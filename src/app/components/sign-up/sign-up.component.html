@@ -12,7 +12,7 @@
         ✕
     </div>
 
-    <h2 class="text-center">Sign up for FREE</h2>
+    <h2 class="text-center">{{isSignInMode ? 'Sign in' : 'Sign up for FREE'}}</h2>
 
     <form class="d-flex flex-column align-center pos-relative" (ngSubmit)="onSubmit()" #signupForm="ngForm">
         <input 
@@ -21,7 +21,7 @@
             name="email"
             [(ngModel)]="email"
             placeholder="✉️ Enter your work email"
-            class="mt-3">
+            class="text mt-3">
 
         <div class="d-flex width-100 mt-3 pos-relative">
             <input 
@@ -29,7 +29,8 @@
                 id="password" 
                 name="password"
                 [(ngModel)]="password"
-                placeholder="🔒 Enter password">
+                placeholder="🔒 Enter password"
+                class="text">
             <div 
                 class="d-flex align-center justify-center cursor-pointer"
                 style="
@@ -46,7 +47,7 @@
         <button 
             class="mt-3 green"
             type="submit">
-            Sign up
+            {{isSignInMode ? 'Sign in' : 'Sign up'}}
         </button>
 
         <div 
@@ -54,6 +55,13 @@
             class="mt-3"
             (click)="onForgotPassword()">
             Forgot password?
+        </div>
+
+        <div 
+            style="cursor: pointer;"
+            class="mt-2"
+            (click)="toggleMode()">
+            {{isSignInMode ? 'Don\'t have an account? Sign up' : 'Already have an account? Sign in'}}
         </div>
 
         <div class="error-container" [class.has-error]="emailError || passwordError">

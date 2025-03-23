@@ -60,4 +60,8 @@ export class LandingComponent {
     });
   }
 
+  onLogin() {
+    this.router.navigate(['/dashboard']);
+  }
+
 }

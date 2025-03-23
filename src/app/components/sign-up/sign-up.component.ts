@@ -17,6 +17,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
   showPassword: boolean = false;
   emailError: string = '';
   passwordError: string = '';
+  isSignInMode: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -30,7 +31,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     const savedData = this.formService.getFormData();
     this.email = savedData.email;
     this.password = savedData.password;
-
+    this.isSignInMode = savedData.isSignInMode;
     // Save form data when dialog is closed
     this.dialogRef.beforeClosed().subscribe(() => {
       this.saveFormData();
@@ -45,7 +46,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
   private saveFormData() {
     this.formService.saveFormData({
       email: this.email,
-      password: this.password
+      password: this.password,
+      isSignInMode: this.isSignInMode
     });
   }
 
@@ -90,10 +92,11 @@ export class SignUpComponent implements OnInit, OnDestroy {
     }
 
     try {
+      // todo if sign in mode, sign in, dashboard; else sign up, onboarding
       // Clear saved form data on successful submission
       this.formService.clearFormData();
       this.dialogRef.close();
-      this.router.navigate(['/home']);
+      this.router.navigate(['/dashboard']);
     } catch (error) {
       console.error('Registration failed:', error);
     }
@@ -102,5 +105,11 @@ export class SignUpComponent implements OnInit, OnDestroy {
   onForgotPassword() {
     this.dialogRef.close();
     this.router.navigate(['/forgot-password']);
+  }
+
+  toggleMode() {
+    this.isSignInMode = !this.isSignInMode;
+    this.emailError = '';
+    this.passwordError = '';
   }
 }

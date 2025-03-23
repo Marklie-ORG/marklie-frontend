@@ -18,8 +18,12 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         this.showHeader = event.url === '/';
 
-        this.showDashboardHeader = event.url === '/home';
+        this.showDashboardHeader = event.url === '/dashboard';
       }
     });
+  }
+
+  onActivate(event: any) {
+    this.showDashboardHeader = event.url === '/dashboard';
   }
 }

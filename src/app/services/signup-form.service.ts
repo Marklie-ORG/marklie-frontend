@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 interface SignUpFormData {
   email: string;
   password: string;
+  isSignInMode: boolean;
 }
 
 @Injectable({
@@ -11,7 +12,8 @@ interface SignUpFormData {
 export class SignUpFormService {
   private formData: SignUpFormData = {
     email: '',
-    password: ''
+    password: '',
+    isSignInMode: false
   };
 
   saveFormData(data: SignUpFormData) {
@@ -25,7 +27,8 @@ export class SignUpFormService {
   clearFormData() {
     this.formData = {
       email: '',
-      password: ''
+      password: '',
+      isSignInMode: false
     };
   }
 } 

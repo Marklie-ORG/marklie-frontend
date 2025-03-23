@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { Client } from '../../models/client.interface';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class DashboardComponent implements OnInit {
   isFbLoggedIn = true;
   showAddClientModal = false;
   clients: Client[] = [];
@@ -115,7 +115,8 @@ export class HomeComponent implements OnInit {
   }
 
   viewReport(clientId: string) {
-    this.router.navigate(['/report'], { queryParams: { clientId } });
+    this.router.navigate(['/client', clientId]);
+    // this.router.navigate(['/report'], { queryParams: { clientId } });
   }
 
   formatDate(date: Date): string {

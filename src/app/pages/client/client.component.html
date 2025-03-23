@@ -1,0 +1,61 @@
+<div class="client-page">
+    <div class="client-header">
+        <div class="client-info">
+            <h1>{{clientName}}</h1>
+            <div class="client-meta">
+                <span class="email">📧 {{clientEmail}}</span>
+                <span class="status" [class.active]="clientStatus === 'active'">● {{clientStatus}}</span>
+            </div>
+        </div>
+        <div class="client-actions">
+            <button class="action-btn edit" (click)="onEditClient()">
+                ✏️ Edit Client
+            </button>
+            <button class="action-btn generate" (click)="onGenerateReport()">
+                📊 Generate Report
+            </button>
+        </div>
+    </div>
+
+    <div class="client-details">
+        <div class="detail-card">
+            <div class="card-header">
+                <h3>Scheduled Reports</h3>
+                <button class="add-btn" (click)="onAddReport()">
+                    ➕ Add Report
+                </button>
+            </div>
+            <div class="detail-content">
+                <div class="reports-list">
+                    <div class="report-item" [class.inactive]="!report.isActive" *ngFor="let report of scheduledReports">
+                        <div class="report-info">
+                            <span class="report-name">{{report.name}}</span>
+                            <span class="report-frequency">{{report.frequency}}</span>
+                            <span class="report-date">Next sending date: {{report.nextSendingDate}}</span>
+                        </div>
+                        <div class="report-actions">
+                            <button class="view-btn" (click)="onEditReport(report.id)">Edit</button>
+                            <button 
+                                class="status-btn" 
+                                [class.active]="report.isActive"
+                                (click)="toggleReportStatus(report)">
+                                {{report.isActive ? 'Deactivate' : 'Activate'}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <h3>Activity Log</h3>
+            <div class="detail-content">
+                <div class="detail-item" *ngFor="let entry of activityLog">
+                    <span class="label">{{entry.action}}</span>
+                    <span class="label report-link" (click)="onViewReport(entry.reportId)">{{entry.reportName}}</span>
+                    <span class="value">{{entry.timestamp}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

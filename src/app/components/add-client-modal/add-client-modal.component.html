@@ -9,7 +9,8 @@
           id="name" 
           formControlName="name" 
           class="form-control"
-          placeholder="Enter client name">
+          placeholder="Enter client name"
+          class="text">
       </div>
 
       <div class="form-group">
@@ -20,7 +21,8 @@
               type="checkbox" 
               [id]="platform"
               [value]="platform"
-              (change)="togglePlatform($event, platform)">
+              (change)="togglePlatform($event, platform)"
+              class="text">
             <label [for]="platform">{{platform}}</label>
           </div>
         </div>

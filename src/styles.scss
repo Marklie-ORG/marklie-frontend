@@ -337,20 +337,24 @@ select {
 }
 
 input, textarea {
-    // width: 100%;
-    font-size: 1rem;
-    padding: 12px;
-    width: calc(100% - 28px);
-    // width: calc(100% - 24px);
-    border-radius: 6px;
-    // border: 2px solid #2d2ab1c2;
-    border: 1.5px solid #bfbfbf;
-    transition: all 0.2s ease-in-out;
-    &:focus {
-      outline: none;
-      border-color: #82baff !important;
-      box-shadow: 0 0 0px 3px #62a9ff47;
+
+    &.text {
+        // width: 100%;
+        font-size: 1rem;
+        padding: 12px;
+        width: calc(100% - 28px);
+        // width: calc(100% - 24px);
+        border-radius: 6px;
+        // border: 2px solid #2d2ab1c2;
+        border: 1.5px solid #bfbfbf;
+        transition: all 0.2s ease-in-out;
+        &:focus {
+        outline: none;
+        border-color: #82baff !important;
+        box-shadow: 0 0 0px 3px #62a9ff47;
+        }
     }
+    
 }
 
 // html, body { height: 100%; }

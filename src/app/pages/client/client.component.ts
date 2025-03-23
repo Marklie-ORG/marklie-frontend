@@ -95,11 +95,6 @@ export class ClientComponent implements OnInit {
     console.log('Edit client clicked');
   }
 
-  onGenerateReport() {
-    // TODO: Implement report generation
-    console.log('Generate report clicked');
-  }
-
   onViewReports() {
     // TODO: Implement view reports functionality
     console.log('View reports clicked');

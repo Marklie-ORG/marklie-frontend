@@ -6,6 +6,14 @@ import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
+interface KpiItem {
+  id: string;
+  label: string;
+  isVisible: boolean;
+  valueClass?: string;
+  getValue: (kpis: any) => string;
+}
+
 @Component({
   selector: 'app-edit-report',
   templateUrl: './edit-report.component.html',
@@ -13,6 +21,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 })
 export class EditReportComponent implements OnInit, OnDestroy {
   @ViewChild('dropdownContainer') dropdownContainer!: ElementRef;
+  @ViewChild('kpiDropdownContainer') kpiDropdownContainer!: ElementRef;
 
   KPIs!: Kpis;
 
@@ -66,12 +75,97 @@ export class EditReportComponent implements OnInit, OnDestroy {
   selectedDatePresetText = "Last 7 Days";
 
   isDropdownOpen = false;
+  isKpiDropdownOpen = false;
+
+  headerBackgroundColor: string = '#ffffff';
+  dashboardBackgroundColor: string = '#f8f9fa';
+
+  kpiItems: KpiItem[] = [
+    {
+      id: 'spend',
+      label: 'Total Spend',
+      isVisible: true,
+      valueClass: 'primary',
+      getValue: (kpis) => `$${this.formatNumber(kpis?.spend, '1.2-2')}`
+    },
+    {
+      id: 'roas',
+      label: 'ROAS',
+      isVisible: true,
+      valueClass: 'success',
+      getValue: (kpis) => `${this.formatNumber(kpis?.purchaseRoas, '1.2-2')}x`
+    },
+    {
+      id: 'conversionValue',
+      label: 'Conversion Value',
+      isVisible: true,
+      valueClass: 'success',
+      getValue: (kpis) => `$${this.formatNumber(kpis?.conversionValue, '1.2-2')}`
+    },
+    {
+      id: 'purchases',
+      label: 'Purchases',
+      isVisible: true,
+      valueClass: 'success',
+      getValue: (kpis) => `${kpis?.purchases}`
+    },
+    {
+      id: 'impressions',
+      label: 'Impressions',
+      isVisible: true,
+      getValue: (kpis) => this.formatNumber(kpis?.impressions, '1.0-0')
+    },
+    {
+      id: 'clicks',
+      label: 'Clicks',
+      isVisible: true,
+      getValue: (kpis) => this.formatNumber(kpis?.clicks, '1.0-0')
+    },
+    {
+      id: 'cpc',
+      label: 'CPC',
+      isVisible: true,
+      getValue: (kpis) => `$${this.formatNumber(kpis?.cpc, '1.2-2')}`
+    },
+    {
+      id: 'ctr',
+      label: 'CTR',
+      isVisible: true,
+      getValue: (kpis) => `${this.formatNumber(kpis?.ctr, '1.2-2')}%`
+    },
+    {
+      id: 'costPerPurchase',
+      label: 'Cost Per Purchase',
+      isVisible: true,
+      getValue: (kpis) => `$${this.formatNumber(kpis?.costPerPurchase, '1.2-2')}`
+    },
+    {
+      id: 'addToCart',
+      label: 'Add To Cart',
+      isVisible: true,
+      getValue: (kpis) => this.formatNumber(kpis?.addToCart, '1.0-0')
+    },
+    {
+      id: 'costPerAddToCart',
+      label: 'Cost Per Add To Cart',
+      isVisible: true,
+      getValue: (kpis) => `$${this.formatNumber(kpis?.costPerAddToCart, '1.2-2')}`
+    },
+    {
+      id: 'initiatedCheckouts',
+      label: 'Initiated Checkouts',
+      isVisible: true,
+      getValue: (kpis) => this.formatNumber(kpis?.initiatedCheckouts, '1.0-0')
+    }
+  ];
 
   constructor(
     private reportService: ReportService,
     private ref: ChangeDetectorRef,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.loadKpiSettings();
+  }
 
   ngOnChanges() {
     // Update selectedDatePresetText when selectedDatePreset changes
@@ -457,6 +551,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.initializeCharts();
       });
+      this.initializeColors();
     } catch (error) {
       console.error('Error fetching report stats:', error);
     }
@@ -1929,5 +2024,110 @@ export class EditReportComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // Cleanup any subscriptions or resources if needed
+  }
+
+  private initializeColors() {
+    // Initialize header color
+    const savedHeaderColor = localStorage.getItem('headerBackgroundColor');
+    if (savedHeaderColor) {
+      this.headerBackgroundColor = savedHeaderColor;
+      this.applyHeaderColor(savedHeaderColor);
+    }
+
+    // Initialize dashboard color
+    const savedDashboardColor = localStorage.getItem('dashboardBackgroundColor');
+    if (savedDashboardColor) {
+      this.dashboardBackgroundColor = savedDashboardColor;
+      this.applyDashboardColor(savedDashboardColor);
+    }
+  }
+
+  onHeaderColorChange(color: string) {
+    this.applyHeaderColor(color);
+    localStorage.setItem('headerBackgroundColor', color);
+  }
+
+  onDashboardColorChange(color: string) {
+    this.applyDashboardColor(color);
+    localStorage.setItem('dashboardBackgroundColor', color);
+  }
+
+  private applyHeaderColor(color: string) {
+    document.documentElement.style.setProperty('--header-bg-color', color);
+  }
+
+  private applyDashboardColor(color: string) {
+    document.documentElement.style.setProperty('--dashboard-bg-color', color);
+  }
+
+  private formatNumber(value: number, format: string): string {
+    if (value === undefined || value === null) return '-';
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: parseInt(format.split('-')[1] || '0'),
+      maximumFractionDigits: parseInt(format.split('-')[1] || '0')
+    }).format(value);
+  }
+
+  toggleKpiDropdown() {
+    this.isKpiDropdownOpen = !this.isKpiDropdownOpen;
+    if (this.isKpiDropdownOpen) {
+      document.addEventListener('click', this.handleClickOutside);
+    } else {
+      document.removeEventListener('click', this.handleClickOutside);
+    }
+  }
+
+  handleClickOutside = (event: MouseEvent) => {
+    if (
+      this.kpiDropdownContainer &&
+      !this.kpiDropdownContainer.nativeElement.contains(event.target)
+    ) {
+      this.isKpiDropdownOpen = false;
+      document.removeEventListener('click', this.handleClickOutside);
+    }
+  };
+
+  onKpiDrop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.kpiItems, event.previousIndex, event.currentIndex);
+    this.saveKpiSettings();
+  }
+
+  toggleKpiVisibility(kpiId: string) {
+    const kpi = this.kpiItems.find(item => item.id === kpiId);
+    if (kpi) {
+      kpi.isVisible = !kpi.isVisible;
+      this.saveKpiSettings();
+    }
+  }
+
+  private loadKpiSettings() {
+    const savedSettings = localStorage.getItem('kpiSettings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      this.kpiItems = this.kpiItems.map(kpi => ({
+        ...kpi,
+        isVisible: settings.visibility[kpi.id] ?? true
+      }));
+      
+      // Restore order
+      if (settings.order) {
+        const orderedItems: KpiItem[] = [];
+        settings.order.forEach((id: string) => {
+          const item = this.kpiItems.find(kpi => kpi.id === id);
+          if (item) orderedItems.push(item);
+        });
+        this.kpiItems = orderedItems;
+      }
+    }
+  }
+
+  private saveKpiSettings() {
+    const settings = {
+      visibility: Object.fromEntries(
+        this.kpiItems.map(kpi => [kpi.id, kpi.isVisible])
+      ),
+      order: this.kpiItems.map(kpi => kpi.id)
+    };
+    localStorage.setItem('kpiSettings', JSON.stringify(settings));
   }
 }

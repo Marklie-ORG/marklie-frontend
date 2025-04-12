@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../services/report.service';
+import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../services/api/report.service';
 import { ActivatedRoute } from '@angular/router';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 

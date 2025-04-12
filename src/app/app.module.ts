@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { register } from 'swiper/element/bundle';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -24,6 +24,7 @@ import { AddClientModalComponent } from './components/add-client-modal/add-clien
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientComponent } from './pages/client/client.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 // Register Swiper custom elements
 register();
@@ -55,7 +56,8 @@ register();
     DragDropModule
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

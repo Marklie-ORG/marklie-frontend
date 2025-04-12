@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../services/report.service';
+import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../services/api/report.service';
 import { ActivatedRoute } from '@angular/router';
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';

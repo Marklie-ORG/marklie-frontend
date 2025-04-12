@@ -88,6 +88,7 @@ export class DashboardComponent implements OnInit {
   }
 
   addClient(clientData: { name: string; platforms: string[] }) {
+    console.log(clientData);
     const newClient: Client = {
       id: (this.clients.length + 1).toString(),
       name: clientData.name,

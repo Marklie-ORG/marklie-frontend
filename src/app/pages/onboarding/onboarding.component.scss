@@ -1,0 +1,19 @@
+.step-container {
+  max-width: 600px;
+  width: 420px;
+}
+
+.navigation-controls {
+  max-width: 600px;
+  width: 420px;
+}
+
+// mat-progress-bar {
+//   height: 15px;
+// }
+
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-track-height: 15px;
+  --mdc-linear-progress-active-indicator-height: 15px;
+}
+

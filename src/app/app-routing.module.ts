@@ -11,6 +11,7 @@ import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-cal
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientComponent } from './pages/client/client.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
+import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 
 const routes: Routes = [
   {
@@ -48,7 +49,8 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent
+    component: DashboardComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'client/:id',
@@ -58,6 +60,11 @@ const routes: Routes = [
     path: 'client/:clientId/report/:id',
     component: EditReportComponent
   },
+  {
+    path: 'onboarding',
+    component: OnboardingComponent,
+    canActivate: [authGuard]
+  }
   // {
   //   path: 'client/:clientId/report/new',
   //   component: EditReportComponent

@@ -1,6 +1,7 @@
 <div class="modal-overlay">
   <div class="modal-content">
     <h2>Add New Client</h2>
+
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="name">Client Name</label>
@@ -24,6 +25,70 @@
               (change)="togglePlatform($event, platform)"
               class="text">
             <label [for]="platform">{{platform}}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Business Managers and Ad Accounts</label>
+
+        <!-- Selected Accounts Display -->
+        <!-- *ngIf="clientForm.get('adAccounts')?.value?.length > 0" -->
+        <div class="selected-accounts" >
+          <h3>Selected Accounts</h3>
+          <div class="selected-accounts-list">
+            <ng-container *ngFor="let business of businesses">
+              <ng-container *ngFor="let account of business.owned_ad_accounts">
+                <div *ngIf="isAdAccountSelected(account.id)" class="selected-account-item">
+                  {{account.name}}
+                </div>
+              </ng-container>
+              <ng-container *ngFor="let account of business.client_ad_accounts">
+                <div *ngIf="isAdAccountSelected(account.id)" class="selected-account-item">
+                  {{account.name}}
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="ad-accounts-container">
+          <div class="businesses-list">
+            <div 
+              *ngFor="let business of businesses" 
+              class="business-item"
+              [class.selected]="selectedBusiness?.id === business.id"
+              (click)="selectBusiness(business)">
+              {{business.name}}
+            </div>
+          </div>
+          
+          <div class="accounts-list" *ngIf="selectedBusiness">
+            <div class="owned-accounts" *ngIf="selectedBusiness.owned_ad_accounts.length > 0">
+              <h4>Owned Accounts</h4>
+              <div *ngFor="let account of selectedBusiness.owned_ad_accounts" class="account-option">
+                <input 
+                  type="checkbox" 
+                  [id]="account.id"
+                  [checked]="isAdAccountSelected(account.id)"
+                  (change)="toggleAdAccount($event, account.id, account.name)"
+                  >
+                <label [for]="account.id">{{account.name}}</label>
+              </div>
+            </div>
+
+            <div class="client-accounts" *ngIf="selectedBusiness.client_ad_accounts.length > 0">
+              <h4>Client Accounts</h4>
+              <div *ngFor="let account of selectedBusiness.client_ad_accounts" class="account-option">
+                <input 
+                  type="checkbox" 
+                  [id]="account.id"
+                  [checked]="isAdAccountSelected(account.id)"
+                  (change)="toggleAdAccount($event, account.id, account.name)"
+                  >
+                <label [for]="account.id">{{account.name}}</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,153 @@
+<!-- Progress Bar -->
+<mat-progress-bar mode="determinate" [value]="progress" class="w-100 mb-5"></mat-progress-bar>
+
+<div class="container d-flex justify-center flex-column align-center">
+
+  <!-- Step 1: Name and Surname -->
+  <div class="step-container" *ngIf="currentStepIndex === 0">
+    
+    <button class="blue mb-4" (click)="previousStep()" style="opacity: 0; pointer-events: none;">⬅</button>
+    <!-- <button class="blue" [disabled]="isFirstStep" (click)="previousStep()">Back</button> -->
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">Welcome,<br>Let’s get you set up for success!</h3>
+    </div>
+
+    <input class="text mt-3" type="text" placeholder="Enter your name" [(ngModel)]="name">
+    <input class="text mt-3" type="text" placeholder="Enter your surname" [(ngModel)]="surname">
+
+    <button class="blue mt-3" [disabled]="!name || !surname" (click)="updateName()">Next</button>
+  </div>
+
+  <!-- Step 2: Owner or Employee -->
+  <div class="step-container" *ngIf="currentStepIndex === 1">
+    
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">Are you the owner of the agency or do you want to join the agency?</h3>
+    </div>
+
+    <div class="d-flex justify-center flex-column">
+      <button class="blue mt-3" (click)="selectUserType(true)">Agency Owner</button>
+      <button class="blue mt-3" (click)="selectUserType(false)">Want to join the agency</button>
+    </div>
+  </div>
+
+  <!-- Step 3a: Invite Code (for employees) -->
+  <div class="step-container" *ngIf="currentStepIndex === 2 && !isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">Enter your invitation code</h3>
+    </div>
+
+    <input class="text mt-3" type="text" placeholder="Enter invitation code" [(ngModel)]="inviteCode">
+    <button class="blue mt-3" [disabled]="!inviteCode" (click)="completeStep()">Complete</button>
+  </div>
+
+  <!-- Step 3b: Agency Name (for owners) -->
+  <div class="step-container" *ngIf="currentStepIndex === 2 && isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">What's your agency name?</h3>
+    </div>
+
+    <input class="text mt-3" type="text" placeholder="Enter agency name" [(ngModel)]="agencyName">
+    <button class="blue mt-3" [disabled]="!agencyName" (click)="nextStep()">Next</button>
+  </div>
+
+  <!-- Step 4: Clients Amount -->
+  <div class="step-container" *ngIf="currentStepIndex === 3 && isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">How many clients do you have?</h3>
+    </div>
+
+    <div class="d-flex flex-column">
+      <mat-radio-group [(ngModel)]="clientsAmount" class="d-flex flex-column">
+        <mat-radio-button *ngFor="let range of clientsRanges" [value]="range.value">
+          {{ range.label }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <button class="blue mt-3" [disabled]="!clientsAmount" (click)="answerClientsAmount()">Next</button>
+  </div>
+
+  <!-- Step 5: Advertising Platforms -->
+  <div class="step-container" *ngIf="currentStepIndex === 4 && isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">Where do you advertise?</h3>
+    </div>
+
+    <div class="d-flex flex-column">
+      <mat-checkbox *ngFor="let platform of advertisingPlatforms" 
+                   [checked]="platform.selected"
+                   (change)="toggleAdvertisingPlatform(platform)">
+        {{ platform.name | titlecase }}
+      </mat-checkbox>
+      <input class="text mt-3"
+             type="text"
+             placeholder="Other platform"
+             [(ngModel)]="customAdvertisingPlatform">
+    </div>
+
+    <button class="blue mt-3" [disabled]="!getSelectedAdvertisingPlatforms().length" (click)="answerAdvertisingPlatforms()">Next</button>
+  </div>
+
+  <!-- Step 6: Communication Platforms -->
+  <div class="step-container" *ngIf="currentStepIndex === 5 && isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">How do you connect with your clients?</h3>
+    </div>
+
+    <div class="d-flex flex-column">
+      <mat-checkbox *ngFor="let platform of communicationPlatforms" 
+                   [checked]="platform.selected"
+                   (change)="toggleCommunicationPlatform(platform)">
+        {{ platform.name | titlecase }}
+      </mat-checkbox>
+      <input class="text mt-3"
+             type="text"
+             placeholder="Other platform"
+             [(ngModel)]="customCommunicationPlatform">
+    </div>
+
+    <button class="blue mt-3" [disabled]="!getSelectedCommunicationPlatforms().length" (click)="answerCommunicationPlatforms()">Next</button>
+  </div>
+
+  <!-- Step 7: How did you hear about us -->
+  <div class="step-container" *ngIf="currentStepIndex === 6 && isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">How did you hear about us?</h3>
+    </div>
+
+    <div class="d-flex flex-column">
+      <mat-radio-group [(ngModel)]="howDidYouHear">
+        <mat-radio-button value="social">Social Media</mat-radio-button>
+        <mat-radio-button value="friend">Friend/Colleague</mat-radio-button>
+        <mat-radio-button value="search">Search Engine</mat-radio-button>
+        <mat-radio-button value="other">Other</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <button class="blue mt-3" [disabled]="!howDidYouHear" (click)="answerHowDidYouHear()">Complete</button>
+  </div>
+
+  
+</div>

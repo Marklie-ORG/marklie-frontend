@@ -1,9 +1,10 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/api/auth.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SignUpFormService } from '../../services/signup-form.service';
+import { OnboardingService } from '../../services/api/onboarding.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -23,7 +24,8 @@ export class SignUpComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     public dialogRef: MatDialogRef<SignUpComponent>,
-    private formService: SignUpFormService
+    private formService: SignUpFormService,
+    private onboardingService: OnboardingService
   ) {}
 
   ngOnInit() {
@@ -91,12 +93,34 @@ export class SignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
+    let accessToken = "";
+
     try {
       // todo if sign in mode, sign in, dashboard; else sign up, onboarding
       // Clear saved form data on successful submission
-      this.formService.clearFormData();
-      this.dialogRef.close();
-      this.router.navigate(['/dashboard']);
+      if (this.isSignInMode) {
+        const response = await this.authService.login(this.email, this.password);
+        accessToken = response.accessToken;
+        this.authService.setToken(accessToken);
+        this.formService.clearFormData();
+        this.dialogRef.close();
+        // const onboardingCompleted = await this.onboardingService.checkOnboardingCompletion();
+        const onboardingCompleted = false;
+        if (onboardingCompleted) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.router.navigate(['/onboarding']);
+        }
+      }
+      else {
+        const response = await this.authService.register(this.email, this.password);
+        accessToken = response.accessToken;
+        this.authService.setToken(accessToken);
+        this.formService.clearFormData();
+        this.dialogRef.close();
+        this.router.navigate(['/onboarding']);
+      }
+      
     } catch (error) {
       console.error('Registration failed:', error);
     }

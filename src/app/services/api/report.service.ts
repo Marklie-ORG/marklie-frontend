@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-
+import { environment } from '@env/environment';
 export interface ReportStatsResponse {
     bestAds: BestAd[]
     KPIs: Kpis
@@ -67,7 +67,7 @@ export interface ReportStatsResponse {
   providedIn: 'root'
 })
 export class ReportService {
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = `${environment.apiUrl}`;
   // private apiUrl = 'https://0758-77-174-130-35.ngrok-free.app';
 
   private headers = {

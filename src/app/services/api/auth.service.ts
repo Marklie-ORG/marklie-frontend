@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
+import { environment } from '@env/environment';
 
 interface AuthResponse {
   accessToken: string;
-  refreshToken: string;
 }
 
 interface DecodedToken {
@@ -18,33 +18,38 @@ interface DecodedToken {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) { }
 
   async login(email: string, password: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, {
-      email,
-      password
-    }));
+    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, 
+      {
+        email,
+        password
+      }
+    ));
   }
 
   async register(email: string, password: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, {
-      email,
-      password
-    }));
+    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, 
+      {
+        email,
+        password
+      }
+    ));
   }
 
-  async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/refresh`, {
-      refreshToken
-    }));
+  refreshToken(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/refresh`, {},
+      {
+        withCredentials: true
+      }
+    );
   }
 
-  setTokens(accessToken: string, refreshToken: string) {
+  setToken(accessToken: string) {
     localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
   }
 
   getAccessToken(): string | null {

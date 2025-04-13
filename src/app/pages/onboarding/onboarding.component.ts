@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { UserService } from 'src/app/services/api/user.service';
+import { OrganizationService } from 'src/app/services/api/organization.service';
 
 interface Platform {
   name: string;
@@ -84,7 +85,8 @@ export class OnboardingComponent implements OnInit {
   constructor(
     private onboardingService: OnboardingService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private organizationService: OrganizationService
   ) {}
 
   ngOnInit() {
@@ -109,12 +111,6 @@ export class OnboardingComponent implements OnInit {
     }
   }
 
-  createOrganization() {
-    if (this.agencyName) {
-      this.nextStep();
-    }
-  }
-
   nextStep() {
     const totalSteps = this.isOwner ? this.totalStepsForOwner : this.totalStepsForEmployee;
     if (this.currentStepIndex < totalSteps - 1) {
@@ -128,6 +124,34 @@ export class OnboardingComponent implements OnInit {
       this.currentStepIndex--;
       this.updateProgress();
     }
+  }
+
+  async useInviteCode() {
+    if (!this.inviteCode) {
+      alert("Please enter an invite code");
+      return;
+    }
+    try {
+      const response = await this.organizationService.useInviteCode(this.inviteCode);
+      if (response.status === 200) {
+        this.nextStep();
+        this.updateProgress(); // Update progress after selecting user type
+        this.completeStep();
+      }
+      else {
+        alert(response.body?.message);
+      }
+    }
+    catch (response) {
+      console.log(response)
+      alert((response as any).error.message);
+    }
+  }
+
+  createOrganization() {
+    this.organizationService.createOrganization(this.agencyName);
+    this.nextStep();
+    this.updateProgress(); // Update progress after selecting user type
   }
 
   answerHowDidYouHear() {

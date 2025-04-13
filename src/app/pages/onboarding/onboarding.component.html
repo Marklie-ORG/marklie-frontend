@@ -44,7 +44,7 @@
     </div>
 
     <input class="text mt-3" type="text" placeholder="Enter invitation code" [(ngModel)]="inviteCode">
-    <button class="blue mt-3" [disabled]="!inviteCode" (click)="completeStep()">Complete</button>
+    <button class="blue mt-3" (click)="useInviteCode()">Complete</button>
   </div>
 
   <!-- Step 3b: Agency Name (for owners) -->
@@ -57,7 +57,7 @@
     </div>
 
     <input class="text mt-3" type="text" placeholder="Enter agency name" [(ngModel)]="agencyName">
-    <button class="blue mt-3" [disabled]="!agencyName" (click)="nextStep()">Next</button>
+    <button class="blue mt-3" [disabled]="!agencyName" (click)="createOrganization()">Next</button>
   </div>
 
   <!-- Step 4: Clients Amount -->

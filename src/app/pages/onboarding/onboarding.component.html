@@ -149,5 +149,21 @@
     <button class="blue mt-3" [disabled]="!howDidYouHear" (click)="answerHowDidYouHear()">Complete</button>
   </div>
 
+  <!-- Step 8: Connect FB -->
+  <div class="step-container" *ngIf="currentStepIndex === 7 && isOwner">
+
+    <button class="blue mb-4" (click)="previousStep()">⬅</button>
+
+    <div class="step-header d-flex justify-center">
+      <h3 class="text-center">Connect your Facebook account</h3>
+    </div>
+
+    <div class="d-flex flex-column">
+      <button class="blue mt-3" (click)="connectFacebook()">Connect</button>
+    </div>
+
+    <!-- <button class="blue mt-3" [disabled]="!howDidYouHear" (click)="answerHowDidYouHear()">Complete</button> -->
+  </div>
+
   
 </div>

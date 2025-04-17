@@ -21,4 +21,22 @@ export class OnboardingService {
       })
     );
   }
+
+  async getOnboardingSteps() {
+    return firstValueFrom(
+      this.http.get<OnboardingSteps>(`${this.apiUrl}/onboarding-steps`)
+    );
+  }
+}
+
+export interface OnboardingSteps {
+  nameAnswered: boolean;
+  isOwnerAnswered: boolean;
+  organizationCreated: boolean;
+  clientsAmountAnswered: boolean;
+  advertisingPlatformsAnswered: boolean;
+  communicationPlatformsAnswered: boolean;
+  howDidYouHearAnswered: boolean;
+  facebookConnected: boolean;
+  onboardingFinished: boolean;
 }

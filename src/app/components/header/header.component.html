@@ -9,10 +9,14 @@
         <nav>
             <a href="#" class="opacity-65">Features</a>
             <a href="#" class="opacity-65">Pricing</a>
-            <a (click)="showSignUpModal()">
+            <a (click)="showSignUpModal()" *ngIf="!isSignedIn">
                 <button class="green">
-                    <!-- Start Free Trial -->
                     Get started. For Free!
+                </button>
+            </a>
+            <a (click)="goToDashboard()" *ngIf="isSignedIn">
+                <button class="green">
+                    Dashboard
                 </button>
             </a>
             <!-- <a routerLink="/login">

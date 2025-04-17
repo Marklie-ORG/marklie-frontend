@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Client } from '../../models/client.interface';
-
+import { OnboardingService } from '../../services/api/onboarding.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -13,9 +13,18 @@ export class DashboardComponent implements OnInit {
   clients: Client[] = [];
   selectedClient: Client | null = null;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private onboardingService: OnboardingService
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    const onboardingSteps = await this.onboardingService.getOnboardingSteps();
+
+    if (!onboardingSteps.organizationCreated) {
+      this.router.navigate(['/onboarding']);
+    }
+
     // Add some initial clients with activity text and logs
     this.clients = [
       {

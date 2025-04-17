@@ -79,4 +79,9 @@ export class AuthService {
       return false;
     }
   }
+
+  hasAccessToken() {
+    return this.getAccessToken() !== null;
+  }
+  
 }

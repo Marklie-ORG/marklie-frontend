@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { SignUpComponent } from '../../components/sign-up/sign-up.component';
 import { MatDialog } from '@angular/material/dialog';
-
+import { AuthService } from '../../services/api/auth.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -10,7 +11,11 @@ import { MatDialog } from '@angular/material/dialog';
 export class HeaderComponent {
   isMobileMenuOpen: boolean = false;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   showSignUpModal() {
     this.dialog.open(SignUpComponent, {
@@ -21,4 +26,13 @@ export class HeaderComponent {
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  get isSignedIn() {
+    return this.authService.hasAccessToken();
+  }
+
 }

@@ -26,8 +26,8 @@ export class FbLoginCallbackComponent {
       const code = params['code'];
       if (code) {
         // const redirectUri = 'http://192.168.89.185:4200/fb-login-callback';
-        // const redirectUri = 'http://localhost:4200/fb-login-callback';
-        const redirectUri = 'https://derevian.co/saas/fb-login-callback';
+        const redirectUri = 'http://localhost:4200/fb-login-callback';
+        // const redirectUri = 'https://derevian.co/saas/fb-login-callback';
         try {
           const response = await this.userService.handleFacebookLogin(code, redirectUri);
           if (response.status === 200) {

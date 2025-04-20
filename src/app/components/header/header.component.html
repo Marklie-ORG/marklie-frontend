@@ -1,19 +1,22 @@
 
-<div class="container">
+<div class="landing-container">
 
     <div class="header flex-row justify-between align-center">
-        <div routerLink="/" class="logo"><img src="../../../favicon.png" alt="logo" width="40px"></div>
+        <div routerLink="/" class="logo d-flex align-center">
+            <img src="../../../favicon.png" alt="logo" width="40px">
+            <span class="ml-3">Marklie</span>
+        </div>
         
         <nav>
             <a href="#" class="opacity-65">Features</a>
             <a href="#" class="opacity-65">Pricing</a>
             <a (click)="showSignUpModal()" *ngIf="!isSignedIn">
-                <button class="green">
-                    Get started. For Free!
+                <button class="blue">
+                    Sign Up
                 </button>
             </a>
             <a (click)="goToDashboard()" *ngIf="isSignedIn">
-                <button class="green">
+                <button class="blue">
                     Dashboard
                 </button>
             </a>

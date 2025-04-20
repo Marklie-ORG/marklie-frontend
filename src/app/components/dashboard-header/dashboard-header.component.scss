@@ -5,11 +5,14 @@
 
 .dashboard-header {
     display: flex;
-    padding: 20px 32px;
+    padding: 14px 20px;
     background: var(--block-color);
-    box-shadow: var(--box-shadow);
     border-radius: 20px;
     margin-top: 15px;
+    // box-shadow: var(--box-shadow);
+
+    box-shadow: 0 4px 6px 0 rgba(67, 46, 134, .04);
+    border: 1px solid #8080803d;
 }
 
 .mobile-dashboard-header {

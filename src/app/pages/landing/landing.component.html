@@ -9,20 +9,44 @@
 
 
 <div class="landing-container">
-  <div class="mt-7 d-flex align-center justify-center">
+  <div style="display: grid; grid-template-columns: 49% 45%; gap: 6%;" class="mt-7">
+    <div class="d-flex flex-column align-start">
+      <h1 [innerHTML]="headline" class=""></h1>
+      <p class="subheadline mt-3" [innerHTML]="subheadline"></p>
+
+      <div class="d-flex flex-column align-center justify-between mt-4">
+        <button class="blue hero-section-cta d-flex align-center" 
+        (click)="showSignUpModal()"
+        >Get started <img width="15px" class="ml-2" src="https://www.svgrepo.com/show/410383/right-arrow.svg" style="filter: invert(1);"></button>
+        <div class="no-credit-card mt-1">No credit card needed</div>
+      </div>
+      
+
+      <div class="social-proof mt-5">Built for Agencies and Freelancers. Trusted by 100+ marketers.</div>
+    </div>
+
+    <div class="d-flex flex-column align-center">
+      <img style="border-radius: 20px; box-shadow: 0 4px 6px 0 rgba(67, 46, 134, .04);
+    border: 1px solid #8080803d; height: 310px;
+    width: 500px;
+    margin: 10px;" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXFsNXY3dGdqdDVtMmIzd3YyYmR3eTZjajFoeTRhemhuZ2VhcndlbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3osxYoCkKu892JBLUc/giphy.gif" alt="">
+    </div>
+
+  </div>
+
+  <!-- <div class="mt-7 d-flex align-center justify-center">
     <div class="d-flex flex-column align-center">
       <h1 [innerHTML]="headline" class="text-center"></h1>
-      <p class="text-center mt-4" [innerHTML]="subheadline"></p>
-      <!-- routerLink="/sign-up" -->
-      <button class="mt-4 green" 
+      <p class="subheadline text-center mt-3" [innerHTML]="subheadline"></p>
+      <button class="mt-5 blue" 
       (click)="showSignUpModal()"
       >Get started. For Free!</button>
-      
-      <!-- <div class="col" style="width: 50%;">
-        <img src="../../../assets/img/landing-image.webp" alt="Landing Image" width="100%">
-      </div> -->
+      <div class="no-credit-card text-center mt-1">No credit card needed</div>
+
+      <div class="social-proof text-center mt-5">Built for Agencies and Freelancers. Trusted by 100+ marketers.</div>
 
     </div>
     
-  </div>
+  </div> -->
+
 </div>

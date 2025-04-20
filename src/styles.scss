@@ -60,7 +60,7 @@ body {
 h1 { font-size: 2rem !important; font-weight: 600 !important; line-height: 2.5rem;}
 h2 { font-size: 1.8rem !important; }
 h3 { font-size: 1.6rem !important; }
-p { font-size: 1.2rem !important; line-height: 1.6rem; }
+p { font-size: 1.1rem !important; line-height: 1.6rem; }
 a { text-decoration: none !important; font-size: 1rem !important; }
 
 @media (max-width: 768px) {
@@ -242,6 +242,11 @@ a { text-decoration: none !important; font-size: 1rem !important; }
     margin: 0 auto;
 }
 
+.landing-container {
+    max-width: 1160px;
+    margin: 0 auto;
+}
+
 button {
     border: none;
     // background: rgb(0, 162, 16);
@@ -264,10 +269,10 @@ button {
     }
 
     &.blue {
-        background: #0076f5;
+        background: #1F8DED;
     }
     &.blue:hover {
-        background: #0076f5;
+        background: #1F8DED;
         box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
     }
 }

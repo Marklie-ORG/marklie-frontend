@@ -7,10 +7,10 @@
 //   height: 50vh;
 // }
 
-.landing-container {
-    max-width: 1280px;
-    margin: 0 auto;
-}
+// .landing-container {
+//     max-width: 1160px;
+//     margin: 0 auto;
+// }
 
 @media (max-width: 1400px) {
     .landing-container {
@@ -28,4 +28,24 @@
     .landing-container {
         max-width: 95%;
     }
+}
+
+.subheadline {
+    color: #363637;
+}
+
+.no-credit-card {
+    font-size: 12px;
+    color: #5d5d85;
+}
+
+.social-proof {
+    font-size: 14px;
+    color: #5d5d85;
+}
+
+.hero-section-cta {
+    padding: 12px 14px;
+    font-size: 1.1rem;
+    background: linear-gradient(45deg, #1f8ded, #34a0ff) !important;
 }

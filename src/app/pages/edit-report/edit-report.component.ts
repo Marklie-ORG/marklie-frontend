@@ -1966,26 +1966,6 @@ export class EditReportComponent implements OnInit, OnDestroy {
 
     // Initiated Checkouts Chart
     this.initiateInitiatedCheckoutsChart('checkoutsChart', formattedDates, this.graphs.map(g => parseInt(g.initiatedCheckouts)));
-  //   new Chart('checkoutsChart', {
-  //     type: 'line',
-  //     data: {
-  //       labels: formattedDates,
-  //       datasets: [{
-  //         label: 'Initiated Checkouts',
-  //         data: this.graphs.map(g => parseInt(g.initiatedCheckouts)),
-  //         borderColor: '#27ae60'
-  //       }]
-  //     },
-  //     options: {
-  //       responsive: true,
-  //       plugins: {
-  //         title: {
-  //           display: true,
-  //           text: 'Initiated Checkouts'
-  //         }
-  //       }
-  //     }
-  //   });
   }
 
   toggleGraphVisibility(graphId: string) {

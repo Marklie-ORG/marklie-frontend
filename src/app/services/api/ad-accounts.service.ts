@@ -9,8 +9,6 @@ export interface Root2 {
   id: string
   name: string
   ad_accounts: AdAccount[]
-  // owned_ad_accounts: OwnedAdAccount[]
-  // client_ad_accounts: ClientAdAccount[]
 }
 
 export interface AdAccount {
@@ -38,7 +36,6 @@ export interface ClientAdAccount {
 })
 export class ReportService {
   private apiUrl = `${environment.apiUrl}`;
-  // private apiUrl = 'https://0758-77-174-130-35.ngrok-free.app';
 
   private headers = {
     'ngrok-skip-browser-warning': 'true'

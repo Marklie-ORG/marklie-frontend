@@ -1,0 +1,113 @@
+<div class="pt-5 pr-5 pb-5 pl-5 pos-relative">
+    <div 
+        class="d-flex align-center justify-center cursor-pointer"
+        style="
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 24px;
+        height: 24px;
+        "
+        (click)="dialogRef.close()">
+        ✕
+    </div>
+
+    <h2>Add client</h2>
+
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Client Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            class="form-control"
+            placeholder="Enter client name"
+            class="text">
+        </div>
+  
+        <!-- <div class="form-group">
+          <label>Platforms</label>
+          <div class="platforms-container">
+            <div *ngFor="let platform of platforms" class="platform-option">
+              <input 
+                type="checkbox" 
+                [id]="platform"
+                [value]="platform"
+                (change)="togglePlatform($event, platform)"
+                class="text">
+              <label [for]="platform">{{platform}}</label>
+            </div>
+          </div>
+        </div> -->
+  
+        <div class="form-group">
+          <label>Selected Ad Accounts</label>
+  
+          <!-- Selected Accounts Display -->
+          <!-- *ngIf="clientForm.get('adAccounts')?.value?.length > 0" -->
+          <div class="selected-accounts" >
+            <!-- <h4>Selected Accounts</h4>  -->
+            <div class="selected-accounts-list">
+              <ng-container *ngFor="let adAccount of uniqueAdAccounts">
+                <div *ngIf="isAdAccountSelected(adAccount.id)" class="selected-account-item">
+                  {{adAccount.name}}
+                </div>
+              </ng-container>
+            </div>
+          </div>
+  
+          <div class="ad-accounts-container">
+            <div class="businesses-list">
+              <div 
+                *ngFor="let business of businesses" 
+                class="business-item"
+                [class.selected]="selectedBusiness?.id === business.id"
+                [class.disabled-business]="isBusinessDisabled(business.id)"
+                (click)="selectBusiness(business)">
+                {{business.name}}
+              </div>
+            </div>
+            
+            <div class="accounts-list" *ngIf="selectedBusiness">
+              <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
+                <h4>Ad Accounts</h4>
+                <div 
+                *ngFor="let account of selectedBusiness.ad_accounts" 
+                class="account-option"
+                (click)="disabledAdAccountAlert(account.business.id)"
+                >
+                  <input 
+                    [disabled]="isAdAccountDisabled(account.business.id)"
+                    type="checkbox" 
+                    [id]="account.id"
+                    [checked]="isAdAccountSelected(account.id)"
+                    (change)="toggleAdAccount($event, account.id, account.business.id)"
+                    >
+                  <label [for]="account.id">{{account.name}}</label>
+                </div>
+              </div>
+  
+              <!-- <div class="client-accounts" *ngIf="selectedBusiness.client_ad_accounts.length > 0">
+                <h4>Client Accounts</h4>
+                <div *ngFor="let account of selectedBusiness.client_ad_accounts" class="account-option">
+                  <input 
+                    type="checkbox" 
+                    [id]="account.id"
+                    [checked]="isAdAccountSelected(account.id)"
+                    (change)="toggleAdAccount($event, account.id, account.name)"
+                    >
+                  <label [for]="account.id">{{account.name}}</label>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+  
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="dialogRef.close()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="!clientForm.valid">Add Client</button>
+        </div>
+      </form>
+</div>
+

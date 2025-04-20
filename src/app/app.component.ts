@@ -18,7 +18,9 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         this.showHeader = event.url === '/';
 
-        this.showDashboardHeader = event.url === '/dashboard';
+        this.showDashboardHeader = 
+          event.url === '/dashboard' || 
+          event.url.startsWith('/client/');
       }
     });
   }

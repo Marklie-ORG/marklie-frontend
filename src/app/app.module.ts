@@ -20,11 +20,11 @@ import { LoginComponent } from './pages/login/login.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
-import { AddClientModalComponent } from './components/add-client-modal/add-client-modal.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientComponent } from './pages/client/client.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AddClientComponent } from './components/add-client/add-client.component';
 
 // Register Swiper custom elements
 register();
@@ -41,10 +41,10 @@ register();
     // HomeComponent,
     FbLoginCallbackComponent,
     DashboardHeaderComponent,
-    AddClientModalComponent,
     DashboardComponent,
     ClientComponent,
-    EditReportComponent
+    EditReportComponent,
+    AddClientComponent
   ],
   imports: [
     BrowserModule,

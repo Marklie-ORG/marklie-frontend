@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment';
+import { Client } from './client.service';
 export interface ReportStatsResponse {
     bestAds: BestAd[]
     KPIs: Kpis
@@ -62,6 +63,13 @@ export interface ReportStatsResponse {
     date: string
   }
   
+export interface Report {
+  uuid: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  client: Client;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -82,5 +90,9 @@ export class ReportService {
 
   async getWeeklyReportById(id: string): Promise<ReportStatsResponse> {
     return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports/${id}`, {headers: this.headers}));
+  }
+
+  async getClientReports(clientUuid: string): Promise<Report[]> {
+    return firstValueFrom(this.http.get<Report[]>(`${this.apiUrl}/reports/client/${clientUuid}`, {headers: this.headers}));
   }
 }

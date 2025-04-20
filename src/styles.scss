@@ -246,10 +246,10 @@ button {
     border: none;
     // background: rgb(0, 162, 16);
     color: #fff;
-    padding: 10px 14px;
+    padding: 8px 10px;
     border-radius: 6px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.9rem;
     box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 2.7px 0px;
     letter-spacing: .03rem;
     cursor: pointer;
@@ -264,11 +264,11 @@ button {
     }
 
     &.blue {
-        background: rgb(49 93 222);
+        background: #0076f5;
     }
     &.blue:hover {
-        background: rgb(49 93 222);
-        box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
+        background: #0076f5;
+        box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
     }
 }
 

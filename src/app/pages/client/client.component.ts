@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-interface ScheduledReport {
-  id: string;
-  name: string;
-  frequency: string;
-  nextSendingDate: string;
-  isActive: boolean;
-}
+import { Client, ClientService } from '../../services/api/client.service';
+import { ReportService, Report } from 'src/app/services/api/report.service';
 
 interface ActivityLogEntry {
   action: string;
@@ -26,30 +20,8 @@ export class ClientComponent implements OnInit {
   clientName: string = '';
   clientEmail: string = '';
   clientStatus: string = 'active';
-
-  scheduledReports: ScheduledReport[] = [
-    {
-      id: '1',
-      name: 'Monthly Performance Report',
-      frequency: 'Monthly',
-      nextSendingDate: '09:00, March 15, 2025',
-      isActive: true
-    },
-    {
-      id: '2',
-      name: 'Weekly Analytics Report',
-      frequency: 'Weekly',
-      nextSendingDate: '09:00, March 15, 2025',
-      isActive: true
-    },
-    {
-      id: '3',
-      name: 'Campaign Summary Report',
-      frequency: 'Biweekly',
-      nextSendingDate: '09:00, March 15, 2025',
-      isActive: true
-    }
-  ];
+  client: Client | null = null;
+  reports: Report[] = [];
 
   activityLog: ActivityLogEntry[] = [
     {
@@ -72,7 +44,12 @@ export class ClientComponent implements OnInit {
     }
   ];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router,
+    private clientService: ClientService,
+    private reportService: ReportService
+  ) {}
 
   ngOnInit() {
     // Get client ID from route parameters
@@ -80,14 +57,22 @@ export class ClientComponent implements OnInit {
       this.clientId = params['id'];
       // TODO: Fetch client details using the ID
       this.loadClientDetails();
+      this.loadClientReports();
     });
   }
 
-  private loadClientDetails() {
-    // TODO: Implement API call to fetch client details
-    // For now, using mock data
-    this.clientName = 'Example Client';
-    this.clientEmail = 'client@example.com';
+  private async loadClientDetails() {
+    if (!this.clientId) {
+      return;
+    }
+    this.client = await this.clientService.getClient(this.clientId);
+  }
+
+  private async loadClientReports() {
+    if (!this.clientId) {
+      return;
+    }
+    this.reports = await this.reportService.getClientReports(this.clientId);
   }
 
   onEditClient() {
@@ -106,12 +91,6 @@ export class ClientComponent implements OnInit {
 
   onAddReport() {
     this.router.navigate(['/client', this.clientId, 'report', '0']);
-  }
-
-  toggleReportStatus(report: ScheduledReport) {
-    report.isActive = !report.isActive;
-    // TODO: Implement API call to update report status
-    console.log(`Report ${report.name} status changed to ${report.isActive ? 'active' : 'inactive'}`);
   }
 
   onViewReport(reportId: string) {

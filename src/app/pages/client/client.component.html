@@ -1,50 +1,64 @@
-<div class="client-page">
-    <div class="client-header">
-        <div class="client-info">
-            <h1>{{clientName}}</h1>
-            <div class="client-meta">
-                <span class="email">📧 {{clientEmail}}</span>
-                <span class="status" [class.active]="clientStatus === 'active'">● {{clientStatus}}</span>
-            </div>
-        </div>
-        <div class="client-actions">
-            <button class="action-btn edit" (click)="onEditClient()">
-                ✏️ Edit Client
-            </button>
-        </div>
-    </div>
+<div class="container">
 
-    <div class="client-details">
-        <div class="detail-card">
-            <div class="card-header">
-                <h3>Scheduled Reports</h3>
-                <button class="add-btn" (click)="onAddReport()">
-                    ➕ Add Report
+    <div 
+    class="p-4 mt-4"
+    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+        <div class="client-header">
+            <div class="client-info">
+                <h1 *ngIf="client">{{client.name}}</h1>
+                <!-- <div class="client-meta">
+                    <span class="email">📧 {{clientEmail}}</span>
+                    <span class="status" [class.active]="clientStatus === 'active'">● {{clientStatus}}</span>
+                </div> -->
+            </div>
+            <div class="client-actions">
+                <button class="action-btn edit" (click)="onEditClient()">
+                    ✏️ Edit Client
                 </button>
             </div>
+        </div>
+    </div>
+    
+    
+    <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">
+    
+        <div 
+        class="p-4"
+        style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+    
+            <!-- Content for left block -->
+            <div class="d-flex align-center justify-between mb-4">
+            <h3>Scheduled Reports</h3>
+            <button class="blue">
+                <i class="fa-solid fa-plus color-white"></i>
+                Add report
+            </button>
+            </div>
+    
+            <div class="clients-list">
             <div class="detail-content">
                 <div class="reports-list">
-                    <div class="report-item" [class.inactive]="!report.isActive" *ngFor="let report of scheduledReports">
+                    <div class="report-item" *ngFor="let report of reports">
                         <div class="report-info">
                             <span class="report-name">{{report.name}}</span>
-                            <span class="report-frequency">{{report.frequency}}</span>
-                            <span class="report-date">Next sending date: {{report.nextSendingDate}}</span>
+                            <span class="report-frequency">Frequency: </span>
+                            <span class="report-date">Next sending date: </span>
                         </div>
                         <div class="report-actions">
-                            <button class="view-btn" (click)="onEditReport(report.id)">Edit</button>
-                            <button 
-                                class="status-btn" 
-                                [class.active]="report.isActive"
-                                (click)="toggleReportStatus(report)">
-                                {{report.isActive ? 'Deactivate' : 'Activate'}}
+                            <button class="view-btn" (click)="onEditReport(report.uuid)">Edit</button>
+                            <button class="status-btn">
+                                Activate/Deactivate
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+            </div>
         </div>
-
-        <div class="detail-card">
+    
+        <div 
+        class="p-4"
+        style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
             <h3>Activity Log</h3>
             <div class="detail-content">
                 <div class="detail-item" *ngFor="let entry of activityLog">
@@ -54,5 +68,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    
+        </div>
 </div>

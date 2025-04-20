@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Client } from '../../models/client.interface';
+
 import { OnboardingService } from '../../services/api/onboarding.service';
+import { Client, ClientService } from '../../services/api/client.service';
+import { MatDialog } from '@angular/material/dialog';
+import { AddClientComponent } from 'src/app/components/add-client/add-client.component';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -9,110 +13,49 @@ import { OnboardingService } from '../../services/api/onboarding.service';
 })
 export class DashboardComponent implements OnInit {
   isFbLoggedIn = true;
-  showAddClientModal = false;
   clients: Client[] = [];
-  selectedClient: Client | null = null;
 
   constructor(
     private router: Router,
-    private onboardingService: OnboardingService
+    private onboardingService: OnboardingService,
+    private clientService: ClientService,
+    private dialog: MatDialog
   ) {}
 
   async ngOnInit() {
     const onboardingSteps = await this.onboardingService.getOnboardingSteps();
 
+    this.getClients();
+
     if (!onboardingSteps.organizationCreated) {
       this.router.navigate(['/onboarding']);
     }
-
-    // Add some initial clients with activity text and logs
-    this.clients = [
-      {
-        id: '1',
-        name: 'Acme Corporation',
-        platforms: ['Facebook', 'TikTok'],
-        createdAt: new Date(),
-        activity: 'Last campaign reached 1M users with 15% engagement rate. Recent posts performing above average with 25% increase in followers.',
-        activityLog: [
-          {
-            id: '1',
-            timestamp: new Date('2024-03-20T10:30:00'),
-            action: 'Campaign Performance',
-            details: 'Campaign "Summer Sale 2024" reached 1M users with 15% engagement rate'
-          },
-          {
-            id: '2',
-            timestamp: new Date('2024-03-19T15:45:00'),
-            action: 'Follower Growth',
-            details: '25% increase in followers across all platforms'
-          }
-        ]
-      },
-      {
-        id: '2',
-        name: 'TechStart Inc',
-        platforms: ['Facebook'],
-        createdAt: new Date(),
-        activity: 'Facebook ads performing well with 2.5x ROI. Latest product launch campaign generated 500+ leads in the past week.',
-        activityLog: [
-          {
-            id: '3',
-            timestamp: new Date('2024-03-20T14:20:00'),
-            action: 'ROI Update',
-            details: 'Facebook ads campaign achieved 2.5x ROI'
-          }
-        ]
-      },
-      {
-        id: '3',
-        name: 'Global Brands',
-        platforms: ['TikTok'],
-        createdAt: new Date(),
-        activity: 'Viral TikTok campaign achieved 500K views. Influencer collaboration resulted in 30% increase in brand mentions.',
-        activityLog: [
-          {
-            id: '4',
-            timestamp: new Date('2024-03-20T16:45:00'),
-            action: 'Viral Campaign',
-            details: 'TikTok campaign reached 500K views'
-          }
-        ]
-      }
-    ];
-    
-    // Set default selected client
-    this.selectedClient = this.clients[0];
   }
 
-  selectClient(client: Client) {
-    this.selectedClient = client;
+  async getClients() {
+    this.clients = await this.clientService.getClients();
   }
 
-  openAddClientModal() {
-    this.showAddClientModal = true;
-  }
+  showAddClientModal() {
+    const dialogRef = this.dialog.open(AddClientComponent, {
+      width: '800px'
+    });
 
-  closeAddClientModal() {
-    this.showAddClientModal = false;
+    dialogRef.afterClosed().subscribe(result => {
+      this.getClients();
+    });
   }
 
   addClient(clientData: { name: string; platforms: string[] }) {
     console.log(clientData);
     const newClient: Client = {
-      id: (this.clients.length + 1).toString(),
       name: clientData.name,
-      platforms: clientData.platforms,
       createdAt: new Date(),
-      activity: 'New client added. No activity recorded yet.',
-      activityLog: [{
-        id: '1',
-        timestamp: new Date(),
-        action: 'Client Created',
-        details: 'New client account was created'
-      }]
+      updatedAt: new Date(),
+      organization: '1',
+      uuid: '1'
     };
     this.clients.push(newClient);
-    this.closeAddClientModal();
   }
 
   fbLogin() {

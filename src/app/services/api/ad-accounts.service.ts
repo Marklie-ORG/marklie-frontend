@@ -8,8 +8,18 @@ export type Root = Root2[]
 export interface Root2 {
   id: string
   name: string
-  owned_ad_accounts: OwnedAdAccount[]
-  client_ad_accounts: ClientAdAccount[]
+  ad_accounts: AdAccount[]
+  // owned_ad_accounts: OwnedAdAccount[]
+  // client_ad_accounts: ClientAdAccount[]
+}
+
+export interface AdAccount {
+  id: string
+  name: string
+  business: {
+    id: string
+    name: string
+  }
 }
 
 export interface OwnedAdAccount {
@@ -36,7 +46,7 @@ export class ReportService {
 
   constructor(private http: HttpClient) { }
 
-  async getBusinesses(): Promise<Root> {
-    return firstValueFrom(this.http.get<Root>(`${this.apiUrl}/ad-accounts/businesses?&organizationName=test`, {headers: this.headers}));
+  async getBusinessesHierarchy(): Promise<Root> {
+    return firstValueFrom(this.http.get<Root>(`${this.apiUrl}/ad-accounts/businesses-hierarchy`, {headers: this.headers}));
   }
 }

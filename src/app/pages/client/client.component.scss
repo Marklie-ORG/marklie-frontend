@@ -192,32 +192,33 @@
         cursor: pointer;
         font-size: 0.9rem;
         transition: all 0.2s ease;
+
     }
 
     .view-btn {
-        background: var(--primary-color);
-        color: white;
+        // background: var(--primary-color);
+        // color: white;
 
-        &:hover {
-            background: var(--primary-color-dark);
-        }
+        // &:hover {
+        //     background: var(--primary-color-dark);
+        // }
     }
 
     .status-btn {
-        background: #e9ecef;
-        color: #495057;
+        // background: #e9ecef;
+        // color: #495057;
 
         &.active {
-            background: #28a745;
+            background: #1F8DED;
             color: white;
         }
 
-        &:hover {
-            background: #dee2e6;
-        }
+        // &:hover {
+        //     background: #dee2e6;
+        // }
 
         &.active:hover {
-            background: #218838;
+            background: #1F8DED;
         }
     }
 }

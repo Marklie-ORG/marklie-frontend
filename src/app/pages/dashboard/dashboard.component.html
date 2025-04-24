@@ -51,12 +51,13 @@
         <div class="activity-list">
           <div *ngFor="let activity of activities" class="activity-item">
             <div class="activity-icon">
-              <i [ngClass]="{
+              <img width="28px" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+              <!-- <i [ngClass]="{
                 'fa-solid fa-file-chart': activity.type === 'report_generated',
                 'fa-solid fa-user-plus': activity.type === 'client_added',
                 'fa-solid fa-share-nodes': activity.type === 'report_shared',
                 'fa-solid fa-link': activity.type === 'platform_connected'
-              }"></i>
+              }"></i> -->
             </div>
             <div class="activity-content">
               <div class="activity-header">

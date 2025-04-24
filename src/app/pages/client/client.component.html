@@ -29,7 +29,7 @@
             <!-- Content for left block -->
             <div class="d-flex align-center justify-between mb-4">
             <h3>Scheduled Reports</h3>
-            <button class="blue">
+            <button class="blue" (click)="onAddReport()">
                 <i class="fa-solid fa-plus color-white"></i>
                 Add report
             </button>
@@ -45,8 +45,8 @@
                             <span class="report-date">Next sending date: {{formatDate(report.nextSendingDate)}}</span>
                         </div>
                         <div class="report-actions">
-                            <button class="view-btn" (click)="onEditReport(report.uuid)">Edit</button>
-                            <button class="status-btn" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
+                            <button class="view-btn blue" (click)="onEditReport(report.uuid)">Edit</button>
+                            <button class="status-btn green" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
                                 {{report.isActive ? 'Deactivate' : 'Activate'}}
                             </button>
                         </div>
@@ -64,14 +64,15 @@
                 <div class="activity-list">
                     <div class="activity-item" *ngFor="let entry of activityLog">
                         <div class="activity-icon">
-                            <i [ngClass]="{
+                            <img width="28px" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+                            <!-- <i [ngClass]="{
                                 'fa-solid fa-file-chart': entry.action === 'Report Generated',
                                 'fa-solid fa-share-nodes': entry.action === 'Report Shared',
                                 'fa-solid fa-calendar-plus': entry.action === 'Report Scheduled',
                                 'fa-solid fa-toggle-off': entry.action === 'Report Deactivated',
                                 'fa-solid fa-toggle-on': entry.action === 'Report Activated',
                                 'fa-solid fa-pen-to-square': entry.action === 'Report Edited'
-                            }"></i>
+                            }"></i> -->
                         </div>
                         <div class="activity-content">
                             <div class="activity-header">

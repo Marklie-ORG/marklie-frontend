@@ -170,11 +170,12 @@ export class ClientComponent implements OnInit {
   }
 
   onEditReport(reportId: string) {
-    this.router.navigate(['/client', this.clientId, 'report', reportId]);
+    this.router.navigate(['/report-example']);
   }
 
   onAddReport() {
-    this.router.navigate(['/client', this.clientId, 'report', '0']);
+    // this.router.navigate(['/client', this.clientId, 'report', '0']);
+    this.router.navigate(['/report-example']);
   }
 
   onViewReport(reportId: string) {

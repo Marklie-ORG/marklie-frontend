@@ -48,8 +48,24 @@
       style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
         <!-- Content for right block -->
         <h3>Activity</h3>
-        <div class="no-selection">
-          <p>Some activity here</p>
+        <div class="activity-list">
+          <div *ngFor="let activity of activities" class="activity-item">
+            <div class="activity-icon">
+              <i [ngClass]="{
+                'fa-solid fa-file-chart': activity.type === 'report_generated',
+                'fa-solid fa-user-plus': activity.type === 'client_added',
+                'fa-solid fa-share-nodes': activity.type === 'report_shared',
+                'fa-solid fa-link': activity.type === 'platform_connected'
+              }"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-header">
+                <span class="activity-client">{{activity.clientName}}</span>
+                <span class="activity-time">{{formatDate(activity.timestamp)}}</span>
+              </div>
+              <p class="activity-details">{{activity.details}}</p>
+            </div>
+          </div>
         </div>
       </div>
 

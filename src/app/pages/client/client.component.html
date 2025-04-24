@@ -41,13 +41,13 @@
                     <div class="report-item" *ngFor="let report of reports">
                         <div class="report-info">
                             <span class="report-name">{{report.name}}</span>
-                            <span class="report-frequency">Frequency: </span>
-                            <span class="report-date">Next sending date: </span>
+                            <span class="report-frequency">Frequency: {{report.frequency}}</span>
+                            <span class="report-date">Next sending date: {{formatDate(report.nextSendingDate)}}</span>
                         </div>
                         <div class="report-actions">
                             <button class="view-btn" (click)="onEditReport(report.uuid)">Edit</button>
-                            <button class="status-btn">
-                                Activate/Deactivate
+                            <button class="status-btn" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
+                                {{report.isActive ? 'Deactivate' : 'Activate'}}
                             </button>
                         </div>
                     </div>
@@ -61,10 +61,28 @@
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
             <h3>Activity Log</h3>
             <div class="detail-content">
-                <div class="detail-item" *ngFor="let entry of activityLog">
-                    <span class="label">{{entry.action}}</span>
-                    <span class="label report-link" (click)="onViewReport(entry.reportId)">{{entry.reportName}}</span>
-                    <span class="value">{{entry.timestamp}}</span>
+                <div class="activity-list">
+                    <div class="activity-item" *ngFor="let entry of activityLog">
+                        <div class="activity-icon">
+                            <i [ngClass]="{
+                                'fa-solid fa-file-chart': entry.action === 'Report Generated',
+                                'fa-solid fa-share-nodes': entry.action === 'Report Shared',
+                                'fa-solid fa-calendar-plus': entry.action === 'Report Scheduled',
+                                'fa-solid fa-toggle-off': entry.action === 'Report Deactivated',
+                                'fa-solid fa-toggle-on': entry.action === 'Report Activated',
+                                'fa-solid fa-pen-to-square': entry.action === 'Report Edited'
+                            }"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-header">
+                                <span class="activity-action">{{entry.action}}</span>
+                                <span class="activity-time">{{entry.timestamp}}</span>
+                            </div>
+                            <span class="activity-report" (click)="onViewReport(entry.reportId)">
+                                {{entry.reportName}}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

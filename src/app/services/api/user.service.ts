@@ -26,4 +26,13 @@ export class UserService {
       }>(`${this.apiUrl}/handle-facebook-login`, { code, redirectUri }, { observe: 'response' })
     );
   }
+
+  async handleSlackLogin(code: string, redirectUri: string) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/handle-slack-login`, { code, redirectUri }, { observe: 'response' })
+    );
+  }
+
 }

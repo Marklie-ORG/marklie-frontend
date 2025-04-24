@@ -15,7 +15,7 @@ export class OrganizationService {
     return firstValueFrom(
       this.http.post<{
         message: string;
-      }>(`${this.apiUrl}/organization`, {
+      }>(`${this.apiUrl}/`, {
         name: name
       }, { observe: 'response' })
     );

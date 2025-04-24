@@ -1,11 +1,12 @@
 <div class="container">
 
-  <div *ngIf="!isFbLoggedIn" class="d-flex flex-column justify-center align-center mt-7">
-    <p>Please login to connect your clients</p>
-    <button class="blue mt-3" (click)="fbLogin()">
-      Login with Facebook
+  <div class="d-flex flex-column justify-center align-center mt-7">
+    <button class="blue" (click)="connectFacebook()">
+      Connect Facebook
     </button>
   </div>
+
+  
 
   <div *ngIf="isFbLoggedIn">
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">

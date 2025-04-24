@@ -6,6 +6,7 @@ import { Client, ClientService } from '../../services/api/client.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddClientComponent } from 'src/app/components/add-client/add-client.component';
 import { FacebookLoginService } from 'src/app/services/facebook-login.service';
+import { SlackLoginService } from 'src/app/services/slack-login.service';
 
 interface Activity {
   id: string;
@@ -59,7 +60,8 @@ export class DashboardComponent implements OnInit {
     private onboardingService: OnboardingService,
     private clientService: ClientService,
     private dialog: MatDialog,
-    private facebookLoginService: FacebookLoginService
+    private facebookLoginService: FacebookLoginService,
+    private slackLoginService: SlackLoginService
   ) {}
 
   async ngOnInit() {
@@ -100,6 +102,10 @@ export class DashboardComponent implements OnInit {
 
   connectFacebook() {
     this.facebookLoginService.connectFacebook();
+  }
+
+  connectSlack() {
+    this.slackLoginService.connectSlack();
   }
 
   viewReport(clientId: string) {

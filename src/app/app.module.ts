@@ -23,6 +23,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AddClientComponent } from './components/add-client/add-client.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
 
 // Register Swiper custom elements
 register();
@@ -40,7 +41,8 @@ register();
     EditReportComponent,
     AddClientComponent,
     PrivacyPolicyComponent,
-    TermsOfServiceComponent
+    TermsOfServiceComponent,
+    SlackLoginCallbackComponent
   ],
   imports: [
     BrowserModule,

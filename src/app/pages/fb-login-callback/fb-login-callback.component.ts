@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '@env/environment';
 import { UserService } from 'src/app/services/api/user.service';
 @Component({
   selector: 'app-fb-login-callback',
@@ -26,7 +27,7 @@ export class FbLoginCallbackComponent {
       const code = params['code'];
       if (code) {
         // const redirectUri = 'http://192.168.89.185:4200/fb-login-callback';
-        const redirectUri = 'http://localhost:4200/fb-login-callback';
+        const redirectUri = environment.facebookLoginCallbackUrl;
         // const redirectUri = 'https://derevian.co/saas/fb-login-callback';
         try {
           const response = await this.userService.handleFacebookLogin(code, redirectUri);

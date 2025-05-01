@@ -27,6 +27,9 @@ export class AuthService {
       {
         email,
         password
+      },
+      {
+        withCredentials: true
       }
     ));
   }
@@ -36,6 +39,9 @@ export class AuthService {
       {
         email,
         password
+      },
+      {
+        withCredentials: true
       }
     ));
   }
@@ -82,6 +88,18 @@ export class AuthService {
 
   hasAccessToken() {
     return this.getAccessToken() !== null;
+  }
+
+  getAllCookies(): { [key: string]: string } {
+    const cookies = document.cookie.split(';');
+    const result: { [key: string]: string } = {};
+    
+    cookies.forEach(cookie => {
+      const [name, value] = cookie.trim().split('=');
+      result[name] = decodeURIComponent(value);
+    });
+    
+    return result;
   }
   
 }

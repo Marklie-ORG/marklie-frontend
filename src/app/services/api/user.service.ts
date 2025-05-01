@@ -27,11 +27,11 @@ export class UserService {
     );
   }
 
-  async handleSlackLogin(code: string, redirectUri: string) {
+  async handleSlackLogin(code: string, redirectUri: string, organizationClientId: string) {
     return firstValueFrom(
       this.http.post<{
         message: string;
-      }>(`${this.apiUrl}/handle-slack-login`, { code, redirectUri }, { observe: 'response' })
+      }>(`${this.apiUrl}/handle-slack-login`, { code, redirectUri, organizationClientId }, { observe: 'response' })
     );
   }
 

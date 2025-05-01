@@ -24,6 +24,8 @@ import { AddClientComponent } from './components/add-client/add-client.component
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
+import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
+import { ModalBaseComponent } from './components/modal-base/modal-base.component';
 
 // Register Swiper custom elements
 register();
@@ -42,7 +44,9 @@ register();
     AddClientComponent,
     PrivacyPolicyComponent,
     TermsOfServiceComponent,
-    SlackLoginCallbackComponent
+    SlackLoginCallbackComponent,
+    ClientSettingsComponent,
+    ModalBaseComponent
   ],
   imports: [
     BrowserModule,

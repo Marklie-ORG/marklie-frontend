@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Client, ClientService } from '../../services/api/client.service';
+import { Client, ClientService, Workspace } from '../../services/api/client.service';
 import { ReportService, Report } from 'src/app/services/api/report.service';
+import { SlackLoginService } from 'src/app/services/slack-login.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { Conversations } from 'src/app/services/api/client.service';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { ClientSettingsComponent } from '../../components/client-settings/client-settings.component';
 
 interface ActivityLogEntry {
   action: string;
@@ -32,6 +37,9 @@ export class ClientComponent implements OnInit {
   clientEmail: string = '';
   clientStatus: string = 'active';
   client: Client | null = null;
+
+  
+
   reports: ScheduledReport[] = [
     {
       uuid: '1',
@@ -124,24 +132,33 @@ export class ClientComponent implements OnInit {
     private route: ActivatedRoute, 
     private router: Router,
     private clientService: ClientService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private slackLoginService: SlackLoginService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
     // Get client ID from route parameters
     this.route.params.subscribe(params => {
       this.clientId = params['id'];
-      // TODO: Fetch client details using the ID
       this.loadClientDetails();
-      // this.loadClientReports();
     });
+
+    
+
+    
   }
+
+  
+
+  
 
   private async loadClientDetails() {
     if (!this.clientId) {
       return;
     }
     this.client = await this.clientService.getClient(this.clientId);
+    // this.onEditClient();
   }
 
   private async loadClientReports() {
@@ -160,8 +177,16 @@ export class ClientComponent implements OnInit {
   }
 
   onEditClient() {
-    // TODO: Implement edit client functionality
-    console.log('Edit client clicked');
+    const dialogRef = this.dialog.open(ClientSettingsComponent, {
+      width: '800px',
+      data: {
+        client: this.client
+      }
+    });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   this.getClients();
+    // });
   }
 
   onViewReports() {
@@ -198,4 +223,6 @@ export class ClientComponent implements OnInit {
       minute: '2-digit'
     });
   }
+
+  
 }

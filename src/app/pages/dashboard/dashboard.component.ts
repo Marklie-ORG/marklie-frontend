@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
     private clientService: ClientService,
     private dialog: MatDialog,
     private facebookLoginService: FacebookLoginService,
-    private slackLoginService: SlackLoginService
+    
   ) {}
 
   async ngOnInit() {
@@ -88,25 +88,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  addClient(clientData: { name: string; platforms: string[] }) {
-    console.log(clientData);
-    const newClient: Client = {
-      name: clientData.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      organization: '1',
-      uuid: '1'
-    };
-    this.clients.push(newClient);
-  }
-
   connectFacebook() {
     this.facebookLoginService.connectFacebook();
   }
 
-  connectSlack() {
-    this.slackLoginService.connectSlack();
-  }
+  
 
   viewReport(clientId: string) {
     this.router.navigate(['/client', clientId]);

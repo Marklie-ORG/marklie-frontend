@@ -16,6 +16,9 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const accessToken = this.authService.getAccessToken();
+    
+    // Log cookies before request
+    // console.log('Cookies before request:', document.cookie);
 
     const modifiedReq = req.clone({
       headers: req.headers

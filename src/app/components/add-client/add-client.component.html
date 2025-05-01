@@ -1,17 +1,4 @@
-<div class="pt-5 pr-5 pb-5 pl-5 pos-relative">
-    <div 
-        class="d-flex align-center justify-center cursor-pointer"
-        style="
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        width: 24px;
-        height: 24px;
-        "
-        (click)="dialogRef.close()">
-        ✕
-    </div>
-
+<modal-base>
     <h2>Add client</h2>
 
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
@@ -21,7 +8,7 @@
             type="text" 
             id="name" 
             formControlName="name" 
-            class="form-control"
+            class="form-control" 
             placeholder="Enter client name"
             class="text">
         </div>
@@ -59,13 +46,14 @@
                 (click)="disabledAdAccountAlert(account.business.id)"
                 >
                   <input 
+                    *ngIf="account.business"
                     [disabled]="isAdAccountDisabled(account.business.id)"
                     type="checkbox" 
                     [id]="account.id"
                     [checked]="isAdAccountSelected(account.id)"
                     (change)="toggleAdAccount($event, account.id, account.business.id)"
                     >
-                  <label [for]="account.id">{{account.name}}</label>
+                  <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
                 </div>
               </div>
               
@@ -78,5 +66,5 @@
           <button type="submit" class="btn-primary" [disabled]="!clientForm.valid">Add Client</button>
         </div>
       </form>
-</div>
+</modal-base>
 

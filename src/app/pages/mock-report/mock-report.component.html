@@ -1,161 +1,139 @@
+<!-- ADD THIS IN YOUR TEMPLATE FILE -->
 <div class="dashboard">
-  <!-- Modal Panel -->
-  <div class="config-modal">
+  <!-- Schedule Panel -->
+  <div class="config-step1">
+    <h3>Report Schedule</h3>
 
-    <div class="config-modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h3 class="modal-title">
-          Step {{ panelStep }}: {{ panelStep === 1 ? 'Schedule Settings' : 'Metric Selection' }}
-        </h3>
-        <button class="pin-toggle" (click)="toggleSticky()" title="Toggle Sticky">
-          {{ isSticky ? '📌' : '📍' }}
-        </button>
-      </div>
-      <div *ngIf="panelStep === 1">
-        <div class="mb-3">
-          <label>Date Preset:</label>
-          <select class="form-control" [(ngModel)]="selectedDatePresetText">
-            <option>Today</option>
-            <option>Yesterday</option>
-            <option>Last 7 Days</option>
-            <option>Last 30 Days</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label>Schedule Frequency:</label>
-          <select class="form-control" [(ngModel)]="schedule.frequency">
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label>Time:</label>
-          <input type="time" class="form-control" [(ngModel)]="schedule.time" />
-        </div>
-
-        <button class="btn btn-primary" (click)="panelStep = 2">Next →</button>
-      </div>
-
-      <div *ngIf="panelStep === 2">
-        <div class="mb-3">
-          <label>KPIs:</label>
-          <div class="metric-group">
-            <label *ngFor="let metric of availableMetrics">
-              <input type="checkbox" [(ngModel)]="metricSelections.kpis[metric]" (change)="onMetricSelectionChange()" />
-              {{ formatMetricLabel(metric) }}
-            </label>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label>Graphs:</label>
-          <div class="metric-group">
-            <label *ngFor="let metric of availableGraphMetrics">
-              <input type="checkbox" [(ngModel)]="metricSelections.graphs[metric]" (change)="onMetricSelectionChange()" />
-              {{ formatMetricLabel(metric) }}
-            </label>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label>Ad Metrics:</label>
-          <div class="metric-group">
-            <label *ngFor="let metric of adAvailableMetrics">
-              <input type="checkbox" [(ngModel)]="metricSelections.ads[metric]" (change)="onMetricSelectionChange()" />
-              {{ formatMetricLabel(metric) }}
-            </label>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label>Campaign Metrics:</label>
-          <div class="metric-group">
-            <label *ngFor="let metric of campaignAvailableMetrics">
-              <input type="checkbox" [(ngModel)]="metricSelections.campaigns[metric]" (change)="onMetricSelectionChange()" />
-              {{ formatMetricLabel(metric) }}
-            </label>
-          </div>
-        </div>
-
-        <button class="btn btn-secondary mr-2" (click)="panelStep = 1">← Back</button>
-      </div>
+    <div class="form-row">
+      <label>Date Preset:</label>
+      <select class="form-control" [(ngModel)]="selectedDatePresetText">
+        <option *ngFor="let preset of datePresets" [value]="preset.value">
+          {{ preset.text }}
+        </option>
+      </select>
     </div>
+
+
+    <div class="form-row">
+      <label>Schedule Frequency:</label>
+      <select class="form-control" [(ngModel)]="schedule.frequency">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </div>
+    <i class="fa-light fa-question"></i>
+    <div class="form-row d-flex align-items-center">
+      <label for="reviewBeforeSend" class="mb-0">
+        Require review before sending
+        <i
+          class="fa-solid fa-question"
+          title="You will be notified to review the generated report before it’s sent to the client."
+          style="cursor: pointer; position: relative; top: -5px;"
+        ></i>
+      </label>
+      <input
+        type="checkbox"
+        id="reviewBeforeSend"
+        [(ngModel)]="schedule.reviewNeeded"
+        class="me-2 ms-2"
+      />
+    </div>
+
+    <button class="btn btn-success" (click)="saveConfiguration()">Save Configuration</button>
   </div>
 
-
+  <!-- Main Report Content -->
   <main class="report-content">
     <h2 class="section-title mb-4">Mock Report Preview</h2>
-
     <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
 
-    <div *ngIf="!reportStatsLoading">
-      <div class="kpi-section">
-        <h2 class="section-title">Account Overview - {{ selectedDatePresetText }}</h2>
-        <div class="kpi-grid">
-          <ng-container *ngFor="let metric of availableMetrics">
-            <div class="kpi-card" *ngIf="metricSelections.kpis[metric]">
-              <div class="kpi-label">{{ formatMetricLabel(metric) }}</div>
-              <div class="kpi-value" [ngClass]="getMetricStyle(metric)">
-                {{ formatMetricValue(metric, KPIs[metric]) }}
+    <!-- Draggable Sections -->
+    <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
+      <div *ngFor="let section of reportSections; let i = index" cdkDrag class="report-section bordered-section">
+        <div class="section-toggle">
+          <label>{{ section.title }}</label>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="panelToggles[section.key]" (change)="onPanelToggleChange()" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <!-- Metric Reordering -->
+        <div *ngIf="panelToggles[section.key]">
+          <div class="metric-group" cdkDropList [cdkDropListData]="section.metrics"
+               (cdkDropListDropped)="dropMetric($event, i)">
+            <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
+              <label>
+                <input type="checkbox" [(ngModel)]="metricSelections[section.key][metric]" (change)="onMetricSelectionChange()" />
+                {{ formatMetricLabel(metric) }}
+              </label>
+            </div>
+          </div>
+
+          <!-- Section-Specific Content -->
+          <ng-container [ngSwitch]="section.key">
+            <div *ngSwitchCase="'kpis'" class="kpi-grid" cdkDropList (cdkDropListDropped)="dropKPICard($event)">
+              <ng-container *ngFor="let metric of section.metrics">
+                <div class="kpi-card" *ngIf="metricSelections.kpis[metric]" cdkDrag>
+                  <div class="kpi-label">{{ formatMetricLabel(metric) }}</div>
+                  <div class="kpi-value" [ngClass]="getMetricStyle(metric)">
+                    {{ formatMetricValue(metric, KPIs[metric]) }}
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+
+            <div *ngSwitchCase="'graphs'" class="graph-grid" cdkDropList (cdkDropListDropped)="dropGraphCard($event)">
+              <div class="graph-card" *ngFor="let config of metricsGraphConfig" cdkDrag>
+                <canvas [id]="config.key + 'Chart'"></canvas>
               </div>
+            </div>
+
+            <div *ngSwitchCase="'ads'" class="ad-grid">
+              <div class="ad-card" *ngFor="let ad of ads">
+                <div class="ad-image-container">
+                  <img class="ad-media" [src]="ad.thumbnailUrl" [alt]="ad.name" />
+                </div>
+                <div class="metrics">
+                  <div class="metric" *ngFor="let key of section.metrics">
+                    <ng-container *ngIf="metricSelections.ads[key]">
+                      <div class="metric-label">{{ formatMetricLabel(key) }}</div>
+                      <div class="metric-value" [ngClass]="getMetricStyle(key)">
+                        {{ formatMetricValue(key, ad[key]) }}
+                      </div>
+                    </ng-container>
+                  </div>
+
+                </div>
+                <a target="_blank" [href]="ad.sourceUrl" class="view-ad-btn">View Ad</a>
+              </div>
+            </div>
+
+            <div *ngSwitchCase="'campaigns'" class="table-container">
+              <table class="campaign-table">
+                <thead>
+                <tr cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropCampaignColumn($event)">
+                  <th>#</th>
+                  <th>Campaign Name</th>
+                  <th *ngFor="let key of campaignColumnOrder" cdkDrag>
+                    {{ formatMetricLabel(key) }}
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let campaign of campaigns; let k = index">
+                  <td>{{ k + 1 }}</td>
+                  <td>{{ campaign.campaign_name }}</td>
+                  <td *ngFor="let key of campaignColumnOrder">
+                    {{ formatMetricValue(key, campaign[key]) }}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </ng-container>
-        </div>
-      </div>
-
-      <div class="graph-section">
-        <h2 class="section-title">Performance Trends</h2>
-        <div class="graph-grid">
-          <div class="graph-card" *ngFor="let config of metricsGraphConfig">
-            <canvas [id]="config.key + 'Chart'"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="ads-section mt-5">
-        <h2 class="section-title">Top 10 Best Performing Ads</h2>
-        <div class="ad-grid">
-          <div class="ad-card" *ngFor="let ad of ads">
-            <div class="ad-image-container">
-              <img class="ad-media" src="/assets/img/2025-03-19%2013.02.21.jpg" [alt]="ad.name" />
-            </div>
-            <div class="metrics">
-              <div class="metric" *ngFor="let key of adMetrics">
-                <div class="metric-label">{{ formatMetricLabel(key) }}</div>
-                <div class="metric-value" [ngClass]="getMetricStyle(key)">
-                  {{ formatMetricValue(key, ad[key]) }}
-                </div>
-              </div>
-            </div>
-            <a target="_blank" [href]="ad.sourceUrl" class="view-ad-btn">View Ad</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="campaigns-section mt-5">
-        <h2 class="section-title">Campaigns Overview</h2>
-        <div class="table-container">
-          <table class="campaign-table">
-            <thead>
-            <tr>
-              <th>#</th>
-              <th>Campaign Name</th>
-              <th *ngFor="let key of campaignMetrics">{{ formatMetricLabel(key) }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let campaign of campaigns; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>{{ campaign.campaign_name }}</td>
-              <td *ngFor="let key of campaignMetrics">
-                {{ formatMetricValue(key, campaign[key]) }}
-              </td>
-            </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

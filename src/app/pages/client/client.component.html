@@ -19,8 +19,8 @@
     <div class="p-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
       <div class="d-flex align-center justify-between mb-4">
         <h3>Scheduled Reports</h3>
-        <button class="blue" (click)="openScheduleModal(client)">
-          <i class="fa-solid fa-plus color-white"></i> Add report
+        <button class="blue" (click)="goToMockReport()">
+          <i class="fa-solid fa-plus color-white"></i> Create Report
         </button>
       </div>
 
@@ -31,9 +31,6 @@
               <div class="report-info">
                 <span class="report-frequency">Frequency: {{ scheduleOption.cronExpression }}</span>
                 <span class="report-date">Next sending date: {{ scheduleOption.nextRun }}</span>
-              </div>
-              <div class="report-actions">
-                <button class="view-btn blue" (click)="submitSchedule()">Edit</button>
               </div>
             </div>
           </div>
@@ -52,68 +49,5 @@
     </div>
   </div>
 
-  <!-- Schedule Modal -->
-  <div *ngIf="showScheduleModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>{{ editingSchedule ? 'Edit' : 'New' }} Report Schedule</h4>
-        <button class="close-btn" (click)="closeScheduleModal()">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <form (ngSubmit)="submitSchedule()">
-
-          <!-- Frequency -->
-          <div class="form-group">
-            <label>Frequency</label>
-            <select class="form-control" [(ngModel)]="scheduleForm.frequency" name="frequency" required>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
-
-          <!-- Time -->
-          <div class="form-group">
-            <label>Time</label>
-            <input type="time" class="form-control" [(ngModel)]="scheduleForm.time" name="time" required>
-          </div>
-
-          <!-- Date Range -->
-          <div class="form-group">
-            <label>Date Range</label>
-            <select class="form-control" [(ngModel)]="scheduleForm.dataPreset" name="dataPreset" required>
-              <option value="last_7d">Last 7 Days</option>
-              <option value="last_14d">Last 14 Days</option>
-              <option value="last_30d">Last 30 Days</option>
-              <option value="last_90d">Last 90 Days</option>
-              <option value="this_month">This Month</option>
-              <option value="last_month">Last Month</option>
-            </select>
-          </div>
-
-           Metrics
-          <div class="form-group">
-            <label>Select Metrics</label>
-            <select class="form-control" multiple [(ngModel)]="scheduleForm.metrics" name="metrics" required>
-              <option *ngFor="let metric of availableMetrics" [value]="metric">{{ metric }}</option>
-            </select>
-          </div>
-
-          <!-- Review Needed -->
-          <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="reviewNeeded" [(ngModel)]="scheduleForm.reviewNeeded" name="reviewNeeded">
-            <label class="form-check-label" for="reviewNeeded">Require manual review before sending</label>
-          </div>
-
-          <!-- Footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="closeScheduleModal()">Cancel</button>
-            <button type="submit" class="btn btn-primary">{{ editingSchedule ? 'Update' : 'Create' }} Schedule</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
 
 </div>

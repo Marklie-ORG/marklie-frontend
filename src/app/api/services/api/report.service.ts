@@ -85,6 +85,26 @@ export class ReportService {
 
   constructor(private http: HttpClient) { }
 
+  // @ts-ignore
+  createSchedule(data: any) {
+    try {
+      console.log(this.apiUrl)
+      return firstValueFrom(this.http.post(`http://localhost:3030/api/reports/schedule`, data));
+
+    }catch (e) {
+      console.log(e)
+
+    }
+  }
+
+  updateSchedule(scheduleUuid: string, data: any): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/${scheduleUuid}`, data));
+  }
+
+  deleteSchedule(scheduleUuid: string): Promise<any> {
+    return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
+  }
+
   async getReportStats(datePreset: string): Promise<ReportStatsResponse> {
     return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports?datePreset=${datePreset}&organizationName=test`, {headers: this.headers}));
   }

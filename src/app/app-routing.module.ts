@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { authGuard } from './guards/auth.guard';
+import { authGuard } from './api/guards/auth.guard';
 import { LandingComponent } from './pages/landing/landing.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
@@ -54,10 +54,8 @@ const routes: Routes = [
     path: 'terms-of-service',
     component: TermsOfServiceComponent
   },
-  {
-    path: 'mock-report',
-    component: MockReportComponent
-  }
+  { path: 'reports/:clientUuid',
+    component: MockReportComponent }
 ];
 
 @NgModule({

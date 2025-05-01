@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/api/auth.service';
+import { AuthService } from '../services/api/auth.service.js';
 
 export const authGuard = () => {
   const authService = inject(AuthService);
@@ -13,4 +13,4 @@ export const authGuard = () => {
   // Redirect to login page if not authenticated
   router.navigate(['/']);
   return false;
-};  
+};

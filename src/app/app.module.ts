@@ -19,7 +19,7 @@ import { DashboardHeaderComponent } from './components/dashboard-header/dashboar
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientComponent } from './pages/client/client.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthInterceptor } from './api/interceptors/auth.interceptor';
 import { AddClientComponent } from './components/add-client/add-client.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
@@ -28,6 +28,8 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {MetricSelectorComponent} from "./components/metrics/metrics-selector/metric-selector.component";
 import {KpiViewerComponent} from "./components/metrics/kpis/kpi-viewer.component";
 import {MockReportComponent} from "./pages/mock-report/mock-report.component.js";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {FaIconComponent, FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 // Register Swiper custom elements
 register();
@@ -49,7 +51,7 @@ register();
     SlackLoginCallbackComponent,
     MetricSelectorComponent,
     KpiViewerComponent,
-    MockReportComponent
+    MockReportComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,12 @@ register();
     MatDialogModule,
     ReactiveFormsModule,
     DragDropModule,
-    NgSelectModule
+    NgSelectModule,
+    BrowserAnimationsModule,
+    DragDropModule,
+    FaIconComponent,
+    FontAwesomeModule
+
   ],
   providers: [
     provideAnimationsAsync(),

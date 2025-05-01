@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, throwError, BehaviorSubject, switchMap, filter, take } from 'rxjs';
-import { AuthService } from '../services/api/auth.service';
+import { AuthService } from '../services/api/auth.service.js';
 import { Router } from '@angular/router';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
         .set('Authorization', accessToken ? `Bearer ${accessToken}` : ''),
       withCredentials: true
     });
-    
+
     return next.handle(modifiedReq).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
@@ -44,7 +44,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(data.accessToken);
           this.authService.setToken(data.accessToken);
-          
+
           return next.handle(this.addTokenToRequest(request, data.accessToken));
         }),
         catchError((err) => {

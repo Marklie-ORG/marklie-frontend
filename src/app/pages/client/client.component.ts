@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Client, ClientService } from '../../services/api/client.service';
-import { AuthService } from "../../services/api/auth.service.js";
+import { Client, ClientService } from '../../api/services/api/client.service';
+import { AuthService } from "../../api/services/api/auth.service.js";
 import {formatDate} from "@angular/common";
 
 interface ScheduledReport {
@@ -19,7 +19,7 @@ interface ScheduledReport {
   styleUrls: ['./client.component.scss']
 })
 export class ClientComponent implements OnInit {
-  clientId: string | null = null;
+  clientUuid: string | null = null;
   client: Client | null = null;
   scheduleOptions: ScheduledReport[] = [];
   activityLog: ScheduledReport[] = [];
@@ -46,85 +46,20 @@ export class ClientComponent implements OnInit {
     private authService: AuthService,
   ) {}
 
-  openScheduleModal(client: any, cron?: any) {
-    this.currentClient = client;
-
-    if (cron) {
-      // Editing
-      this.editingSchedule = true;
-      this.currentScheduleId = cron.uuid;
-      this.scheduleForm = {
-        frequency: cron.frequency,
-        time: cron.time,
-        dataPreset: cron.dataPreset,
-        reviewNeeded: cron.reviewNeeded,
-        metrics: []
-      };
-    } else {
-      // New schedule
-      this.editingSchedule = false;
-      this.currentScheduleId = null;
-      this.scheduleForm = {
-        frequency: 'daily',
-        time: '09:00',
-        dataPreset: 'last_7d',
-        reviewNeeded: false,
-        metrics: this.availableMetrics
-      };
-    }
-
-    this.showScheduleModal = true;
-  }
-
-  closeScheduleModal() {
-    this.showScheduleModal = false;
-    this.currentClient = null;
-  }
-
-  async submitSchedule() {
-    const scheduleData = {
-      ...this.scheduleForm,
-      clientUuid: this.currentClient.uuid
-    };
-
-    try {
-      if (this.editingSchedule && this.currentScheduleId) {
-        // Update
-        const response = await this.authService.updateSchedule(this.currentScheduleId, scheduleData);
-        const idx = this.scheduleOptions.findIndex(s => s.uuid === this.currentScheduleId);
-        if (idx !== -1) this.scheduleOptions[idx] = response;
-      } else {
-        // Create
-        const response = await this.authService.createSchedule(scheduleData);
-        this.scheduleOptions.push(response);
-      }
-      this.closeScheduleModal();
-    } catch (err) {
-      console.error('Error saving schedule:', err);
-    }
-  }
-
-  async deleteSchedule(scheduleId: string) {
-    if (confirm('Are you sure you want to delete this schedule?')) {
-      try {
-        await this.authService.deleteSchedule(scheduleId);
-        this.scheduleOptions = this.scheduleOptions.filter(s => s.uuid !== scheduleId);
-      } catch (err) {
-        console.error('Error deleting schedule:', err);
-      }
-    }
-  }
-
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.clientId = params['id'];
+      this.clientUuid = params['id'];
       await this.loadClientDetails();
     });
   }
 
+  goToMockReport(): void {
+    this.router.navigate(['/reports', this.clientUuid]); // or another identifier
+  }
+
   private async loadClientDetails() {
-    if (!this.clientId) return;
-    this.client = await this.clientService.getClient(this.clientId);
+    if (!this.clientUuid) return;
+    this.client = await this.clientService.getClient(this.clientUuid);
     this.scheduleOptions = this.client.crons || [];
   }
 

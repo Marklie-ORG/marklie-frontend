@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@env/environment.js';
 
 interface AuthResponse {
   accessToken: string;
@@ -38,18 +38,6 @@ export class AuthService {
         password
       }
     ));
-  }
-
-  createSchedule(data: any): Promise<any> {
-    return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
-  }
-
-  updateSchedule(scheduleUuid: string, data: any): Promise<any> {
-    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/${scheduleUuid}`, data));
-  }
-
-  deleteSchedule(scheduleUuid: string): Promise<any> {
-    return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
   }
 
   refreshToken(): Observable<AuthResponse> {

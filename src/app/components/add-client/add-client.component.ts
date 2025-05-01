@@ -1,8 +1,8 @@
 import { MatDialogRef } from '@angular/material/dialog';
-import { ClientService } from 'src/app/services/api/client.service';
+import { ClientService } from '../../api/services/api/client.service';
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AdAccount, ReportService, Root2 } from '../../services/api/ad-accounts.service';
+import { AdAccount, ReportService, Root2 } from '../../api/services/api/ad-accounts.service';
 
 @Component({
   selector: 'app-add-client',
@@ -58,7 +58,7 @@ export class AddClientComponent {
   // togglePlatform(event: Event, platform: string) {
   //   const checkbox = event.target as HTMLInputElement;
   //   const currentPlatforms = this.clientForm.get('platforms')?.value as string[] || [];
-    
+
   //   if (checkbox.checked) {
   //     this.clientForm.get('platforms')?.setValue([...currentPlatforms, platform]);
   //   } else {
@@ -72,7 +72,7 @@ export class AddClientComponent {
     const checkbox = event.target as HTMLInputElement;
     this.selectedAdAccounts[accountId] = checkbox.checked;
     this.selectedBusinessId = accountBusinessId;
-    
+
     let currentAccounts = this.getCurrentFacebookAdAccounts();
 
     if (checkbox.checked) {
@@ -107,7 +107,7 @@ export class AddClientComponent {
       if (businessAdAccount.business.id === this.selectedBusinessId) {
         businessDisabled = false;
       }
-    } 
+    }
     return businessDisabled;
   }
 

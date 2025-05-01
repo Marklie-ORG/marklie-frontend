@@ -1,342 +1,450 @@
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .dashboard {
   background: #f8f9fa;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 32px 16px;
 }
 
-.modal-header {
+.config-step1 {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 40px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-
-  .modal-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-right: 10px;
-  }
-
-  .pin-toggle {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #007bff;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background 0.2s;
-
-
-    &:hover {
-      background: #eef2f5;
-    }
-  }
+  flex-direction: column;
+  gap: 24px;
 }
 
-.config-modal {
-  position: relative;
-  top: 0;
-  z-index: 1000;
-  background: #f8f9fa;
+.config-step1 h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.config-step1 .form-row {
   display: flex;
-  justify-content: center;
-  transition: all 0.3s ease;
+  flex-direction: column;
+  gap: 8px;
+}
 
-  .config-modal-content {
-    width: 90%;
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
+@media (min-width: 600px) {
+  .config-step1 .form-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
-
-  h3 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-
-  .mb-3 {
-    margin-bottom: 1rem;
-  }
-
-  label {
-    font-weight: 500;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-
-  .metric-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-
-    label {
-      background: #f1f1f1;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-
-      input {
-        margin-right: 6px;
-      }
-    }
-  }
-
-  .form-control {
-    max-width: 240px;
-    width: 100%;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-
-  .btn {
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  .btn-primary {
-    background: #007bff;
-    color: #fff;
-
-    &:hover {
-      background: #0056b3;
-    }
-  }
-
-  .btn-secondary {
-    background: #6c757d;
-    color: #fff;
-
-    &:hover {
-      background: #5a6268;
-    }
+  .config-step1 .form-row label {
+    min-width: 160px;
+    margin-bottom: 0;
   }
 }
+
+.config-step1 label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.config-step1 .form-control {
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  width: 100%;
+  max-width: 280px;
+}
+
+.config-step1 .form-control:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.config-step1 .btn {
+  align-self: flex-end;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #22c55e;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+.config-step1 .btn:hover {
+  background: #16a34a;
+}
+
 
 .report-content {
-  width: 80%;
-  margin-top: 24px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 16px;
 }
-
-// Configuration Panel (modal-style)
-.config-panel-button {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: 1001;
-  background-color: #4a90e2;
-  color: #fff;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.3s;
-
-  &:hover {
-    background-color: #357ab8;
-  }
-}
-
 
 .section-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 16px;
-  color: #2c3e50;
+  margin-bottom: 24px;
+  color: #1f2937;
 }
 
-.kpi-section {
-  margin-bottom: 48px;
+.section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.section-toggle label {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  transition: 0.2s;
+  border-radius: 34px;
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2563eb;
+}
+
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.metric-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 0 8px;
+}
+
+.metric-group label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.metric-group label:hover {
+  background: #e2e8f0;
+}
+
+.metric-group input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.kpi-section,
+.graph-section,
+.ads-section,
+.campaigns-section {
+  margin-bottom: 56px;
 }
 
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  gap: 20px;
+  padding: 0 8px;
 }
 
 .kpi-card {
   background: #fff;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
   transition: 0.2s ease-in-out;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  }
-
-  .kpi-label {
-    font-size: 13px;
-    color: #6c757d;
-    margin-bottom: 6px;
-  }
-
-  .kpi-value {
-    font-size: 20px;
-    font-weight: 600;
-
-    &.primary {
-      color: #007bff;
-    }
-
-    &.success {
-      color: #28a745;
-    }
-  }
 }
 
-// Graph Section
-.graph-section {
-  margin-bottom: 48px;
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.kpi-value.primary {
+  color: #2563eb;
+}
+
+.kpi-value.success {
+  color: #22c55e;
 }
 
 .graph-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 24px;
+  padding: 0 8px;
 }
 
 .graph-card {
-  background: white;
+  background: #ffffff;
   padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
 }
 
-// Ads
-.ads-section {
-  margin-bottom: 48px;
+.ad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 0 8px;
+}
 
-  .ad-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-  }
+.ad-card .metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // Two columns
+  gap: 12px 16px;
+  padding: 16px;
+}
 
-  .ad-card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
+.ad-card .metric {
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
 
-  .ad-image-container {
-    position: relative;
-    padding-top: 100%;
-    background: #f0f0f0;
+.ad-card .metric-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
 
-    .ad-media {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 80%;
-      height: 80%;
-      transform: translate(-50%, -50%);
-      object-fit: contain;
-    }
-  }
+.ad-card .metric-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
 
-  .metric-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 1rem;
+.view-ad-btn {
+  display: block;
+  margin-top: auto;
+  text-align: center;
+  padding: 10px 14px;
+  background-color: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
 
-    label {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      background: #f2f2f2;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
+.view-ad-btn:hover {
+  background-color: #1d4ed8;
+  text-decoration: none;
+}
 
-      input[type="checkbox"] {
-        margin-right: 6px;
-      }
-    }
-  }
 
-  .metric-value {
-    font-size: 16px;
-    font-weight: bold;
-
-    &.success {
-      color: #28a745;
-    }
-  }
-
-  .view-ad-btn {
-    text-align: center;
-    padding: 12px;
-    background: #007bff;
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-
-    &:hover {
-      background: #0056b3;
-    }
+@media (max-width: 480px) {
+  .ad-card .metrics {
+    grid-template-columns: 1fr;
   }
 }
 
-// Campaigns
-.campaigns-section {
-  margin-bottom: 48px;
-
-  .table-container {
-    overflow-x: auto;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  }
-
-  .campaign-table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #eaeaea;
-    }
-
-    th {
-      background: #f9fafb;
-      text-align: left;
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    td {
-      font-size: 14px;
-      color: #555;
-    }
-  }
+.ad-image-container {
+  position: relative;
+  padding-top: 100%;
+  background: #f3f4f6;
 }
 
-// Misc
+.ad-media {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+}
+
+.metric-value {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.metric-value.success {
+  color: #22c55e;
+}
+
+.table-container {
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  margin-top: 16px;
+}
+
+.campaign-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.campaign-table th,
+.campaign-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.campaign-table th {
+  background: #f9fafb;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.campaign-table tr:hover td {
+  background-color: #f9fafb;
+}
+
 .loading {
   font-size: 18px;
   font-weight: 500;
   text-align: center;
   padding: 40px 0;
+  color: #4b5563;
 }
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  padding: 16px;
+  width: 100%;
+  max-width: 1200px;
+  z-index: 1000;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.report-content .cdk-drop-list-dragging .report-section:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drag-handle {
+  cursor: grab;
+  margin-right: 8px;
+  font-size: 16px;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  color: #2563eb;
+}
+
+.bordered-section {
+  border: 2px dashed #d1d5db;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  background-color: #ffffff;
+  transition: box-shadow 0.2s ease;
+}
+
+.bordered-section:hover {
+  box-shadow: 0 0 0 2px #2563eb40;
+}
+
+.kpi-card[cdkDrag],
+.graph-card[cdkDrag] {
+  cursor: move;
+}
+
+.kpi-grid[cdkDropList],
+.graph-grid[cdkDropList] {
+  min-height: 60px;
+}
+
+.campaign-table th[cdkDrag] {
+  cursor: move;
+  background-color: #e5e7eb;
+  user-select: none;
+}
+

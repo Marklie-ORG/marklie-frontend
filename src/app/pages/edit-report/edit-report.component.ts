@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import Chart from 'chart.js/auto';
-import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../services/api/report.service';
+import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../api/services/api/report.service';
 import { ActivatedRoute } from '@angular/router';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 
@@ -192,7 +192,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
                 "thumbnailUrl": "https://scontent-ams2-1.cdninstagram.com/v/t51.2885-15/482422647_1286213389104987_4095784446547550610_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ccb=1-7&_nc_sid=18de74&_nc_ohc=gYmDbxzXrLcQ7kNvgFJLOEJ&_nc_oc=AdgdQsvKvsH7pS2ewRNoaUx60Dqci_EPOOEnpAHJkcGgRNroqMgx3lz15P1wsKCbw8oZnk-1AlxrbRkpt-Hd9aIP&_nc_zt=23&_nc_ht=scontent-ams2-1.cdninstagram.com&edm=AEQ6tj4EAAAA&oh=00_AYEiLe93lVwiPxi61JtcHA3ZAf4sJ73MCGQBtTo0L-DJoQ&oe=67D9BF7D",
                 "spend": "156.34",
                 "addToCart": "12",
-                "purchases": "4", 
+                "purchases": "4",
                 "roas": "3.82",
                 "sourceUrl": "https://www.instagram.com/p/DGnpldFgcBw/"
             },
@@ -206,10 +206,10 @@ export class EditReportComponent implements OnInit, OnDestroy {
                 "sourceUrl": "https://www.instagram.com/p/DG5fUbpAGWC/"
             },
             {
-                "adCreativeId": "987607223315046", 
+                "adCreativeId": "987607223315046",
                 "thumbnailUrl": "https://scontent-ams4-1.cdninstagram.com/v/t51.2885-15/481468300_644631508508263_7228676733588715195_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ccb=1-7&_nc_sid=18de74&_nc_ohc=WabBYJ1kRpIQ7kNvgGHFPZZ&_nc_oc=AdjxEzpA5kd__ank3MzEiI5-6OqmKJ6Bc09NPC6lpvXyG8NiJr99cc4flhAyl8umeB0zokFrUvpcrBbo3EcOAEs2&_nc_zt=23&_nc_ht=scontent-ams4-1.cdninstagram.com&edm=AEQ6tj4EAAAA&oh=00_AYHpjpSo--bMzSzMn7ua6XkXsXpz_stoGjaLSE3dyhdzFw&oe=67D9B6E8",
                 "spend": "322.45",
-                "addToCart": "25", 
+                "addToCart": "25",
                 "purchases": "6",
                 "roas": "2.98",
                 "sourceUrl": "https://www.instagram.com/p/DGirKkMgZfF/"
@@ -294,7 +294,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
                 "purchaseRoas": "2.45"
             },
             {
-                "campaignName": "campaign 2", 
+                "campaignName": "campaign 2",
                 "spend": "3567.89",
                 "purchases": "32",
                 "conversionRate": "2.12",
@@ -547,7 +547,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
       this.graphs = reportStats.graphs;
       this.campaigns = reportStats.campaigns;
       this.bestAds = reportStats.bestAds;
-      
+
       setTimeout(() => {
         this.initializeCharts();
       });
@@ -558,7 +558,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
   }
 
   async updateReportStats(reportId?: string) {
-    this.reportStatsLoading = true; 
+    this.reportStatsLoading = true;
     const start = performance.now();
     if (reportId) {
       ({ KPIs: this.KPIs, graphs: this.graphs, campaigns: this.campaigns, bestAds: this.bestAds } = await this.reportService.getWeeklyReportById(reportId));
@@ -592,7 +592,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
       // Validate date range
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
-      
+
       if (start > end) {
         // Handle invalid date range
         if (type === 'start') {
@@ -746,7 +746,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
           label: 'ROAS',
           data: this.graphs.map(g => parseFloat(g.purchaseRoas)),
           borderColor: color,
-          
+
           // backgroundColor: 'rgba(52, 152, 219, 0.1)',
           borderWidth: 2,
           // fill: true,
@@ -882,7 +882,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
           pointHoverBorderColor: '#e74c3c',
           pointHoverBorderWidth: 2,
         }, {
-          label: 'Add to Cart', 
+          label: 'Add to Cart',
           data: this.graphs.map(g => parseInt(g.addToCart)),
           borderColor: '#f1c40f',
           borderWidth: 2,
@@ -1023,7 +1023,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
 
   initiateEngagementChart(chartId: string, formattedDates: string[]) {
     new Chart(chartId, {
-      type: 'line', 
+      type: 'line',
       data: {
         labels: formattedDates,
         datasets: [{
@@ -1163,7 +1163,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
               callback: function(value) {
                 const absValue = Math.abs(Number(value));
                 const sign = Number(value) < 0 ? '-' : '';
-                
+
                 if (absValue <= 1000) {
                   return sign + value.toString();
                 } else if (absValue <= 10000) {
@@ -1798,7 +1798,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
   initiateInitiatedCheckoutsChart(chartId: string, formattedDates: string[], data: number[]) {
     const color = '#27ae60';
     new Chart(chartId, {
@@ -1926,8 +1926,8 @@ export class EditReportComponent implements OnInit, OnDestroy {
   private initializeCharts() {
     const formatDate = (dateStr: string) => {
       const date = new Date(dateStr);
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
         day: 'numeric'
       });
     };
@@ -1995,8 +1995,8 @@ export class EditReportComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   clickOutside(event: Event) {
-    if (this.isDropdownOpen && 
-        this.dropdownContainer && 
+    if (this.isDropdownOpen &&
+        this.dropdownContainer &&
         !this.dropdownContainer.nativeElement.contains(event.target)) {
       this.isDropdownOpen = false;
     }
@@ -2088,7 +2088,7 @@ export class EditReportComponent implements OnInit, OnDestroy {
         ...kpi,
         isVisible: settings.visibility[kpi.id] ?? true
       }));
-      
+
       // Restore order
       if (settings.order) {
         const orderedItems: KpiItem[] = [];

@@ -24,6 +24,10 @@ import { AddClientComponent } from './components/add-client/add-client.component
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
+import {NgSelectModule} from "@ng-select/ng-select";
+import {MetricSelectorComponent} from "./components/metrics/metrics-selector/metric-selector.component";
+import {KpiViewerComponent} from "./components/metrics/kpis/kpi-viewer.component";
+import {MockReportComponent} from "./pages/mock-report/mock-report.component.js";
 
 // Register Swiper custom elements
 register();
@@ -42,7 +46,10 @@ register();
     AddClientComponent,
     PrivacyPolicyComponent,
     TermsOfServiceComponent,
-    SlackLoginCallbackComponent
+    SlackLoginCallbackComponent,
+    MetricSelectorComponent,
+    KpiViewerComponent,
+    MockReportComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +58,8 @@ register();
     HttpClientModule,
     MatDialogModule,
     ReactiveFormsModule,
-    DragDropModule
+    DragDropModule,
+    NgSelectModule
   ],
   providers: [
     provideAnimationsAsync(),

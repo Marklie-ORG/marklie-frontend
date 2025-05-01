@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit {
   async ngOnInit() {
     const onboardingSteps = await this.onboardingService.getOnboardingSteps();
 
-    this.getClients();
+    await this.getClients();
 
     // if (!onboardingSteps.organizationCreated) {
     //   this.router.navigate(['/onboarding']);
@@ -90,14 +90,6 @@ export class DashboardComponent implements OnInit {
 
   addClient(clientData: { name: string; platforms: string[] }) {
     console.log(clientData);
-    const newClient: Client = {
-      name: clientData.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      organization: '1',
-      uuid: '1'
-    };
-    this.clients.push(newClient);
   }
 
   connectFacebook() {

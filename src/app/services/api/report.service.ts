@@ -9,7 +9,7 @@ export interface ReportStatsResponse {
     campaigns: Campaign[]
     graphs: Graph[]
   }
-  
+
   export interface BestAd {
     adCreativeId: string
     thumbnailUrl: string
@@ -19,7 +19,7 @@ export interface ReportStatsResponse {
     roas: string
     sourceUrl: string
   }
-  
+
   export interface Kpis {
     accountName: string
     accountId: string
@@ -36,7 +36,7 @@ export interface ReportStatsResponse {
     initiatedCheckouts: string
     purchaseRoas: string
   }
-  
+
   export interface Campaign {
     campaignName: string
     spend: string
@@ -44,7 +44,7 @@ export interface ReportStatsResponse {
     conversionRate: string
     purchaseRoas: string
   }
-  
+
   export interface Graph {
     accountName: string
     accountId: string
@@ -62,13 +62,14 @@ export interface ReportStatsResponse {
     purchaseRoas: string
     date: string
   }
-  
+
 export interface Report {
-  uuid: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  client: Client;
+  uuid:	string
+  cronExpression:	string
+  isActive: boolean,
+  nextRun:	Date
+  dataPreset:	string
+  reviewNeeded:	boolean
 }
 
 @Injectable({

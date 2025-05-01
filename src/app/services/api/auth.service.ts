@@ -23,7 +23,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   async login(email: string, password: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, 
+    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`,
       {
         email,
         password
@@ -32,12 +32,24 @@ export class AuthService {
   }
 
   async register(email: string, password: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, 
+    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`,
       {
         email,
         password
       }
     ));
+  }
+
+  createSchedule(data: any): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
+  }
+
+  updateSchedule(scheduleUuid: string, data: any): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/${scheduleUuid}`, data));
+  }
+
+  deleteSchedule(scheduleUuid: string): Promise<any> {
+    return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
   }
 
   refreshToken(): Observable<AuthResponse> {
@@ -62,13 +74,13 @@ export class AuthService {
 
   clearTokens() {
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken'); 
+    localStorage.removeItem('refreshToken');
   }
 
   isAdmin(): boolean {
     const token = this.getAccessToken();
     if (!token) return false;
-    
+
     try {
       const payload = token.split('.')[1];
       const decoded = JSON.parse(atob(payload)) as DecodedToken;
@@ -83,5 +95,5 @@ export class AuthService {
   hasAccessToken() {
     return this.getAccessToken() !== null;
   }
-  
+
 }

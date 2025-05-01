@@ -1,21 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Client, ClientService } from '../../services/api/client.service';
-import { ReportService, Report } from 'src/app/services/api/report.service';
-
-interface ActivityLogEntry {
-  action: string;
-  reportName: string;
-  timestamp: string;
-  reportId: string;
-}
+import { AuthService } from "../../services/api/auth.service.js";
+import {formatDate} from "@angular/common";
 
 interface ScheduledReport {
   uuid: string;
-  name: string;
-  client: string;
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
-  nextSendingDate: Date;
+  cronExpression: string;
+  nextRun: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -28,174 +20,113 @@ interface ScheduledReport {
 })
 export class ClientComponent implements OnInit {
   clientId: string | null = null;
-  clientName: string = '';
-  clientEmail: string = '';
-  clientStatus: string = 'active';
   client: Client | null = null;
-  reports: ScheduledReport[] = [
-    {
-      uuid: '1',
-      name: 'Daily Performance Summary',
-      frequency: 'daily',
-      nextSendingDate: new Date(Date.now() + 86400000), // Tomorrow
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      client: this.clientId || ''
-    },
-    {
-      uuid: '2',
-      name: 'Weekly Marketing Analytics',
-      frequency: 'weekly',
-      nextSendingDate: new Date(Date.now() + 604800000), // Next week
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      client: this.clientId || ''
-    },
-    {
-      uuid: '3',
-      name: 'Monthly Revenue Report',
-      frequency: 'monthly',
-      nextSendingDate: new Date(Date.now() + 2592000000), // Next month
-      isActive: false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      client: this.clientId || ''
-    },
-    {
-      uuid: '4',
-      name: 'Quarterly Business Review',
-      frequency: 'quarterly',
-      nextSendingDate: new Date(Date.now() + 7776000000), // Next quarter
-      isActive: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      client: this.clientId || ''
-    }
-  ];
+  scheduleOptions: ScheduledReport[] = [];
+  activityLog: ScheduledReport[] = [];
+  availableMetrics = ['Revenue', 'Leads', 'Conversions', 'CTR', 'Impressions'];
 
-  activityLog: ActivityLogEntry[] = [
-    {
-      action: 'Report Generated',
-      reportName: 'Daily Performance Summary',
-      timestamp: this.formatDate(new Date(Date.now() - 3600000)), // 1 hour ago
-      reportId: '1'
-    },
-    {
-      action: 'Report Shared',
-      reportName: 'Weekly Marketing Analytics',
-      timestamp: this.formatDate(new Date(Date.now() - 7200000)), // 2 hours ago
-      reportId: '2'
-    },
-    {
-      action: 'Report Scheduled',
-      reportName: 'Monthly Revenue Report',
-      timestamp: this.formatDate(new Date(Date.now() - 86400000)), // 1 day ago
-      reportId: '3'
-    },
-    {
-      action: 'Report Deactivated',
-      reportName: 'Campaign Summary Report',
-      timestamp: this.formatDate(new Date(Date.now() - 172800000)), // 2 days ago
-      reportId: '4'
-    },
-    {
-      action: 'Report Generated',
-      reportName: 'Quarterly Business Review',
-      timestamp: this.formatDate(new Date(Date.now() - 259200000)), // 3 days ago
-      reportId: '5'
-    },
-    {
-      action: 'Report Edited',
-      reportName: 'Social Media Analytics',
-      timestamp: this.formatDate(new Date(Date.now() - 345600000)), // 4 days ago
-      reportId: '6'
-    },
-    {
-      action: 'Report Activated',
-      reportName: 'Customer Engagement Report',
-      timestamp: this.formatDate(new Date(Date.now() - 432000000)), // 5 days ago
-      reportId: '7'
-    }
-  ];
+  scheduleForm = {
+    frequency: '',
+    time: '',
+    dataPreset: '',
+    reviewNeeded: false,
+    metrics: [] as string[],
+  };
+
+  showScheduleModal = false;
+  editingSchedule = false;
+  currentClient: any = null;
+  currentScheduleId: string | null = null;
+
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private clientService: ClientService,
-    private reportService: ReportService
+    private authService: AuthService,
   ) {}
 
-  ngOnInit() {
-    // Get client ID from route parameters
-    this.route.params.subscribe(params => {
+  openScheduleModal(client: any, cron?: any) {
+    this.currentClient = client;
+
+    if (cron) {
+      // Editing
+      this.editingSchedule = true;
+      this.currentScheduleId = cron.uuid;
+      this.scheduleForm = {
+        frequency: cron.frequency,
+        time: cron.time,
+        dataPreset: cron.dataPreset,
+        reviewNeeded: cron.reviewNeeded,
+        metrics: []
+      };
+    } else {
+      // New schedule
+      this.editingSchedule = false;
+      this.currentScheduleId = null;
+      this.scheduleForm = {
+        frequency: 'daily',
+        time: '09:00',
+        dataPreset: 'last_7d',
+        reviewNeeded: false,
+        metrics: this.availableMetrics
+      };
+    }
+
+    this.showScheduleModal = true;
+  }
+
+  closeScheduleModal() {
+    this.showScheduleModal = false;
+    this.currentClient = null;
+  }
+
+  async submitSchedule() {
+    const scheduleData = {
+      ...this.scheduleForm,
+      clientUuid: this.currentClient.uuid
+    };
+
+    try {
+      if (this.editingSchedule && this.currentScheduleId) {
+        // Update
+        const response = await this.authService.updateSchedule(this.currentScheduleId, scheduleData);
+        const idx = this.scheduleOptions.findIndex(s => s.uuid === this.currentScheduleId);
+        if (idx !== -1) this.scheduleOptions[idx] = response;
+      } else {
+        // Create
+        const response = await this.authService.createSchedule(scheduleData);
+        this.scheduleOptions.push(response);
+      }
+      this.closeScheduleModal();
+    } catch (err) {
+      console.error('Error saving schedule:', err);
+    }
+  }
+
+  async deleteSchedule(scheduleId: string) {
+    if (confirm('Are you sure you want to delete this schedule?')) {
+      try {
+        await this.authService.deleteSchedule(scheduleId);
+        this.scheduleOptions = this.scheduleOptions.filter(s => s.uuid !== scheduleId);
+      } catch (err) {
+        console.error('Error deleting schedule:', err);
+      }
+    }
+  }
+
+  async ngOnInit() {
+    this.route.params.subscribe(async params => {
       this.clientId = params['id'];
-      // TODO: Fetch client details using the ID
-      this.loadClientDetails();
-      // this.loadClientReports();
+      await this.loadClientDetails();
     });
   }
 
   private async loadClientDetails() {
-    if (!this.clientId) {
-      return;
-    }
+    if (!this.clientId) return;
     this.client = await this.clientService.getClient(this.clientId);
+    this.scheduleOptions = this.client.crons || [];
   }
 
-  private async loadClientReports() {
-    if (!this.clientId) {
-      return;
-    }
-    const apiReports = await this.reportService.getClientReports(this.clientId);
-    // Convert API reports to ScheduledReport format
-    this.reports = apiReports.map(report => ({
-      ...report,
-      frequency: 'monthly' as const,
-      nextSendingDate: new Date(Date.now() + 2592000000),
-      isActive: true,
-      client: this.clientId || ''
-    }));
-  }
-
-  onEditClient() {
-    // TODO: Implement edit client functionality
-    console.log('Edit client clicked');
-  }
-
-  onViewReports() {
-    // TODO: Implement view reports functionality
-    console.log('View reports clicked');
-  }
-
-  onEditReport(reportId: string) {
-    this.router.navigate(['/report-example']);
-  }
-
-  onAddReport() {
-    // this.router.navigate(['/client', this.clientId, 'report', '0']);
-    this.router.navigate(['/report-example']);
-  }
-
-  onViewReport(reportId: string) {
-    // TODO: Implement navigation to report details
-    console.log(`Viewing report with ID: ${reportId}`);
-  }
-
-  toggleReportStatus(report: ScheduledReport) {
-    report.isActive = !report.isActive;
-    // TODO: Implement API call to update report status
-    console.log(`Toggled report ${report.uuid} status to ${report.isActive}`);
-  }
-
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
+  protected readonly formatDate = formatDate;
 }

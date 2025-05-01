@@ -10,6 +10,7 @@ import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
+import {MockReportComponent} from "./pages/mock-report/mock-report.component.js";
 
 const routes: Routes = [
   {
@@ -52,6 +53,10 @@ const routes: Routes = [
   {
     path: 'terms-of-service',
     component: TermsOfServiceComponent
+  },
+  {
+    path: 'mock-report',
+    component: MockReportComponent
   }
 ];
 

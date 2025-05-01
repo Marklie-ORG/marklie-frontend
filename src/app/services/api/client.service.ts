@@ -13,7 +13,7 @@ export class ClientService {
 
   async getClients() {
     return firstValueFrom(
-      this.http.get<Client[]>(`${this.apiUrl}/`)
+      this.http.get<Client[]>(`${this.apiUrl}`)
     );
   }
 
@@ -39,6 +39,7 @@ export interface Client {
     createdAt: Date;
     updatedAt: Date;
     organization: string;
+    crons: any[]
 }
 
 export interface CreateClientRequest {

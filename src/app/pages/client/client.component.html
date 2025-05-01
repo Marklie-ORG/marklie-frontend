@@ -1,92 +1,119 @@
 <div class="container">
 
-    <div 
-    class="p-4 mt-4"
-    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-        <div class="client-header">
-            <div class="client-info">
-                <h1 *ngIf="client">{{client.name}}</h1>
-                <!-- <div class="client-meta">
-                    <span class="email">📧 {{clientEmail}}</span>
-                    <span class="status" [class.active]="clientStatus === 'active'">● {{clientStatus}}</span>
-                </div> -->
-            </div>
-            <div class="client-actions">
-                <button class="action-btn edit" (click)="onEditClient()">
-                    ✏️ Edit Client
-                </button>
-            </div>
-        </div>
+  <!-- Client Header -->
+  <div class="p-4 mt-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+    <div class="client-header">
+      <div class="client-info">
+        <h1 *ngIf="client">{{ client.name }}</h1>
+      </div>
+      <div class="client-actions">
+        <!-- Future Edit Button -->
+      </div>
     </div>
-    
-    
-    <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">
-    
-        <div 
-        class="p-4"
-        style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-    
-            <!-- Content for left block -->
-            <div class="d-flex align-center justify-between mb-4">
-            <h3>Scheduled Reports</h3>
-            <button class="blue" (click)="onAddReport()">
-                <i class="fa-solid fa-plus color-white"></i>
-                Add report
-            </button>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">
+
+    <!-- Scheduled Reports Block -->
+    <div class="p-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+      <div class="d-flex align-center justify-between mb-4">
+        <h3>Scheduled Reports</h3>
+        <button class="blue" (click)="openScheduleModal(client)">
+          <i class="fa-solid fa-plus color-white"></i> Add report
+        </button>
+      </div>
+
+      <div class="clients-list">
+        <div class="detail-content">
+          <div class="reports-list">
+            <div class="report-item" *ngFor="let scheduleOption of scheduleOptions">
+              <div class="report-info">
+                <span class="report-frequency">Frequency: {{ scheduleOption.cronExpression }}</span>
+                <span class="report-date">Next sending date: {{ scheduleOption.nextRun }}</span>
+              </div>
+              <div class="report-actions">
+                <button class="view-btn blue" (click)="submitSchedule()">Edit</button>
+              </div>
             </div>
-    
-            <div class="clients-list">
-            <div class="detail-content">
-                <div class="reports-list">
-                    <div class="report-item" *ngFor="let report of reports">
-                        <div class="report-info">
-                            <span class="report-name">{{report.name}}</span>
-                            <span class="report-frequency">Frequency: {{report.frequency}}</span>
-                            <span class="report-date">Next sending date: {{formatDate(report.nextSendingDate)}}</span>
-                        </div>
-                        <div class="report-actions">
-                            <button class="view-btn blue" (click)="onEditReport(report.uuid)">Edit</button>
-                            <button class="status-btn green" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
-                                {{report.isActive ? 'Deactivate' : 'Activate'}}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
+          </div>
         </div>
-    
-        <div 
-        class="p-4"
-        style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-            <h3>Activity Log</h3>
-            <div class="detail-content">
-                <div class="activity-list">
-                    <div class="activity-item" *ngFor="let entry of activityLog">
-                        <div class="activity-icon">
-                            <img width="28px" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
-                            <!-- <i [ngClass]="{
-                                'fa-solid fa-file-chart': entry.action === 'Report Generated',
-                                'fa-solid fa-share-nodes': entry.action === 'Report Shared',
-                                'fa-solid fa-calendar-plus': entry.action === 'Report Scheduled',
-                                'fa-solid fa-toggle-off': entry.action === 'Report Deactivated',
-                                'fa-solid fa-toggle-on': entry.action === 'Report Activated',
-                                'fa-solid fa-pen-to-square': entry.action === 'Report Edited'
-                            }"></i> -->
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-header">
-                                <span class="activity-action">{{entry.action}}</span>
-                                <span class="activity-time">{{entry.timestamp}}</span>
-                            </div>
-                            <span class="activity-report" (click)="onViewReport(entry.reportId)">
-                                {{entry.reportName}}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      </div>
+    </div>
+
+    <!-- Activity Log Block -->
+    <div class="p-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+      <h3>Activity Log</h3>
+      <div class="detail-content">
+        <div class="activity-list">
+          <!-- Activity log entries go here -->
         </div>
-    
-        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedule Modal -->
+  <div *ngIf="showScheduleModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>{{ editingSchedule ? 'Edit' : 'New' }} Report Schedule</h4>
+        <button class="close-btn" (click)="closeScheduleModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="submitSchedule()">
+
+          <!-- Frequency -->
+          <div class="form-group">
+            <label>Frequency</label>
+            <select class="form-control" [(ngModel)]="scheduleForm.frequency" name="frequency" required>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+
+          <!-- Time -->
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" class="form-control" [(ngModel)]="scheduleForm.time" name="time" required>
+          </div>
+
+          <!-- Date Range -->
+          <div class="form-group">
+            <label>Date Range</label>
+            <select class="form-control" [(ngModel)]="scheduleForm.dataPreset" name="dataPreset" required>
+              <option value="last_7d">Last 7 Days</option>
+              <option value="last_14d">Last 14 Days</option>
+              <option value="last_30d">Last 30 Days</option>
+              <option value="last_90d">Last 90 Days</option>
+              <option value="this_month">This Month</option>
+              <option value="last_month">Last Month</option>
+            </select>
+          </div>
+
+           Metrics
+          <div class="form-group">
+            <label>Select Metrics</label>
+            <select class="form-control" multiple [(ngModel)]="scheduleForm.metrics" name="metrics" required>
+              <option *ngFor="let metric of availableMetrics" [value]="metric">{{ metric }}</option>
+            </select>
+          </div>
+
+          <!-- Review Needed -->
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input" id="reviewNeeded" [(ngModel)]="scheduleForm.reviewNeeded" name="reviewNeeded">
+            <label class="form-check-label" for="reviewNeeded">Require manual review before sending</label>
+          </div>
+
+          <!-- Footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeScheduleModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">{{ editingSchedule ? 'Update' : 'Create' }} Schedule</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>

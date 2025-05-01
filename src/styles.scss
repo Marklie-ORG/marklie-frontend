@@ -12,7 +12,34 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$saas-primary: mat.define-palette(mat.$indigo-palette);
+$primary-color: #1F8DED;
+
+$saas-primary: mat.define-palette(
+    (
+      500: $primary-color,
+      50: #e3f2fd,
+      100: #bbdefb,
+      200: #90caf9,
+      300: #64b5f6,
+      400: #42a5f5,
+      600: #1a7cd3,
+      700: #1669b3,
+      800: #125799,
+      900: #0f447a,
+      A100: lighten($primary-color, 30%),
+      A200: $primary-color,
+      A400: darken($primary-color, 10%),
+      A700: darken($primary-color, 20%),
+      contrast: (
+        500: white,
+        700: white,
+        900: white,
+        A200: white,
+        A400: white,
+        A700: white,
+      ),
+    )
+);
 $saas-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
@@ -260,27 +287,19 @@ button {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 
-    &.green {
-        background: rgb(0, 162, 16);
-    }
-    &.green:hover {
-        background: rgb(1 147 15);
-        box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
-    }
 
     &.blue {
         background: #1F8DED;
     }
-    &.blue:hover {
-        background: #1F8DED;
-        box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
-    }
+  &.blue:hover {
+    background: darken(#1F8DED, 5%);
+  }
 }
 
 select {
     border: none;
-    background: rgb(0, 162, 16);
-    color: #fff;
+    background-color: white;
+    color: black;
     padding: 10px 40px 10px 14px; /* Increased right padding for arrow */
     border-radius: 6px;
     font-weight: 600;
@@ -297,19 +316,19 @@ select {
     background-size: 12px auto;
 
     &:hover {
-        background-color: rgb(1 147 15);
         box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
     }
 
     option {
-        background: rgb(0, 162, 16);
-        color: #fff;
+        background: white;
+        color: black;
         font-weight: 600;
         font-size: 1rem;
         padding: 10px 14px;
 
         &:hover {
-            background: rgb(1 147 15);
+          background: darken(#64b5f6, 5%);;
+
         }
     }
 }
@@ -332,7 +351,7 @@ input, textarea {
         box-shadow: 0 0 0px 3px #62a9ff47;
         }
     }
-    
+
 }
 
 // Angular components

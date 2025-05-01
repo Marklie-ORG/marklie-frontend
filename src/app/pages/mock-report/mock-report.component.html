@@ -1,0 +1,163 @@
+<div class="dashboard">
+  <!-- Modal Panel -->
+  <div class="config-modal">
+
+    <div class="config-modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          Step {{ panelStep }}: {{ panelStep === 1 ? 'Schedule Settings' : 'Metric Selection' }}
+        </h3>
+        <button class="pin-toggle" (click)="toggleSticky()" title="Toggle Sticky">
+          {{ isSticky ? '📌' : '📍' }}
+        </button>
+      </div>
+      <div *ngIf="panelStep === 1">
+        <div class="mb-3">
+          <label>Date Preset:</label>
+          <select class="form-control" [(ngModel)]="selectedDatePresetText">
+            <option>Today</option>
+            <option>Yesterday</option>
+            <option>Last 7 Days</option>
+            <option>Last 30 Days</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Schedule Frequency:</label>
+          <select class="form-control" [(ngModel)]="schedule.frequency">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Time:</label>
+          <input type="time" class="form-control" [(ngModel)]="schedule.time" />
+        </div>
+
+        <button class="btn btn-primary" (click)="panelStep = 2">Next →</button>
+      </div>
+
+      <div *ngIf="panelStep === 2">
+        <div class="mb-3">
+          <label>KPIs:</label>
+          <div class="metric-group">
+            <label *ngFor="let metric of availableMetrics">
+              <input type="checkbox" [(ngModel)]="metricSelections.kpis[metric]" (change)="onMetricSelectionChange()" />
+              {{ formatMetricLabel(metric) }}
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label>Graphs:</label>
+          <div class="metric-group">
+            <label *ngFor="let metric of availableGraphMetrics">
+              <input type="checkbox" [(ngModel)]="metricSelections.graphs[metric]" (change)="onMetricSelectionChange()" />
+              {{ formatMetricLabel(metric) }}
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label>Ad Metrics:</label>
+          <div class="metric-group">
+            <label *ngFor="let metric of adAvailableMetrics">
+              <input type="checkbox" [(ngModel)]="metricSelections.ads[metric]" (change)="onMetricSelectionChange()" />
+              {{ formatMetricLabel(metric) }}
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label>Campaign Metrics:</label>
+          <div class="metric-group">
+            <label *ngFor="let metric of campaignAvailableMetrics">
+              <input type="checkbox" [(ngModel)]="metricSelections.campaigns[metric]" (change)="onMetricSelectionChange()" />
+              {{ formatMetricLabel(metric) }}
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary mr-2" (click)="panelStep = 1">← Back</button>
+      </div>
+    </div>
+  </div>
+
+
+  <main class="report-content">
+    <h2 class="section-title mb-4">Mock Report Preview</h2>
+
+    <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+
+    <div *ngIf="!reportStatsLoading">
+      <div class="kpi-section">
+        <h2 class="section-title">Account Overview - {{ selectedDatePresetText }}</h2>
+        <div class="kpi-grid">
+          <ng-container *ngFor="let metric of availableMetrics">
+            <div class="kpi-card" *ngIf="metricSelections.kpis[metric]">
+              <div class="kpi-label">{{ formatMetricLabel(metric) }}</div>
+              <div class="kpi-value" [ngClass]="getMetricStyle(metric)">
+                {{ formatMetricValue(metric, KPIs[metric]) }}
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="graph-section">
+        <h2 class="section-title">Performance Trends</h2>
+        <div class="graph-grid">
+          <div class="graph-card" *ngFor="let config of metricsGraphConfig">
+            <canvas [id]="config.key + 'Chart'"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="ads-section mt-5">
+        <h2 class="section-title">Top 10 Best Performing Ads</h2>
+        <div class="ad-grid">
+          <div class="ad-card" *ngFor="let ad of ads">
+            <div class="ad-image-container">
+              <img class="ad-media" src="/assets/img/2025-03-19%2013.02.21.jpg" [alt]="ad.name" />
+            </div>
+            <div class="metrics">
+              <div class="metric" *ngFor="let key of adMetrics">
+                <div class="metric-label">{{ formatMetricLabel(key) }}</div>
+                <div class="metric-value" [ngClass]="getMetricStyle(key)">
+                  {{ formatMetricValue(key, ad[key]) }}
+                </div>
+              </div>
+            </div>
+            <a target="_blank" [href]="ad.sourceUrl" class="view-ad-btn">View Ad</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="campaigns-section mt-5">
+        <h2 class="section-title">Campaigns Overview</h2>
+        <div class="table-container">
+          <table class="campaign-table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Campaign Name</th>
+              <th *ngFor="let key of campaignMetrics">{{ formatMetricLabel(key) }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let campaign of campaigns; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ campaign.campaign_name }}</td>
+              <td *ngFor="let key of campaignMetrics">
+                {{ formatMetricValue(key, campaign[key]) }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

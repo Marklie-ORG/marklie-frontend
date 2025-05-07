@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@env/environment';
-import { UserService } from '../../api/services/user.service.js';
+import { SlackLoginService } from 'src/app/services/slack-login.service';
+import {UserService} from "../../api/services/user.service.js";
 
 @Component({
   selector: 'app-slack-login-callback',
@@ -14,18 +15,22 @@ export class SlackLoginCallbackComponent {
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private slackLoginService: SlackLoginService
   ) {}
 
   ngOnInit() {
 
     this.route.queryParams.subscribe(async (params) => {
       const code = params['code'];
-      if (code) {
+      const organizationClientId = this.slackLoginService.getTargetClientIdForSlackWorkspace();
+
+      if (code && organizationClientId) {
         const redirectUri = environment.slackLoginCallbackUrl;
 
         try {
-          const response = await this.userService.handleSlackLogin(code, redirectUri);
+          const response = await this.userService.handleSlackLogin(code, redirectUri, organizationClientId);
+          this.slackLoginService.removeTargetClientIdForSlackWorkspace();
           if (response.status === 200) {
             this.router.navigate(['/dashboard']);
           }

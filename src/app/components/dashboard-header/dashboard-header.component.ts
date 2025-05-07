@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { jwtDecode } from "jwt-decode";
 import { AuthService } from '../../api/services/auth.service.js';
 @Component({
@@ -11,7 +12,8 @@ export class DashboardHeaderComponent implements OnInit {
   email: string = '';
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -22,6 +24,11 @@ export class DashboardHeaderComponent implements OnInit {
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  signOut() {
+    this.authService.clearTokens();
+    this.router.navigate(['/']);
   }
 
 

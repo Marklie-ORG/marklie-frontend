@@ -24,14 +24,15 @@ import { AddClientComponent } from './components/add-client/add-client.component
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
-import {NgSelectModule} from "@ng-select/ng-select";
 import {MetricSelectorComponent} from "./components/metrics/metrics-selector/metric-selector.component";
 import {KpiViewerComponent} from "./components/metrics/kpis/kpi-viewer.component";
 import {MockReportComponent} from "./pages/mock-report/mock-report.component.js";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
+import { ModalBaseComponent } from './components/modal-base/modal-base.component';
 import {FaIconComponent, FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
-// Register Swiper custom elements
 register();
 
 @NgModule({
@@ -52,6 +53,9 @@ register();
     MetricSelectorComponent,
     KpiViewerComponent,
     MockReportComponent,
+    SlackLoginCallbackComponent,
+    ClientSettingsComponent,
+    ModalBaseComponent
   ],
   imports: [
     BrowserModule,

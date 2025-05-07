@@ -2,12 +2,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ClientService } from '../../api/services/client.service.js';
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AdAccount, ReportService, Root2 } from '../../api/services/ad-accounts.service.js';
+import {AdAccount, AdAccountsService, Root2} from "../../api/services/ad-accounts.service.js";
 
 @Component({
   selector: 'app-add-client',
   templateUrl: './add-client.component.html',
-  styleUrl: './add-client.component.scss'
+  styleUrl: './add-client.component.scss',
 })
 export class AddClientComponent {
   @Output() close = new EventEmitter<void>();
@@ -24,7 +24,7 @@ export class AddClientComponent {
 
   constructor(
     private fb: FormBuilder,
-    private reportService: ReportService,
+    private adAccountsService: AdAccountsService,
     public dialogRef: MatDialogRef<AddClientComponent>,
     private clientService: ClientService
   ) {
@@ -38,7 +38,7 @@ export class AddClientComponent {
 
   async ngOnInit() {
     try {
-      this.businesses = await this.reportService.getBusinessesHierarchy();
+      this.businesses = await this.adAccountsService.getBusinessesHierarchy();
       const adAccounts = this.businesses.map(business => business.ad_accounts);
       const flattenedAdAccounts = adAccounts.flat();
       this.uniqueAdAccounts = [...new Map(flattenedAdAccounts.map(account => [account.id, account])).values()];
@@ -104,7 +104,7 @@ export class AddClientComponent {
     const businessAdAccounts = this.businesses.find(business => business.id === businessId)!.ad_accounts;
     let businessDisabled = true;
     for (let businessAdAccount of businessAdAccounts) {
-      if (businessAdAccount.business.id === this.selectedBusinessId) {
+      if (businessAdAccount.business?.id === this.selectedBusinessId) {
         businessDisabled = false;
       }
     }

@@ -24,7 +24,7 @@ export interface AdAccount {
 @Injectable({
   providedIn: 'root'
 })
-export class ReportService {
+export class AdAccountsService {
   private apiUrl = `${environment.apiUrl}`;
 
   private headers = {

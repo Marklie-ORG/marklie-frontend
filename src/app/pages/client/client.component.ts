@@ -1,8 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Client, ClientService } from '../../api/services/client.service.js';
-import { AuthService } from "../../api/services/auth.service.js";
-import {formatDate} from "@angular/common";
+import { SlackLoginService } from 'src/app/services/slack-login.service';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { ClientSettingsComponent } from '../../components/client-settings/client-settings.component';
+import {Client, ClientService} from "../../api/services/client.service.js";
+import {ReportService} from "../../api/services/report.service.js";
+import {AuthService} from "../../api/services/auth.service.js";
+
+interface ActivityLogEntry {
+  action: string;
+  reportName: string;
+  timestamp: string;
+  reportId: string;
+}
 
 interface ScheduledReport {
   uuid: string;
@@ -24,13 +35,16 @@ export class ClientComponent implements OnInit {
   scheduleOptions: ScheduledReport[] = [];
   activityLog: ScheduledReport[] = [];
 
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private clientService: ClientService,
+    private reportService: ReportService,
+    private slackLoginService: SlackLoginService,
+    private dialog: MatDialog,
     private authService: AuthService,
   ) {}
+
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {

@@ -12,34 +12,7 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$primary-color: #1F8DED;
-
-$saas-primary: mat.define-palette(
-    (
-      500: $primary-color,
-      50: #e3f2fd,
-      100: #bbdefb,
-      200: #90caf9,
-      300: #64b5f6,
-      400: #42a5f5,
-      600: #1a7cd3,
-      700: #1669b3,
-      800: #125799,
-      900: #0f447a,
-      A100: lighten($primary-color, 30%),
-      A200: $primary-color,
-      A400: darken($primary-color, 10%),
-      A700: darken($primary-color, 20%),
-      contrast: (
-        500: white,
-        700: white,
-        900: white,
-        A200: white,
-        A400: white,
-        A700: white,
-      ),
-    )
-);
+$saas-primary: mat.define-palette(mat.$indigo-palette);
 $saas-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
@@ -89,6 +62,7 @@ h2 { font-size: 1.8rem !important; }
 h3 { font-size: 1.6rem !important; }
 p { font-size: 1.1rem !important; line-height: 1.6rem; }
 a { text-decoration: none !important; font-size: 1rem !important; }
+hr { opacity: 0.3; border-radius: 20px;}
 
 @media (max-width: 768px) {
     h1 { font-size: 1.5rem !important; font-weight: 600 !important; line-height: 2rem;}
@@ -265,7 +239,7 @@ a { text-decoration: none !important; font-size: 1rem !important; }
 
 
 .container {
-    max-width: 95%;
+    max-width: 75%;
     margin: 0 auto;
 }
 
@@ -276,60 +250,80 @@ a { text-decoration: none !important; font-size: 1rem !important; }
 
 button {
     border: none;
-    // background: rgb(0, 162, 16);
-    color: #fff;
+    color: #333;
     padding: 8px 10px;
     border-radius: 6px;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 0.9rem;
-    box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 2.7px 0px;
+    box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
     letter-spacing: .03rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    background-color: #f7f7f7;
 
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:hover {
+        background-color: #f1f1f1;
+    }
+
+
+    &.green {
+        background: rgb(0, 162, 16);
+        color: #fff;
+    }
+    &.green:hover {
+        background: rgb(1 147 15);
+        box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
+    }
 
     &.blue {
         background: #1F8DED;
+        color: #fff;
     }
-  &.blue:hover {
-    background: darken(#1F8DED, 5%);
-  }
+    &.blue:hover {
+        background: #1F8DED;
+        box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
+    }
 }
 
 select {
     border: none;
-    background-color: white;
-    color: black;
-    padding: 10px 40px 10px 14px; /* Increased right padding for arrow */
+    color: #333;
+    padding: 8px 26px 8px 10px;
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 2.7px 0px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
     letter-spacing: .03rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     outline: none;
-    appearance: none; /* Remove default arrow */
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    appearance: none;
+    background-color: #f7f7f7;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
-    background-position: right 14px top 50%;
-    background-size: 12px auto;
+    background-position: right 10px top 50%;
+    background-size: 10px auto;
+    text-align: center;
 
     &:hover {
+        // background-color: rgb(1 147 15);
         box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
     }
 
     option {
-        background: white;
-        color: black;
+        // background: rgb(0, 162, 16);
+        // color: #fff;
         font-weight: 600;
         font-size: 1rem;
         padding: 10px 14px;
 
-        &:hover {
-          background: darken(#64b5f6, 5%);;
-
-        }
+        // &:hover {
+        //     background: rgb(1 147 15);
+        // }
     }
 }
 
@@ -353,6 +347,15 @@ input, textarea {
     }
 
 }
+
+.block {
+    background: var(--block-color);
+    border: var(--block-border);
+    border-radius: 20px;
+    box-shadow: var(--box-shadow);
+}
+
+
 
 // Angular components
 .mat-mdc-dialog-surface {

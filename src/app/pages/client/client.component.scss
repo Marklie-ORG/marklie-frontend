@@ -35,35 +35,35 @@
     display: flex;
     gap: 1rem;
 
-    .action-btn {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: background-color 0.2s;
+    // .action-btn {
+    //     padding: 0.5rem 1rem;
+    //     border: none;
+    //     border-radius: 4px;
+    //     cursor: pointer;
+    //     font-size: 0.9rem;
+    //     display: flex;
+    //     align-items: center;
+    //     gap: 0.5rem;
+    //     transition: background-color 0.2s;
 
-        &.edit {
-            background-color: #f5f5f5;
-            color: #333;
+    //     &.edit {
+    //         background-color: #f5f5f5;
+    //         color: #333;
 
-            &:hover {
-                background-color: #e0e0e0;
-            }
-        }
+    //         &:hover {
+    //             background-color: #e0e0e0;
+    //         }
+    //     }
 
-        &.generate {
-            background-color: #4CAF50;
-            color: white;
+    //     &.generate {
+    //         background-color: #4CAF50;
+    //         color: white;
 
-            &:hover {
-                background-color: #45a049;
-            }
-        }
-    }
+    //         &:hover {
+    //             background-color: #45a049;
+    //         }
+    //     }
+    // }
 }
 
 .client-details {
@@ -159,6 +159,13 @@
     background: #F7F7F7;
     border-radius: 8px;
     box-shadow: var(--box-shadow);
+    border: 1px solid #8080803d;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateX(2px);
+    }
 }
 
 .report-info {
@@ -182,44 +189,6 @@
 .report-actions {
     display: flex;
     gap: 0.5rem;
-
-    .view-btn,
-    .status-btn {
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-
-    }
-
-    .view-btn {
-        // background: var(--primary-color);
-        // color: white;
-
-        // &:hover {
-        //     background: var(--primary-color-dark);
-        // }
-    }
-
-    .status-btn {
-        // background: #e9ecef;
-        // color: #495057;
-
-        &.active {
-            background: #1F8DED;
-            color: white;
-        }
-
-        // &:hover {
-        //     background: #dee2e6;
-        // }
-
-        &.active:hover {
-            background: #1F8DED;
-        }
-    }
 }
 
 @media (max-width: 768px) {
@@ -251,11 +220,13 @@
     padding: 1rem;
     background: #F7F7F7;
     border-radius: 8px;
-    box-shadow: var(--box-shadow);
     transition: transform 0.2s ease;
+    box-shadow: var(--box-shadow);
+    border: 1px solid #8080803d;
+    cursor: pointer;
 
     &:hover {
-        transform: translateX(4px);
+        transform: translateX(2px);
     }
 }
 

@@ -27,11 +27,11 @@ import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-
 import {MetricSelectorComponent} from "./components/metrics/metrics-selector/metric-selector.component";
 import {KpiViewerComponent} from "./components/metrics/kpis/kpi-viewer.component";
 import {MockReportComponent} from "./pages/mock-report/mock-report.component.js";
-import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
-import { ModalBaseComponent } from './components/modal-base/modal-base.component';
 import {FaIconComponent, FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
+import { ModalBaseComponent } from './components/modal-base/modal-base.component';
 
 register();
 
@@ -53,6 +53,9 @@ register();
     MetricSelectorComponent,
     KpiViewerComponent,
     MockReportComponent,
+    SlackLoginCallbackComponent,
+    ClientSettingsComponent,
+    ModalBaseComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
     ModalBaseComponent

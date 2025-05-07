@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { environment } from '@env/environment.js';
+import {Injectable} from '@angular/core';
+import {environment} from '@env/environment.js';
 
 
 @Injectable({
@@ -12,8 +12,6 @@ export class SlackLoginService {
         const redirectUri = environment.slackLoginCallbackUrl;
         const scopes = 'chat:write';
 
-        const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
-
-        window.location.href = authUrl;
+      window.location.href = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
     }
 }

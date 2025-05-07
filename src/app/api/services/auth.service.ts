@@ -18,7 +18,7 @@ interface DecodedToken {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}`;
+  private apiUrl = `${environment.authApiUrl}`;
 
   constructor(private http: HttpClient) { }
 

@@ -71,6 +71,16 @@ body {
   max-width: 280px;
 }
 
+.config-step1 select.form-control {
+  max-width: 280px;
+  width: 100%;
+  min-width: 200px;
+}
+
+input[type="time"].form-control {
+  text-align: center;
+}
+
 .config-step1 .form-control:focus {
   border-color: #2563eb;
   outline: none;
@@ -97,7 +107,7 @@ body {
 
 .report-content {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1600px;
   padding: 0 16px;
 }
 

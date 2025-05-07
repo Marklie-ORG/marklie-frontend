@@ -1,8 +1,8 @@
 import { MatDialogRef } from '@angular/material/dialog';
-import { ClientService } from '../../api/services/api/client.service';
+import { ClientService } from '../../api/services/client.service.js';
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AdAccount, ReportService, Root2 } from '../../api/services/api/ad-accounts.service';
+import { AdAccount, ReportService, Root2 } from '../../api/services/ad-accounts.service.js';
 
 @Component({
   selector: 'app-add-client',

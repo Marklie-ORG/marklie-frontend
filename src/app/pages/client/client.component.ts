@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Client, ClientService } from '../../api/services/api/client.service';
-import { AuthService } from "../../api/services/api/auth.service.js";
+import { Client, ClientService } from '../../api/services/client.service.js';
+import { AuthService } from "../../api/services/auth.service.js";
 import {formatDate} from "@angular/common";
 
 interface ScheduledReport {
@@ -23,20 +23,6 @@ export class ClientComponent implements OnInit {
   client: Client | null = null;
   scheduleOptions: ScheduledReport[] = [];
   activityLog: ScheduledReport[] = [];
-  availableMetrics = ['Revenue', 'Leads', 'Conversions', 'CTR', 'Impressions'];
-
-  scheduleForm = {
-    frequency: '',
-    time: '',
-    dataPreset: '',
-    reviewNeeded: false,
-    metrics: [] as string[],
-  };
-
-  showScheduleModal = false;
-  editingSchedule = false;
-  currentClient: any = null;
-  currentScheduleId: string | null = null;
 
 
   constructor(
@@ -54,14 +40,13 @@ export class ClientComponent implements OnInit {
   }
 
   goToMockReport(): void {
-    this.router.navigate(['/reports', this.clientUuid]); // or another identifier
+    this.router.navigate(['/reports', this.clientUuid]);
   }
 
   private async loadClientDetails() {
     if (!this.clientUuid) return;
     this.client = await this.clientService.getClient(this.clientUuid);
+    console.log(this.client);
     this.scheduleOptions = this.client.crons || [];
   }
-
-  protected readonly formatDate = formatDate;
 }

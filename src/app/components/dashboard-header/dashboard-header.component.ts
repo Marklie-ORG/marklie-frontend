@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { jwtDecode } from "jwt-decode";
-import { AuthService } from '../../api/services/api/auth.service';
+import { AuthService } from '../../api/services/auth.service.js';
 @Component({
   selector: 'app-dashboard-header',
   templateUrl: './dashboard-header.component.html',

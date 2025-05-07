@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { OnboardingService } from '../../api/services/api/onboarding.service';
-import { Client, ClientService } from '../../api/services/api/client.service';
+import { OnboardingService } from '../../api/services/onboarding.service.js';
+import { Client, ClientService } from '../../api/services/client.service.js';
 import { MatDialog } from '@angular/material/dialog';
 import { AddClientComponent } from 'src/app/components/add-client/add-client.component';
 import { FacebookLoginService } from '../../api/services/facebook-login.service';
@@ -76,6 +76,7 @@ export class DashboardComponent implements OnInit {
 
   async getClients() {
     this.clients = await this.clientService.getClients();
+    console.log(this.clients)
   }
 
   showAddClientModal() {

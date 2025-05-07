@@ -1,10 +1,10 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../api/services/api/auth.service';
+import { AuthService } from '../../api/services/auth.service.js';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SignUpFormService } from '../../api/services/signup-form.service';
-import { OnboardingService } from '../../api/services/api/onboarding.service';
+import { OnboardingService } from '../../api/services/onboarding.service.js';
 
 @Component({
   selector: 'app-sign-up',

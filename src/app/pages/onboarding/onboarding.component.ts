@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OnboardingService, OnboardingSteps } from '../../api/services/api/onboarding.service';
+import { OnboardingService, OnboardingSteps } from '../../api/services/onboarding.service.js';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,8 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { UserService } from '../../api/services/api/user.service';
-import { OrganizationService } from '../../api/services/api/organization.service';
+import { UserService } from '../../api/services/user.service.js';
+import { OrganizationService } from '../../api/services/organization.service.js';
 import { environment } from '@env/environment';
 import { FacebookLoginService } from '../../api/services/facebook-login.service';
 

@@ -1,13 +1,16 @@
-<!-- ADD THIS IN YOUR TEMPLATE FILE -->
 <div class="dashboard">
-  <!-- Schedule Panel -->
   <div class="config-step1">
     <h3>Report Schedule</h3>
+
+    <div *ngIf="scheduleSaved" class="alert alert-success" role="alert">
+      Schedule saved successfully!
+    </div>
+
 
     <div class="form-row">
       <label>Date Preset:</label>
       <select class="form-control" [(ngModel)]="selectedDatePresetText">
-        <option *ngFor="let preset of datePresets" [value]="preset.value">
+        <option *ngFor="let preset of DATE_PRESETS" [value]="preset.value">
           {{ preset.text }}
         </option>
       </select>
@@ -17,11 +20,43 @@
     <div class="form-row">
       <label>Schedule Frequency:</label>
       <select class="form-control" [(ngModel)]="schedule.frequency">
-        <option value="daily">Daily</option>
         <option value="weekly">Weekly</option>
+        <option value="biweekly">Biweekly</option>
         <option value="monthly">Monthly</option>
+        <option value="custom">Custom</option>
+        <option value="cron">Cron</option>
       </select>
     </div>
+
+
+    <div class="form-row" *ngIf="['weekly', 'biweekly'].includes(schedule.frequency)">
+      <label>Day of Week:</label>
+      <select class="form-control" [(ngModel)]="schedule.dayOfWeek">
+        <option *ngFor="let day of DAYS_OF_WEEK" [value]="day">{{ day }}</option>
+      </select>
+    </div>
+
+    <div class="form-row" *ngIf="schedule.frequency === 'monthly'">
+      <label>Day of Month:</label>
+      <input type="number" class="form-control" [(ngModel)]="schedule.dayOfMonth" min="1" max="31" />
+    </div>
+
+    <div class="form-row" *ngIf="schedule.frequency === 'custom'">
+      <label>Every X Days:</label>
+      <input type="number" class="form-control" [(ngModel)]="schedule.intervalDays" min="1" />
+    </div>
+
+    <div class="form-row" *ngIf="schedule.frequency === 'cron'">
+      <label>Cron Expression:</label>
+      <input type="text" class="form-control" [(ngModel)]="schedule.cronExpression" />
+    </div>
+
+    <div class="form-row" *ngIf="schedule.frequency !== 'cron'">
+      <label>Time:</label>
+      <input type="time" class="form-control" [(ngModel)]="schedule.time" step="300" />
+    </div>
+
+
     <i class="fa-light fa-question"></i>
     <div class="form-row d-flex align-items-center">
       <label for="reviewBeforeSend" class="mb-0">
@@ -43,12 +78,10 @@
     <button class="btn btn-success" (click)="saveConfiguration()">Save Configuration</button>
   </div>
 
-  <!-- Main Report Content -->
   <main class="report-content">
     <h2 class="section-title mb-4">Mock Report Preview</h2>
     <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
 
-    <!-- Draggable Sections -->
     <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
       <div *ngFor="let section of reportSections; let i = index" cdkDrag class="report-section bordered-section">
         <div class="section-toggle">
@@ -59,7 +92,6 @@
           </label>
         </div>
 
-        <!-- Metric Reordering -->
         <div *ngIf="panelToggles[section.key]">
           <div class="metric-group" cdkDropList [cdkDropListData]="section.metrics"
                (cdkDropListDropped)="dropMetric($event, i)">
@@ -71,7 +103,6 @@
             </div>
           </div>
 
-          <!-- Section-Specific Content -->
           <ng-container [ngSwitch]="section.key">
             <div *ngSwitchCase="'kpis'" class="kpi-grid" cdkDropList (cdkDropListDropped)="dropKPICard($event)">
               <ng-container *ngFor="let metric of section.metrics">

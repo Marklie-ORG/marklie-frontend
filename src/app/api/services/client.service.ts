@@ -39,7 +39,7 @@ export interface Client {
     createdAt: Date;
     updatedAt: Date;
     organization: string;
-    crons: any[]
+  crons: any[]
 }
 
 export interface CreateClientRequest {

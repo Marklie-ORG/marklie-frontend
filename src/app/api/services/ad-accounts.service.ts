@@ -20,16 +20,6 @@ export interface AdAccount {
   }
 }
 
-export interface OwnedAdAccount {
-  id: string
-  name: string
-}
-
-export interface ClientAdAccount {
-  id: string
-  name: string
-}
-
 
 @Injectable({
   providedIn: 'root'

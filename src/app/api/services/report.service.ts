@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '@env/environment';
-import { Client } from './client.service';
+import { environment } from '@env/environment.js';
+import { Client } from './client.service.js';
 export interface ReportStatsResponse {
     bestAds: BestAd[]
     KPIs: Kpis
@@ -76,7 +76,7 @@ export interface Report {
   providedIn: 'root'
 })
 export class ReportService {
-  private apiUrl = `${environment.apiUrl}`;
+  private apiUrl = `${environment.reportsApiUrl}`;
   // private apiUrl = 'https://0758-77-174-130-35.ngrok-free.app';
 
   private headers = {
@@ -89,7 +89,7 @@ export class ReportService {
   createSchedule(data: any) {
     try {
       console.log(this.apiUrl)
-      return firstValueFrom(this.http.post(`http://localhost:3030/api/reports/schedule`, data));
+      return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
 
     }catch (e) {
       console.log(e)

@@ -4,11 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ClientService} from "../../api/services/api/client.service.js";
-import {AuthService} from "../../api/services/api/auth.service.js";
-import {ReportService} from "../../api/services/api/report.service.js";
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import {faCoffee} from "@fortawesome/free-solid-svg-icons";
+import {ReportService} from "../../api/services/report.service.js";
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
@@ -31,22 +27,7 @@ interface ReportSection {
   ]
 })
 export class MockReportComponent implements OnInit, AfterViewInit {
-  // Scheduling
-  schedule = { frequency: 'weekly', time: '09:00',   reviewNeeded: false };
-  clientUuid: string = '';
-
-  // UI state
-  panelStep = 1;
-  isSticky = false;
-  reportStatsLoading = true;
-  animating = false;
-
-  // Metric categories
-  availableMetrics = ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'actions', 'action_values', 'purchase_roas', 'reach'];
-  availableGraphMetrics = ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'purchaseRoas', 'conversionValue', 'purchases', 'addToCart', 'initiatedCheckouts', 'costPerPurchase', 'costPerCart'];
-  adAvailableMetrics = ['spend', 'addToCart', 'purchases', 'roas'];
-  campaignAvailableMetrics = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
-  datePresets = [
+  readonly DATE_PRESETS = [
     { value: 'today', text: 'Today' },
     { value: 'yesterday', text: 'Yesterday' },
     { value: 'this_month', text: 'This Month' },
@@ -65,11 +46,31 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     { value: 'this_week_mon_today', text: 'This Week (Mon-Today)' },
     { value: 'this_week_sun_today', text: 'This Week (Sun-Today)' },
     { value: 'this_year', text: 'This Year' },
-    { value: 'maximum', text: 'Maximum' },
-
+    { value: 'maximum', text: 'Maximum' }
   ];
-  selectedDatePresetText = this.datePresets[6].value;
-  // Dynamic UI selections
+  DEFAULT_SELECTED_METRICS = ['spend', 'impressions', 'clicks'];
+  readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  readonly DAYS_IN_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
+
+  schedule = {
+    frequency: 'weekly',
+    time: '09:00',
+    dayOfWeek: 'Monday',
+    dayOfMonth: 1,
+    intervalDays: 1,
+    cronExpression: '',
+    reviewNeeded: false,
+  };
+  clientUuid: string = '';
+  reportStatsLoading = true;
+
+  availableMetrics = ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'actions', 'action_values', 'purchase_roas', 'reach'];
+  availableGraphMetrics = ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'purchaseRoas', 'conversionValue', 'purchases', 'addToCart', 'initiatedCheckouts', 'costPerPurchase', 'costPerCart'];
+  adAvailableMetrics = ['spend', 'addToCart', 'purchases', 'roas'];
+  campaignAvailableMetrics = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
+
+  selectedDatePresetText = this.DATE_PRESETS[6].value;
+
   metricSelections = {
     kpis: {} as Record<string, boolean>,
     graphs: {} as Record<string, boolean>,
@@ -84,24 +85,23 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     campaigns: true
   };
 
-  // Selected metrics
-  selectedMetrics = ['spend', 'impressions', 'clicks'];
   adMetrics: string[] = [];
   campaignMetrics: string[] = [];
   metricsGraphConfig: any[] = [];
 
-  // Data
   KPIs: Record<string, any> = {};
   ads: any[] = [];
   campaigns: any[] = [];
   graphs: any[] = [];
 
+  scheduleSaved = false;
+
   constructor(
     private reportsService: ReportService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
-  // DnD + Chart
   private chartRefs: Record<string, Chart> = {};
   campaignColumnOrder: string[] = [...this.campaignAvailableMetrics];
 
@@ -112,11 +112,10 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.campaignAvailableMetrics }
   ];
 
-  // Lifecycle
   ngOnInit(): void {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
 
-    this.initSelections();
+    this.initMetricSelections();
     this.generateMockData();
     this.updateVisibleMetrics();
     this.reportStatsLoading = false;
@@ -126,12 +125,14 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     this.renderCharts();
   }
 
-  // Initialization
-  private initSelections(): void {
-    this.availableMetrics.forEach(m => this.metricSelections.kpis[m] = this.selectedMetrics.includes(m));
-    this.availableGraphMetrics.forEach(m => this.metricSelections.graphs[m] = this.selectedMetrics.includes(m));
-    this.adAvailableMetrics.forEach(m => this.metricSelections.ads[m] = true);
-    this.campaignAvailableMetrics.forEach(m => this.metricSelections.campaigns[m] = true);
+  private initMetricSelections(): void {
+    const initSelection = (keys: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: this.DEFAULT_SELECTED_METRICS.includes(k) }), {});
+    this.metricSelections = {
+      kpis: initSelection(this.availableMetrics),
+      graphs: initSelection(this.availableGraphMetrics),
+      ads: initSelection(this.adAvailableMetrics),
+      campaigns: initSelection(this.campaignAvailableMetrics)
+    };
   }
 
   private generateMockData(): void {
@@ -141,7 +142,6 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     this.graphs = this.mockGraphData();
   }
 
-  // Metric & Section Changes
   onPanelToggleChange(): void {
     this.updateVisibleMetrics();
   }
@@ -152,10 +152,12 @@ export class MockReportComponent implements OnInit, AfterViewInit {
 
 
   private updateVisibleMetrics(): void {
-    this.selectedMetrics = this.getSelected(this.metricSelections.kpis);
-    this.metricsGraphConfig = this.getMetricConfigs().filter(c => this.metricSelections.graphs[c.key]);
-    this.adMetrics = this.getSelected(this.metricSelections.ads);
-    this.campaignMetrics = this.getSelected(this.metricSelections.campaigns);
+    const { kpis, graphs, ads, campaigns } = this.metricSelections;
+
+    this.DEFAULT_SELECTED_METRICS = this.getSelected(kpis);
+    this.metricsGraphConfig = this.getMetricConfigs().filter(cfg => graphs[cfg.key]);
+    this.adMetrics = this.getSelected(ads);
+    this.campaignMetrics = this.getSelected(campaigns);
 
     if (this.panelToggles.graphs) {
       setTimeout(() => this.renderCharts(), 0);
@@ -166,7 +168,6 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     return Object.keys(selection).filter(k => selection[k]);
   }
 
-  // Drag & Drop
   dropSection(event: CdkDragDrop<ReportSection[]>): void {
     moveItemInArray(this.reportSections, event.previousIndex, event.currentIndex);
   }
@@ -209,20 +210,23 @@ export class MockReportComponent implements OnInit, AfterViewInit {
       }
     });
 
-    const configPayload = {
-      dataPreset: this.selectedDatePresetText,
-      ...this.schedule,
+    const payload = {
+      ...(this.schedule),
       metrics,
+      dataPreset: this.selectedDatePresetText,
       clientUuid: this.clientUuid,
     };
+
     try {
-      await this.reportsService.createSchedule(configPayload)
-    }catch (e) {
+      await this.reportsService.createSchedule(payload);
+      this.scheduleSaved = true;
+      setTimeout(() => this.scheduleSaved = false, 3000);
+      this.router.navigate(['/client', this.clientUuid]);
+    } catch (e) {
       console.error(e);
     }
   }
 
-  // Charts
   private renderCharts(): void {
     if (!this.graphs?.length) return;
 
@@ -288,7 +292,6 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Helpers
   getMetricConfigs() {
     return [
       { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
@@ -307,21 +310,23 @@ export class MockReportComponent implements OnInit, AfterViewInit {
   }
 
   formatMetricLabel(metric: string): string {
-    return metric.replace(/_/g, ' ')
+    return metric
+      .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, c => c.toUpperCase());
   }
 
   formatMetricValue(metric: string, value: any): string {
-    if (value == null) return '—';
     const num = typeof value === 'number' ? value : parseFloat(value);
-    const rounded = isNaN(num) ? value : num.toFixed(2);
+    if (isNaN(num)) return value ?? '—';
 
+    const rounded = num.toFixed(2);
     if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
-    if (metric.toLowerCase().includes('ctr')) return `${rounded}%`;
-    if (metric.toLowerCase().includes('roas')) return `${rounded}x`;
-    return isNaN(num) ? value : Number(num).toLocaleString();
+    if (metric.includes('ctr')) return `${rounded}%`;
+    if (metric.includes('roas')) return `${rounded}x`;
+    return Number(num).toLocaleString();
   }
+
 
   getMetricStyle(metric: string): string {
     if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
@@ -329,7 +334,6 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     return '';
   }
 
-  // Mock Generators
   private mockKPIs() {
     return {
       spend: 1234.56,
@@ -405,6 +409,4 @@ export class MockReportComponent implements OnInit, AfterViewInit {
       };
     });
   }
-
-  protected readonly faCoffee = faCoffee;
 }

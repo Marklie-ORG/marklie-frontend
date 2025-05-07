@@ -53,14 +53,6 @@ export class ClientService {
     );
   }
 
-  async sendMessageToSlack(clientUuid: string, message: string) {
-    return firstValueFrom(
-      this.http.post<{
-        message: string;
-      }>(`${this.apiUrl}/${clientUuid}/slack/send-message`, { message }, { observe: 'response' })
-    );
-  }
-
   async getConnectedWorkspaces(clientUuid: string) {
     return firstValueFrom(
       this.http.get<Workspace[]>(`${this.apiUrl}/${clientUuid}/slack/workspaces`)
@@ -75,11 +67,11 @@ export class ClientService {
     );
   }
 
-  async sendMessageWithFileToSlack(clientUuid: string, message: string) {
+  async updateClient(clientUuid: string, client: UpdateClientRequest) {
     return firstValueFrom(
-      this.http.post<{
+      this.http.put<{
         message: string;
-      }>(`${this.apiUrl}/${clientUuid}/slack/send-message-with-file`, { message }, { observe: 'response' })
+      }>(`${this.apiUrl}/${clientUuid}`, client, { observe: 'response' })
     );
   }
 
@@ -119,10 +111,16 @@ export interface Client {
     updatedAt: Date;
     organization: string;
     slackConversationId: string | null;
+    emails: string[];
 }
 
 export interface CreateClientRequest {
   name: string;
   facebookAdAccounts: string[];
   tiktokAdAccounts: string[];
+}
+
+export interface UpdateClientRequest {
+  name?: string;
+  emails?: string[];
 }

@@ -1,12 +1,12 @@
 import { Component, Input, SimpleChanges, OnInit, OnChanges, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
 import { Subscription } from 'rxjs';
 import { Root2 } from 'src/app/services/api/ad-accounts.service';
 import { AdAccount } from 'src/app/services/api/ad-accounts.service';
 import { AdAccountsService } from 'src/app/services/api/ad-accounts.service';
-import { Client, ClientService, Conversations, Workspace } from 'src/app/services/api/client.service';
+import { Client, ClientService, Conversations, UpdateClientRequest, Workspace } from 'src/app/services/api/client.service';
 import { SlackLoginService } from 'src/app/services/slack-login.service';
 @Component({
   selector: 'app-client-settings',
@@ -17,7 +17,6 @@ export class ClientSettingsComponent implements OnInit {
 
   conversations: Conversations | null = null;
   selectedConversationId: string | null = null;
-  slackMessage: string = '';
 
   workspaces: Workspace[] | null = null;
   currentWorkspace: Workspace | null = null;
@@ -38,12 +37,42 @@ export class ClientSettingsComponent implements OnInit {
     private clientService: ClientService,
     private slackLoginService: SlackLoginService
   ) {
-
     this.clientForm = this.fb.group({
       name: [this.data.client.name, Validators.required],
-      facebookAdAccounts: [[], Validators.required],
+      emails: this.fb.array([])
     });
 
+    // Initialize emails if they exist
+    if (this.data.client.emails && this.data.client.emails.length > 0) {
+      this.data.client.emails.forEach(email => {
+        this.addEmail(email);
+      });
+    } else {
+      this.addEmail(); // Add one empty email field by default
+    }
+  }
+
+  get emails() {
+    return this.clientForm.get('emails') as FormArray;
+  }
+
+  addEmail(email: string = '') {
+    const emailForm = this.fb.group({
+      email: [email, [Validators.required, Validators.email]]
+    });
+    this.emails.push(emailForm);
+  }
+
+  removeEmail(index: number) {
+    // console.log(index);
+    // console.log(this.emails.length);
+    // if (this.emails.length === 1) {
+    //   this.emails.at(0).get('email')?.setValue('');
+    //   return;
+    // }
+    this.emails.removeAt(index);
+
+    
   }
 
   async ngOnInit() {
@@ -96,16 +125,6 @@ export class ClientSettingsComponent implements OnInit {
     this.isSlackWorkspaceConnectedSubject.next(status.isConnected);
   }
 
-  async sendMessageToSlack() {
-    if (!this.data.client.uuid) {
-      return;
-    }
-    // const response = await this.clientService.sendMessageToSlack(this.data.client.uuid!, this.slackMessage);
-    
-    const response = await this.clientService.sendMessageWithFileToSlack(this.data.client.uuid!, this.slackMessage);
-    console.log(response);
-  }
-
   async onWorkspaceTokenIdChange(tokenId: string) {
     this.currentWorkspace = this.workspaces?.find(workspace => workspace.tokenId === tokenId) || null;
     this.currentWorkspaceTokenId = tokenId;
@@ -138,11 +157,24 @@ export class ClientSettingsComponent implements OnInit {
   }
 
   async onSubmit() {
+    console.log(this.clientForm.value.emails)
     if (this.clientForm.valid) {
-      console.log(this.clientForm.value);
-      // await this.clientService.createClient(this.clientForm.value);
+      const formValue = this.clientForm.value;
+      const emails = formValue.emails.map((item: { email: string }) => item.email);
+      await this.updateClient(
+        formValue.name,
+        emails
+      );
       this.dialogRef.close();
     }
+  }
+
+  async updateClient(name: string, emails: string[]) {
+    const client: UpdateClientRequest = {
+      name: name,
+      emails: emails
+    }
+    const response = await this.clientService.updateClient(this.data.client.uuid!, client);
   }
   
 

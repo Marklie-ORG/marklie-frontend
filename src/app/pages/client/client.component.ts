@@ -143,15 +143,7 @@ export class ClientComponent implements OnInit {
       this.clientId = params['id'];
       this.loadClientDetails();
     });
-
-    
-
-    
   }
-
-  
-
-  
 
   private async loadClientDetails() {
     if (!this.clientId) {
@@ -184,9 +176,9 @@ export class ClientComponent implements OnInit {
       }
     });
 
-    // dialogRef.afterClosed().subscribe(result => {
-    //   this.getClients();
-    // });
+    dialogRef.afterClosed().subscribe(result => {
+      this.loadClientDetails();
+    });
   }
 
   onViewReports() {

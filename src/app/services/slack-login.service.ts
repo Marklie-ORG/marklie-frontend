@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { environment } from '@env/environment';
-import { LocalStorageKeys, LocalStorageService } from './local-storage.service';
+import {Injectable} from '@angular/core';
+import {environment} from '@env/environment';
+import {LocalStorageKeys, LocalStorageService} from './local-storage.service';
 
 
 @Injectable({
@@ -31,9 +31,7 @@ export class SlackLoginService {
 
     this.saveTargetClientIdForSlackWorkspace(organizationClientId);
 
-    const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
-    
-    window.location.href = authUrl;
+    window.location.href = `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=${scopes}&redirect_uri=${redirectUri}`;
   }
 
   saveTargetClientIdForSlackWorkspace(clientId: string) {
@@ -47,4 +45,4 @@ export class SlackLoginService {
   removeTargetClientIdForSlackWorkspace() {
     this.localStorageService.removeItem(LocalStorageKeys.TARGET_CLIENT_ID_FOR_SLACK_WORKSPACE);
   }
-} 
+}

@@ -1,10 +1,10 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/api/auth.service';
+import { AuthService } from '../../api/services/auth.service.js';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { SignUpFormService } from '../../services/signup-form.service';
-import { OnboardingService } from '../../services/api/onboarding.service';
+import { SignUpFormService } from '../../api/services/signup-form.service';
+import { OnboardingService } from '../../api/services/onboarding.service.js';
 
 @Component({
   selector: 'app-sign-up',
@@ -120,7 +120,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
         this.dialogRef.close();
         this.router.navigate(['/onboarding']);
       }
-      
+
     } catch (error) {
       console.error('Registration failed:', error);
     }

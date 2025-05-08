@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OnboardingService, OnboardingSteps } from '../../services/api/onboarding.service';
+import { OnboardingService, OnboardingSteps } from '../../api/services/onboarding.service.js';
 import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,10 +9,10 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { UserService } from 'src/app/services/api/user.service';
-import { OrganizationService } from 'src/app/services/api/organization.service';
+import { UserService } from '../../api/services/user.service.js';
+import { OrganizationService } from '../../api/services/organization.service.js';
 import { environment } from '@env/environment';
-import { FacebookLoginService } from 'src/app/services/facebook-login.service';
+import { FacebookLoginService } from '../../api/services/facebook-login.service';
 
 interface Platform {
   name: string;
@@ -47,7 +47,7 @@ export class OnboardingComponent implements OnInit {
   isOwner: boolean | null = null;
   agencyName: string = '';
   clientsAmount: string = '';
-  
+
   // Clients range options
   clientsRanges: ClientsRange[] = [
     { value: '1-5', label: '1-5' },
@@ -55,7 +55,7 @@ export class OnboardingComponent implements OnInit {
     { value: '11-15', label: '11-15' },
     { value: '>15', label: '> 15' }
   ];
-  
+
   // Advertising platforms
   advertisingPlatforms: Platform[] = [
     { name: 'facebook', selected: false },
@@ -95,9 +95,9 @@ export class OnboardingComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    
+
     this.navigateOnboarding();
-    
+
   }
 
   async navigateOnboarding() {
@@ -109,7 +109,7 @@ export class OnboardingComponent implements OnInit {
     // }
 
 
-    
+
 
     // else if (!this.onboardingSteps.nameAnswered) {
     //   this.currentStepIndex = 0;
@@ -251,11 +251,11 @@ export class OnboardingComponent implements OnInit {
     const selectedPlatforms = this.advertisingPlatforms
       .filter(platform => platform.selected)
       .map(platform => platform.name);
-    
+
     if (this.customAdvertisingPlatform) {
       selectedPlatforms.push(this.customAdvertisingPlatform);
     }
-    
+
     return selectedPlatforms;
   }
 
@@ -263,11 +263,11 @@ export class OnboardingComponent implements OnInit {
     const selectedPlatforms = this.communicationPlatforms
       .filter(platform => platform.selected)
       .map(platform => platform.name);
-    
+
     if (this.customCommunicationPlatform) {
       selectedPlatforms.push(this.customCommunicationPlatform);
     }
-    
+
     return selectedPlatforms;
   }
 
@@ -305,4 +305,4 @@ export class OnboardingComponent implements OnInit {
     const totalSteps = this.isOwner ? this.totalStepsForOwner : this.totalStepsForEmployee;
     return this.currentStepIndex === totalSteps - 1;
   }
-} 
+}

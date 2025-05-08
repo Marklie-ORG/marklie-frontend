@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@env/environment.js';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,7 @@ export class ClientService {
 
   async getClients() {
     return firstValueFrom(
-      this.http.get<Client[]>(`${this.apiUrl}/`)
+      this.http.get<Client[]>(`${this.apiUrl}`)
     );
   }
 
@@ -105,13 +105,14 @@ interface IM {
 
 
 export interface Client {
-  uuid: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  organization: string;
-  slackConversationId: string | null;
-  emails: string[];
+    uuid: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    organization: string;
+    crons: any[]
+    slackConversationId: string | null;
+    emails: string[];
 }
 
 export interface CreateClientRequest {
@@ -119,6 +120,7 @@ export interface CreateClientRequest {
   facebookAdAccounts: string[];
   tiktokAdAccounts: string[];
 }
+
 
 export interface UpdateClientRequest {
   name?: string;

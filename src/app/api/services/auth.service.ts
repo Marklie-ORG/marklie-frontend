@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
-import { environment } from '@env/environment';
+import { environment } from '@env/environment.js';
 
 interface AuthResponse {
   accessToken: string;
@@ -18,12 +18,12 @@ interface DecodedToken {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}`;
+  private apiUrl = `${environment.authApiUrl}`;
 
   constructor(private http: HttpClient) { }
 
   async login(email: string, password: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, 
+    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`,
       {
         email,
         password
@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   async register(email: string, password: string): Promise<AuthResponse> {
-    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, 
+    return firstValueFrom(this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`,
       {
         email,
         password
@@ -68,13 +68,13 @@ export class AuthService {
 
   clearTokens() {
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken'); 
+    localStorage.removeItem('refreshToken');
   }
 
   isAdmin(): boolean {
     const token = this.getAccessToken();
     if (!token) return false;
-    
+
     try {
       const payload = token.split('.')[1];
       const decoded = JSON.parse(atob(payload)) as DecodedToken;
@@ -93,13 +93,13 @@ export class AuthService {
   getAllCookies(): { [key: string]: string } {
     const cookies = document.cookie.split(';');
     const result: { [key: string]: string } = {};
-    
+
     cookies.forEach(cookie => {
       const [name, value] = cookie.trim().split('=');
       result[name] = decodeURIComponent(value);
     });
-    
+
     return result;
   }
-  
+
 }

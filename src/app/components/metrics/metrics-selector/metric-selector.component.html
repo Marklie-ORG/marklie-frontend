@@ -1,0 +1,10 @@
+<ng-select
+  [items]="availableMetrics"
+  [multiple]="true"
+  bindLabel=""
+  [(ngModel)]="selectedMetrics"
+  [closeOnSelect]="false"
+  [searchable]="true"
+  placeholder="Select metrics to display"
+  (change)="onMetricsChange()">
+</ng-select>

@@ -1,0 +1,6 @@
+<div class="kpi-grid">
+  <div class="kpi-card" *ngFor="let metric of metrics">
+    <div class="kpi-label">{{ formatLabel(metric) }}</div>
+    <div class="kpi-value">{{ getKPIValue(metric) }}</div>
+  </div>
+</div>

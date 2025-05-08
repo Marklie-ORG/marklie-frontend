@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '@env/environment';
-import { Client } from './client.service';
+import { environment } from '@env/environment.js';
+import { Client } from './client.service.js';
 export interface ReportStatsResponse {
     bestAds: BestAd[]
     KPIs: Kpis
     campaigns: Campaign[]
     graphs: Graph[]
   }
-  
+
   export interface BestAd {
     adCreativeId: string
     thumbnailUrl: string
@@ -19,7 +19,7 @@ export interface ReportStatsResponse {
     roas: string
     sourceUrl: string
   }
-  
+
   export interface Kpis {
     accountName: string
     accountId: string
@@ -36,7 +36,7 @@ export interface ReportStatsResponse {
     initiatedCheckouts: string
     purchaseRoas: string
   }
-  
+
   export interface Campaign {
     campaignName: string
     spend: string
@@ -44,7 +44,7 @@ export interface ReportStatsResponse {
     conversionRate: string
     purchaseRoas: string
   }
-  
+
   export interface Graph {
     accountName: string
     accountId: string
@@ -62,20 +62,21 @@ export interface ReportStatsResponse {
     purchaseRoas: string
     date: string
   }
-  
+
 export interface Report {
-  uuid: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  client: Client;
+  uuid:	string
+  cronExpression:	string
+  isActive: boolean,
+  nextRun:	Date
+  dataPreset:	string
+  reviewNeeded:	boolean
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
-  private apiUrl = `${environment.apiUrl}`;
+  private apiUrl = `${environment.reportsApiUrl}`;
   // private apiUrl = 'https://0758-77-174-130-35.ngrok-free.app';
 
   private headers = {
@@ -83,6 +84,26 @@ export class ReportService {
   }
 
   constructor(private http: HttpClient) { }
+
+  // @ts-ignore
+  createSchedule(data: any) {
+    try {
+      console.log(this.apiUrl)
+      return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
+
+    }catch (e) {
+      console.log(e)
+
+    }
+  }
+
+  updateSchedule(scheduleUuid: string, data: any): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/${scheduleUuid}`, data));
+  }
+
+  deleteSchedule(scheduleUuid: string): Promise<any> {
+    return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
+  }
 
   async getReportStats(datePreset: string): Promise<ReportStatsResponse> {
     return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports?datePreset=${datePreset}&organizationName=test`, {headers: this.headers}));

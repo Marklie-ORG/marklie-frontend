@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { OnboardingService } from '../../services/api/onboarding.service';
-import { Client, ClientService } from '../../services/api/client.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddClientComponent } from 'src/app/components/add-client/add-client.component';
-import { FacebookLoginService } from 'src/app/services/facebook-login.service';
-import { SlackLoginService } from 'src/app/services/slack-login.service';
+import {OnboardingService} from "../../api/services/onboarding.service.js";
+import {ClientService} from "../../api/services/client.service.js";
+import {FacebookLoginService} from "../../api/services/facebook-login.service.js";
 
 interface Activity {
   id: string;
@@ -61,13 +60,13 @@ export class DashboardComponent implements OnInit {
     private clientService: ClientService,
     private dialog: MatDialog,
     private facebookLoginService: FacebookLoginService,
-    
+
   ) {}
 
   async ngOnInit() {
     const onboardingSteps = await this.onboardingService.getOnboardingSteps();
 
-    this.getClients();
+    await this.getClients();
 
     // if (!onboardingSteps.organizationCreated) {
     //   this.router.navigate(['/onboarding']);
@@ -88,11 +87,15 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  addClient(clientData: { name: string; platforms: string[] }) {
+    console.log(clientData);
+  }
+
   connectFacebook() {
     this.facebookLoginService.connectFacebook();
   }
 
-  
+
 
   viewReport(clientId: string) {
     this.router.navigate(['/client', clientId]);

@@ -1,47 +1,113 @@
 <div class="container">
 
-  <div class="p-4 mt-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-    <div class="client-header">
-      <div class="client-info">
-        <h1 *ngIf="client">{{ client.name }}</h1>
+  <div 
+  class="p-4 mt-4 block"
+  style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+      <div class="client-header">
+          <div class="client-info">
+              <h1 *ngIf="client">{{client.name}}</h1>
+              <!-- <div class="client-meta">
+                  <span class="email">📧 {{clientEmail}}</span>
+                  <span class="status" [class.active]="clientStatus === 'active'">● {{clientStatus}}</span>
+              </div> -->
+          </div>
+          <div class="client-actions">
+              
+              <button class="" (click)="onEditClient()">
+                  Client Settings
+              </button>
+          </div>
       </div>
-      <div class="client-actions">
-      </div>
-    </div>
   </div>
-
+  
+  
   <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">
+  
+      <div 
+      class="p-4 block"
+      style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+  
+          <!-- Content for left block -->
+          <div class="d-flex align-center justify-between mb-4">
+              <h3>Scheduled Reports</h3>
+              <button class="" (click)="goToMockReport()">
+                  <i class="fa-solid fa-plus color-black"></i>
+                  Add report
+              </button>
+          </div>
 
-    <div class="p-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-      <div class="d-flex align-center justify-between mb-4">
-        <h3>Scheduled Reports</h3>
-        <button class="blue" (click)="goToMockReport()">
-          <i class="fa-solid fa-plus color-white"></i> Create Report
-        </button>
-      </div>
+          <hr>
 
-      <div class="clients-list">
-        <div class="detail-content">
-          <div class="reports-list">
-            <div class="report-item" *ngFor="let scheduleOption of scheduleOptions">
-              <div class="report-info">
-                <span class="report-frequency">Frequency: {{ scheduleOption.cronExpression }}</span>
-                <span class="report-date">Next sending date: {{ scheduleOption.nextRun }}</span>
+          <!-- <div class="clients-list">
+            <div class="detail-content">
+              <div class="reports-list">
+                <div class="report-item" *ngFor="let scheduleOption of scheduleOptions">
+                  <div class="report-info">
+                    <span class="report-frequency">Frequency: {{ scheduleOption.cronExpression }}</span>
+                    <span class="report-date">Next sending date: {{ scheduleOption.nextRun }}</span>
+                  </div>
+                </div>
               </div>
             </div>
+          </div> -->
+  
+          <div class="clients-list mt-4">
+          <div class="detail-content">
+              <div class="reports-list">
+                  <div class="report-item" *ngFor="let scheduleOption of scheduleOptions" (click)="onEditReport(scheduleOption.uuid)">
+                      <div class="report-info">
+                          <!-- <span class="report-name">{{scheduleOption.name}}</span> -->
+                          <span class="report-frequency">Frequency: {{scheduleOption.cronExpression}}</span>
+                          <span class="report-date">Next sending date: {{formatDate(scheduleOption.nextRun)}}</span>
+                      </div>
+                      <div class="report-actions">
+                          <!-- <button class="" (click)="onEditReport(report.uuid)">Edit</button> -->
+                          <!-- <img 
+                          (click)="onEditReport(report.uuid)"
+                          src="https://www.svgrepo.com/show/522527/edit-3.svg" width="25px" height="25px" style="cursor: pointer;"> -->
+                          <!-- <button class="" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
+                              {{report.isActive ? 'Deactivate' : 'Activate'}}
+                          </button> -->
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
+          </div>
       </div>
-    </div>
-
-    <div class="p-4" style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-      <h3>Activity Log</h3>
-      <div class="detail-content">
-        <div class="activity-list">
-        </div>
+  
+      <div 
+      class="p-4 block"
+      style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+          <h3 class="mb-4">Activity Log</h3>
+          <hr>
+          <div class="detail-content mt-4">
+              <div class="activity-list">
+                  <div class="activity-item" *ngFor="let entry of activityLog">
+                      <div class="activity-icon">
+                          <img width="28px" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
+                          <!-- <i [ngClass]="{
+                              'fa-solid fa-file-chart': entry.action === 'Report Generated',
+                              'fa-solid fa-share-nodes': entry.action === 'Report Shared',
+                              'fa-solid fa-calendar-plus': entry.action === 'Report Scheduled',
+                              'fa-solid fa-toggle-off': entry.action === 'Report Deactivated',
+                              'fa-solid fa-toggle-on': entry.action === 'Report Activated',
+                              'fa-solid fa-pen-to-square': entry.action === 'Report Edited'
+                          }"></i> -->
+                      </div>
+                      <div class="activity-content">
+                          <div class="activity-header">
+                              <span class="activity-action">{{entry.action}}</span>
+                              <span class="activity-time">{{entry.timestamp}}</span>
+                          </div>
+                          <span class="activity-report" (click)="onViewReport(entry.reportId)">
+                              {{entry.reportName}}
+                          </span>
+                      </div>
+                  </div>
+              </div>
+          </div>
       </div>
-    </div>
-  </div>
-
-
+  
+      </div>
 </div>
+

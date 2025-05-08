@@ -108,7 +108,12 @@
             Please select a conversation to send reports to!
           </div>
   
-          <select *ngIf="conversations" class="conversation-select" [(ngModel)]="selectedConversationId" (ngModelChange)="onConversationChange($event)">
+          <select 
+          *ngIf="conversations" 
+          class="conversation-select" 
+          [(ngModel)]="selectedConversationId" 
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onConversationChange($event)">
               <option *ngIf="!selectedConversationId" [ngValue]="null">Select a conversation</option>
               <option *ngFor="let conversation of conversations.channels" [ngValue]="conversation.id">
                   # {{conversation.name}}
@@ -125,6 +130,7 @@
           <select *ngIf="workspaces && workspaces.length > 0" 
             class="conversation-select" 
             [(ngModel)]="currentWorkspaceTokenId" 
+            [ngModelOptions]="{standalone: true}"
             (ngModelChange)="onWorkspaceTokenIdChange($event)">
             <option *ngIf="!currentWorkspace" [ngValue]="null">Select previously connected workspace</option>
             <option *ngFor="let workspace of workspaces" [ngValue]="workspace.tokenId">

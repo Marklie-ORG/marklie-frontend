@@ -58,7 +58,7 @@ export class ClientSettingsComponent implements OnInit {
 
   addEmail(email: string = '') {
     const emailForm = this.fb.group({
-      email: [email, [Validators.required, Validators.email]]
+      email: [email, [Validators.email]]
     });
     this.emails.push(emailForm);
   }

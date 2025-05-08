@@ -52,30 +52,6 @@ export class ClientComponent implements OnInit {
       reportName: 'Monthly Revenue Report',
       timestamp: this.formatDate(new Date(Date.now() - 86400000)), // 1 day ago
       reportId: '3'
-    },
-    {
-      action: 'Report Deactivated',
-      reportName: 'Campaign Summary Report',
-      timestamp: this.formatDate(new Date(Date.now() - 172800000)), // 2 days ago
-      reportId: '4'
-    },
-    {
-      action: 'Report Generated',
-      reportName: 'Quarterly Business Review',
-      timestamp: this.formatDate(new Date(Date.now() - 259200000)), // 3 days ago
-      reportId: '5'
-    },
-    {
-      action: 'Report Edited',
-      reportName: 'Social Media Analytics',
-      timestamp: this.formatDate(new Date(Date.now() - 345600000)), // 4 days ago
-      reportId: '6'
-    },
-    {
-      action: 'Report Activated',
-      reportName: 'Customer Engagement Report',
-      timestamp: this.formatDate(new Date(Date.now() - 432000000)), // 5 days ago
-      reportId: '7'
     }
   ];
 

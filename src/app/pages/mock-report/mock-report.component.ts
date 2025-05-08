@@ -4,7 +4,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ReportService} from "../../api/services/report.service.js";
+import {ReportService} from "../../services/api/report.service.js";
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 

@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material/dialog';
 import { AddClientComponent } from 'src/app/components/add-client/add-client.component';
-import {OnboardingService} from "../../api/services/onboarding.service.js";
-import {ClientService} from "../../api/services/client.service.js";
-import {FacebookLoginService} from "../../api/services/facebook-login.service.js";
+import { OnboardingService } from "../../services/api/onboarding.service.js";
+import { ClientService } from "../../services/api/client.service.js";
+import { FacebookLoginService } from "../../services/api/facebook-login.service.js";
+import { Client } from 'src/app/services/api/client.service.js';
 
 interface Activity {
   id: string;

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@env/environment';
 import { SlackLoginService } from 'src/app/services/slack-login.service';
-import {UserService} from "../../api/services/user.service.js";
+import {UserService} from "../../services/api/user.service.js";
 
 @Component({
   selector: 'app-slack-login-callback',

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@env/environment';
-import { UserService } from '../../api/services/user.service.js';
+import { UserService } from '../../services/api/user.service.js';
 @Component({
   selector: 'app-fb-login-callback',
   templateUrl: './fb-login-callback.component.html',

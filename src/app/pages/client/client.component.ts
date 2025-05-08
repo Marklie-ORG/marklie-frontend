@@ -4,9 +4,9 @@ import { SlackLoginService } from 'src/app/services/slack-login.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ClientSettingsComponent } from '../../components/client-settings/client-settings.component';
-import {Client, ClientService} from "../../api/services/client.service.js";
-import {ReportService} from "../../api/services/report.service.js";
-import {AuthService} from "../../api/services/auth.service.js";
+import { Client, ClientService } from 'src/app/services/api/client.service.js';
+import { ReportService } from 'src/app/services/api/report.service.js';
+import { AuthService } from 'src/app/services/api/auth.service.js';
 
 interface ActivityLogEntry {
   action: string;

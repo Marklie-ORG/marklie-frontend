@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { authGuard } from './api/guards/auth.guard';
+import { authGuard } from './guards/auth.guard';
 import { LandingComponent } from './pages/landing/landing.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
@@ -10,7 +10,7 @@ import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
-import {MockReportComponent} from "./pages/mock-report/mock-report.component.js";
+import { MockReportComponent } from "./pages/mock-report/mock-report.component.js";
 
 const routes: Routes = [
   {

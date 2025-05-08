@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { SignUpComponent } from '../../components/sign-up/sign-up.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../api/services/auth.service.js';
+import { AuthService } from '../../services/api/auth.service.js';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',

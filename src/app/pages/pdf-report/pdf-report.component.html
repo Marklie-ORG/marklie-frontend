@@ -1,0 +1,70 @@
+<div class="report-print">
+  <h1>Account Performance Report</h1>
+
+  <section class="section" *ngIf="KPIs">
+    <h2 class="section-title">Account Overview</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card" *ngFor="let key of objectKeys(KPIs)">
+        <div class="kpi-label">{{ formatMetricLabel(key) }}</div>
+        <div class="kpi-value" [ngClass]="getMetricStyle(key)">
+          {{ formatMetricValue(key, KPIs[key]) }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" *ngIf="base64Charts.length">
+    <h2 class="section-title">Performance Trends</h2>
+    <div class="chart-grid">
+      <div class="chart-card" *ngFor="let chart of base64Charts">
+        <img [src]="chart.url" alt="Chart Image" class="chart-image"/>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" *ngIf="bestAds?.length">
+    <h2 class="section-title">Top {{ bestAds.length }} Performing Ads</h2>
+    <div class="ad-grid">
+      <div class="ad-card" *ngFor="let ad of bestAds">
+        <div class="ad-thumbnail-container">
+          <img class="ad-thumbnail" [src]="ad.thumbnailUrl || 'https://via.placeholder.com/150'" />
+        </div>
+        <div class="ad-metrics-table">
+          <table>
+            <tr *ngFor="let key of ['spend', 'addToCart', 'purchases', 'roas']">
+              <td class="label">{{ formatMetricLabel(key) }}</td>
+              <td class="value">{{ formatMetricValue(key, ad[key]) }}</td>
+            </tr>
+          </table>
+        </div>
+        <div class="ad-button-container" *ngIf="ad.sourceUrl">
+          <a class="view-ad-button" [href]="ad.sourceUrl" target="_blank" rel="noopener">View Ad</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="section" *ngIf="campaigns?.length">
+    <h2 class="section-title">Campaigns Overview</h2>
+    <table class="campaign-table">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Campaign Name</th>
+        <th *ngFor="let key of campaignColumnOrder">{{ formatMetricLabel(key) }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let campaign of campaigns; let i = index">
+        {{campaign.roas}}
+        <td>{{ i + 1 }}</td>
+        <td>{{ campaign.campaign_name }}</td>
+        <td *ngFor="let key of campaignColumnOrder">
+          {{ formatMetricValue(key, campaign[key]) }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</div>

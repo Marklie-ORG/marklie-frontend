@@ -18,7 +18,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { DashboardHeaderComponent } from './components/dashboard-header/dashboard-header.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientComponent } from './pages/client/client.component';
-import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AddClientComponent } from './components/add-client/add-client.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
@@ -32,6 +31,8 @@ import { NgSelectModule } from "@ng-select/ng-select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
 import { ModalBaseComponent } from './components/modal-base/modal-base.component';
+import {ReportComponent} from "./pages/report/report.component.js";
+import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 
 register();
 
@@ -45,7 +46,6 @@ register();
     DashboardHeaderComponent,
     DashboardComponent,
     ClientComponent,
-    EditReportComponent,
     AddClientComponent,
     PrivacyPolicyComponent,
     TermsOfServiceComponent,
@@ -58,7 +58,8 @@ register();
     ModalBaseComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
-    ModalBaseComponent
+    ReportComponent,
+    PdfReportComponent
   ],
   imports: [
     BrowserModule,

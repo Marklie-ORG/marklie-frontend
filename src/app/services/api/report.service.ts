@@ -4,64 +4,14 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { Client } from './client.service.js';
 export interface ReportStatsResponse {
-    bestAds: BestAd[]
-    KPIs: Kpis
-    campaigns: Campaign[]
-    graphs: Graph[]
-  }
-
-  export interface BestAd {
-    adCreativeId: string
-    thumbnailUrl: string
-    spend: string
-    addToCart: string
-    purchases: string
-    roas: string
-    sourceUrl: string
-  }
-
-  export interface Kpis {
-    accountName: string
-    accountId: string
-    spend: string
-    impressions: string
-    clicks: string
-    cpc: string
-    ctr: string
-    purchases: string
-    costPerPurchase: string
-    conversionValue: string
-    addToCart: string
-    costPerAddToCart: string
-    initiatedCheckouts: string
-    purchaseRoas: string
-  }
-
-  export interface Campaign {
-    campaignName: string
-    spend: string
-    purchases: string
-    conversionRate: string
-    purchaseRoas: string
-  }
-
-  export interface Graph {
-    accountName: string
-    accountId: string
-    spend: string
-    impressions: string
-    clicks: string
-    cpc: string
-    ctr: string
-    purchases: string
-    costPerPurchase: string
-    conversionValue: string
-    addToCart: string
-    costPerAddToCart: string
-    initiatedCheckouts: string
-    purchaseRoas: string
-    date: string
-  }
+  data: {
+    ads: any[]
+    KPIs: any
+    campaigns: any[]
+    graphs: any[]
+    adAccountId: string
+  }[]
+}
 
 export interface Report {
   uuid:	string
@@ -103,6 +53,10 @@ export class ReportService {
 
   deleteSchedule(scheduleUuid: string): Promise<any> {
     return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
+  }
+
+  async getReport(uuid: string): Promise<ReportStatsResponse> {
+    return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
   }
 
   async getReportStats(datePreset: string): Promise<ReportStatsResponse> {

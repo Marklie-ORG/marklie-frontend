@@ -6,11 +6,16 @@ export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  const currentUrl = router.url;
+
+  if (currentUrl.startsWith('/view-report')) {
+    return true;
+  }
+
   if (authService.getAccessToken()) {
     return true;
   }
 
-  // Redirect to login page if not authenticated
   router.navigate(['/']);
   return false;
 };

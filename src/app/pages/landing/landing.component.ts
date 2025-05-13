@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { SignUpComponent } from '../../components/sign-up/sign-up.component';
+import {AuthDialogComponent} from "../../components/auth-dialog/auth-dialog.component.js";
 
 @Component({
   selector: 'app-landing',
@@ -33,7 +33,7 @@ export class LandingComponent {
   }
 
   showSignUpModal() {
-    this.dialog.open(SignUpComponent, {
+    this.dialog.open(AuthDialogComponent, {
       width: '400px'
     });
   }

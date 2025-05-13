@@ -10,7 +10,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
-import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
@@ -32,6 +31,9 @@ import { NgSelectModule } from "@ng-select/ng-select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
 import { ModalBaseComponent } from './components/modal-base/modal-base.component';
+import {LoginComponent} from "./components/login/login.component.js";
+import {RegisterComponent} from "./components/register/register.component.js";
+import {AuthDialogComponent} from "./components/auth-dialog/auth-dialog.component.js";
 
 register();
 
@@ -39,7 +41,6 @@ register();
   declarations: [
     AppComponent,
     LandingComponent,
-    SignUpComponent,
     HeaderComponent,
     FbLoginCallbackComponent,
     DashboardHeaderComponent,
@@ -58,7 +59,9 @@ register();
     ModalBaseComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
-    ModalBaseComponent
+    LoginComponent,
+    RegisterComponent,
+    AuthDialogComponent
   ],
   imports: [
     BrowserModule,

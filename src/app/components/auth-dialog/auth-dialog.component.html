@@ -1,0 +1,6 @@
+<ng-container *ngIf="formService.getFormData().isSignInMode; else register">
+  <login></login>
+</ng-container>
+<ng-template #register>
+  <register></register>
+</ng-template>

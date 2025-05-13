@@ -1,0 +1,77 @@
+import { Component } from '@angular/core';
+import { AuthService } from '../../services/api/auth.service.js';
+import { Router } from '@angular/router';
+import { SignUpFormService } from '../../services/api/signup-form.service.js';
+import { MatDialogRef } from '@angular/material/dialog';
+import {HttpErrorResponse} from "@angular/common/http";
+
+@Component({
+  selector: 'login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
+})
+export class LoginComponent {
+  email = '';
+  password = '';
+  emailError = '';
+  passwordError = '';
+  formError = '';
+  showPassword = false;
+  submitted = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    public dialogRef: MatDialogRef<LoginComponent>,
+    public formService: SignUpFormService
+  ) {
+    const saved = this.formService.getFormData();
+    this.email = saved.email;
+    this.password = saved.password;
+  }
+
+  toggleMode() {
+    this.formService.saveFormData({
+      email: this.email,
+      password: this.password,
+      isSignInMode: false
+    });
+  }
+
+  async onSubmit() {
+    this.submitted = true;
+    if (!this.validateEmail() || !this.validatePassword()) {
+      return
+    }
+
+    try {
+      const res = await this.authService.login(this.email, this.password);
+      this.authService.setToken(res.accessToken);
+      this.formService.clearFormData();
+      this.dialogRef.close();
+      this.router.navigate(['/dashboard']);
+    } catch (err) {
+      if (err instanceof HttpErrorResponse && err.status === 400) {
+        this.formError = "Wrong credentials";
+      }
+    }
+  }
+
+  validateEmail(): boolean {
+    if (!this.email) {
+      this.emailError = 'Email is required';
+      return false;
+    }
+    this.emailError = '';
+    return true;
+  }
+
+  validatePassword(): boolean {
+    if (!this.password) {
+      this.passwordError = 'Password is required';
+      return false;
+    }
+    this.passwordError = '';
+    return true;
+  }
+}

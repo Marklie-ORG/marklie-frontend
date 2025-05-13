@@ -1,0 +1,48 @@
+<div class="dialog-wrapper">
+  <form class="form-container" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <h2 class="text-center mb-3">Sign in</h2>
+
+    <div class="input-group" [class.has-error]="submitted && emailError">
+      <input
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder="✉️ Enter your work email"
+        required
+        [class.show-errors]="submitted"
+      />
+      <div class="error-message" *ngIf="submitted && emailError">
+        {{ emailError }}
+      </div>
+    </div>
+
+    <div class="input-group password-wrapper">
+      <input
+        [type]="showPassword ? 'text' : 'password'"
+        [(ngModel)]="password"
+        name="password"
+        placeholder="🔒 Enter password"
+        class="show-errors"
+        required
+      />
+      <span class="toggle-password" (click)="showPassword = !showPassword">
+    {{ showPassword ? '🙈' : '👁️' }}
+  </span>
+    </div>
+    <div class="error-message" *ngIf="submitted && passwordError">
+      {{ passwordError }}
+    </div>
+
+    <div class="form-error" *ngIf="formError">
+      {{ formError }}
+    </div>
+
+    <button type="submit">Sign in</button>
+
+    <div class="forgot-password">Forgot password?</div>
+
+    <div class="toggle-mode" (click)="toggleMode()">
+      Don't have an account? Sign up
+    </div>
+  </form>
+</div>

@@ -10,7 +10,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
-import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from './components/header/header.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
@@ -40,7 +39,6 @@ register();
   declarations: [
     AppComponent,
     LandingComponent,
-    SignUpComponent,
     HeaderComponent,
     FbLoginCallbackComponent,
     DashboardHeaderComponent,
@@ -60,6 +58,7 @@ register();
     ClientSettingsComponent,
     ReportComponent,
     PdfReportComponent
+
   ],
   imports: [
     BrowserModule,

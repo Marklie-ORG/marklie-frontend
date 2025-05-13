@@ -5,12 +5,13 @@ import { LandingComponent } from './pages/landing/landing.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientComponent } from './pages/client/client.component';
-import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
 import { MockReportComponent } from "./pages/mock-report/mock-report.component.js";
+import {ReportComponent} from "./pages/report/report.component.js";
+import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 
 const routes: Routes = [
   {
@@ -38,10 +39,6 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'report-example',
-    component: EditReportComponent
-  },
-  {
     path: 'onboarding',
     component: OnboardingComponent,
     canActivate: [authGuard]
@@ -55,7 +52,16 @@ const routes: Routes = [
     component: TermsOfServiceComponent
   },
   { path: 'reports/:clientUuid',
-    component: MockReportComponent }
+    component: MockReportComponent,
+    canActivate: [authGuard]
+
+  },
+  { path: 'view-report/:uuid',
+    component: ReportComponent
+  },
+  { path: 'pdf-report/:uuid',
+    component: PdfReportComponent
+  },
 ];
 
 @NgModule({

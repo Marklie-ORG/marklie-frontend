@@ -3,7 +3,7 @@ name: Deploy Marklie
 on:
   push:
     branches:
-      - dev
+      - feature/loom
 
 jobs:
   build-and-deploy:
@@ -23,7 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: npm install 
+      run: npm install --legacy-peer-deps
 
     - name: Build project
       run: npm run build

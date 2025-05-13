@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { LoomService } from 'src/app/services/loom.service.js';
 
 interface KpiItem {
   id: string;
@@ -162,7 +163,8 @@ export class EditReportComponent implements OnInit, OnDestroy {
   constructor(
     private reportService: ReportService,
     private ref: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private loomService: LoomService
   ) {
     this.loadKpiSettings();
   }

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { SignUpComponent } from '../../components/sign-up/sign-up.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../services/api/auth.service.js';
 import { Router } from '@angular/router';
+import {AuthDialogComponent} from "../auth-dialog/auth-dialog.component.js";
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -18,7 +18,7 @@ export class HeaderComponent {
   ) {}
 
   showSignUpModal() {
-    this.dialog.open(SignUpComponent, {
+    this.dialog.open(AuthDialogComponent, {
       width: '400px'
     });
   }

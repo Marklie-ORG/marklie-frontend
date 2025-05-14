@@ -20,7 +20,8 @@ export class AppComponent {
 
         this.showDashboardHeader = 
           event.url === '/dashboard' || 
-          event.url.startsWith('/client/');
+          event.url.startsWith('/client/') ||
+          event.url === '/profile';
       }
     });
   }

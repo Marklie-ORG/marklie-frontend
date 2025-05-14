@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '@env/environment.js';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthResponse {
   accessToken: string;
@@ -54,6 +55,15 @@ export class AuthService {
     );
   }
 
+  async refreshAndReplaceToken() {
+    return new Promise(async (resolve, reject) => {
+      const response = await firstValueFrom(this.refreshToken());
+      console.log(response)
+      this.setToken(response.accessToken);
+      resolve(response);
+    });
+  }
+
   setToken(accessToken: string) {
     localStorage.setItem('accessToken', accessToken);
   }
@@ -100,6 +110,12 @@ export class AuthService {
     });
 
     return result;
+  }
+
+  getDecodedAccessTokenInfo(): any {
+    const access_token = this.getAccessToken() || '';
+    const decodedToken = jwtDecode(access_token);
+    return (decodedToken as any);
   }
 
 }

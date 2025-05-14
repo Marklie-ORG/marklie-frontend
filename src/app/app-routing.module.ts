@@ -12,6 +12,8 @@ import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-
 import { MockReportComponent } from "./pages/mock-report/mock-report.component.js";
 import {ReportComponent} from "./pages/report/report.component.js";
 import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
+import { ProfileComponent } from './pages/profile/profile.component';
+import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
 
 const routes: Routes = [
   {
@@ -62,6 +64,14 @@ const routes: Routes = [
   { path: 'pdf-report/:uuid',
     component: PdfReportComponent
   },
+  { 
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [authGuard]
+  },
+  { path: 'verify-email-change',
+    component: VerifyEmailChangeComponent
+  }
 ];
 
 @NgModule({

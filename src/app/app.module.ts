@@ -32,6 +32,11 @@ import { ClientSettingsComponent } from './components/client-settings/client-set
 import { ModalBaseComponent } from './components/modal-base/modal-base.component';
 import {ReportComponent} from "./pages/report/report.component.js";
 import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
+import {LoginComponent} from "./components/login/login.component.js";
+import {RegisterComponent} from "./components/register/register.component.js";
+import {AuthDialogComponent} from "./components/auth-dialog/auth-dialog.component.js";
+import { ProfileComponent } from './pages/profile/profile.component';
+import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
 
 register();
 
@@ -57,7 +62,12 @@ register();
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
     ReportComponent,
-    PdfReportComponent
+    PdfReportComponent,
+    LoginComponent,
+    RegisterComponent,
+    AuthDialogComponent,
+    ProfileComponent,
+    VerifyEmailChangeComponent
 
   ],
   imports: [

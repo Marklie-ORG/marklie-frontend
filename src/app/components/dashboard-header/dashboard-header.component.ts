@@ -17,9 +17,7 @@ export class DashboardHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const access_token = this.authService.getAccessToken() || '';
-    const decodedToken = jwtDecode(access_token);
-    this.email = (decodedToken as any).email || '';
+    this.email = this.authService.getDecodedAccessTokenInfo().email || '';
   }
 
   toggleMobileMenu() {

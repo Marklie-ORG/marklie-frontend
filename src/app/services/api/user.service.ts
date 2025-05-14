@@ -35,4 +35,20 @@ export class UserService {
     );
   }
 
+  async changeEmail(email: string, password: string) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/send-change-email-email`, { email, password }, { observe: 'response' })
+    );
+  }
+
+  async verifyEmailChange(token: string) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/verify-email-change`, { token }, { observe: 'response' })
+    );
+  }
+
 }

@@ -11,9 +11,16 @@ import { UserService } from 'src/app/services/api/user.service';
 })
 export class ProfileComponent {
   email: string = '';
-  password: string = ''
+  changeEmailPassword: string = ''
   newPassword: string = ''
   newPasswordRepeated: string = ''
+  changePasswordPassword: string = ''
+  
+  // Password visibility toggles
+  showChangeEmailPassword = false;
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmNewPassword = false;
 
   constructor(
     private authService: AuthService,
@@ -30,13 +37,13 @@ export class ProfileComponent {
   }
 
   async changeEmail() {
-    if (!this.password) {
+    if (!this.changeEmailPassword) {
       alert('Please enter a password');
       return;
     }
 
     try {
-      const response = await this.userService.changeEmail(this.email, this.password);
+      const response = await this.userService.changeEmail(this.email, this.changeEmailPassword);
       if (response.status === 200) {
         // await this.authService.refreshAndReplaceToken();
         // this.getEmail();
@@ -52,7 +59,7 @@ export class ProfileComponent {
   }
 
   changePassword() {
-    if (!this.password) {
+    if (!this.changeEmailPassword) {
       alert('Please enter a password');
       return;
     }

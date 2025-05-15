@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/api/auth.service';
 import {FormsModule} from '@angular/forms'
 import { UserService } from 'src/app/services/api/user.service';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-profile',
@@ -21,6 +22,10 @@ export class ProfileComponent {
   showCurrentPassword = false;
   showNewPassword = false;
   showConfirmNewPassword = false;
+
+  // Font Awesome icons
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
 
   constructor(
     private authService: AuthService,
@@ -58,15 +63,32 @@ export class ProfileComponent {
     }
   }
 
-  changePassword() {
-    if (!this.changeEmailPassword) {
+  async changePassword() {
+    if (!this.changePasswordPassword) {
       alert('Please enter a password');
       return;
     }
 
     if (this.newPassword !== this.newPasswordRepeated) {
-    
+      alert('New password and new password repeated do not match');
+      return;
     }
+
+    try {
+      const response = await this.userService.changePassword(this.changePasswordPassword, this.newPassword);
+      if (response.status === 200) {
+        alert('Password changed successfully');
+        this.changePasswordPassword = '';
+        this.newPassword = '';
+        this.newPasswordRepeated = '';
+      } else {
+        alert('Failed to change password');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Failed to change password');
+    }
+
   }
 
 }

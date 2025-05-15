@@ -51,4 +51,12 @@ export class UserService {
     );
   }
 
+  async changePassword(password: string, newPassword: string) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/change-password`, { password, newPassword }, { observe: 'response' })
+    );
+  }
+
 }

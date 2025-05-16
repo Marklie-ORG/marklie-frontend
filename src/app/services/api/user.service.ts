@@ -59,4 +59,20 @@ export class UserService {
     );
   }
 
+  async sendPasswordRecoveryEmail(email: string) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/send-password-recovery-email`, { email }, { observe: 'response' })
+    );
+  }
+
+  async verifyPasswordRecovery(token: string, newPassword: string) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/verify-password-recovery`, { token, newPassword }, { observe: 'response' })
+    );
+  }
+
 }

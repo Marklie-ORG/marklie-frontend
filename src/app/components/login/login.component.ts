@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/api/auth.service.js';
 import { Router } from '@angular/router';
-import { SignUpFormService } from '../../services/api/signup-form.service.js';
+import { AuthFormService } from '../../services/auth-form.service.js';
 import { MatDialogRef } from '@angular/material/dialog';
 import {HttpErrorResponse} from "@angular/common/http";
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { isEmail } from 'validator';
 
 @Component({
   selector: 'login',
@@ -28,24 +29,38 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router,
     public dialogRef: MatDialogRef<LoginComponent>,
-    public formService: SignUpFormService
+    public formService: AuthFormService
   ) {
     const saved = this.formService.getFormData();
     this.email = saved.email;
     this.password = saved.password;
   }
 
-  toggleMode() {
+  toggleForgotPasswordMode() {
     this.formService.saveFormData({
       email: this.email,
       password: this.password,
-      isSignInMode: false
+      isSignInMode: false,
+      isSignUpMode: false,
+      isForgotPasswordMode: true
+    });
+  }
+
+  toggleSignUpMode() {
+    this.formService.saveFormData({
+      email: this.email,
+      password: this.password,
+      isSignInMode: false,
+      isSignUpMode: true,
+      isForgotPasswordMode: false
     });
   }
 
   async onSubmit() {
     this.submitted = true;
-    if (!this.validateEmail() || !this.validatePassword()) {
+    const passwordValidated = this.validatePassword();
+    const emailValidated = this.validateEmail();
+    if (!emailValidated || !passwordValidated) {
       return
     }
 
@@ -67,6 +82,10 @@ export class LoginComponent {
       this.emailError = 'Email is required';
       return false;
     }
+    if (!isEmail(this.email)) {
+      this.emailError = 'Enter valid email address';
+      return false;
+    }
     this.emailError = '';
     return true;
   }
@@ -74,6 +93,10 @@ export class LoginComponent {
   validatePassword(): boolean {
     if (!this.password) {
       this.passwordError = 'Password is required';
+      return false;
+    }
+    if (this.password.length < 8) {
+      this.passwordError = 'Password must be at least 8 characters long';
       return false;
     }
     this.passwordError = '';

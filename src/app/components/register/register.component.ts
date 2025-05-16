@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SignUpFormService } from '../../services/api/signup-form.service.js';
 import { MatDialogRef } from '@angular/material/dialog';
 import {HttpErrorResponse} from "@angular/common/http";
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'register',
@@ -18,6 +19,10 @@ export class RegisterComponent {
   formError = '';
   showPassword = false;
   submitted = false;
+
+  // Font Awesome icons
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
 
   constructor(
     private authService: AuthService,

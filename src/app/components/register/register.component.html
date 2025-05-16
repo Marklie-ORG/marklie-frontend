@@ -28,7 +28,7 @@
         (input)="validatePassword()"
       />
       <div class="toggle-password" (click)="showPassword = !showPassword">
-        {{ showPassword ? '🙈' : '👁️' }}
+        <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
       </div>
       <div class="error-message" *ngIf="submitted && passwordError">{{ passwordError }}</div>
     </div>

@@ -16,7 +16,7 @@
                     <div class="password-wrapper">
                         <input id="changeEmailPassword" [type]="showChangeEmailPassword ? 'text' : 'password'" class="text" [(ngModel)]="changeEmailPassword" placeholder="•••••••••••">
                         <span class="toggle-password" (click)="showChangeEmailPassword = !showChangeEmailPassword">
-                            {{ showChangeEmailPassword ? '🙈' : '👁️' }}
+                            <fa-icon [icon]="showChangeEmailPassword ? faEyeSlash : faEye"></fa-icon>
                         </span>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                     <div class="password-wrapper">
                         <input id="currentPassword" [type]="showCurrentPassword ? 'text' : 'password'" class="text" [(ngModel)]="changePasswordPassword" placeholder="•••••••••••">
                         <span class="toggle-password" (click)="showCurrentPassword = !showCurrentPassword">
-                            {{ showCurrentPassword ? '🙈' : '👁️' }}
+                            <fa-icon [icon]="showCurrentPassword ? faEyeSlash : faEye"></fa-icon>
                         </span>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                     <div class="password-wrapper">
                         <input id="newPassword" [type]="showNewPassword ? 'text' : 'password'" class="text" [(ngModel)]="newPassword" placeholder="•••••••••••">
                         <span class="toggle-password" (click)="showNewPassword = !showNewPassword">
-                            {{ showNewPassword ? '🙈' : '👁️' }}
+                            <fa-icon [icon]="showNewPassword ? faEyeSlash : faEye"></fa-icon>
                         </span>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="password-wrapper">
                         <input id="confirmNewPassword" [type]="showConfirmNewPassword ? 'text' : 'password'" class="text" [(ngModel)]="newPasswordRepeated" placeholder="•••••••••••">
                         <span class="toggle-password" (click)="showConfirmNewPassword = !showConfirmNewPassword">
-                            {{ showConfirmNewPassword ? '🙈' : '👁️' }}
+                            <fa-icon [icon]="showConfirmNewPassword ? faEyeSlash : faEye"></fa-icon>
                         </span>
                     </div>
                 </div>

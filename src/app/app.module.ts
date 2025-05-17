@@ -37,6 +37,8 @@ import {RegisterComponent} from "./components/register/register.component.js";
 import {AuthDialogComponent} from "./components/auth-dialog/auth-dialog.component.js";
 import { ProfileComponent } from './pages/profile/profile.component';
 import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
+import { ForgotPasswordEmailFormComponent } from './components/forgot-password-email-form/forgot-password-email-form.component';
+import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
 
 register();
 
@@ -63,11 +65,16 @@ register();
     ClientSettingsComponent,
     ReportComponent,
     PdfReportComponent,
+    
     LoginComponent,
     RegisterComponent,
     AuthDialogComponent,
+    ForgotPasswordEmailFormComponent,
+
     ProfileComponent,
-    VerifyEmailChangeComponent
+    VerifyEmailChangeComponent,
+    ForgotPasswordEmailFormComponent,
+    PasswordRecoveryComponent
 
   ],
   imports: [

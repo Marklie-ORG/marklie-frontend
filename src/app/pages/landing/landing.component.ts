@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import {AuthDialogComponent} from "../../components/auth-dialog/auth-dialog.component.js";
 
@@ -12,8 +12,17 @@ export class LandingComponent {
 
   constructor(
     private router: Router,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+    private route: ActivatedRoute
+  ) {
+    
+    this.route.queryParams.subscribe(params => {
+      if (params['showLogin']) {
+        this.showSignUpModal();
+      }
+    });
+
+  }
 
   headline: string = 'Set up automated Facebook reports.<br>Save time, increase client retention.';
   // headline: string = 'Communicate With Clients Proactively.<br>Boost Retention With Automated Reports';
@@ -26,20 +35,18 @@ export class LandingComponent {
 
   ngOnInit() {
     // Check if user is already logged in
-    const userName = localStorage.getItem('userName');
-    if (userName) {
-      this.router.navigate(['/home']);
-    }
+    // const userName = localStorage.getItem('userName');
+    // if (userName) {
+    //   this.router.navigate(['/home']);
+    // }
+
+    
   }
 
   showSignUpModal() {
     this.dialog.open(AuthDialogComponent, {
       width: '400px'
     });
-  }
-
-  onLogin() {
-    this.router.navigate(['/dashboard']);
   }
 
 }

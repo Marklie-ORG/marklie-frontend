@@ -14,6 +14,7 @@ import {ReportComponent} from "./pages/report/report.component.js";
 import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 import { ProfileComponent } from './pages/profile/profile.component';
 import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
+import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
 
 const routes: Routes = [
   {
@@ -71,6 +72,9 @@ const routes: Routes = [
   },
   { path: 'verify-email-change',
     component: VerifyEmailChangeComponent
+  },
+  { path: 'password-recovery',
+    component: PasswordRecoveryComponent
   }
 ];
 

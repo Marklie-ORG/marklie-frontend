@@ -58,20 +58,20 @@ const routes: Routes = [
     canActivate: [authGuard]
 
   },
-  { path: 'view-report/:uuid',
-    component: ReportComponent
-  },
-  { path: 'pdf-report/:uuid',
-    component: PdfReportComponent
-  },
-  { 
+  {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [authGuard]
   },
   { path: 'verify-email-change',
     component: VerifyEmailChangeComponent
-  }
+  },
+  { path: 'view-report/:uuid',
+    component: ReportComponent
+  },
+  { path: 'pdf-report/:uuid',
+    component: PdfReportComponent
+  },
 ];
 
 @NgModule({

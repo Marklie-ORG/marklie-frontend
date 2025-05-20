@@ -213,7 +213,7 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     const payload = {
       ...(this.schedule),
       metrics,
-      dataPreset: this.selectedDatePresetText,
+      datePreset: this.selectedDatePresetText,
       clientUuid: this.clientUuid,
     };
 

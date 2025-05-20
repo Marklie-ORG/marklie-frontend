@@ -205,3 +205,38 @@
   color: var(--text-color);
   font-size: 0.95rem;
 }
+
+.connect-facebook {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('../../../assets/img/dashboard_no_fb_background.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  // background-size: cover;
+}
+
+.table {
+  .header {
+    font-size: 13px;
+    // color: #3333339c !important;
+    font-weight: 500;
+  }
+  
+  .row, .header {
+    // box-shadow: 0 4px 6px 0 rgba(67, 46, 134, 0.04);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+  }
+
+  .row {
+    cursor: pointer;
+  }
+}
+

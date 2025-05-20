@@ -1,169 +1,221 @@
-<!-- Progress Bar -->
-<mat-progress-bar mode="determinate" [value]="progress" class="w-100 mb-5"></mat-progress-bar>
-
-<div class="container d-flex justify-center flex-column align-center">
-
-  <!-- Step 1: Name and Surname -->
-  <div class="step-container" *ngIf="currentStepIndex === 0">
-    
-    <button class="blue mb-4" (click)="previousStep()" style="opacity: 0; pointer-events: none;">⬅</button>
-    <!-- <button class="blue" [disabled]="isFirstStep" (click)="previousStep()">Back</button> -->
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">Welcome,<br>Let’s get you set up for success!</h3>
+<div class="container d-flex flex-column align-center justify-center gap-5" 
+style="height: 100vh; width: 100%;"
+*ngIf="!isOwner && !isEmployee">
+  <h1>Which option best describes you?</h1>
+  <div class="d-flex align-center justify-between gap-5">
+    <div
+    (click)="selected = 'owner'"
+    class="card p-5 d-flex flex-column align-center justify-center gap-4 cursor-pointer"
+    [class.selected]="selected === 'owner'"
+    >
+      <h4>Agency owner</h4>
+      <p class="text-center">I want to create a new account for my agency</p>
+      <div class="select d-flex align-center justify-center p-1" [class.selected]="selected === 'owner'">
+        <span *ngIf="selected === 'owner'">
+          <!-- <fa-icon icon="faCheck"></fa-icon> -->
+          <fa-icon [icon]="faCheck" class="light"></fa-icon>
+        </span>
+      </div>
     </div>
-
-    <input class="text mt-3" type="text" placeholder="Enter your name" [(ngModel)]="name">
-    <input class="text mt-3" type="text" placeholder="Enter your surname" [(ngModel)]="surname">
-
-    <button class="blue mt-3" [disabled]="!name || !surname" (click)="updateName()">Next</button>
-  </div>
-
-  <!-- Step 2: Owner or Employee -->
-  <div class="step-container" *ngIf="currentStepIndex === 1">
-    
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">Are you the owner of the agency or do you want to join the agency?</h3>
-    </div>
-
-    <div class="d-flex justify-center flex-column">
-      <button class="blue mt-3" (click)="selectUserType(true)">Agency Owner</button>
-      <button class="blue mt-3" (click)="selectUserType(false)">Want to join the agency</button>
+    <div
+    (click)="selected = 'employee'"
+    class="card p-5 d-flex flex-column align-center justify-center gap-4 cursor-pointer"
+    [class.selected]="selected === 'employee'"
+    >
+      <h4>Agency employee</h4>
+      <p class="text-center">I want to join an agency with invitation code</p>
+      <div class="select d-flex align-center justify-center p-1" [class.selected]="selected === 'employee'">
+        <span *ngIf="selected === 'employee'">
+          <fa-icon [icon]="faCheck" class="light"></fa-icon>
+        </span>
+      </div>
     </div>
   </div>
+  <button class="blue" (click)="confirmUserType()">Continue</button>
+</div>
 
-  <!-- Step 3a: Invite Code (for employees) -->
-  <div class="step-container" *ngIf="currentStepIndex === 2 && !isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">Enter your invitation code</h3>
+<div class="d-flex" style="height: 100vh; width: 100%;" *ngIf="isOwner || isEmployee">
+  <div class="sidescreen" style="width: 30%;">
+    <div class="header d-flex align-center justify-center gap-3" style="height: 10%;">
+      <img src="../../../favicon.png" alt="logo" width="35px">
+      <h2>Marklie</h2>
     </div>
-
-    <input class="text mt-3" type="text" placeholder="Enter invitation code" [(ngModel)]="inviteCode">
-    <button class="blue mt-3" (click)="useInviteCode()">Complete</button>
+    <div class="d-flex justify-end" style="height: 90%;">
+      <!-- d-flex align-center justify-center -->
+      <img src="../../../assets/img/onboarding_background.png" alt="Onborading picture">
+    </div>
   </div>
-
-  <!-- Step 3b: Agency Name (for owners) -->
-  <div class="step-container" *ngIf="currentStepIndex === 2 && isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">What's your agency name?</h3>
-    </div>
-
-    <input class="text mt-3" type="text" placeholder="Enter agency name" [(ngModel)]="agencyName">
-    <button class="blue mt-3" [disabled]="!agencyName" (click)="createOrganization()">Next</button>
-  </div>
-
-  <!-- Step 4: Clients Amount -->
-  <div class="step-container" *ngIf="currentStepIndex === 3 && isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">How many clients do you have?</h3>
-    </div>
-
-    <div class="d-flex flex-column">
-      <mat-radio-group [(ngModel)]="clientsAmount" class="d-flex flex-column">
-        <mat-radio-button *ngFor="let range of clientsRanges" [value]="range.value">
-          {{ range.label }}
-        </mat-radio-button>
-      </mat-radio-group>
-    </div>
-
-    <button class="blue mt-3" [disabled]="!clientsAmount" (click)="answerClientsAmount()">Next</button>
-  </div>
-
-  <!-- Step 5: Advertising Platforms -->
-  <div class="step-container" *ngIf="currentStepIndex === 4 && isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">Where do you advertise?</h3>
-    </div>
-
-    <div class="d-flex flex-column">
-      <mat-checkbox *ngFor="let platform of advertisingPlatforms" 
-                   [checked]="platform.selected"
-                   (change)="toggleAdvertisingPlatform(platform)">
-        {{ platform.name | titlecase }}
-      </mat-checkbox>
-      <input class="text mt-3"
-             type="text"
-             placeholder="Other platform"
-             [(ngModel)]="customAdvertisingPlatform">
-    </div>
-
-    <button class="blue mt-3" [disabled]="!getSelectedAdvertisingPlatforms().length" (click)="answerAdvertisingPlatforms()">Next</button>
-  </div>
-
-  <!-- Step 6: Communication Platforms -->
-  <div class="step-container" *ngIf="currentStepIndex === 5 && isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">How do you connect with your clients?</h3>
-    </div>
-
-    <div class="d-flex flex-column">
-      <mat-checkbox *ngFor="let platform of communicationPlatforms" 
-                   [checked]="platform.selected"
-                   (change)="toggleCommunicationPlatform(platform)">
-        {{ platform.name | titlecase }}
-      </mat-checkbox>
-      <input class="text mt-3"
-             type="text"
-             placeholder="Other platform"
-             [(ngModel)]="customCommunicationPlatform">
-    </div>
-
-    <button class="blue mt-3" [disabled]="!getSelectedCommunicationPlatforms().length" (click)="answerCommunicationPlatforms()">Next</button>
-  </div>
-
-  <!-- Step 7: How did you hear about us -->
-  <div class="step-container" *ngIf="currentStepIndex === 6 && isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">How did you hear about us?</h3>
-    </div>
-
-    <div class="d-flex flex-column">
-      <mat-radio-group [(ngModel)]="howDidYouHear">
-        <mat-radio-button value="social">Social Media</mat-radio-button>
-        <mat-radio-button value="friend">Friend/Colleague</mat-radio-button>
-        <mat-radio-button value="search">Search Engine</mat-radio-button>
-        <mat-radio-button value="other">Other</mat-radio-button>
-      </mat-radio-group>
-    </div>
-
-    <button class="blue mt-3" [disabled]="!howDidYouHear" (click)="answerHowDidYouHear()">Complete</button>
-  </div>
-
-  <!-- Step 8: Connect FB -->
-  <div class="step-container" *ngIf="currentStepIndex === 7 && isOwner">
-
-    <button class="blue mb-4" (click)="previousStep()">⬅</button>
-
-    <div class="step-header d-flex justify-center">
-      <h3 class="text-center">Connect your Facebook account</h3>
-    </div>
-
-    <div class="d-flex flex-column">
-      <button class="blue mt-3" (click)="connectFacebook()">Connect</button>
-    </div>
-
-    <!-- <button class="blue mt-3" [disabled]="!howDidYouHear" (click)="answerHowDidYouHear()">Complete</button> -->
-  </div>
-
   
+  <div class="d-flex flex-column align-center justify-center" style="height: 100vh; width: 70%;">
+    
+    <div *ngIf="isOwner" class="d-flex flex-column justify-center gap-4" style="width: 60%;">
+      
+      <div class="d-flex flex-column gap-4">
+  
+        <div class="d-flex gap-3">
+  
+          <!-- style="width: 280px;" -->
+          <div class="d-flex flex-column gap-2 width-100" >
+            <label for="firstName">First name</label>
+            <input id="firstName" type="text" class="text" [(ngModel)]="firstName" placeholder="First name">
+          </div>
+    
+          <!-- style="width: 280px;" -->
+          <div class="d-flex flex-column gap-2 width-100" >
+            <label for="lastName">Last name</label>
+            <input id="lastName" type="text" class="text" [(ngModel)]="lastName" placeholder="Last name">
+          </div>
+    
+        </div>
+    
+        <div class="d-flex flex-column gap-2 width-100">
+          <label for="agencyName">Agency name</label>
+          <input id="agencyName" type="text" class="text" [(ngModel)]="agencyName" placeholder="Agency name">
+        </div>
+  
+      </div>
+  
+      <div class="width-100 d-flex flex-column gap-2">
+        <p>How many clients do you have?</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <div 
+          *ngFor="let clientRange of clientsRanges"
+          class="option" 
+          (click)="clientsAmount = clientRange.value"
+          [class.selected]="clientsAmount === clientRange.value"
+          >{{clientRange.label}}</div>
+        </div>
+      </div>
+  
+      <div class="width-100 d-flex flex-column gap-2"
+      style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;"
+      [class.show]="clientsAmount"
+      >
+        <p>Where do you advertise?</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <div 
+          *ngFor="let advertisingPlatform of advertisingPlatforms"
+          class="option" 
+          (click)="advertisingPlatform.selected = !advertisingPlatform.selected"
+          [class.selected]="advertisingPlatform.selected"
+          >{{advertisingPlatform.name}}</div>
+  
+          <div class="option"
+          (click)="otherAdvertisingPlatformSelected = !otherAdvertisingPlatformSelected"
+          [class.selected]="otherAdvertisingPlatformSelected"
+          >Other</div>
+  
+          <div class="d-flex flex-column gap-2" 
+          style="opacity: 0; transition: opacity 0.3s ease-in-out; width: 200px;"
+          [class.show]="otherAdvertisingPlatformSelected"
+          >
+            <input id="otherAdvertisingPlatform" type="text" class="text" [(ngModel)]="otherAdvertisingPlatform" placeholder="Other">
+          </div>
+        </div>
+      </div>
+  
+      <div class="width-100 d-flex flex-column gap-2"
+      style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;"
+      [class.show]="clientsAmount && getSelectedAdvertisingPlatforms().length > 0"
+      >
+        <p>How do you communicate with your clients?</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <div 
+          *ngFor="let communicationPlatform of communicationPlatforms"
+          class="option" 
+          (click)="communicationPlatform.selected = !communicationPlatform.selected"
+          [class.selected]="communicationPlatform.selected"
+          >{{communicationPlatform.name}}</div>
+  
+          <div class="option"
+          (click)="otherCommunicationPlatformSelected = !otherCommunicationPlatformSelected"
+          [class.selected]="otherCommunicationPlatformSelected"
+          >Other</div>
+  
+          <div class="d-flex flex-column gap-2" 
+          style="opacity: 0; transition: opacity 0.3s ease-in-out; width: 200px;"
+          [class.show]="clientsAmount && getSelectedAdvertisingPlatforms().length > 0 &&otherCommunicationPlatformSelected"
+          >
+            <input id="otherCommunicationPlatform" type="text" class="text" [(ngModel)]="otherCommunicationPlatform" placeholder="Other">
+          </div>
+        </div>
+      </div>
+
+      <div class="width-100 d-flex flex-column gap-2"
+      style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;"
+      [class.show]="
+      clientsAmount && 
+      getSelectedAdvertisingPlatforms().length > 0 &&
+      getSelectedCommunicationPlatforms().length > 0"
+      >
+        <p>How did you find out about us?</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <div 
+          *ngFor="let foundOutOption of foundOuts"
+          class="option" 
+          (click)="toggleFoundOut(foundOutOption)"
+          [class.selected]="foundOut === foundOutOption && !otherFoundOutSelected"
+          >{{foundOutOption}}</div>
+
+          <div class="option"
+          (click)="otherFoundOutSelected = true"
+          [class.selected]="otherFoundOutSelected"
+          >Other</div>
+
+          <div class="d-flex flex-column gap-2" 
+          style="opacity: 0; transition: opacity 0.3s ease-in-out; width: 200px;"
+          [class.show]="otherFoundOutSelected"
+          >
+            <input id="otherFoundOut" type="text" class="text" [(ngModel)]="otherFoundOut" placeholder="Other">
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-between">
+        <button class="subtle" (click)="this.isOwner = false">Go back</button>
+        <button class="blue" (click)="finishOwnerOnboarding()"
+        style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;"
+        [class.show]="clientsAmount && 
+        getSelectedAdvertisingPlatforms().length > 0 &&
+        getSelectedCommunicationPlatforms().length > 0 &&
+        getFoundOut()"
+        >Continue</button>
+      </div>
+    
+    </div>
+  
+    <div class="d-flex flex-column align-center justify-center gap-4" *ngIf="isEmployee">
+      <h1>Welcome!</h1>
+      <div class="d-flex gap-3">
+  
+        <!-- style="width: 280px;" -->
+        <div class="d-flex flex-column gap-2" >
+          <label for="firstName">First name</label>
+          <input id="firstName" type="text" class="text" [(ngModel)]="firstName" placeholder="First name">
+        </div>
+  
+        <!-- style="width: 280px;" -->
+        <div class="d-flex flex-column gap-2" >
+          <label for="lastName">Last name</label>
+          <input id="lastName" type="text" class="text" [(ngModel)]="lastName" placeholder="Last name">
+        </div>
+  
+      </div>
+      <!-- style="width: 280px;" -->
+      <div class="d-flex flex-column gap-2 width-100">
+        <label for="inviteCode">Invitation code</label>
+        <input id="inviteCode" type="text" class="text" [(ngModel)]="inviteCode" placeholder="Invitation code">
+      </div>
+
+      <div class="d-flex justify-between width-100">
+        <button class="subtle" (click)="this.isEmployee = false">Go back</button>
+        <button class="blue" (click)="finishEmployeeOnboarding()"
+        style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out;"
+        [class.show]="firstName && lastName && inviteCode"
+        >Let's start</button>
+      </div>
+      
+    </div>
+
+  </div>
 </div>

@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/api/auth.service.js';
 import { Router } from '@angular/router';
-import { SignUpFormService } from '../../services/api/signup-form.service.js';
+import { AuthFormService } from '../../services/auth-form.service.js';
 import { MatDialogRef } from '@angular/material/dialog';
 import {HttpErrorResponse} from "@angular/common/http";
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { isEmail } from 'validator';
 
 @Component({
   selector: 'register',
@@ -19,28 +21,36 @@ export class RegisterComponent {
   showPassword = false;
   submitted = false;
 
+  // Font Awesome icons
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
+
   constructor(
     private authService: AuthService,
     private router: Router,
     public dialogRef: MatDialogRef<RegisterComponent>,
-    public formService: SignUpFormService
+    public formService: AuthFormService
   ) {
     const saved = this.formService.getFormData();
     this.email = saved.email;
     this.password = saved.password;
   }
 
-  toggleMode() {
+  toggleSignInMode() {
     this.formService.saveFormData({
       email: this.email,
       password: this.password,
-      isSignInMode: true
+      isSignInMode: true,
+      isSignUpMode: false,
+      isForgotPasswordMode: false
     });
   }
 
   async onSubmit() {
     this.submitted = true;
-    if (!this.validateEmail() || !this.validatePassword()) {
+    const passwordValidated = this.validatePassword();
+    const emailValidated = this.validateEmail();
+    if (!emailValidated || !passwordValidated) {
       return
     }
     try {
@@ -61,6 +71,10 @@ export class RegisterComponent {
       this.emailError = 'Email is required';
       return false;
     }
+    if (!isEmail(this.email)) {
+      this.emailError = 'Enter valid email address';
+      return false;
+    }
     this.emailError = '';
     return true;
   }
@@ -68,6 +82,10 @@ export class RegisterComponent {
   validatePassword(): boolean {
     if (!this.password) {
       this.passwordError = 'Password is required';
+      return false;
+    }
+    if (this.password.length < 8) {
+      this.passwordError = 'Password must be at least 8 characters long';
       return false;
     }
     this.passwordError = '';

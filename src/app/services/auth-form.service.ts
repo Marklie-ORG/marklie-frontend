@@ -4,16 +4,20 @@ interface SignUpFormData {
   email: string;
   password: string;
   isSignInMode: boolean;
+  isSignUpMode: boolean;
+  isForgotPasswordMode: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class SignUpFormService {
+export class AuthFormService {
   private formData: SignUpFormData = {
     email: '',
     password: '',
-    isSignInMode: false
+    isSignInMode: false,
+    isSignUpMode: true,
+    isForgotPasswordMode: false
   };
 
   saveFormData(data: SignUpFormData) {
@@ -28,7 +32,9 @@ export class SignUpFormService {
     this.formData = {
       email: '',
       password: '',
-      isSignInMode: false
+      isSignInMode: false,
+      isSignUpMode: true,
+      isForgotPasswordMode: false
     };
   }
 } 

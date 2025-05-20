@@ -1,6 +1,27 @@
-<ng-container *ngIf="formService.getFormData().isSignInMode; else register">
-  <login></login>
-</ng-container>
-<ng-template #register>
-  <register></register>
-</ng-template>
+<div class="p-5 pos-relative" style="min-height: 320px;">
+
+  <div 
+      class="d-flex align-center justify-center cursor-pointer"
+      style="
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+      "
+      (click)="dialogRef.close()">
+      ✕
+  </div>
+
+  <ng-container *ngIf="formService.getFormData().isSignInMode">
+    <login></login>
+  </ng-container>
+  <ng-container *ngIf="formService.getFormData().isSignUpMode">
+    <register></register>
+  </ng-container>
+  <ng-container *ngIf="formService.getFormData().isForgotPasswordMode">
+    <forgot-password-email-form></forgot-password-email-form>
+  </ng-container>
+
+</div>
+

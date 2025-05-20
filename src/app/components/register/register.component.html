@@ -1,5 +1,5 @@
 <div class="dialog-wrapper">
-  <form class="form-container" (ngSubmit)="onSubmit()" #registerForm="ngForm">
+  <form class="form-container d-flex flex-column align-center justify-center gap-3" (ngSubmit)="onSubmit()" #registerForm="ngForm">
     <h2>Sign up for FREE</h2>
 
     <div class="input-group" [class.has-error]="submitted && emailError">
@@ -9,9 +9,9 @@
         name="email"
         [(ngModel)]="email"
         placeholder="✉️ Enter your work email"
-        class="text-input show-errors"
+        class="text"
         required
-        (input)="validateEmail()"
+        [class.show-errors]="submitted"
       />
       <div class="error-message" *ngIf="submitted && emailError">{{ emailError }}</div>
     </div>
@@ -23,18 +23,18 @@
         name="password"
         [(ngModel)]="password"
         placeholder="🔒 Enter password"
-        class="text-input show-errors"
+        class="text"
         required
-        (input)="validatePassword()"
+        [class.show-errors]="submitted"
       />
       <div class="toggle-password" (click)="showPassword = !showPassword">
-        {{ showPassword ? '🙈' : '👁️' }}
+        <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
       </div>
       <div class="error-message" *ngIf="submitted && passwordError">{{ passwordError }}</div>
     </div>
 
-    <button type="submit">Sign up</button>
+    <button type="submit" class="blue">Sign up</button>
 
-    <div class="toggle-mode" (click)="toggleMode()">Already have an account? Sign in</div>
+    <div class="cursor-pointer" (click)="toggleSignInMode()">Already have an account? Sign in</div>
   </form>
 </div>

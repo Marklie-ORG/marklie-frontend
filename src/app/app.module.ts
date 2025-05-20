@@ -37,6 +37,12 @@ import {RegisterComponent} from "./components/register/register.component.js";
 import {AuthDialogComponent} from "./components/auth-dialog/auth-dialog.component.js";
 import { ProfileComponent } from './pages/profile/profile.component';
 import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
+import { ForgotPasswordEmailFormComponent } from './components/forgot-password-email-form/forgot-password-email-form.component';
+import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
+
+import { OnboardingComponent } from './pages/onboarding/onboarding.component';
+import { NotificationComponent } from './components/notification/notification.component';
+// import { library } from '@fortawesome/fontawesome-svg-core';
 
 register();
 
@@ -63,11 +69,19 @@ register();
     ClientSettingsComponent,
     ReportComponent,
     PdfReportComponent,
+    OnboardingComponent,
+    
     LoginComponent,
     RegisterComponent,
     AuthDialogComponent,
+    ForgotPasswordEmailFormComponent,
+    
+
     ProfileComponent,
-    VerifyEmailChangeComponent
+    VerifyEmailChangeComponent,
+    ForgotPasswordEmailFormComponent,
+    PasswordRecoveryComponent,
+    NotificationComponent
 
   ],
   imports: [
@@ -92,4 +106,4 @@ register();
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule { }
+export class AppModule {}

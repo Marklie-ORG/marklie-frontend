@@ -40,6 +40,10 @@ import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-e
 import { ForgotPasswordEmailFormComponent } from './components/forgot-password-email-form/forgot-password-email-form.component';
 import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
 
+import { OnboardingComponent } from './pages/onboarding/onboarding.component';
+import { NotificationComponent } from './components/notification/notification.component';
+// import { library } from '@fortawesome/fontawesome-svg-core';
+
 register();
 
 @NgModule({
@@ -65,16 +69,19 @@ register();
     ClientSettingsComponent,
     ReportComponent,
     PdfReportComponent,
+    OnboardingComponent,
     
     LoginComponent,
     RegisterComponent,
     AuthDialogComponent,
     ForgotPasswordEmailFormComponent,
+    
 
     ProfileComponent,
     VerifyEmailChangeComponent,
     ForgotPasswordEmailFormComponent,
-    PasswordRecoveryComponent
+    PasswordRecoveryComponent,
+    NotificationComponent
 
   ],
   imports: [
@@ -99,4 +106,4 @@ register();
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class AppModule { }
+export class AppModule {}

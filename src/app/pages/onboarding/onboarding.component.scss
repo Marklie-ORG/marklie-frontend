@@ -1,3 +1,5 @@
+@import '../../../styles.scss';
+
 .step-container {
   max-width: 600px;
   width: 420px;
@@ -17,3 +19,61 @@
   --mdc-linear-progress-active-indicator-height: 15px;
 }
 
+.card {
+  width: 42%;
+  height: 160px;
+
+  @extend .block;
+
+  &.selected {
+    border: 1px solid #1E8DED;
+  }
+}
+
+.select {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: var(--block-border);
+
+  // fa-icon {
+  // }
+
+  path {
+    color: #fff !important;
+  }
+
+  &.selected {
+    background-color: #1E8DED;
+  }
+
+}
+
+.option {
+  padding: 10px 20px;
+  background: #EAEFF6;
+  min-width: 50px;
+  display: flex;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+
+    &.selected {
+      // border: 1px solid black;
+      // background-color: #d4d5d7;
+      // box-shadow: inset 0 0 0 1px rgb(79 79 79 / 50%);
+      box-shadow: inset 0 0 0 1.5px #1F8DED;
+      transition: box-shadow 0.15s ease-in-out;
+    }
+}
+
+.show {
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
+
+.sidescreen {
+  background-color: #F5F7FB;
+}

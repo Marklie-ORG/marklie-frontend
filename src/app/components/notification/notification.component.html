@@ -1,0 +1,22 @@
+<div *ngIf="notification" 
+class="notification p-4" 
+[ngClass]="'notification--' + notification.type"
+>
+    <div class="notification__content">
+        <p class="notification__message">{{ notification.message }}</p>
+        <!-- <button class="notification__close" (click)="close()">×</button> -->
+        <div 
+            class="d-flex align-center justify-center cursor-pointer"
+            style="
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 24px;
+            height: 24px;
+            "
+            (click)="close()">
+            ✕
+        </div>
+    </div>
+</div>
+

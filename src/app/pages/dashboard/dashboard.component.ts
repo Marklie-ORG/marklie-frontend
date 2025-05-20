@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { OnboardingService } from "../../services/api/onboarding.service.js";
 import { ClientService } from "../../services/api/client.service.js";
 import { FacebookLoginService } from "../../services/api/facebook-login.service.js";
 import { Client } from 'src/app/services/api/client.service.js';
+import { User, UserService } from 'src/app/services/api/user.service.js';
 
 interface Activity {
   id: string;
@@ -21,8 +22,10 @@ interface Activity {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
-  isFbLoggedIn = true;
+export class DashboardComponent implements OnInit, OnDestroy {
+  isFacebookConnected = true;
+  randomNumber = this.getRandomNumber(1, 3);
+
   clients: Client[] = [];
   activities: Activity[] = [
     {
@@ -61,17 +64,41 @@ export class DashboardComponent implements OnInit {
     private clientService: ClientService,
     private dialog: MatDialog,
     private facebookLoginService: FacebookLoginService,
-
+    private userService: UserService
   ) {}
 
   async ngOnInit() {
-    const onboardingSteps = await this.onboardingService.getOnboardingSteps();
+    let user: User;
+
+    try {
+      user = await this.userService.me();
+    } catch (error) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    if (!user.activeOrganization) {
+      this.router.navigate(['/onboarding']);
+    }
 
     await this.getClients();
+
+    const onboardingSteps = await this.onboardingService.getOnboardingSteps();
+
+    if (!onboardingSteps.facebookConnected) {
+      this.isFacebookConnected = false;
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
 
     // if (!onboardingSteps.organizationCreated) {
     //   this.router.navigate(['/onboarding']);
     // }
+  }
+
+  ngOnDestroy() {
+    document.body.classList.remove('no-scroll');
   }
 
   async getClients() {
@@ -96,8 +123,6 @@ export class DashboardComponent implements OnInit {
     this.facebookLoginService.connectFacebook();
   }
 
-
-
   viewReport(clientId: string) {
     this.router.navigate(['/client', clientId]);
     // this.router.navigate(['/report'], { queryParams: { clientId } });
@@ -112,4 +137,8 @@ export class DashboardComponent implements OnInit {
       minute: '2-digit'
     });
   }
+
+getRandomNumber(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 }

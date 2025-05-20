@@ -215,6 +215,7 @@ export class MockReportComponent implements OnInit, AfterViewInit {
       metrics,
       datePreset: this.selectedDatePresetText,
       clientUuid: this.clientUuid,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     };
 
     try {

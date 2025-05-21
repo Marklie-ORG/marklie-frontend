@@ -1,0 +1,15 @@
+<div class="d-flex flex-column align-center justify-center width-100" style="height: 100vh;">
+<!-- style="min-height: 100vh;" -->
+    <div style="min-height: 380px;">
+        <ng-container *ngIf="formService.getFormData().isSignInMode">
+            <login></login>
+        </ng-container>
+        <ng-container *ngIf="formService.getFormData().isSignUpMode">
+            <register></register>
+        </ng-container>
+        <ng-container *ngIf="formService.getFormData().isForgotPasswordMode">
+            <forgot-password-email-form></forgot-password-email-form>
+        </ng-container>
+    </div>
+    
+</div>

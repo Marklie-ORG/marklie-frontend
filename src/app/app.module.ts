@@ -42,6 +42,7 @@ import { PasswordRecoveryComponent } from './pages/password-recovery/password-re
 
 import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { NotificationComponent } from './components/notification/notification.component';
+import { AuthComponent } from './pages/auth/auth.component';
 // import { library } from '@fortawesome/fontawesome-svg-core';
 
 register();
@@ -81,7 +82,8 @@ register();
     VerifyEmailChangeComponent,
     ForgotPasswordEmailFormComponent,
     PasswordRecoveryComponent,
-    NotificationComponent
+    NotificationComponent,
+    AuthComponent
 
   ],
   imports: [

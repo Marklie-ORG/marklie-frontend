@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../services/api/auth.service.js';
-import { Router } from '@angular/router';
 import { AuthFormService } from '../../services/auth-form.service.js';
-import { MatDialogRef } from '@angular/material/dialog';
+// import { MatDialogRef } from '@angular/material/dialog';
 import {HttpErrorResponse} from "@angular/common/http";
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { UserService } from 'src/app/services/api/user.service.js';
@@ -25,9 +23,7 @@ export class ForgotPasswordEmailFormComponent {
   isLinkSent = false;
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
-    public dialogRef: MatDialogRef<ForgotPasswordEmailFormComponent>,
+    // public dialogRef: MatDialogRef<ForgotPasswordEmailFormComponent>,
     public formService: AuthFormService,
     private userService: UserService
   ) {

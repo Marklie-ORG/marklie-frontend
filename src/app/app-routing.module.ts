@@ -15,11 +15,15 @@ import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 import { ProfileComponent } from './pages/profile/profile.component';
 import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
 import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
-
+import { AuthComponent } from './pages/auth/auth.component';
 const routes: Routes = [
   {
     path: '',
     component: LandingComponent
+  },
+  {
+    path: 'auth',
+    component: AuthComponent
   },
   {
     path: 'fb-login-callback',

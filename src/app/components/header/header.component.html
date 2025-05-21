@@ -10,9 +10,12 @@
         <nav>
             <a href="#" class="opacity-65">Features</a>
             <a href="#" class="opacity-65">Pricing</a>
-            <a (click)="showSignUpModal()" *ngIf="!isSignedIn">
+            <!-- <a class="opacity-65" routerLink="/auth" *ngIf="!isSignedIn">
+                Sign in
+            </a> -->
+            <a routerLink="/auth" *ngIf="!isSignedIn">
                 <button class="blue">
-                    Sign Up
+                    Get started
                 </button>
             </a>
             <a (click)="goToDashboard()" *ngIf="isSignedIn">
@@ -41,7 +44,7 @@
         <nav>
             <!-- <a href="#" class="opacity-65">Features</a>
             <a href="#" class="opacity-65">Pricing</a> -->
-            <a (click)="showSignUpModal()">
+            <a routerLink="/auth">
                 <button>
                     <!-- Start Free Trial -->
                     Sign up

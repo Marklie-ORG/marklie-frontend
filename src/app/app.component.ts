@@ -19,7 +19,10 @@ export class AppComponent {
         console.log(event)
         // console.log(event.url)
         const url = event.url.split('?')[0];
-        this.showHeader = url === '/';
+        this.showHeader = 
+          url === '/' 
+          // ||
+          // url === '/auth';
 
         this.showDashboardHeader = 
           url === '/dashboard' || 

@@ -1,35 +1,48 @@
 <div class="dialog-wrapper">
-  <form class="form-container d-flex flex-column align-center justify-center gap-3" (ngSubmit)="onSubmit()" #loginForm="ngForm">
-    <h2 class="text-center">Sign in</h2>
+  <form class="form-container d-flex flex-column align-center justify-center gap-4" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <h2 class="text-center">Sign In to your Account</h2>
 
     <div class="input-group" [class.has-error]="submitted && emailError">
-      <input
-        class="text"
-        type="email"
-        [(ngModel)]="email"
-        name="email"
-        placeholder="✉️ Enter your work email"
-        required
-        [class.show-errors]="submitted"
-      />
+      <div class="d-flex flex-column gap-2">
+        <label for="email">Email</label>
+        <!-- <input id="email" type="text" class="text" [(ngModel)]="email"> -->
+        <input
+          class="text"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="Enter your work email"
+          required
+          [class.show-errors]="submitted"
+        />
+      </div>
+      
       <div class="error-message" *ngIf="submitted && emailError">
         {{ emailError }}
       </div>
     </div>
 
     <div class="input-group password-wrapper" [class.has-error]="submitted && passwordError">
-      <input
-        [type]="showPassword ? 'text' : 'password'"
-        [(ngModel)]="password"
-        name="password"
-        placeholder="🔒 Enter password"
-        class="text show-errors"
-        required
-        [class.show-errors]="submitted"
-      />
-      <span class="toggle-password" (click)="showPassword = !showPassword">
-        <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
-      </span>
+      <div class="d-flex flex-column gap-2">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Enter password"
+            class="text show-errors"
+            required
+            [class.show-errors]="submitted"
+          />
+          <span class="toggle-password" (click)="showPassword = !showPassword">
+            <fa-icon [icon]="showPassword ? faEyeSlash : faEye"></fa-icon>
+          </span>
+        </div>
+        
+      </div>
+      
+      
 
       <div class="error-message" *ngIf="submitted && passwordError">
         {{ passwordError }}
@@ -44,12 +57,12 @@
       {{ formError }}
     </div>
 
-    <button type="submit" class="blue">Sign in</button>
+    <button type="submit" class="blue">Continue</button>
 
-    <div class="cursor-pointer" (click)="toggleForgotPasswordMode()">Forgot password?</div>
+    <div class="cursor-pointer" (click)="toggleForgotPasswordMode()">Forgot password? <span style="text-decoration: underline;">Reset</span></div>
 
     <div class="cursor-pointer" (click)="toggleSignUpMode()">
-      Don't have an account? Sign up
+      Don't have an account? <span style="text-decoration: underline;">Sign up</span>
     </div>
   </form>
 </div>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/api/auth.service.js';
 import { Router } from '@angular/router';
 import { AuthFormService } from '../../services/auth-form.service.js';
-import { MatDialogRef } from '@angular/material/dialog';
+// import { MatDialogRef } from '@angular/material/dialog';
 import {HttpErrorResponse} from "@angular/common/http";
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { isEmail } from 'validator';
@@ -28,7 +28,7 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    public dialogRef: MatDialogRef<RegisterComponent>,
+    // public dialogRef: MatDialogRef<RegisterComponent>,
     public formService: AuthFormService
   ) {
     const saved = this.formService.getFormData();
@@ -57,7 +57,7 @@ export class RegisterComponent {
       const res = await this.authService.register(this.email, this.password);
       this.authService.setToken(res.accessToken);
       this.formService.clearFormData();
-      this.dialogRef.close();
+      // this.dialogRef.close();
       this.router.navigate(['/onboarding']);
     } catch (err) {
       if (err instanceof HttpErrorResponse && err.status === 400) {

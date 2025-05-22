@@ -113,6 +113,7 @@ export interface Client {
     crons: any[]
     slackConversationId: string | null;
     emails: string[];
+    phoneNumbers: string[];
 }
 
 export interface CreateClientRequest {
@@ -125,4 +126,5 @@ export interface CreateClientRequest {
 export interface UpdateClientRequest {
   name?: string;
   emails?: string[];
+  phoneNumbers?: string[];
 }

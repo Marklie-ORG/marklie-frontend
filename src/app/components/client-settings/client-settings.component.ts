@@ -7,6 +7,7 @@ import { Root2 } from 'src/app/services/api/ad-accounts.service';
 import { AdAccount } from 'src/app/services/api/ad-accounts.service';
 import { AdAccountsService } from 'src/app/services/api/ad-accounts.service';
 import { Client, ClientService, Conversations, UpdateClientRequest, Workspace } from 'src/app/services/api/client.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { SlackLoginService } from 'src/app/services/slack-login.service';
 @Component({
   selector: 'app-client-settings',
@@ -35,11 +36,13 @@ export class ClientSettingsComponent implements OnInit {
     public dialogRef: MatDialogRef<ClientSettingsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {client: Client},
     private clientService: ClientService,
-    private slackLoginService: SlackLoginService
+    private slackLoginService: SlackLoginService,
+    private notificationService: NotificationService
   ) {
     this.clientForm = this.fb.group({
       name: [this.data.client.name, Validators.required],
-      emails: this.fb.array([])
+      emails: this.fb.array([]),
+      phoneNumbers: this.fb.array([])
     });
 
     // Initialize emails if they exist
@@ -50,11 +53,23 @@ export class ClientSettingsComponent implements OnInit {
     } else {
       this.addEmail(); // Add one empty email field by default
     }
+
+    // Initialize phoneNumbers if they exist
+    if (this.data.client.phoneNumbers && this.data.client.phoneNumbers.length > 0) {
+      this.data.client.phoneNumbers.forEach(phoneNumber => {
+        this.addPhoneNumber(phoneNumber);
+      });
+    } else {
+      this.addPhoneNumber(); // Add one empty email field by default
+    }
+
   }
 
   get emails() {
     return this.clientForm.get('emails') as FormArray;
   }
+
+  
 
   addEmail(email: string = '') {
     const emailForm = this.fb.group({
@@ -64,15 +79,22 @@ export class ClientSettingsComponent implements OnInit {
   }
 
   removeEmail(index: number) {
-    // console.log(index);
-    // console.log(this.emails.length);
-    // if (this.emails.length === 1) {
-    //   this.emails.at(0).get('email')?.setValue('');
-    //   return;
-    // }
     this.emails.removeAt(index);
+  }
 
-    
+  get phoneNumbers() {
+    return this.clientForm.get('phoneNumbers') as FormArray;
+  }
+
+  addPhoneNumber(phoneNumber: string = '') {
+    const phoneNumberForm = this.fb.group({
+      phoneNumber: [phoneNumber, [Validators.required]]
+    });
+    this.phoneNumbers.push(phoneNumberForm);
+  }
+
+  removePhoneNumber(index: number) {
+    this.phoneNumbers.removeAt(index);
   }
 
   async ngOnInit() {
@@ -158,23 +180,35 @@ export class ClientSettingsComponent implements OnInit {
 
   async onSubmit() {
     console.log(this.clientForm.value.emails)
+    console.log(this.clientForm.value.phoneNumbers)
+    console.log(this.clientForm)
     if (this.clientForm.valid) {
       const formValue = this.clientForm.value;
       const emails = formValue.emails.map((item: { email: string }) => item.email);
+      const phoneNumbers = formValue.phoneNumbers.map((item: { phoneNumber: string }) => item.phoneNumber);
       await this.updateClient(
         formValue.name,
-        emails
+        emails,
+        phoneNumbers
       );
       this.dialogRef.close();
     }
   }
 
-  async updateClient(name: string, emails: string[]) {
+  async updateClient(name: string, emails: string[], phoneNumbers: string[]) {
     const client: UpdateClientRequest = {
       name: name,
-      emails: emails
+      emails: emails,
+      phoneNumbers: phoneNumbers
     }
-    const response = await this.clientService.updateClient(this.data.client.uuid!, client);
+    try {
+      const response = await this.clientService.updateClient(this.data.client.uuid!, client);
+      console.log(response);
+      this.notificationService.info('Information updated successfully');
+    } catch (error) {
+      this.notificationService.info('Error updating Information');
+    }
+    
   }
   
 

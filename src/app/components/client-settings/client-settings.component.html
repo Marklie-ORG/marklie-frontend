@@ -16,7 +16,7 @@
 
         <div class="mb-4 d-flex flex-column gap-2">
           <label>Email Addresses</label>
-          <div formArrayName="emails" class="email-inputs">
+          <div formArrayName="emails">
             <div *ngFor="let email of emails.controls; let i = index" [formGroupName]="i" class="d-flex gap-2 mb-2">
               <input 
                 
@@ -44,6 +44,41 @@
               class="btn btn-secondary" 
               (click)="addEmail()">
               Add Another Email
+            </button>
+          </div>
+          
+        </div>
+
+        <div class="mb-4 d-flex flex-column gap-2">
+          <label>WhatsApp Phone Numbers</label>
+          <div formArrayName="phoneNumbers">
+            <div *ngFor="let email of phoneNumbers.controls; let i = index" [formGroupName]="i" class="d-flex gap-2 mb-2">
+              <input 
+                
+                type="text" 
+                formControlName="phoneNumber" 
+                class="form-control" 
+                placeholder="Enter phone number"
+                class="text">
+                <!-- [class.is-invalid]="email.get('email')?.invalid && email.get('email')?.touched"  -->
+              <button 
+                type="button" 
+                class="btn btn-danger" 
+                (click)="removePhoneNumber(i)"
+                >
+                Remove
+              </button>
+              <!-- [disabled]="emails.length === 1" -->
+            </div>
+            <div *ngIf="phoneNumbers.at(0)?.get('phoneNumber')?.invalid && phoneNumbers.at(0)?.get('phoneNumber')?.touched" class="invalid-feedback">
+              Please enter a valid phone number
+            </div>
+
+            <button 
+              type="button" 
+              class="btn btn-secondary" 
+              (click)="addPhoneNumber()">
+              Add Another Phone Number
             </button>
           </div>
           

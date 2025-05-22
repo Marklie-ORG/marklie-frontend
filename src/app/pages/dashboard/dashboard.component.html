@@ -59,55 +59,50 @@ style="height: 85%;"
             <div style="width: 20%;" class="d-flex align-center justify-center">{{getRandomNumber(1, 10)}}</div>
             <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
           </div>
-          
         </div>
-
-
       </div>
-
-
-
-      <!-- <div class="clients-list">
-        <div *ngFor="let client of clients" 
-              class="client-card"
-              (click)="viewReport(client.uuid); $event.stopPropagation()"
-              >
-          <div class="client-info">
-            <p>{{client.name}}</p>
-          </div>
-          <div class="client-actions">
-            <svg fill="#000000" style="opacity: 0.7;" height="23px" width="23px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-52.8 -52.8 435.60 435.60" xml:space="preserve" stroke="#000000" stroke-width="33"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path id="XMLID_222_" d="M250.606,154.389l-150-149.996c-5.857-5.858-15.355-5.858-21.213,0.001 c-5.857,5.858-5.857,15.355,0.001,21.213l139.393,139.39L79.393,304.394c-5.857,5.858-5.857,15.355,0.001,21.213 C82.322,328.536,86.161,330,90,330s7.678-1.464,10.607-4.394l149.999-150.004c2.814-2.813,4.394-6.628,4.394-10.606 C255,161.018,253.42,157.202,250.606,154.389z"></path> </g></svg>
-          </div>
-        </div>
-      </div> -->
-
     </div>
     
     <div 
-    class="p-4  block"
+    class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-      <!-- Content for right block -->
+      
+    <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
       <h3>Activity</h3>
-      <div class="activity-list">
-        <div *ngFor="let activity of activities" class="activity-item">
-          <div class="activity-icon">
-            <img width="28px" src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" alt="">
-            <!-- <i [ngClass]="{
-              'fa-solid fa-file-chart': activity.type === 'report_generated',
-              'fa-solid fa-user-plus': activity.type === 'client_added',
-              'fa-solid fa-share-nodes': activity.type === 'report_shared',
-              'fa-solid fa-link': activity.type === 'platform_connected'
-            }"></i> -->
-          </div>
-          <div class="activity-content">
-            <div class="activity-header">
-              <span class="activity-client">{{activity.clientName}}</span>
-              <span class="activity-time">{{formatDate(activity.timestamp)}}</span>
+        <button class="subtle" >
+          See all activity
+        </button>
+      </div>
+
+
+      <div class="table">
+
+        <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
+          <div style="width: 10%; color: #333333cb !important;"></div>
+          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-start">Date</div>
+          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-start">Client name</div>
+          <div style="width: 40%; color: #333333cb !important;" class="d-flex align-center justify-start">Activity</div>
+        </div>
+
+        <div class="list">
+          <div 
+          class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" *ngFor="let activity of activities">
+            <div style="width: 10%;">
+              <fa-icon [icon]="activity.status === 'new' ? faCircleDot : faCircle" style="opacity: 0.3;"></fa-icon>
             </div>
-            <p class="activity-details">{{activity.details}}</p>
+            <div style="width: 25%;" class="d-flex align-center justify-start">
+              {{formatDate(activity.date)}}
+            </div>
+            <div style="width: 25%;" class="d-flex align-center justify-start">
+              {{activity.clientName}}
+            </div>
+            <div style="width: 40%;" class="d-flex align-center justify-start">
+              {{activity.activity}}
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>

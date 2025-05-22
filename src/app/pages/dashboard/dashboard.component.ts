@@ -8,13 +8,13 @@ import { ClientService } from "../../services/api/client.service.js";
 import { FacebookLoginService } from "../../services/api/facebook-login.service.js";
 import { Client } from 'src/app/services/api/client.service.js';
 import { User, UserService } from 'src/app/services/api/user.service.js';
+import { faCircle, faCircleDot } from '@fortawesome/free-solid-svg-icons';
 
 interface Activity {
-  id: string;
-  type: 'report_generated' | 'client_added' | 'report_shared' | 'platform_connected';
-  clientName: string;
-  timestamp: Date;
-  details: string;
+  status: 'new' | 'old',
+  date: Date,
+  clientName: string,
+  activity: string
 }
 
 @Component({
@@ -25,37 +25,41 @@ interface Activity {
 export class DashboardComponent implements OnInit, OnDestroy {
   isFacebookConnected = true;
   randomNumber = this.getRandomNumber(1, 3);
+  faCircle = faCircle;
+  faCircleDot = faCircleDot;
 
   clients: Client[] = [];
   activities: Activity[] = [
-    {
-      id: '1',
-      type: 'report_generated',
-      clientName: 'Acme Corp',
-      timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-      details: 'Monthly performance report generated'
-    },
-    {
-      id: '2',
-      type: 'client_added',
-      clientName: 'TechStart Inc',
-      timestamp: new Date(Date.now() - 7200000), // 2 hours ago
-      details: 'New client added to the platform'
-    },
-    {
-      id: '3',
-      type: 'platform_connected',
-      clientName: 'Global Solutions',
-      timestamp: new Date(Date.now() - 86400000), // 1 day ago
-      details: 'Facebook and Instagram accounts connected'
-    },
-    {
-      id: '4',
-      type: 'report_shared',
-      clientName: 'Acme Corp',
-      timestamp: new Date(Date.now() - 172800000), // 2 days ago
-      details: 'Q1 Performance report shared with team'
-    }
+  {
+    status: 'new',
+    date: new Date(),
+    clientName: 'Acme Corp',
+    activity: 'Report generated for Q1 2024'
+  },
+  {
+    status: 'new',
+    date: new Date(Date.now() - 86400000), // 1 day ago
+    clientName: 'TechStart Inc',
+    activity: 'New client added'
+  },
+  {
+    status: 'old',
+    date: new Date(Date.now() - 172800000), // 2 days ago
+    clientName: 'Global Services',
+    activity: 'Report sent via email'
+  },
+  {
+    status: 'old',
+    date: new Date(Date.now() - 259200000), // 3 days ago
+    clientName: 'Innovation Labs',
+    activity: 'Facebook account connected'
+  },
+  {
+    status: 'old',
+    date: new Date(Date.now() - 345600000), // 4 days ago
+    clientName: 'Digital Solutions',
+    activity: 'Report configuration updated'
+  }
   ];
 
   constructor(
@@ -130,7 +134,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   formatDate(date: Date): string {
     return new Date(date).toLocaleString('en-US', {
-      year: 'numeric',
+      // year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',

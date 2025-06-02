@@ -19,6 +19,7 @@ export class AddClientComponent {
   uniqueAdAccounts: AdAccount[] = [];
   selectedAdAccounts: { [key: string]: boolean } = {};
   selectedBusiness: Root2 | null = null;
+  isLoading = true;
 
   selectedBusinessId: string | null = null;
 
@@ -38,12 +39,15 @@ export class AddClientComponent {
 
   async ngOnInit() {
     try {
+      this.isLoading = true;
       this.businesses = await this.adAccountsService.getBusinessesHierarchy();
       const adAccounts = this.businesses.map(business => business.ad_accounts);
       const flattenedAdAccounts = adAccounts.flat();
       this.uniqueAdAccounts = [...new Map(flattenedAdAccounts.map(account => [account.id, account])).values()];
     } catch (error) {
       console.error('Error fetching businesses:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 

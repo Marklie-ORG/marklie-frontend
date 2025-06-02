@@ -7,12 +7,13 @@ import { ClientSettingsComponent } from '../../components/client-settings/client
 import { Client, ClientService } from 'src/app/services/api/client.service.js';
 import { ReportService } from 'src/app/services/api/report.service.js';
 import { AuthService } from 'src/app/services/api/auth.service.js';
+import { faCircle, faCircleDot } from '@fortawesome/free-solid-svg-icons';
 
-interface ActivityLogEntry {
-  action: string;
-  reportName: string;
-  timestamp: string;
-  reportId: string;
+interface Activity {
+  status: 'new' | 'old',
+  date: Date,
+  clientName: string,
+  activity: string
 }
 
 interface ScheduledReport {
@@ -34,26 +35,41 @@ export class ClientComponent implements OnInit {
   client: Client | null = null;
   scheduleOptions: ScheduledReport[] = [];
 
-  activityLog: ActivityLogEntry[] = [
-    {
-      action: 'Report Generated',
-      reportName: 'Daily Performance Summary',
-      timestamp: this.formatDate(new Date(Date.now() - 3600000)), // 1 hour ago
-      reportId: '1'
-    },
-    {
-      action: 'Report Shared',
-      reportName: 'Weekly Marketing Analytics',
-      timestamp: this.formatDate(new Date(Date.now() - 7200000)), // 2 hours ago
-      reportId: '2'
-    },
-    {
-      action: 'Report Scheduled',
-      reportName: 'Monthly Revenue Report',
-      timestamp: this.formatDate(new Date(Date.now() - 86400000)), // 1 day ago
-      reportId: '3'
-    }
-  ];
+  faCircle = faCircle;
+  faCircleDot = faCircleDot;
+
+  activities: Activity[] = [
+    // {
+    //   status: 'new',
+    //   date: new Date(),
+    //   clientName: 'Acme Corp',
+    //   activity: 'Report generated for Q1 2024'
+    // },
+    // {
+    //   status: 'new',
+    //   date: new Date(Date.now() - 86400000), // 1 day ago
+    //   clientName: 'TechStart Inc',
+    //   activity: 'New client added'
+    // },
+    // {
+    //   status: 'old',
+    //   date: new Date(Date.now() - 172800000), // 2 days ago
+    //   clientName: 'Global Services',
+    //   activity: 'Report sent via email'
+    // },
+    // {
+    //   status: 'old',
+    //   date: new Date(Date.now() - 259200000), // 3 days ago
+    //   clientName: 'Innovation Labs',
+    //   activity: 'Facebook account connected'
+    // },
+    // {
+    //   status: 'old',
+    //   date: new Date(Date.now() - 345600000), // 4 days ago
+    //   clientName: 'Digital Solutions',
+    //   activity: 'Report configuration updated'
+    // }
+    ];
 
   constructor(
     private route: ActivatedRoute,
@@ -108,7 +124,6 @@ export class ClientComponent implements OnInit {
 
   formatDate(date: Date | string): string {
     return new Date(date).toLocaleString('en-US', {
-      year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',

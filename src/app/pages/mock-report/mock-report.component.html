@@ -79,7 +79,7 @@
   </div>
 
   <main class="report-content">
-    <h2 class="section-title mb-4">Mock Report Preview</h2>
+    <h2 class="section-title mb-4">Report Preview</h2>
     <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
 
     <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">

@@ -2,7 +2,7 @@
     <h2>Add client</h2>
 
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
+        <div class="form-group mt-3">
           <label for="name">Client Name</label>
           <input 
             type="text" 
@@ -26,38 +26,44 @@
           </div>
   
           <div class="ad-accounts-container">
-            <div class="businesses-list">
-              <div 
-                *ngFor="let business of businesses" 
-                class="business-item"
-                [class.selected]="selectedBusiness?.id === business.id"
-                [class.disabled-business]="isBusinessDisabled(business.id)"
-                (click)="selectBusiness(business)">
-                {{business.name}}
-              </div>
+            <div *ngIf="isLoading" class="loading-spinner">
+              <div class="spinner"></div>
+              <p>Loading ad accounts...</p>
             </div>
             
-            <div class="accounts-list" *ngIf="selectedBusiness">
-              <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
-                <h4>Ad Accounts</h4>
+            <ng-container *ngIf="!isLoading">
+              <div class="businesses-list">
                 <div 
-                *ngFor="let account of selectedBusiness.ad_accounts" 
-                class="account-option"
-                (click)="disabledAdAccountAlert(account.business.id)"
-                >
-                  <input 
-                    *ngIf="account.business"
-                    [disabled]="isAdAccountDisabled(account.business.id)"
-                    type="checkbox" 
-                    [id]="account.id"
-                    [checked]="isAdAccountSelected(account.id)"
-                    (change)="toggleAdAccount($event, account.id, account.business.id)"
-                    >
-                  <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
+                  *ngFor="let business of businesses" 
+                  class="business-item"
+                  [class.selected]="selectedBusiness?.id === business.id"
+                  [class.disabled-business]="isBusinessDisabled(business.id)"
+                  (click)="selectBusiness(business)">
+                  {{business.name}}
                 </div>
               </div>
               
-            </div>
+              <div class="accounts-list" *ngIf="selectedBusiness">
+                <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
+                  <h4>Ad Accounts</h4>
+                  <div 
+                  *ngFor="let account of selectedBusiness.ad_accounts" 
+                  class="account-option"
+                  (click)="disabledAdAccountAlert(account.business.id)"
+                  >
+                    <input 
+                      *ngIf="account.business"
+                      [disabled]="isAdAccountDisabled(account.business.id)"
+                      type="checkbox" 
+                      [id]="account.id"
+                      [checked]="isAdAccountSelected(account.id)"
+                      (change)="toggleAdAccount($event, account.id, account.business.id)"
+                      >
+                    <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
           </div>
         </div>
   

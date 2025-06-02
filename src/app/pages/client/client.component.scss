@@ -1,114 +1,10 @@
-.client-page {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+
+:host {
+  min-height: 100vh;
 }
 
-.client-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
 
-.client-info {
-  h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: #333;
-  }
 
-  .client-meta {
-      display: flex;
-      gap: 1rem;
-      margin-top: 0.5rem;
-      color: #666;
-
-      .status {
-          &.active {
-              color: #4CAF50;
-          }
-      }
-  }
-}
-
-.client-actions {
-  display: flex;
-  gap: 1rem;
-
-  // .action-btn {
-  //     padding: 0.5rem 1rem;
-  //     border: none;
-  //     border-radius: 4px;
-  //     cursor: pointer;
-  //     font-size: 0.9rem;
-  //     display: flex;
-  //     align-items: center;
-  //     gap: 0.5rem;
-  //     transition: background-color 0.2s;
-
-  //     &.edit {
-  //         background-color: #f5f5f5;
-  //         color: #333;
-
-  //         &:hover {
-  //             background-color: #e0e0e0;
-  //         }
-  //     }
-
-  //     &.generate {
-  //         background-color: #4CAF50;
-  //         color: white;
-
-  //         &:hover {
-  //             background-color: #45a049;
-  //         }
-  //     }
-  // }
-}
-
-.client-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.detail-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-
-      h3 {
-          margin: 0;
-          color: #333;
-          font-size: 1.2rem;
-      }
-
-      .add-btn {
-          padding: 0.5rem 1rem;
-          background-color: #4CAF50;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 0.9rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          transition: background-color 0.2s;
-
-          &:hover {
-              background-color: #45a049;
-          }
-      }
-  }
-}
 
 .detail-content {
   .detail-item {
@@ -277,5 +173,22 @@
   &:hover {
       color: var(--primary-color-dark);
       text-decoration: underline;
+  }
+}
+
+.table {
+  .header {
+    font-size: 13px;
+    // color: #3333339c !important;
+    font-weight: 500;
+  }
+  
+  .row, .header {
+    // box-shadow: 0 4px 6px 0 rgba(67, 46, 134, 0.04);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+  }
+
+  .row {
+    cursor: pointer;
   }
 }

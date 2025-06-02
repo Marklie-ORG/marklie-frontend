@@ -22,7 +22,7 @@ style="height: 85%;"
       <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
         <button class="blue" (click)="showAddClientModal()">
-          <i class="fa-solid fa-plus color-white"></i>
+          <!-- <i class="fa-solid fa-plus color-white"></i> -->
           Add client
         </button>
       </div>
@@ -46,7 +46,7 @@ style="height: 85%;"
             <div style="width: 20%;">
               <div class="d-flex align-center gap-2 justify-center">
                 <img src="../../../assets/img/meta_icon.png" alt="Meta Platform">
-                <img src="../../../assets/img/tt_icon.png" alt="TikTok Platform" *ngIf="randomNumber === 1">
+                <!-- <img src="../../../assets/img/tt_icon.png" alt="TikTok Platform" *ngIf="randomNumber === 1"> -->
               </div>
             </div>
             <div style="width: 20%;">
@@ -56,7 +56,7 @@ style="height: 85%;"
                 <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon" *ngIf="randomNumber === 3">
               </div>
             </div>
-            <div style="width: 20%;" class="d-flex align-center justify-center">{{getRandomNumber(1, 10)}}</div>
+            <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption.length}}</div>
             <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
           </div>
         </div>
@@ -67,7 +67,7 @@ style="height: 85%;"
     class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
       
-    <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+      <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
       <h3>Activity</h3>
         <button class="subtle" >
           See all activity
@@ -79,9 +79,9 @@ style="height: 85%;"
 
         <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
           <div style="width: 10%; color: #333333cb !important;"></div>
-          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-start">Date</div>
-          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-start">Client name</div>
-          <div style="width: 40%; color: #333333cb !important;" class="d-flex align-center justify-start">Activity</div>
+          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-center">Date</div>
+          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-center">Client name</div>
+          <div style="width: 40%; color: #333333cb !important;" class="d-flex align-center justify-center">Activity</div>
         </div>
 
         <div class="list">

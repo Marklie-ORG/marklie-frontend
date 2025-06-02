@@ -114,6 +114,7 @@ export interface Client {
     slackConversationId: string | null;
     emails: string[];
     phoneNumbers: string[];
+    schedulingOption: any[];
 }
 
 export interface CreateClientRequest {

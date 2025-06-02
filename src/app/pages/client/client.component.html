@@ -9,7 +9,7 @@
           <!-- Content for left block -->
           <div class="d-flex align-center justify-between mb-4">
               <h3>Reports</h3>
-              <button class="blue" (click)="goToMockReport()">
+              <button class="blue" (click)="goToMockReport()" *ngIf="scheduleOptions.length > 0">
                   <!-- <i class="fa-solid fa-plus color-black"></i> -->
                   Add report
               </button>
@@ -18,27 +18,34 @@
           <hr>
   
           <div class="clients-list mt-4">
-          <div class="detail-content">
-              <div class="reports-list">
-                  <div class="report-item" *ngFor="let scheduleOption of scheduleOptions" (click)="onEditReport(scheduleOption.uuid)">
-                      <div class="report-info">
-                          <!-- <span class="report-name">{{scheduleOption.name}}</span> -->
-                          <span class="report-frequency">Frequency: {{scheduleOption.cronExpression}}</span>
-                          <span class="report-date">Next sending date: {{formatDate(scheduleOption.nextRun)}}</span>
-                      </div>
-                      <div class="report-actions">
-                          <!-- <button class="" (click)="onEditReport(report.uuid)">Edit</button> -->
-                          <!-- <img 
-                          (click)="onEditReport(report.uuid)"
-                          src="https://www.svgrepo.com/show/522527/edit-3.svg" width="25px" height="25px" style="cursor: pointer;"> -->
-                          <!-- <button class="" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
-                              {{report.isActive ? 'Deactivate' : 'Activate'}}
-                          </button> -->
-                      </div>
-                  </div>
-              </div>
+            <div class="detail-content">
+                <div class="reports-list">
+                    <div class="report-item" *ngFor="let scheduleOption of scheduleOptions" (click)="onEditReport(scheduleOption.uuid)">
+                        <div class="report-info" (click)="onEditReport(scheduleOption.uuid)">
+                            <!-- <span class="report-name">{{scheduleOption.name}}</span> -->
+                            <span class="report-frequency">Frequency: {{scheduleOption.cronExpression}}</span>
+                            <span class="report-date">Next sending date: {{formatDate(scheduleOption.nextRun)}}</span>
+                        </div>
+                        <div class="report-actions">
+                            <!-- <button class="" (click)="onEditReport(report.uuid)">Edit</button> -->
+                            <!-- <img 
+                            (click)="onEditReport(report.uuid)"
+                            src="https://www.svgrepo.com/show/522527/edit-3.svg" width="25px" height="25px" style="cursor: pointer;"> -->
+                            <!-- <button class="" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
+                                {{report.isActive ? 'Deactivate' : 'Activate'}}
+                            </button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
           </div>
+          <div class="d-flex align-center justify-center mt-4" *ngIf="scheduleOptions.length === 0">
+            <button class="blue" (click)="goToMockReport()" >
+                <!-- <i class="fa-solid fa-plus color-black"></i> -->
+                Add your first report for {{client?.name}}!
+            </button>
           </div>
+            
         </div>
 
         <div class="d-flex flex-column gap-4">
@@ -88,6 +95,10 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="d-flex align-center justify-center mt-4" style="opacity: 0.6;">
+                Activity related to {{client?.name}} will appear here!
             </div>
 
             </div>

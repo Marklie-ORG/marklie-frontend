@@ -53,7 +53,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #F7F7F7;
+  // background: #F7F7F7;
   border-radius: 8px;
   box-shadow: var(--box-shadow);
   border: 1px solid #8080803d;
@@ -79,7 +79,7 @@
   .report-frequency,
   .report-date {
       font-size: 0.9rem;
-      color: rgba(0, 0, 0, 0.6);
+      color: rgba(0, 0, 0, 1);
   }
 }
 

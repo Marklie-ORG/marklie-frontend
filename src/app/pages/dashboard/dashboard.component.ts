@@ -23,7 +23,7 @@ interface Activity {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  isFacebookConnected = true;
+  isFacebookConnected: boolean | undefined = undefined;
   randomNumber = this.getRandomNumber(1, 3);
   faCircle = faCircle;
   faCircleDot = faCircleDot;
@@ -93,8 +93,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.isFacebookConnected = false;
       document.body.classList.add('no-scroll');
     } else {
+      this.isFacebookConnected = true;
       document.body.classList.remove('no-scroll');
     }
+    
 
     // if (!onboardingSteps.organizationCreated) {
     //   this.router.navigate(['/onboarding']);

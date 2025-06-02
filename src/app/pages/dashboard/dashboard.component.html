@@ -1,5 +1,5 @@
 
-<div class="connect-facebook" *ngIf="!isFacebookConnected">
+<div class="connect-facebook" *ngIf="isFacebookConnected === false">
   <div class="d-flex flex-column justify-center align-center gap-4 block p-5">
     <h4 class="text-center">To complete setup,<br>connect your Facebook account</h4>
     <p class="text-center">On the next page, grant Marklie permission<br>to access your ad data.</p>
@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<div class="container" *ngIf="isFacebookConnected"
+<div class="container" *ngIf="isFacebookConnected === true"
 style="height: 85%;"
 >
 
@@ -21,7 +21,7 @@ style="height: 85%;"
       <!-- Content for left block -->
       <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
-        <button class="blue" (click)="showAddClientModal()">
+        <button class="blue" (click)="showAddClientModal()" *ngIf="clients.length > 0">
           <!-- <i class="fa-solid fa-plus color-white"></i> -->
           Add client
         </button>
@@ -60,6 +60,12 @@ style="height: 85%;"
             <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
           </div>
         </div>
+      </div>
+      <div *ngIf="clients.length === 0" class="d-flex align-center justify-center mt-4">
+        <button class="blue" (click)="showAddClientModal()">
+          <!-- <i class="fa-solid fa-plus color-white"></i> -->
+          Add your first client
+        </button>
       </div>
     </div>
     
@@ -101,6 +107,10 @@ style="height: 85%;"
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="d-flex align-center justify-center mt-4" style="opacity: 0.6;">
+        Activity related to your clients will appear here!
       </div>
 
     </div>

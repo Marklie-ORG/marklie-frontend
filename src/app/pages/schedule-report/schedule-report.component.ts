@@ -16,6 +16,13 @@ interface ReportSection {
   metrics: string[];
 }
 
+interface MockData {
+  KPIs: Record<string, any>;
+  ads: any[];
+  campaigns: any[];
+  graphs: any[];
+}
+
 @Component({
   selector: 'schedule-report',
   templateUrl: './schedule-report.component.html',
@@ -30,8 +37,6 @@ interface ReportSection {
 export class ScheduleReportComponent implements OnInit, AfterViewInit {
   
   DEFAULT_SELECTED_METRICS = ['spend', 'impressions', 'clicks'];
-  
-  readonly DAYS_IN_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
   schedule = {
     frequency: 'weekly',
@@ -50,8 +55,6 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
   adAvailableMetrics = ['spend', 'addToCart', 'purchases', 'roas'];
   campaignAvailableMetrics = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
 
-  
-
   metricSelections = {
     kpis: {} as Record<string, boolean>,
     graphs: {} as Record<string, boolean>,
@@ -66,20 +69,14 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
     campaigns: true
   };
 
-  adMetrics: string[] = [];
-  campaignMetrics: string[] = [];
   metricsGraphConfig: any[] = [];
 
-  KPIs: Record<string, any> = {};
-  ads: any[] = [];
-  campaigns: any[] = [];
-  graphs: any[] = [];
-
-  constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
+  mockData: MockData = {
+    KPIs: {},
+    ads: [],
+    campaigns: [],
+    graphs: []
+  }
 
   private chartRefs: Record<string, Chart> = {};
   campaignColumnOrder: string[] = [...this.campaignAvailableMetrics];
@@ -90,6 +87,12 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
     { key: 'ads', title: 'Ads', enabled: true, metrics: this.adAvailableMetrics },
     { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.campaignAvailableMetrics }
   ];
+
+  constructor(
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
@@ -115,10 +118,10 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
   }
 
   private generateMockData(): void {
-    this.KPIs = this.mockKPIs();
-    this.ads = this.mockAds();
-    this.campaigns = this.mockCampaigns();
-    this.graphs = this.mockGraphData();
+    this.mockData.KPIs = this.mockKPIs();
+    this.mockData.ads = this.mockAds();
+    this.mockData.campaigns = this.mockCampaigns();
+    this.mockData.graphs = this.mockGraphData();
   }
 
   onPanelToggleChange(): void {
@@ -135,8 +138,6 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
 
     this.DEFAULT_SELECTED_METRICS = this.getSelected(kpis);
     this.metricsGraphConfig = this.getMetricConfigs().filter(cfg => graphs[cfg.key]);
-    this.adMetrics = this.getSelected(ads);
-    this.campaignMetrics = this.getSelected(campaigns);
 
     if (this.panelToggles.graphs) {
       setTimeout(() => this.renderCharts(), 0);
@@ -183,9 +184,9 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
   
 
   private renderCharts(): void {
-    if (!this.graphs?.length) return;
+    if (!this.mockData.graphs?.length) return;
 
-    const labels = this.graphs.map(g =>
+    const labels = this.mockData.graphs.map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );
 
@@ -194,7 +195,7 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
       const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
       if (!canvas) continue;
 
-      const data = this.graphs.map(g => parseFloat(g[config.key]) || 0);
+      const data = this.mockData.graphs.map(g => parseFloat(g[config.key]) || 0);
 
       this.chartRefs[canvasId]?.destroy();
 
@@ -289,6 +290,22 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
     return '';
   }
 
+  scheduleReportDelivery() {
+    const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
+      width: '800px',
+      data: {
+        panelToggles: this.panelToggles,
+        clientUuid: this.clientUuid,
+        metricSelections: this.metricSelections,
+        schedule: this.schedule
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadClientDetails();
+    });
+  }
+
   private mockKPIs() {
     return {
       spend: 1234.56,
@@ -365,19 +382,8 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
     });
   }
 
-  scheduleReportDelivery() {
-    const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
-      width: '800px',
-      data: {
-        panelToggles: this.panelToggles,
-        clientUuid: this.clientUuid,
-        metricSelections: this.metricSelections,
-        schedule: this.schedule
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // this.loadClientDetails();
-    });
+  log() {
+    console.log(this.metricSelections.campaigns)
   }
+
 }

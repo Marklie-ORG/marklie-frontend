@@ -88,7 +88,7 @@ const routes: Routes = [
     component: PdfReportComponent
   },
   {
-    path: 'edit-report/:uuid',
+    path: 'edit-report/:id',
     component: EditReportComponent, 
     canActivate: [authGuard]
   }

@@ -4,7 +4,8 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
-import {ReportService} from "../../services/api/report.service.js";
+import { MatDialog } from '@angular/material/dialog';
+import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
@@ -75,7 +76,7 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
   graphs: any[] = [];
 
   constructor(
-    
+    private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
   ) {}
@@ -361,6 +362,22 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
         costPerPurchase: (Math.random() * 100).toFixed(2),
         costPerCart: (Math.random() * 20).toFixed(2)
       };
+    });
+  }
+
+  scheduleReportDelivery() {
+    const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
+      width: '800px',
+      data: {
+        panelToggles: this.panelToggles,
+        clientUuid: this.clientUuid,
+        metricSelections: this.metricSelections,
+        schedule: this.schedule
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadClientDetails();
     });
   }
 }

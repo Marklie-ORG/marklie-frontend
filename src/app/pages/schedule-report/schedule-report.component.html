@@ -1,8 +1,37 @@
 <div class="dashboard">
 
-  <div style="display: grid; grid-template-columns: 15% 85%; gap: 0%;">
+  <div style="display: grid; grid-template-columns: 20% 80%; gap: 0%;">
     <div class="side-panel d-flex flex-column p-3">
-      hellow orld
+
+      <button class="blue mb-3" (click)="scheduleReportDelivery()">
+        Schedule Report Delivery
+      </button>
+
+
+
+      <div *ngFor="let section of reportSections; let i = index" class="report-section block mb-3">
+        <div class="section-toggle">
+          <label>{{ section.title }}</label>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="panelToggles[section.key]" (change)="onPanelToggleChange()" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <div *ngIf="panelToggles[section.key]">
+          <div class="metric-group p-2" cdkDropList [cdkDropListData]="section.metrics"
+               (cdkDropListDropped)="dropMetric($event, i)">
+            <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
+              <label>
+                <input type="checkbox" [(ngModel)]="metricSelections[section.key][metric]" (change)="onMetricSelectionChange()" />
+                {{ formatMetricLabel(metric) }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
     <div class="d-flex flex-column pl-4 pr-4 pt-4 pb-5">
       <main>
@@ -97,12 +126,16 @@
           </div>
         </div>
 
-        <schedule-options
-        [panelToggles]="panelToggles"
-        [clientUuid]="clientUuid"
-        [metricSelections]="metricSelections"
-        [schedule]="schedule"
-        ></schedule-options>
+          <!-- <schedule-options
+          [panelToggles]="panelToggles"
+          [clientUuid]="clientUuid"
+          [metricSelections]="metricSelections"
+          [schedule]="schedule"
+          ></schedule-options> -->
+
+          <button class="blue mb-3" (click)="scheduleReportDelivery()">
+            Schedule Report Delivery
+          </button>
 
       </main>
     </div>

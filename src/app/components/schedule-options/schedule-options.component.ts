@@ -1,9 +1,17 @@
-import { Component, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/services/api/report.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
+
+interface ScheduleOptionsMatDialogData {
+  panelToggles: Record<MetricSectionKey, boolean>;
+  clientUuid: string;
+  metricSelections: Record<MetricSectionKey, Record<string, boolean>>;
+  schedule: any;
+}
 
 @Component({
   selector: 'schedule-options',
@@ -45,7 +53,14 @@ export class ScheduleOptionsComponent {
   constructor(
     private reportsService: ReportService,
     private router: Router,
-  ) {}
+    public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ScheduleOptionsMatDialogData,
+  ) {
+    this.panelToggles = data.panelToggles;
+    this.clientUuid = data.clientUuid;
+    this.metricSelections = data.metricSelections;
+    this.schedule = data.schedule;
+  }
 
   async saveConfiguration() {
 

@@ -16,9 +16,9 @@ interface ReportSection {
 }
 
 @Component({
-  selector: 'mock-report',
-  templateUrl: './mock-report.component.html',
-  styleUrls: ['./mock-report.component.scss'],
+  selector: 'schedule-report',
+  templateUrl: './schedule-report.component.html',
+  styleUrls: ['./schedule-report.component.scss'],
   animations: [
     trigger('fadeAnimation', [
       transition(':enter', [style({ opacity: 0 }), animate('250ms ease-in', style({ opacity: 1 }))]),
@@ -26,30 +26,10 @@ interface ReportSection {
     ])
   ]
 })
-export class MockReportComponent implements OnInit, AfterViewInit {
-  readonly DATE_PRESETS = [
-    { value: 'today', text: 'Today' },
-    { value: 'yesterday', text: 'Yesterday' },
-    { value: 'this_month', text: 'This Month' },
-    { value: 'last_month', text: 'Last Month' },
-    { value: 'this_quarter', text: 'This Quarter' },
-    { value: 'last_3d', text: 'Last 3 Days' },
-    { value: 'last_7d', text: 'Last 7 Days' },
-    { value: 'last_14d', text: 'Last 14 Days' },
-    { value: 'last_28d', text: 'Last 28 Days' },
-    { value: 'last_30d', text: 'Last 30 Days' },
-    { value: 'last_90d', text: 'Last 90 Days' },
-    { value: 'last_week_mon_sun', text: 'Last Week (Mon-Sun)' },
-    { value: 'last_week_sun_sat', text: 'Last Week (Sun-Sat)' },
-    { value: 'last_quarter', text: 'Last Quarter' },
-    { value: 'last_year', text: 'Last Year' },
-    { value: 'this_week_mon_today', text: 'This Week (Mon-Today)' },
-    { value: 'this_week_sun_today', text: 'This Week (Sun-Today)' },
-    { value: 'this_year', text: 'This Year' },
-    { value: 'maximum', text: 'Maximum' }
-  ];
+export class ScheduleReportComponent implements OnInit, AfterViewInit {
+  
   DEFAULT_SELECTED_METRICS = ['spend', 'impressions', 'clicks'];
-  readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  
   readonly DAYS_IN_MONTH = Array.from({ length: 31 }, (_, i) => i + 1);
 
   schedule = {
@@ -69,7 +49,7 @@ export class MockReportComponent implements OnInit, AfterViewInit {
   adAvailableMetrics = ['spend', 'addToCart', 'purchases', 'roas'];
   campaignAvailableMetrics = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
 
-  selectedDatePresetText = this.DATE_PRESETS[6].value;
+  
 
   metricSelections = {
     kpis: {} as Record<string, boolean>,
@@ -94,10 +74,8 @@ export class MockReportComponent implements OnInit, AfterViewInit {
   campaigns: any[] = [];
   graphs: any[] = [];
 
-  scheduleSaved = false;
-
   constructor(
-    private reportsService: ReportService,
+    
     private route: ActivatedRoute,
     private router: Router,
   ) {}
@@ -201,32 +179,7 @@ export class MockReportComponent implements OnInit, AfterViewInit {
     moveItemInArray(this.campaignColumnOrder, event.previousIndex, event.currentIndex);
   }
 
-  async saveConfiguration() {
-    const metrics: Partial<Record<MetricSectionKey, string[]>> = {};
-
-    (Object.keys(this.panelToggles) as MetricSectionKey[]).forEach(sectionKey => {
-      if (this.panelToggles[sectionKey]) {
-        metrics[sectionKey] = this.getSelected(this.metricSelections[sectionKey]);
-      }
-    });
-
-    const payload = {
-      ...(this.schedule),
-      metrics,
-      datePreset: this.selectedDatePresetText,
-      clientUuid: this.clientUuid,
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-    };
-
-    try {
-      await this.reportsService.createSchedule(payload);
-      this.scheduleSaved = true;
-      setTimeout(() => this.scheduleSaved = false, 3000);
-      this.router.navigate(['/client', this.clientUuid]);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  
 
   private renderCharts(): void {
     if (!this.graphs?.length) return;

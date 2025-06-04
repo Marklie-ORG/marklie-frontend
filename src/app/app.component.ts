@@ -27,7 +27,9 @@ export class AppComponent {
         this.showDashboardHeader = 
           url === '/dashboard' || 
           url.startsWith('/client/') ||
-          url === '/profile';
+          url === '/profile' ||
+          url.startsWith('/edit-report/') ||
+          url.startsWith('/schedule-report/');
       }
     });
   }

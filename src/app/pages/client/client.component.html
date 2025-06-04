@@ -9,7 +9,7 @@
           <!-- Content for left block -->
           <div class="d-flex align-center justify-between mb-4">
               <h3>Reports</h3>
-              <button class="blue" (click)="goToMockReport()" *ngIf="scheduleOptions.length > 0">
+              <button class="blue" (click)="scheduleReport()" *ngIf="scheduleOptions.length > 0">
                   <!-- <i class="fa-solid fa-plus color-black"></i> -->
                   Add report
               </button>
@@ -40,7 +40,7 @@
             </div>
           </div>
           <div class="d-flex align-center justify-center mt-4" *ngIf="scheduleOptions.length === 0">
-            <button class="blue" (click)="goToMockReport()" >
+            <button class="blue" (click)="scheduleReport()" >
                 <!-- <i class="fa-solid fa-plus color-black"></i> -->
                 Add your first report for {{client?.name}}!
             </button>

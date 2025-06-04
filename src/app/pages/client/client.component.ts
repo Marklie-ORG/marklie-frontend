@@ -90,11 +90,11 @@ export class ClientComponent implements OnInit {
   }
 
   onEditReport(reportId: string) {
-    this.router.navigate(['/pdf-report/1bc6d6c9-96ed-4589-9dee-80dca6195e73']);
+    this.router.navigate(['/edit-report', reportId]);
   }
 
-  goToMockReport(): void {
-    this.router.navigate(['/reports', this.clientUuid]);
+  scheduleReport(): void {
+    this.router.navigate(['/schedule-report', this.clientUuid]);
   }
 
   onViewReport(reportId: string) {

@@ -24,7 +24,7 @@ import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-servi
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
 import { MetricSelectorComponent } from "./components/metrics/metrics-selector/metric-selector.component";
 import { KpiViewerComponent } from "./components/metrics/kpis/kpi-viewer.component";
-import { MockReportComponent } from "./pages/mock-report/mock-report.component.js";
+import { ScheduleReportComponent } from "./pages/schedule-report/schedule-report.component.js";
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -43,7 +43,8 @@ import { PasswordRecoveryComponent } from './pages/password-recovery/password-re
 import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { AuthComponent } from './pages/auth/auth.component';
-// import { library } from '@fortawesome/fontawesome-svg-core';
+import { EditReportComponent } from './pages/edit-report/edit-report.component';
+import { ScheduleOptionsComponent } from './components/schedule-options/schedule-options.component';
 
 register();
 
@@ -62,7 +63,7 @@ register();
     SlackLoginCallbackComponent,
     MetricSelectorComponent,
     KpiViewerComponent,
-    MockReportComponent,
+    ScheduleReportComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
     ModalBaseComponent,
@@ -83,7 +84,9 @@ register();
     ForgotPasswordEmailFormComponent,
     PasswordRecoveryComponent,
     NotificationComponent,
-    AuthComponent
+    AuthComponent,
+    EditReportComponent,
+    ScheduleOptionsComponent
 
   ],
   imports: [

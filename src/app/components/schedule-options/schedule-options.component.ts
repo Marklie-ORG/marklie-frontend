@@ -1,8 +1,9 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { ReportService } from 'src/app/services/api/report.service';
+import { CreateScheduleRequest, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
@@ -11,6 +12,9 @@ interface ScheduleOptionsMatDialogData {
   clientUuid: string;
   metricSelections: Record<MetricSectionKey, Record<string, boolean>>;
   schedule: any;
+  isEditMode: boolean;
+  datePreset: string;
+  schedulingOptionId: string;
 }
 
 @Component({
@@ -23,7 +27,10 @@ export class ScheduleOptionsComponent {
   @Input() panelToggles: Record<MetricSectionKey, boolean> | undefined = undefined;
   @Input() clientUuid: string = '';
   @Input() metricSelections: Record<MetricSectionKey, Record<string, boolean>> | undefined = undefined;
-  @Input() schedule: any = {};
+  @Input() schedule: Schedule | undefined = undefined;
+  @Input() isEditMode: boolean = false;
+
+  @Output() scheduleOptionUpdated = new EventEmitter<void>();
 
   readonly DATE_PRESETS = [
     { value: 'today', text: 'Today' },
@@ -48,7 +55,9 @@ export class ScheduleOptionsComponent {
   ];
   readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  selectedDatePresetText = this.DATE_PRESETS[6].value;
+  selectedDatePreset = this.DATE_PRESETS[6].value;
+  schedulingOptionId: string = '';
+  
 
   constructor(
     private reportsService: ReportService,
@@ -60,6 +69,9 @@ export class ScheduleOptionsComponent {
     this.clientUuid = data.clientUuid;
     this.metricSelections = data.metricSelections;
     this.schedule = data.schedule;
+    this.isEditMode = data.isEditMode;
+    this.selectedDatePreset = this.isEditMode ? data.datePreset : this.DATE_PRESETS[6].value;
+    this.schedulingOptionId = data.schedulingOptionId;
   }
 
   async saveConfiguration() {
@@ -68,7 +80,12 @@ export class ScheduleOptionsComponent {
       return;
     }
 
-    const metrics: Partial<Record<MetricSectionKey, string[]>> = {};
+    const metrics: Metrics = {
+      kpis: [],
+      graphs: [],
+      ads: [],
+      campaigns: []
+    };
 
     (Object.keys(this.panelToggles) as MetricSectionKey[]).forEach(sectionKey => {
       if (this.panelToggles && this.panelToggles[sectionKey] && this.metricSelections) {
@@ -76,17 +93,26 @@ export class ScheduleOptionsComponent {
       }
     });
 
-    const payload = {
+    if (!this.schedule) {
+      return;
+    }
+
+    const payload: CreateScheduleRequest = {
       ...(this.schedule),
       metrics,
-      datePreset: this.selectedDatePresetText,
+      datePreset: this.selectedDatePreset,
       clientUuid: this.clientUuid,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
     };
 
     try {
-      await this.reportsService.createSchedule(payload);
-      this.router.navigate(['/client', this.clientUuid]);
+      if (this.isEditMode && this.schedulingOptionId) {
+        await this.reportsService.updateSchedulingOption(this.schedulingOptionId, payload);
+        this.scheduleOptionUpdated.emit();
+      } else {
+        await this.reportsService.createSchedule(payload);
+      }
+      this.dialogRef.close();
     } catch (e) {
       console.error(e);
     }

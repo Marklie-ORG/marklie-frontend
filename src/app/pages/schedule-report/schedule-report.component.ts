@@ -7,16 +7,16 @@ import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
 
-type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
+export type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
-interface ReportSection {
+export interface ReportSection {
   key: MetricSectionKey;
   title: string;
   enabled: boolean;
   metrics: string[];
 }
 
-interface MockData {
+export interface MockData {
   KPIs: Record<string, any>;
   ads: any[];
   campaigns: any[];
@@ -34,9 +34,9 @@ interface MockData {
     ])
   ]
 })
-export class ScheduleReportComponent implements OnInit, AfterViewInit {
+export class ScheduleReportComponent implements OnInit {
   
-  DEFAULT_SELECTED_METRICS = ['spend', 'impressions', 'clicks'];
+  DEFAULT_SELECTED_METRICS = ['spend', 'impressions', 'clicks', 'cpc'];
 
   schedule = {
     frequency: 'weekly',
@@ -103,9 +103,9 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
     this.reportStatsLoading = false;
   }
 
-  ngAfterViewInit(): void {
-    this.renderCharts();
-  }
+  // ngAfterViewInit(): void {
+  //   this.renderCharts();
+  // }
 
   private initMetricSelections(): void {
     const initSelection = (keys: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: this.DEFAULT_SELECTED_METRICS.includes(k) }), {});
@@ -180,8 +180,6 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
   dropCampaignColumn(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.campaignColumnOrder, event.previousIndex, event.currentIndex);
   }
-
-  
 
   private renderCharts(): void {
     if (!this.mockData.graphs?.length) return;
@@ -265,29 +263,17 @@ export class ScheduleReportComponent implements OnInit, AfterViewInit {
     ];
   }
 
+  getMetricStyle(metric: string): string {
+    if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
+    if (['spend', 'cpc'].includes(metric)) return 'primary';
+    return '';
+  }
+
   formatMetricLabel(metric: string): string {
     return metric
       .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, c => c.toUpperCase());
-  }
-
-  formatMetricValue(metric: string, value: any): string {
-    const num = typeof value === 'number' ? value : parseFloat(value);
-    if (isNaN(num)) return value ?? '—';
-
-    const rounded = num.toFixed(2);
-    if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
-    if (metric.includes('ctr')) return `${rounded}%`;
-    if (metric.includes('roas')) return `${rounded}x`;
-    return Number(num).toLocaleString();
-  }
-
-
-  getMetricStyle(metric: string): string {
-    if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
-    if (['spend', 'cpc'].includes(metric)) return 'primary';
-    return '';
   }
 
   scheduleReportDelivery() {

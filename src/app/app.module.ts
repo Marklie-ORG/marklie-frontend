@@ -45,6 +45,8 @@ import { NotificationComponent } from './components/notification/notification.co
 import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { ScheduleOptionsComponent } from './components/schedule-options/schedule-options.component';
+import { EditReportTmpComponent } from './components/edit-report-tmp/edit-report-tmp.component';
+import { EditMetricsTmpComponent } from './components/edit-metrics-tmp/edit-metrics-tmp.component';
 
 register();
 
@@ -86,7 +88,9 @@ register();
     NotificationComponent,
     AuthComponent,
     EditReportComponent,
-    ScheduleOptionsComponent
+    ScheduleOptionsComponent,
+    EditReportTmpComponent,
+    EditMetricsTmpComponent
 
   ],
   imports: [

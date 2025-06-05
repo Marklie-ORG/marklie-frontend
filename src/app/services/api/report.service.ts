@@ -22,6 +22,30 @@ export interface Report {
   reviewNeeded:	boolean
 }
 
+export interface CreateScheduleRequest extends Schedule {
+  metrics: Metrics
+  datePreset: string
+  clientUuid: string
+  timeZone: string
+}
+
+export interface Schedule {
+  frequency: string
+  time: string
+  dayOfWeek: string
+  dayOfMonth: number
+  intervalDays: number
+  cronExpression: string
+  reviewNeeded: boolean
+}
+
+export interface Metrics {
+  kpis: string[]
+  graphs: string[]
+  ads: string[]
+  campaigns: string[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,7 +60,7 @@ export class ReportService {
   constructor(private http: HttpClient) { }
 
   // @ts-ignore
-  createSchedule(data: any) {
+  createSchedule(data: CreateScheduleRequest) {
     try {
       console.log(this.apiUrl)
       return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
@@ -47,8 +71,8 @@ export class ReportService {
     }
   }
 
-  updateSchedule(scheduleUuid: string, data: any): Promise<any> {
-    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/${scheduleUuid}`, data));
+  updateSchedulingOption(scheduleUuid: string, data: any): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/scheduling-option/${scheduleUuid}`, data));
   }
 
   deleteSchedule(scheduleUuid: string): Promise<any> {
@@ -75,3 +99,4 @@ export class ReportService {
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/reports/scheduling-option/${uuid}`, {headers: this.headers}));
   }
 }
+

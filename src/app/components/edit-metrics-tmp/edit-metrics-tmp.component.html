@@ -1,0 +1,24 @@
+<div *ngFor="let section of reportSections; let i = index" class="report-section block mb-3">
+    <div class="section-toggle">
+      <label>{{ section.title }}</label>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="panelToggles && panelToggles[section.key]" (change)="onPanelToggleChange.emit()"/>
+        <!-- (change)="onPanelToggleChange()"  -->
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div *ngIf="panelToggles && panelToggles[section.key]">
+      <div class="metric-group p-2" cdkDropList [cdkDropListData]="section.metrics"
+           (cdkDropListDropped)="dropMetric($event, i)">
+        <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
+          <label>
+            <input type="checkbox" [(ngModel)]="metricSelections && metricSelections[section.key][metric]" (change)="onMetricSelectionChange.emit()"/>
+            {{ formatMetricLabel(metric) }}
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- (change)="onMetricSelectionChange()" -->
+
+  </div>

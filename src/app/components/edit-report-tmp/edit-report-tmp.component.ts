@@ -1,181 +1,68 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
-import { Chart } from 'chart.js';
-import { MatDialog } from '@angular/material/dialog';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { MetricSelections } from 'src/app/components/edit-report-tmp/edit-report-tmp.component';
-import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { Chart } from 'chart.js';
+import { MetricSectionKey, MockData } from 'src/app/pages/schedule-report/schedule-report.component';
+import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { ScheduleOptionsComponent } from '../schedule-options/schedule-options.component';
 
-interface SchedulingOption {
-  uuid: string
-  createdAt: string
-  updatedAt: string
-  cronExpression: string
-  datePreset: string
-  isActive: boolean
-  reportType: string
-  jobData: JobData
-  timezone: string
-  reviewNeeded: boolean
-  lastRun: any
-  nextRun: string
-  bullJobId: string
-  client: string
+export interface MetricSelections {
+  kpis: Record<string, boolean>;
+  graphs: Record<string, boolean>;
+  ads: Record<string, boolean>;
+  campaigns: Record<string, boolean>;
 }
-
-interface JobData {
-  time: string
-  metrics: Metrics
-  timeZone: string
-  dayOfWeek: string
-  frequency: string
-  clientUuid: string
-  datePreset: string
-  dayOfMonth: number
-  intervalDays: number
-  reviewNeeded: boolean
-  cronExpression: string
-  organizationUuid: string
-}
-
-
 
 @Component({
-  selector: 'app-edit-report',
-  templateUrl: './edit-report.component.html',
-  styleUrl: './edit-report.component.scss'
+  selector: 'app-edit-report-tmp',
+  templateUrl: './edit-report-tmp.component.html',
+  styleUrl: './edit-report-tmp.component.scss'
 })
-export class EditReportComponent {
+export class EditReportTmpComponent implements AfterViewInit, OnInit {
 
-  // DEFAULT_SELECTED_METRICS = ['spend', 'impressions', 'clicks', 'cpc'];
+  @Input() reportSections: ReportSection[] = [];
+  @Input() panelToggles: Record<MetricSectionKey, boolean> | undefined = undefined;
+  @Input() metricSelections: MetricSelections | undefined = undefined;
+  @Input() campaignColumnOrder: string[] = [];
+  @Input() mockData: MockData | undefined = undefined;
+  @Input() availableMetrics: string[] = [];
+  @Input() availableGraphMetrics: string[] = [];
+  @Input() adAvailableMetrics: string[] = [];
+  @Input() campaignAvailableMetrics: string[] = [];
+  // @Input() DEFAULT_SELECTED_METRICS: string[] = [];
+  @Input() metricsGraphConfig: any[] = [];
+  @Input() clientUuid: string = '';
+  @Input() schedule: any = {};
 
-  schedule: Schedule = {
-    frequency: 'weekly',
-    time: '09:00',
-    dayOfWeek: 'Monday',
-    dayOfMonth: 1,
-    intervalDays: 1,
-    cronExpression: '',
-    reviewNeeded: false,
-  };
-  clientUuid: string = '';
-  reportStatsLoading = false;
-
-  availableMetrics = ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'actions', 'action_values', 'purchase_roas', 'reach'];
-  availableGraphMetrics = ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'purchaseRoas', 'conversionValue', 'purchases', 'addToCart', 'initiatedCheckouts', 'costPerPurchase', 'costPerCart'];
-  adAvailableMetrics = ['spend', 'addToCart', 'purchases', 'roas'];
-  campaignAvailableMetrics = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
-
-  metricSelections: MetricSelections = {
-    kpis: {} as Record<string, boolean>,
-    graphs: {} as Record<string, boolean>,
-    ads: {} as Record<string, boolean>,
-    campaigns: {} as Record<string, boolean>
-  };
-
-  panelToggles = {
-    kpis: true,
-    graphs: true,
-    ads: true,
-    campaigns: true
-  };
-
-  metricsGraphConfig: any[] = [];
-
-  mockData: MockData = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
-
+  // metricSelections = {
+  //   kpis: {} as Record<string, boolean>,
+  //   graphs: {} as Record<string, boolean>,
+  //   ads: {} as Record<string, boolean>,
+  //   campaigns: {} as Record<string, boolean>
+  // };
   private chartRefs: Record<string, Chart> = {};
-  campaignColumnOrder: string[] = [...this.campaignAvailableMetrics];
-
-  reportSections: ReportSection[] = [
-    { key: 'kpis', title: 'KPIs', enabled: true, metrics: this.availableMetrics },
-    { key: 'graphs', title: 'Graphs', enabled: true, metrics: this.availableGraphMetrics },
-    { key: 'ads', title: 'Ads', enabled: true, metrics: this.adAvailableMetrics },
-    { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.campaignAvailableMetrics }
-  ];
-
-  schedulingOptionId: string | null = null;
-
-  schedulingOption: SchedulingOption | null = null;
 
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private reportService: ReportService,
+    private router: Router,
   ) {
+    console.log(this.metricSelections)
+    // this.initMetricSelections();  
+    // console.log(this.metricSelections)
   }
 
-  ngOnInit() {
-    this.route.params.subscribe(async params => {
-      this.schedulingOptionId = params['schedulingOptionId'];
-      
-      await this.loadReport();
-      
-    });
-  }
-
-  private async loadReport() {
-    if (!this.schedulingOptionId) return;
-    this.schedulingOption = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
-    this.convertOptionIntoTemplate(this.schedulingOption);
+  ngOnInit(): void {
+    // this.initMetricSelections();
     this.generateMockData();
     this.updateVisibleMetrics();
   }
 
-  convertOptionIntoTemplate(schedulingOption: SchedulingOption) {
-
-    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
-
-    this.schedule = {
-      frequency: schedulingOption.jobData.frequency,
-      time: schedulingOption.jobData.time,
-      dayOfWeek: schedulingOption.jobData.dayOfWeek,
-      dayOfMonth: schedulingOption.jobData.dayOfMonth,
-      intervalDays: schedulingOption.jobData.intervalDays,
-      cronExpression: schedulingOption.cronExpression,
-      reviewNeeded: schedulingOption.reviewNeeded,
-    };
-
-    this.metricSelections = {
-      kpis: initSelection(this.availableMetrics, schedulingOption.jobData.metrics.kpis),
-      graphs: initSelection(this.availableGraphMetrics, schedulingOption.jobData.metrics.graphs),
-      ads: initSelection(this.adAvailableMetrics, schedulingOption.jobData.metrics.ads),
-      campaigns: initSelection(this.campaignAvailableMetrics, schedulingOption.jobData.metrics.campaigns),
-    }
-
-    console.log(this.metricSelections)
-  }
-
-  editDelivery() {
-    const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
-      width: '800px',
-      data: {
-        panelToggles: this.panelToggles,
-        clientUuid: this.clientUuid,
-        metricSelections: this.metricSelections,
-        schedule: this.schedule,
-        isEditMode: true,
-        datePreset: this.schedulingOption?.datePreset || '',
-        schedulingOptionId: this.schedulingOptionId || ''
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // this.loadClientDetails();
-    });
-
-    dialogRef.componentInstance.scheduleOptionUpdated.subscribe(async () => {
-      await this.loadReport();
-      // You can add additional logic here if needed when the schedule is updated
-    });
+  ngAfterViewInit(): void {
+    this.renderCharts();
   }
 
   // private initMetricSelections(): void {
@@ -186,10 +73,10 @@ export class EditReportComponent {
   //     ads: initSelection(this.adAvailableMetrics),
   //     campaigns: initSelection(this.campaignAvailableMetrics)
   //   };
-  //   console.log(this.metricSelections)
   // }
 
   private generateMockData(): void {
+    if (!this.mockData) return;
     this.mockData.KPIs = this.mockKPIs();
     this.mockData.ads = this.mockAds();
     this.mockData.campaigns = this.mockCampaigns();
@@ -204,14 +91,14 @@ export class EditReportComponent {
     this.updateVisibleMetrics();
   }
 
-
   private updateVisibleMetrics(): void {
+    if (!this.metricSelections) return;
     const { kpis, graphs, ads, campaigns } = this.metricSelections;
-// 
+
     // this.DEFAULT_SELECTED_METRICS = this.getSelected(kpis);
     this.metricsGraphConfig = this.getMetricConfigs().filter(cfg => graphs[cfg.key]);
 
-    if (this.panelToggles.graphs) {
+    if (this.panelToggles && this.panelToggles.graphs) {
       setTimeout(() => this.renderCharts(), 0);
     }
   }
@@ -254,7 +141,7 @@ export class EditReportComponent {
   }
 
   private renderCharts(): void {
-    if (!this.mockData.graphs?.length) return;
+    if (!this.mockData || !this.mockData.graphs?.length) return;
 
     const labels = this.mockData.graphs.map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -348,7 +235,26 @@ export class EditReportComponent {
       .replace(/^./, c => c.toUpperCase());
   }
 
-  
+  scheduleReportDelivery() {
+    const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
+      width: '800px',
+      data: {
+        panelToggles: this.panelToggles,
+        clientUuid: this.clientUuid,
+        metricSelections: this.metricSelections,
+        schedule: this.schedule
+      }
+    });
+
+    dialogRef.componentInstance.scheduleOptionUpdated.subscribe((updatedSchedule: any) => {
+      this.schedule = updatedSchedule;
+      // You can add additional logic here if needed when the schedule is updated
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // this.loadClientDetails();
+    });
+  }
 
   private mockKPIs() {
     return {
@@ -426,9 +332,24 @@ export class EditReportComponent {
     });
   }
 
+  formatMetricValue(metric: string, value: any): string {
+    const num = typeof value === 'number' ? value : parseFloat(value);
+    if (isNaN(num)) return value ?? '—';
+
+    const rounded = num.toFixed(2);
+    if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
+    if (metric.includes('ctr')) return `${rounded}%`;
+    if (metric.includes('roas')) return `${rounded}x`;
+    return Number(num).toLocaleString();
+  }
+
   log() {
+    if (!this.metricSelections) return;
     console.log(this.metricSelections.campaigns)
   }
 
-}
+  openAd(url: string): void {
+    window.open(url, '_blank');
+  }
 
+}

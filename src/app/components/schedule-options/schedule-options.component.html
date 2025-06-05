@@ -1,9 +1,9 @@
-<div class="config-step1 p-4">
+<div class="config-step1 p-4" *ngIf="schedule">
     <h3>Report Schedule</h3>
 
     <div class="form-row">
       <label>Date Preset:</label>
-      <select class="form-control" [(ngModel)]="selectedDatePresetText">
+      <select class="form-control" [(ngModel)]="selectedDatePreset">
         <option *ngFor="let preset of DATE_PRESETS" [value]="preset.value">
           {{ preset.text }}
         </option>

@@ -1,1 +1,62 @@
-<p>edit-report works!</p>
+<div>
+
+    <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
+  
+      <div class="d-flex flex-column pt-3 pl-5 pr-5">
+        <main>
+          <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+      
+          <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
+            <app-edit-report-tmp
+              [reportSections]="reportSections"
+              [panelToggles]="panelToggles"
+              [metricSelections]="metricSelections"
+              [campaignColumnOrder]="campaignColumnOrder"
+              [mockData]="mockData"
+              [availableMetrics]="availableMetrics"
+              [availableGraphMetrics]="availableGraphMetrics"
+              [adAvailableMetrics]="adAvailableMetrics"
+              [campaignAvailableMetrics]="campaignAvailableMetrics"
+              
+              [metricsGraphConfig]="metricsGraphConfig"
+              [clientUuid]="clientUuid"
+              [schedule]="schedule"
+            ></app-edit-report-tmp>
+            <!-- [DEFAULT_SELECTED_METRICS]="DEFAULT_SELECTED_METRICS" -->
+          </div>
+  
+        </main>
+      </div>
+  
+      <div class="side-panel d-flex flex-column p-3">
+  
+        <!-- <button class="blue mb-3" (click)="scheduleReportDelivery()">
+          Schedule Report Delivery
+        </button> -->
+        <div *ngIf="schedulingOption" class="p-3 block d-flex flex-column gap-2">
+          <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div>
+          <div>Date Preset: {{schedulingOption.datePreset}}</div>
+          <div>Frequency: {{schedulingOption.jobData.frequency}}</div>
+          <div>Review before sending: {{schedulingOption.jobData.reviewNeeded ? 'yes' : 'no'}}</div>
+          <div>Next run: {{schedulingOption.nextRun}}</div>
+          
+        </div>
+
+        <button class="blue mb-3" (click)="editDelivery()">
+          Edit Delivery
+        </button>
+  
+        <app-edit-metrics-tmp
+          [reportSections]="reportSections"
+          [panelToggles]="panelToggles"
+          [metricSelections]="metricSelections"
+          [campaignColumnOrder]="campaignColumnOrder"
+          (onPanelToggleChange)="onPanelToggleChange()"
+          (onMetricSelectionChange)="onMetricSelectionChange()"
+        ></app-edit-metrics-tmp>
+  
+      </div>
+    </div>
+  
+  </div>
+  

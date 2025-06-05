@@ -1,6 +1,31 @@
-<div class="dashboard">
+<div>
 
-  <div style="display: grid; grid-template-columns: 20% 80%; gap: 0%;">
+  <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
+
+    <div class="d-flex flex-column pt-3 pl-5 pr-5">
+      <main>
+        <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+    
+        <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
+          <app-edit-report-tmp
+            [reportSections]="reportSections"
+            [panelToggles]="panelToggles"
+            [metricSelections]="metricSelections"
+            [campaignColumnOrder]="campaignColumnOrder"
+            [mockData]="mockData"
+            [availableMetrics]="availableMetrics"
+            [availableGraphMetrics]="availableGraphMetrics"
+            [adAvailableMetrics]="adAvailableMetrics"
+            [campaignAvailableMetrics]="campaignAvailableMetrics"
+            [DEFAULT_SELECTED_METRICS]="DEFAULT_SELECTED_METRICS"
+            [metricsGraphConfig]="metricsGraphConfig"
+            [clientUuid]="clientUuid"
+            [schedule]="schedule"
+          ></app-edit-report-tmp>
+        </div>
+
+      </main>
+    </div>
 
     <div class="side-panel d-flex flex-column p-3">
 
@@ -8,131 +33,16 @@
         Schedule Report Delivery
       </button>
 
-      <div *ngFor="let section of reportSections; let i = index" class="report-section block mb-3">
-        <div class="section-toggle">
-          <label>{{ section.title }}</label>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="panelToggles[section.key]" (change)="onPanelToggleChange()" />
-            <span class="slider round"></span>
-          </label>
-        </div>
+      <app-edit-metrics-tmp
+        [reportSections]="reportSections"
+        [panelToggles]="panelToggles"
+        [metricSelections]="metricSelections"
+        [campaignColumnOrder]="campaignColumnOrder"
+        (onPanelToggleChange)="onPanelToggleChange()"
+        (onMetricSelectionChange)="onMetricSelectionChange()"
+      ></app-edit-metrics-tmp>
 
-        <div *ngIf="panelToggles[section.key]">
-          <div class="metric-group p-2" cdkDropList [cdkDropListData]="section.metrics"
-               (cdkDropListDropped)="dropMetric($event, i)">
-            <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
-              <label>
-                <input type="checkbox" [(ngModel)]="metricSelections[section.key][metric]" (change)="onMetricSelectionChange()" />
-                {{ formatMetricLabel(metric) }}
-              </label>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="d-flex flex-column pl-4 pr-4 pt-4 pb-5">
-      <main>
-        <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
-    
-        <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
-          <div *ngFor="let section of reportSections; let i = index" cdkDrag class="report-section bordered-section">
-            <div class="section-toggle">
-              <label>{{ section.title }}</label>
-              <label class="switch">
-                <input type="checkbox" [(ngModel)]="panelToggles[section.key]" (change)="onPanelToggleChange()" />
-                <span class="slider round"></span>
-              </label>
-            </div>
-    
-            <div *ngIf="panelToggles[section.key]">
-              <div class="metric-group" cdkDropList [cdkDropListData]="section.metrics"
-                   (cdkDropListDropped)="dropMetric($event, i)">
-                <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
-                  <label>
-                    <input type="checkbox" [(ngModel)]="metricSelections[section.key][metric]" (change)="section.key === 'graphs' ? onMetricSelectionChange() : log()"/>
-                    <!-- (change)="section.key !== 'ads' ? onMetricSelectionChange() : null" -->
-                    {{ formatMetricLabel(metric) }}
-                  </label>
-                </div>
-              </div>
-    
-              <ng-container [ngSwitch]="section.key">
-
-                <div *ngSwitchCase="'kpis'" class="kpi-grid" cdkDropList (cdkDropListDropped)="dropKPICard($event)">
-                  <ng-container *ngFor="let metric of section.metrics">
-                    <div class="kpi-card" *ngIf="metricSelections.kpis[metric]" cdkDrag>
-                      <div class="kpi-label">{{ formatMetricLabel(metric) }}</div>
-                      <div class="kpi-value" [ngClass]="getMetricStyle(metric)">
-                        {{ formatMetricValue(metric, mockData.KPIs[metric]) }}
-                      </div>
-                    </div>
-                  </ng-container>
-                </div>
-    
-    
-                <div *ngSwitchCase="'graphs'" class="graph-grid" cdkDropList (cdkDropListDropped)="dropGraphCard($event)">
-                  <div class="graph-card" *ngFor="let config of metricsGraphConfig" cdkDrag>
-                    <canvas [id]="config.key + 'Chart'"></canvas>
-                  </div>
-                </div>
-    
-                <div *ngSwitchCase="'ads'" class="ad-grid">
-                  <div class="ad-card" *ngFor="let ad of mockData.ads">
-                    <div class="ad-image-container">
-                      <img class="ad-media" [src]="ad.thumbnailUrl" [alt]="ad.name" />
-                    </div>
-                    <div class="metrics">
-                      <ng-container *ngFor="let key of section.metrics">
-                        <div class="metric" *ngIf="metricSelections.ads[key]">
-                            <div class="metric-label">{{ formatMetricLabel(key) }}</div>
-                            <div class="metric-value" [ngClass]="getMetricStyle(key)">
-                              {{ formatMetricValue(key, ad[key]) }}
-                            </div>
-                        </div>
-                      </ng-container>
-    
-                    </div>
-                    <a target="_blank" [href]="ad.sourceUrl" class="view-ad-btn">View Ad</a>
-                  </div>
-                </div>
-    
-                <div *ngSwitchCase="'campaigns'" class="table-container">
-                  <table class="campaign-table">
-                    <thead>
-                      <tr cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropCampaignColumn($event)">
-                        <th>#</th>
-                        <th>Campaign Name</th>
-                        <th *ngFor="let key of campaignColumnOrder" cdkDrag>
-                          {{ formatMetricLabel(key) }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let campaign of mockData.campaigns; let k = index">
-                        <td>{{ k + 1 }}</td>
-                        <td>{{ campaign.campaign_name }}</td>
-                        <td *ngFor="let key of campaignColumnOrder">
-                          {{ formatMetricValue(key, campaign[key]) }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                
-              </ng-container>
-            </div>
-          </div>
-        </div>
-
-      </main>
     </div>
   </div>
-
-  
-
-  
 
 </div>

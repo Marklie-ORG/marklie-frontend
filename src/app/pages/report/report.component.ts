@@ -70,7 +70,6 @@ export class ReportComponent implements OnInit, OnDestroy {
         this.dateRangeLabel = `${start.toLocaleDateString()} – ${end.toLocaleDateString()} (${diffDays} days)`;
       }
 
-      console.log(this.dateRangeLabel);
 
       this.campaigns = res.data[0].campaigns;
       this.bestAds = res.data[0].ads;
@@ -99,7 +98,6 @@ export class ReportComponent implements OnInit, OnDestroy {
     );
 
     for (const config of this.chartConfigs) {
-      console.log(`${config.key}Chart`);
       const canvasId = `${config.key}Chart`;
       const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
       if (!canvas) {
@@ -165,7 +163,6 @@ export class ReportComponent implements OnInit, OnDestroy {
   }
 
   formatMetricValue(metric: string, value: any): string {
-    console.log(metric, value)
     const num = typeof value === 'number' ? value : parseFloat(value);
     if (isNaN(num)) return value ?? '—';
 

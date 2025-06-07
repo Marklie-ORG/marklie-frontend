@@ -62,8 +62,6 @@
           </thead>
           <tbody>
           <tr *ngFor="let campaign of campaigns; let i = index">
-            {{campaign}}
-
             <td>{{ i + 1 }}</td>
             <td>{{ campaign.campaign_name }}</td>
             <td *ngFor="let key of campaignColumnOrder">

@@ -16,7 +16,6 @@ export class AppComponent {
     // Listen to route changes
     router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        console.log(event)
         // console.log(event.url)
         const url = event.url.split('?')[0];
         this.showHeader = 

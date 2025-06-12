@@ -46,6 +46,86 @@ export interface Metrics {
   campaigns: string[]
 }
 
+export interface GetReportResponse {
+  uuid: string
+  createdAt: string
+  updatedAt: string
+  organization: string
+  client: string
+  reportType: string
+  gcsUrl: string
+  data: Daum[]
+  metadata: Metadata
+}
+
+export interface Daum {
+  ads: Ad[]
+  KPIs: Kpis
+  graphs: Graph[]
+  campaigns: Campaign[]
+  adAccountId: string
+}
+
+export interface Ad {
+  adId: string
+  adCreativeId: string
+  thumbnailUrl: string
+  spend: string
+  addToCart: string
+  purchases: string
+  roas: string
+  sourceUrl: string
+}
+export interface Kpis {
+  spend: string
+  purchaseRoas: string
+  conversionValue: string
+  purchases: string
+  impressions: string
+  clicks: string
+  cpc: string
+  ctr: string
+  costPerPurchase: number
+  addToCart: string
+  costPerAddToCart: number
+  initiatedCheckouts: string
+}
+
+export interface Graph {
+  spend: string
+  impressions: number
+  clicks: number
+  ctr: string
+  cpc: string
+  purchaseRoas: string
+  conversionValue: string
+  engagement: number
+  purchases: number
+  costPerPurchase: string
+  costPerCart: string
+  addToCart: number
+  initiatedCheckouts: number
+  conversionRate: string
+  date_start: string
+  date_stop: string
+}
+
+
+export interface Campaign {
+  index: number
+  campaign_name: string
+  spend: string
+  purchases: number
+  conversionRate: string
+  purchaseRoas: string
+}
+
+export interface Metadata {
+  datePreset: string
+  reviewNeeded: boolean
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -79,8 +159,8 @@ export class ReportService {
     return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
   }
 
-  async getReport(uuid: string): Promise<ReportStatsResponse> {
-    return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
+  async getReport(uuid: string): Promise<GetReportResponse> {
+    return firstValueFrom(this.http.get<GetReportResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
   }
 
   async getReportStats(datePreset: string): Promise<ReportStatsResponse> {
@@ -97,6 +177,10 @@ export class ReportService {
 
   async getSchedulingOption(uuid: string): Promise<any> {
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/reports/scheduling-option/${uuid}`, {headers: this.headers}));
+  }
+
+  async getAvailableMetrics(): Promise<Metrics> {
+    return firstValueFrom(this.http.get<Metrics>(`${this.apiUrl}/reports/available-metrics`));
   }
 }
 

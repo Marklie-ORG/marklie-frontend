@@ -2,8 +2,7 @@
     <div class="section-toggle">
       <label>{{ section.title }}</label>
       <label class="switch">
-        <input type="checkbox" [(ngModel)]="panelToggles && panelToggles[section.key]" (change)="onPanelToggleChange.emit()"/>
-        <!-- (change)="onPanelToggleChange()"  -->
+        <input type="checkbox" [(ngModel)]="panelToggles && panelToggles[section.key]"/>
         <span class="slider round"></span>
       </label>
     </div>
@@ -13,12 +12,12 @@
            (cdkDropListDropped)="dropMetric($event, i)">
         <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
           <label>
-            <input type="checkbox" [(ngModel)]="metricSelections && metricSelections[section.key][metric]" (change)="onMetricSelectionChange.emit()"/>
-            {{ formatMetricLabel(metric) }}
+            <input type="checkbox" [(ngModel)]="metricSelections && metricSelections[section.key][metric]" (change)="onMetricsChange()"/>
+            <!-- {{ metricsService.formatMetricLabel(metric) }} -->
+            {{metric}}
           </label>
         </div>
       </div>
     </div>
-    <!-- (change)="onMetricSelectionChange()" -->
 
   </div>

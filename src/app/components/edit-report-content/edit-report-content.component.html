@@ -1,0 +1,53 @@
+<div *ngFor="let section of reportSections; let i = index" cdkDrag class="report-section p-3 mb-4">
+  
+  <ng-container *ngIf="panelToggles && panelToggles[section.key] && mockData">
+
+    <div class="section-toggle">
+      <label>{{ section.title }}</label>
+    </div>
+
+    <ng-container [ngSwitch]="section.key">
+
+      <div *ngSwitchCase="'kpis'" class="kpi-grid" cdkDropList (cdkDropListDropped)="dropKPICard($event)">
+        <ng-container *ngFor="let metric of section.metrics">
+          <kpi-card 
+          cdkDrag
+          *ngIf="metricSelections && metricSelections.kpis[metric]" 
+          [metric]="metric" 
+          [value]="mockData.KPIs[metric]"
+          ></kpi-card>
+        </ng-container>
+      </div>
+
+      <charts
+      *ngSwitchCase="'graphs'"
+      [data]="mockData"
+      [metricSelections]="metricSelections"
+      ></charts>
+
+      <div *ngSwitchCase="'ads'" class="ad-grid">
+
+        <ad-card
+        *ngFor="let ad of mockData.ads"
+        [thumbnail]="ad.thumbnailUrl"
+        [metrics]="section.metrics"
+        [metricSelections]="metricSelections"
+        [sourceUrl]="ad.sourceUrl"
+        [ad]="ad"
+        ></ad-card>
+
+      </div>
+
+      <div *ngSwitchCase="'campaigns'" class="table-container">
+
+        <campaign-table
+        [campaignColumnOrder]="campaignColumnOrder"
+        [campaigns]="mockData.campaigns"
+        ></campaign-table>
+      </div>
+      
+    </ng-container>
+
+  </ng-container>
+
+</div>

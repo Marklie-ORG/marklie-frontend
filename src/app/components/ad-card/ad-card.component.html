@@ -1,0 +1,17 @@
+<div class="ad-card" >
+    <div class="ad-image-container">
+      <img class="ad-media" [src]="thumbnail"/>
+    </div>
+    <div class="metrics">
+      <ng-container *ngFor="let key of metrics">
+        <div class="metric" *ngIf="metricSelections && metricSelections.ads[key]">
+            <div class="metric-label">{{ metricsService.formatMetricLabel(key) }}</div>
+            <div class="metric-value" [ngClass]="metricsService.getMetricStyle(key)">
+              {{ metricsService.formatMetricValue(key, ad[key]) }}
+            </div>
+        </div>
+      </ng-container>
+
+    </div>
+    <button (click)="openAd(sourceUrl)" class="width-100">View Ad</button>
+</div>

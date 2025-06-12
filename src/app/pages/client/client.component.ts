@@ -35,41 +35,12 @@ export class ClientComponent implements OnInit {
   client: Client | null = null;
   scheduleOptions: ScheduledReport[] = [];
 
+  scheduleOptionsLoading = true;
+
   faCircle = faCircle;
   faCircleDot = faCircleDot;
 
-  activities: Activity[] = [
-    // {
-    //   status: 'new',
-    //   date: new Date(),
-    //   clientName: 'Acme Corp',
-    //   activity: 'Report generated for Q1 2024'
-    // },
-    // {
-    //   status: 'new',
-    //   date: new Date(Date.now() - 86400000), // 1 day ago
-    //   clientName: 'TechStart Inc',
-    //   activity: 'New client added'
-    // },
-    // {
-    //   status: 'old',
-    //   date: new Date(Date.now() - 172800000), // 2 days ago
-    //   clientName: 'Global Services',
-    //   activity: 'Report sent via email'
-    // },
-    // {
-    //   status: 'old',
-    //   date: new Date(Date.now() - 259200000), // 3 days ago
-    //   clientName: 'Innovation Labs',
-    //   activity: 'Facebook account connected'
-    // },
-    // {
-    //   status: 'old',
-    //   date: new Date(Date.now() - 345600000), // 4 days ago
-    //   clientName: 'Digital Solutions',
-    //   activity: 'Report configuration updated'
-    // }
-    ];
+  activities: Activity[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -86,6 +57,7 @@ export class ClientComponent implements OnInit {
     this.route.params.subscribe(async params => {
       this.clientUuid = params['id'];
       await this.loadClientDetails();
+      // this.onEditClient();
     });
   }
 
@@ -107,6 +79,7 @@ export class ClientComponent implements OnInit {
     this.client = await this.clientService.getClient(this.clientUuid);
     console.log(this.client);
     this.scheduleOptions = this.client.crons || [];
+    this.scheduleOptionsLoading = false;
   }
 
   onEditClient() {

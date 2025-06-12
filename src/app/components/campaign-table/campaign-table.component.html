@@ -1,0 +1,20 @@
+<table class="campaign-table">
+    <thead>
+      <tr cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropCampaignColumn($event)">
+        <th>#</th>
+        <th>Campaign Name</th>
+        <th *ngFor="let key of campaignColumnOrder" cdkDrag>
+          {{ metricsService.formatMetricLabel(key) }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let campaign of campaigns; let k = index">
+        <td>{{ k + 1 }}</td>
+        <td>{{ campaign.campaign_name }}</td>
+        <td *ngFor="let key of campaignColumnOrder">
+          {{ metricsService.formatMetricValue(key, campaign[key]) }}
+        </td>
+      </tr>
+    </tbody>
+</table>

@@ -7,32 +7,21 @@
           <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
       
           <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
-            <app-edit-report-tmp
+            <edit-report-content
               [reportSections]="reportSections"
               [panelToggles]="panelToggles"
               [metricSelections]="metricSelections"
-              [campaignColumnOrder]="campaignColumnOrder"
+              [campaignColumnOrder]="availableMetrics.campaigns"
               [mockData]="mockData"
-              [availableMetrics]="availableMetrics"
-              [availableGraphMetrics]="availableGraphMetrics"
-              [adAvailableMetrics]="adAvailableMetrics"
-              [campaignAvailableMetrics]="campaignAvailableMetrics"
-              
-              [metricsGraphConfig]="metricsGraphConfig"
-              [clientUuid]="clientUuid"
-              [schedule]="schedule"
-            ></app-edit-report-tmp>
-            <!-- [DEFAULT_SELECTED_METRICS]="DEFAULT_SELECTED_METRICS" -->
+              [campaignAvailableMetrics]="availableMetrics.campaigns"
+            ></edit-report-content>
           </div>
   
         </main>
       </div>
   
       <div class="side-panel d-flex flex-column p-3">
-  
-        <!-- <button class="blue mb-3" (click)="scheduleReportDelivery()">
-          Schedule Report Delivery
-        </button> -->
+        
         <div *ngIf="schedulingOption" class="p-3 block d-flex flex-column gap-2">
           <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div>
           <div>Date Preset: {{schedulingOption.datePreset}}</div>
@@ -46,14 +35,12 @@
           Edit Delivery
         </button>
   
-        <app-edit-metrics-tmp
+        <edit-metrics
           [reportSections]="reportSections"
           [panelToggles]="panelToggles"
-          [metricSelections]="metricSelections"
-          [campaignColumnOrder]="campaignColumnOrder"
-          (onPanelToggleChange)="onPanelToggleChange()"
-          (onMetricSelectionChange)="onMetricSelectionChange()"
-        ></app-edit-metrics-tmp>
+          [(metricSelections)]="metricSelections"
+          [campaignColumnOrder]="availableMetrics.campaigns"
+        ></edit-metrics>
   
       </div>
     </div>

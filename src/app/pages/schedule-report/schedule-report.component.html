@@ -7,21 +7,16 @@
         <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
     
         <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
-          <app-edit-report-tmp
+          <edit-report-content
             [reportSections]="reportSections"
             [panelToggles]="panelToggles"
             [metricSelections]="metricSelections"
-            [campaignColumnOrder]="campaignColumnOrder"
+            [campaignColumnOrder]="availableMetrics.campaigns"
             [mockData]="mockData"
-            [availableMetrics]="availableMetrics"
-            [availableGraphMetrics]="availableGraphMetrics"
-            [adAvailableMetrics]="adAvailableMetrics"
-            [campaignAvailableMetrics]="campaignAvailableMetrics"
-            [DEFAULT_SELECTED_METRICS]="DEFAULT_SELECTED_METRICS"
-            [metricsGraphConfig]="metricsGraphConfig"
+            [campaignAvailableMetrics]="availableMetrics.campaigns"
             [clientUuid]="clientUuid"
             [schedule]="schedule"
-          ></app-edit-report-tmp>
+          ></edit-report-content>
         </div>
 
       </main>
@@ -33,14 +28,12 @@
         Schedule Report Delivery
       </button>
 
-      <app-edit-metrics-tmp
+      <edit-metrics
         [reportSections]="reportSections"
         [panelToggles]="panelToggles"
-        [metricSelections]="metricSelections"
-        [campaignColumnOrder]="campaignColumnOrder"
-        (onPanelToggleChange)="onPanelToggleChange()"
-        (onMetricSelectionChange)="onMetricSelectionChange()"
-      ></app-edit-metrics-tmp>
+        [(metricSelections)]="metricSelections"
+        [campaignColumnOrder]="availableMetrics.campaigns"
+      ></edit-metrics>
 
     </div>
   </div>

@@ -1,199 +1,7 @@
-.report-print {
-  font-family: 'Arial', sans-serif;
-  padding: 32px;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  background: white;
-  color: #2c3e50;
-  box-sizing: border-box;
-}
 
 @page {
   size: A4 landscape;
   margin: 20mm;
-}
-
-h1, h2 {
-  page-break-after: avoid;
-}
-
-.section,
-.chart-card,
-.ad-card,
-.kpi-card,
-thead,
-tbody,
-tr,
-td {
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-
-.section-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #1e1e1e;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 6px;
-}
-
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-}
-
-.kpi-card {
-  background: #f9f9f9;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  page-break-inside: avoid;
-}
-
-.kpi-label {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.kpi-value {
-  font-size: 18px;
-  font-weight: bold;
-
-  &.primary {
-    color: #1F8DED;
-  }
-
-  &.success {
-    color: #2ecc71;
-  }
-}
-
-.chart-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); // 2 per row
-  gap: 24px;
-}
-
-.chart-card img {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.ad-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); // 5 ads per row
-  gap: 16px;
-}
-
-.ad-card {
-  background: #fff;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  font-size: 12px;
-  page-break-inside: avoid;
-}
-
-.ad-thumbnail-container {
-  width: 100%;
-  padding-top: 56.25%; // 16:9 ratio
-  position: relative;
-}
-
-.ad-thumbnail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.ad-metrics-table {
-  padding: 12px;
-}
-
-.ad-metrics-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.ad-metrics-table .label {
-  font-size: 11px;
-  color: #555;
-  padding: 2px 0;
-}
-
-.ad-metrics-table .value {
-  font-weight: 600;
-  font-size: 13px;
-  text-align: right;
-  color: #2c3e50;
-  padding: 2px 0;
-}
-
-.ad-button-container {
-  padding: 10px 12px;
-  text-align: center;
-  border-top: 1px solid #eee;
-}
-
-.view-ad-button {
-  display: inline-block;
-  font-size: 13px;
-  padding: 6px 12px;
-  background-color: #3498db;
-  color: white;
-  font-weight: 500;
-  text-decoration: none;
-  border-radius: 4px;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-}
-
-
-.metric-label {
-  color: #666;
-}
-
-.metric-value {
-  font-weight: 600;
-}
-
-.campaign-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.campaign-table th,
-.campaign-table td {
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-}
-
-.campaign-table th {
-  background: #efefef;
-  font-weight: 600;
-}
-
-.chart-image {
-  width: 100%;
-  max-width: 800px;
-  height: auto;
-  display: block;
-  border-radius: 6px;
-  margin: 0 auto;
 }
 
 @media print {
@@ -213,27 +21,32 @@ td {
   }
 }
 
-.chart-grid {
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #f8f9fa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ad-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); // 3 graphs per row
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 0 8px;
 }
 
-.chart-card {
-  background: #fff;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  page-break-inside: avoid;
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 0 8px;
 }
 
 
-.chart-card img {
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  page-break-inside: avoid;
-}
 
+@media (max-width: 480px) {
+  .ad-card .metrics {
+    grid-template-columns: 1fr;
+  }
+}

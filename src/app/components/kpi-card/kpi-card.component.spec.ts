@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditReportTmpComponent } from './edit-report-tmp.component';
+import { KpiCardComponent } from './kpi-card.component';
 
-describe('EditReportTmpComponent', () => {
-  let component: EditReportTmpComponent;
-  let fixture: ComponentFixture<EditReportTmpComponent>;
+describe('KpiCardComponent', () => {
+  let component: KpiCardComponent;
+  let fixture: ComponentFixture<KpiCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EditReportTmpComponent]
+      declarations: [KpiCardComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(EditReportTmpComponent);
+    fixture = TestBed.createComponent(KpiCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

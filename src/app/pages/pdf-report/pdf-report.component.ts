@@ -1,8 +1,19 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import Chart from 'chart.js/auto';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ActivatedRoute } from '@angular/router';
-import { ReportService } from '../../services/api/report.service.js';
+import { Daum, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
+import { MetricSectionKey, MockData, ReportSection } from '../schedule-report/schedule-report.component';
+import { Chart } from 'chart.js';
+import { MatDialog } from '@angular/material/dialog';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
+import { SchedulingOption } from '../edit-report/edit-report.component';
+import { MetricsService } from 'src/app/services/metrics.service';
+
+export interface PdfReportSection {
+  key: MetricSectionKey;
+  title: string;
+  enabled: boolean;
+}
 
 @Component({
   selector: 'app-pdf-report',
@@ -10,162 +21,151 @@ import { ReportService } from '../../services/api/report.service.js';
   styleUrls: ['./pdf-report.component.scss']
 })
 export class PdfReportComponent implements OnInit {
-  KPIs!: any;
-  graphs: any[] = [];
-  campaigns: any[] = [];
-  bestAds: any[] = [];
-  objectKeys = Object.keys;
+
+  schedule: Schedule = {
+    frequency: 'weekly',
+    time: '09:00',
+    dayOfWeek: 'Monday',
+    dayOfMonth: 1,
+    intervalDays: 1,
+    cronExpression: '',
+    reviewNeeded: false,
+  };
+  clientUuid: string = '';
   reportStatsLoading = false;
-  dateRangeLabel = '';
-  base64Charts: { label: string, url: string }[] = [];
 
-  campaignColumnOrder = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
+  metricSelections: MetricSelections = {
+    kpis: {} as Record<string, boolean>,
+    graphs: {} as Record<string, boolean>,
+    ads: {} as Record<string, boolean>,
+    campaigns: {} as Record<string, boolean>
+  };
 
-  readonly chartConfigs = [
-    { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
-    { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
-    { key: 'conversionValue', label: 'Conversion Value', color: '#c0392b', format: (v: any) => `$${v}` },
-    { key: 'purchases', label: 'Purchases', color: '#e74c3c', format: (v: any) => `${v}` },
-    { key: 'addToCart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
-    { key: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
-    { key: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
-    { key: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
-    { key: 'ctr', label: 'CTR', color: '#34495e', format: (v: any) => `${v}%` },
-    { key: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
-    { key: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
-    { key: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
-  ];
+  panelToggles = {
+    kpis: true,
+    graphs: true,
+    ads: true,
+    campaigns: true
+  };
+
+  metricsGraphConfig: any[] = [];
+
+  data: MockData = {
+    KPIs: {},
+    ads: [],
+    campaigns: [],
+    graphs: []
+  }
+
+  private chartRefs: Record<string, Chart> = {};
+
+  reportId: string | null = null;
+
+  schedulingOption: SchedulingOption | null = null;
+
+  availableMetrics: Metrics = {
+    kpis: [],
+    graphs: [],
+    ads: [],
+    campaigns: []
+  };
+
+  reportSections: ReportSection[] = []
 
   constructor(
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
     private reportService: ReportService,
-    private ref: ChangeDetectorRef,
-    private route: ActivatedRoute
-  ) {}
+    public metricsService: MetricsService,
+    public ref: ChangeDetectorRef
+  ) {
+  }
 
-  async ngOnInit() {
-    const reportUuid = this.route.snapshot.params['uuid'];
-    if (reportUuid) {
-      await this.loadReport(reportUuid);
+  ngOnInit() {
+    this.route.params.subscribe(async params => {
+      this.reportId = params['uuid'];
+
+      this.availableMetrics = await this.reportService.getAvailableMetrics();
+      // this.availableMetrics = {
+      //   kpis: [
+      //     'spend',
+      //     'purchaseRoas',
+      //     'conversionValue',
+      //     'purchases',
+      //     'impressions',
+      //     'clicks',
+      //     'cpc',
+      //     'ctr',
+      //     'costPerPurchase',
+      //     'addToCart',
+      //     'costPerAddToCart',
+      //     'initiatedCheckouts'
+      //   ],
+      //   graphs: 
+      //   [
+      //       'spend', 'impressions', 'clicks', 'ctr', 'cpc', 'purchaseRoas',
+      //       'conversionValue', 'engagement', 'purchases', 'costPerPurchase',
+      //       'costPerCart', 'addToCart', 'initiatedCheckouts', 'conversionRate',
+      //       'date_start', 'date_stop'
+      //     ],
+      //   ads: 
+      //   [
+      //     'adId', 'adCreativeId', 'thumbnailUrl', 'spend',
+      //     'addToCart', 'purchases', 'roas', 'sourceUrl'
+      //   ],
+      //   campaigns: 
+      //   [
+      //       'index', 'campaign_name', 'spend', 'purchases',
+      //       'conversionRate', 'purchaseRoas'
+      //   ]
+      // }
+
+      this.reportSections = [
+        { key: 'kpis', title: 'KPIs', enabled: true, metrics: this.availableMetrics.kpis },
+        { key: 'graphs', title: 'Graphs', enabled: true, metrics: this.availableMetrics.graphs },
+        { key: 'ads', title: 'Ads', enabled: true, metrics: this.availableMetrics.ads },
+        { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.availableMetrics.campaigns }
+      ];
+
+      await this.loadReport();
+      
+    });
+  }
+
+  private async loadReport() {
+    if (!this.reportId) return;
+    const res = await this.reportService.getReport(this.reportId);
+    const data = res.data[0];
+    if (data.ads.length === 0) {
+      this.panelToggles.ads = false;
     }
+    // this.report = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
+    this.convertOptionIntoTemplate(data);
+    this.generateMockData(data);
   }
 
-  private async loadReport(reportUuid: string) {
-    this.reportStatsLoading = true;
-    try {
-      const res = await this.reportService.getReport(reportUuid);
-      const data = res.data[0];
+  convertOptionIntoTemplate(data: Daum) {
 
-      this.KPIs = data.KPIs;
-      this.graphs = data.graphs;
-      this.campaigns = data.campaigns;
-      this.bestAds = data.ads;
+    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
 
-      if (this.graphs.length) {
-        const start = new Date(this.graphs[0].date_start);
-        const end = new Date(this.graphs.at(-1)?.date_stop || this.graphs.at(-1)?.date_start);
-        const diff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-        this.dateRangeLabel = `${start.toLocaleDateString()} – ${end.toLocaleDateString()} (${diff} days)`;
-      }
-
-      this.ref.detectChanges();
-
-      await this.renderChartsAsImages();
-      this.ref.detectChanges();
-
-    } catch (error) {
-      console.error('Failed to load report:', error);
-    } finally {
-      this.reportStatsLoading = false;
+    this.metricSelections = {
+      kpis: initSelection(this.availableMetrics.kpis, Object.keys(data.KPIs)),
+      graphs: initSelection(this.availableMetrics.graphs, Object.keys(data.graphs[0])),
+      ads: initSelection(this.availableMetrics.ads, []),
+      campaigns: initSelection(this.availableMetrics.campaigns, Object.keys(data.campaigns[0])),
     }
+    
   }
 
-  private async renderChartsAsImages() {
-    const labels = this.graphs.map(g =>
-      new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
-
-    for (const cfg of this.chartConfigs) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 600; // fixed width for rendering
-      canvas.height = 300; // fixed height
-      const ctx = canvas.getContext('2d');
-
-      new Chart(ctx!, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: cfg.label,
-            data: this.graphs.map(g => parseFloat(g[cfg.key]) || 0),
-            borderColor: cfg.color,
-            pointRadius: 3,
-            tension: 0.3,
-            fill: false
-          }]
-        },
-        options: {
-          responsive: false,
-          animation: false,
-          plugins: {
-            legend: { display: false },
-            title: {
-              display: true,
-              text: cfg.label,
-              font: {
-                size: 20,
-                family: 'Arial'
-              }
-            },          },
-          scales: {
-            x: {
-              ticks: {
-                font: {
-                  size: 18
-                }
-              },
-              grid: { color: '#eee' }
-            },
-            y: {
-              ticks: {
-                callback: value => cfg.format(Number(value).toFixed(0)),
-                font: {
-                  size: 18
-                }
-              },
-              grid: { color: 'rgba(0,0,0,0.05)' }
-            }
-          }
-        }
-      });
-
-      await new Promise(r => setTimeout(r, 50));
-      const base64 = canvas.toDataURL('image/png');
-      this.base64Charts.push({label: "", url: base64 });    }
+  private generateMockData(data: Daum): void {
+    this.data.KPIs = data.KPIs;
+    this.data.ads = data.ads;
+    this.data.campaigns = data.campaigns;
+    this.data.graphs = data.graphs;
   }
 
-  getAdValue(ad: any, key: string): any {
-    return ad[key];
+  openAd(url: string): void {
+    window.open(url, '_blank');
   }
-
-  formatMetricLabel(metric: string): string {
-    return metric.replace(/_/g, ' ')
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, c => c.toUpperCase());
-  }
-
-  formatMetricValue(metric: string, value: any): string {
-    const num = typeof value === 'number' ? value : parseFloat(value);
-    if (isNaN(num)) return value ?? '—';
-    const rounded = num.toFixed(2);
-    if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
-    if (metric.includes('ctr')) return `${rounded}%`;
-    if (metric.includes('roas')) return `${rounded}x`;
-    return Number(num).toLocaleString();
-  }
-
-  getMetricStyle(metric: string): string {
-    if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
-    if (['spend', 'cpc'].includes(metric)) return 'primary';
-    return '';
-  }
+  
 }

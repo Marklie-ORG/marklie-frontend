@@ -1,0 +1,23 @@
+.tabs {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+
+    .selected {
+        border-bottom: 3px solid #4aa6ff;
+        width: max-content;
+    }
+
+    div {
+        cursor: pointer;
+    }
+}
+
+.email-row {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+}
+
+.add-email-button {
+    opacity: 0.6;
+    font-size: 14px;
+    padding: 10px 0;
+    cursor: pointer;
+}

@@ -3,45 +3,43 @@
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
         <div 
-        class="p-4 block"
+        class="block"
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
   
           <!-- Content for left block -->
-          <div class="d-flex align-center justify-between mb-4">
+          <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
               <h3>Reports</h3>
-              <button class="blue" (click)="scheduleReport()" *ngIf="scheduleOptions.length > 0">
-                  <!-- <i class="fa-solid fa-plus color-black"></i> -->
+              <button class="blue" (click)="scheduleReport()" >
                   Add report
               </button>
           </div>
 
-          <hr>
-  
-          <div class="clients-list mt-4">
-            <div class="detail-content">
-                <div class="reports-list">
-                    <div class="report-item" *ngFor="let scheduleOption of scheduleOptions" (click)="onEditReport(scheduleOption.uuid)">
-                        <div class="report-info" (click)="onEditReport(scheduleOption.uuid)">
-                            <!-- <span class="report-name">{{scheduleOption.name}}</span> -->
-                            <span class="report-frequency">Frequency: {{scheduleOption.cronExpression}}</span>
-                            <span class="report-date">Next sending date: {{formatDate(scheduleOption.nextRun)}}</span>
-                        </div>
-                        <div class="report-actions">
-                            <!-- <button class="" (click)="onEditReport(report.uuid)">Edit</button> -->
-                            <!-- <img 
-                            (click)="onEditReport(report.uuid)"
-                            src="https://www.svgrepo.com/show/522527/edit-3.svg" width="25px" height="25px" style="cursor: pointer;"> -->
-                            <!-- <button class="" [class.active]="report.isActive" (click)="toggleReportStatus(report)">
-                                {{report.isActive ? 'Deactivate' : 'Activate'}}
-                            </button> -->
-                        </div>
-                    </div>
-                </div>
+          <div class="table">
+
+            <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
+              <div style="width: 20%; color: #333333cb !important;">Report name</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Frequency</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Last activity</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Next activity</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
+            </div>
+    
+            <div class="list">
+              <div 
+              *ngFor="let scheduleOption of scheduleOptions"
+              (click)="onEditReport(scheduleOption.uuid)"
+              class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
+                <div style="width: 20%;"></div>
+                <div style="width: 20%;">{{scheduleOption.cronExpression}}</div>
+                <div style="width: 20%;"></div>
+                <div style="width: 20%;" class="d-flex align-center justify-center">{{formatDate(scheduleOption.nextRun)}}</div>
+                <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
+              </div>
             </div>
           </div>
-          <div class="d-flex align-center justify-center mt-4" *ngIf="scheduleOptions.length === 0">
+
+          <div class="d-flex align-center justify-center mt-4" *ngIf="!scheduleOptionsLoading && scheduleOptions.length === 0">
             <button class="blue" (click)="scheduleReport()" >
-                <!-- <i class="fa-solid fa-plus color-black"></i> -->
                 Add your first report for {{client?.name}}!
             </button>
           </div>
@@ -51,7 +49,10 @@
         <div class="d-flex flex-column gap-4">
 
             <div class="p-4 block d-flex align-center justify-between">
-                <h3 *ngIf="client">{{client.name}}</h3>
+                <div>
+                    <h3 *ngIf="client">{{client.name}}</h3>
+                </div>
+                
                 <button class="blue" (click)="onEditClient()">
                     Client Settings
                 </button>

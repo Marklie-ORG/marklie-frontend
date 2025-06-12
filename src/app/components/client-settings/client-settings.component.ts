@@ -1,4 +1,4 @@
-import { Component, Input, SimpleChanges, OnInit, OnChanges, Inject } from '@angular/core';
+import { Component, Input, SimpleChanges, OnInit, OnChanges, Inject, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BehaviorSubject } from 'rxjs';
@@ -27,74 +27,109 @@ export class ClientSettingsComponent implements OnInit {
   isSlackWorkspaceConnected$ = this.isSlackWorkspaceConnectedSubject.asObservable();
   private subscriptions: Subscription[] = [];
 
-  clientForm: FormGroup;
-
   businesses: Root2[] = [];
   uniqueAdAccounts: AdAccount[] = [];
+
+  activeTab: "comm_channels" | "ad_platform" = "comm_channels";
+
+  clientName: string = "";
+  emails: {email: string, isEditMode: boolean}[] = [];
+  phoneNumbers: {phoneNumber: string, isEditMode: boolean}[] = [];
+
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ClientSettingsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {client: Client},
     private clientService: ClientService,
     private slackLoginService: SlackLoginService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private renderer: Renderer2
   ) {
-    this.clientForm = this.fb.group({
-      name: [this.data.client.name, Validators.required],
-      emails: this.fb.array([]),
-      phoneNumbers: this.fb.array([])
-    });
 
-    // Initialize emails if they exist
-    if (this.data.client.emails && this.data.client.emails.length > 0) {
-      this.data.client.emails.forEach(email => {
-        this.addEmail(email);
-      });
-    } else {
-      this.addEmail(); // Add one empty email field by default
-    }
+    this.clientName = this.data.client.name;
+    this.emails = this.data.client.emails ? 
+      this.data.client.emails.map(email => ({email: email, isEditMode: false})) : [];
+    this.phoneNumbers = this.data.client.phoneNumbers ? 
+      this.data.client.phoneNumbers.map(phoneNumber => ({phoneNumber: phoneNumber, isEditMode: false})) : [];
 
-    // Initialize phoneNumbers if they exist
-    if (this.data.client.phoneNumbers && this.data.client.phoneNumbers.length > 0) {
-      this.data.client.phoneNumbers.forEach(phoneNumber => {
-        this.addPhoneNumber(phoneNumber);
-      });
-    } else {
-      this.addPhoneNumber(); // Add one empty email field by default
-    }
+    // // Initialize emails if they exist
+    // if (this.data.client.emails && this.data.client.emails.length > 0) {
+    //   this.data.client.emails.forEach(email => {
+    //     this.addEmail(email);
+    //   });
+    // } else {
+    //   this.addEmail(); // Add one empty email field by default
+    // }
+
+    // // Initialize phoneNumbers if they exist
+    // if (this.data.client.phoneNumbers && this.data.client.phoneNumbers.length > 0) {
+    //   this.data.client.phoneNumbers.forEach(phoneNumber => {
+    //     this.addPhoneNumber(phoneNumber);
+    //   });
+    // } else {
+    //   this.addPhoneNumber(); // Add one empty email field by default
+    // }
 
   }
 
-  get emails() {
-    return this.clientForm.get('emails') as FormArray;
-  }
+  // async onSubmit() {
+    
+  //   if (this.clientForm.valid) {
+  //     const formValue = this.clientForm.value;
+  //     const emails = formValue.emails.map((item: { email: string }) => item.email);
+  //     const phoneNumbers = formValue.phoneNumbers.map((item: { phoneNumber: string }) => item.phoneNumber);
+  //     await this.updateClient(
+  //       formValue.name,
+  //       emails,
+  //       phoneNumbers
+  //     );
+  //     this.dialogRef.close();
+  //   }
+  // }
 
-  
+  // get emails() {
+  //   return this.clientForm.get('emails') as FormArray;
+  // }
+
+  // get phoneNumbers() {
+  //   return this.clientForm.get('phoneNumbers') as FormArray;
+  // }
+
+  onInputBlur() {
+    console.log(this.clientName)
+    this.updateClient(this.clientName)
+  }
 
   addEmail(email: string = '') {
-    const emailForm = this.fb.group({
-      email: [email, [Validators.email]]
-    });
-    this.emails.push(emailForm);
+    this.emails.push({email: email, isEditMode: true});
+    this.focusInput('email' + (this.emails.length - 1));
   }
 
   removeEmail(index: number) {
-    this.emails.removeAt(index);
-  }
-
-  get phoneNumbers() {
-    return this.clientForm.get('phoneNumbers') as FormArray;
+    this.emails.splice(index, 1);
   }
 
   addPhoneNumber(phoneNumber: string = '') {
-    const phoneNumberForm = this.fb.group({
-      phoneNumber: [phoneNumber, [Validators.required]]
-    });
-    this.phoneNumbers.push(phoneNumberForm);
+    this.phoneNumbers.push({phoneNumber: phoneNumber, isEditMode: true});
+    this.focusInput('phoneNumber' + (this.phoneNumbers.length - 1));
   }
 
   removePhoneNumber(index: number) {
-    this.phoneNumbers.removeAt(index);
+    this.phoneNumbers.splice(index, 1);
+  }
+
+  onEmailBlur(index: number) {
+    this.emails[index].isEditMode = false;
+    if (this.emails[index].email.trim() === '') {
+      this.removeEmail(index);
+    }
+  }
+
+  onPhoneNumberBlur(index: number) {
+    this.phoneNumbers[index].isEditMode = false;
+    if (this.phoneNumbers[index].phoneNumber.trim() === '') {
+      this.removePhoneNumber(index);
+    }
   }
 
   async ngOnInit() {
@@ -155,15 +190,12 @@ export class ClientSettingsComponent implements OnInit {
     this.isSlackWorkspaceConnectedSubject.next(true);
     this.selectedConversationId = null;
     await this.getWorkspaces();
-    // this.conversations = await this.clientService.getSlackAvailableConversations(this.data.client.uuid!);
-    console.log(response);
   }
 
   async onConversationChange(id: string) {
     this.selectedConversationId = id;
 
     const response = await this.clientService.setSlackConversationId(this.data.client.uuid!, id);
-    console.log(response);
   }
 
   connectSlack() {
@@ -178,37 +210,31 @@ export class ClientSettingsComponent implements OnInit {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  async onSubmit() {
-    console.log(this.clientForm.value.emails)
-    console.log(this.clientForm.value.phoneNumbers)
-    console.log(this.clientForm)
-    if (this.clientForm.valid) {
-      const formValue = this.clientForm.value;
-      const emails = formValue.emails.map((item: { email: string }) => item.email);
-      const phoneNumbers = formValue.phoneNumbers.map((item: { phoneNumber: string }) => item.phoneNumber);
-      await this.updateClient(
-        formValue.name,
-        emails,
-        phoneNumbers
-      );
-      this.dialogRef.close();
-    }
-  }
-
-  async updateClient(name: string, emails: string[], phoneNumbers: string[]) {
+  async updateClient(name?: string, emails?: string[], phoneNumbers?: string[]) {
     const client: UpdateClientRequest = {
-      name: name,
-      emails: emails,
-      phoneNumbers: phoneNumbers
+      ...(name && { name }),
+      ...(emails && { emails }),
+      ...(phoneNumbers && { phoneNumbers })
     }
     try {
       const response = await this.clientService.updateClient(this.data.client.uuid!, client);
-      console.log(response);
       this.notificationService.info('Information updated successfully');
     } catch (error) {
       this.notificationService.info('Error updating Information');
     }
-    
+  }
+
+  focusInput(inputId: string) {
+    setTimeout(() => {
+      const input = this.renderer.selectRootElement(`#${inputId}`, true);
+      console.log(input)
+      input.focus();
+    }, 50);
+  }
+
+  saveChanges() {
+    this.updateClient(this.clientName, this.emails.map(email => email.email), this.phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber));
+    this.dialogRef.close();
   }
   
 

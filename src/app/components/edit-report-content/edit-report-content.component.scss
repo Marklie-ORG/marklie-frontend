@@ -114,20 +114,6 @@ body {
     padding: 0 8px;
   }
   
-  .kpi-card {
-    background: #fff;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
-    transition: 0.2s ease-in-out;
-  }
-  
-  .kpi-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  }
-  
   .kpi-label {
     font-size: 13px;
     color: #6b7280;
@@ -147,21 +133,6 @@ body {
     color: #22c55e;
   }
   
-  .graph-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-    gap: 24px;
-    padding: 0 8px;
-  }
-  
-  .graph-card {
-    background: #ffffff;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e5e7eb;
-  }
-  
   .ad-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -169,55 +140,7 @@ body {
     padding: 0 8px;
   }
   
-  .ad-card .metrics {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); // Two columns
-    gap: 12px 16px;
-    padding: 16px 0;
-  }
   
-  .ad-card .metric {
-    background: #f9fafb;
-    padding: 8px 12px;
-    border-radius: 6px;
-    display: flex;
-    // justify-content: center;
-    // align-items: center;
-    flex-direction: column;
-    align-items: flex-start;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  }
-  
-  .ad-card .metric-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #6b7280;
-    margin-bottom: 4px;
-  }
-  
-  .ad-card .metric-value {
-    font-size: 15px;
-    font-weight: 600;
-    color: #1f2937;
-  }
-  
-  .view-ad-btn {
-    display: block;
-    margin-top: auto;
-    text-align: center;
-    padding: 10px 14px;
-    background-color: #bcbcbc;
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  }
-  
-  // .view-ad-btn:hover {
-  //   background-color: #1d4ed8;
-  //   text-decoration: none;
-  // }
   
   
   @media (max-width: 480px) {
@@ -226,21 +149,9 @@ body {
     }
   }
   
-  .ad-image-container {
-    position: relative;
-    padding-top: 100%;
-    background: #f3f4f6;
-  }
   
-  .ad-media {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 80%;
-    height: 80%;
-    transform: translate(-50%, -50%);
-    object-fit: contain;
-  }
+  
+  
   
   .metric-value {
     font-size: 16px;
@@ -260,29 +171,7 @@ body {
     margin-top: 16px;
   }
   
-  .campaign-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
   
-  .campaign-table th,
-  .campaign-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #f3f4f6;
-  }
-  
-  .campaign-table th {
-    background: #f9fafb;
-    text-align: left;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1f2937;
-  }
-  
-  .campaign-table tr:hover td {
-    background-color: #f9fafb;
-  }
   
   .loading {
     font-size: 18px;
@@ -339,7 +228,7 @@ body {
     box-shadow: 0 0 0 2px #2563eb40;
   }
   
-  .kpi-card[cdkDrag],
+  kpi-card[cdkDrag],
   .graph-card[cdkDrag] {
     cursor: move;
   }
@@ -349,10 +238,6 @@ body {
     min-height: 60px;
   }
   
-  .campaign-table th[cdkDrag] {
-    cursor: move;
-    background-color: #e5e7eb;
-    user-select: none;
-  }
+  
   
   

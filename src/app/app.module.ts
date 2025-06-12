@@ -22,8 +22,6 @@ import { AddClientComponent } from './components/add-client/add-client.component
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
-import { MetricSelectorComponent } from "./components/metrics/metrics-selector/metric-selector.component";
-import { KpiViewerComponent } from "./components/metrics/kpis/kpi-viewer.component";
 import { ScheduleReportComponent } from "./pages/schedule-report/schedule-report.component.js";
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgSelectModule } from "@ng-select/ng-select";
@@ -45,8 +43,13 @@ import { NotificationComponent } from './components/notification/notification.co
 import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { ScheduleOptionsComponent } from './components/schedule-options/schedule-options.component';
-import { EditReportTmpComponent } from './components/edit-report-tmp/edit-report-tmp.component';
-import { EditMetricsTmpComponent } from './components/edit-metrics-tmp/edit-metrics-tmp.component';
+import { EditReportContentComponent } from './components/edit-report-content/edit-report-content.component';
+import { EditMetricsComponent } from './components/edit-metrics/edit-metrics.component';
+import { ReviewReportComponent } from './pages/review-report/review-report.component';
+import { KpiCardComponent } from './components/kpi-card/kpi-card.component';
+import { AdCardComponent } from './components/ad-card/ad-card.component';
+import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
+import { ChartsComponent } from './components/charts/charts.component';
 
 register();
 
@@ -63,8 +66,6 @@ register();
     PrivacyPolicyComponent,
     TermsOfServiceComponent,
     SlackLoginCallbackComponent,
-    MetricSelectorComponent,
-    KpiViewerComponent,
     ScheduleReportComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
@@ -89,8 +90,13 @@ register();
     AuthComponent,
     EditReportComponent,
     ScheduleOptionsComponent,
-    EditReportTmpComponent,
-    EditMetricsTmpComponent
+    EditReportContentComponent,
+    EditMetricsComponent,
+    ReviewReportComponent,
+    KpiCardComponent,
+    AdCardComponent,
+    CampaignTableComponent,
+    ChartsComponent
 
   ],
   imports: [

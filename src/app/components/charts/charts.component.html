@@ -1,0 +1,7 @@
+
+
+<div class="graph-grid" cdkDropList (cdkDropListDropped)="dropGraphCard($event)">
+    <div class="graph-card" *ngFor="let config of graphConfigs" cdkDrag>
+        <canvas [id]="config.metric + 'Chart'"></canvas>
+    </div>
+</div>

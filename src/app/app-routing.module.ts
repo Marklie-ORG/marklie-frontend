@@ -17,7 +17,7 @@ import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-e
 import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
-import { EditReportTmpComponent } from './components/edit-report-tmp/edit-report-tmp.component';
+import { EditReportContentComponent } from './components/edit-report-content/edit-report-content.component';
 const routes: Routes = [
   {
     path: '',

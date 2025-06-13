@@ -56,11 +56,19 @@ export class ChartsComponent {
       { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
       { metric: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
       { metric: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
-      { metric: 'ctr', label: 'CTR', color: '#34495e', format: (v: any) => `${v}%` },
+      { metric: 'ctr', label: 'Click Through Rate', color: '#34495e', format: (v: any) => `${v}%` },
+      { metric: 'cpm', label: 'Cost Per Mile', color: '#34495e', format: (v: any) => `$${v}` },
       { metric: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
       { metric: 'cpp', label: 'CPP', color: '#16a085', format: (v: any) => `$${v}` },
+      { metric: 'reach', label: 'Reach', color: '#16a085', format: (v: any) => `${v}` },
       { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
-      { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
+      { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` },
+      { metric: 'add_to_cart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
+      { metric: 'initiated_checkouts', label: 'Initiated Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
+      { metric: 'engagement', label: 'Engagement', color: '#3498db', format: (v: any) => `${v}` },
+      { metric: 'cost_per_purchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
+      { metric: 'cost_per_add_to_cart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` },
+      { metric: 'conversion_rate', label: 'Conversion Rate', color: '#27ae60', format: (v: any) => `${v}%` },
     ];
   }
 

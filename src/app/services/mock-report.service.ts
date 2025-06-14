@@ -77,15 +77,27 @@ export class MockReportService {
         "spend",
         "impressions",
         "clicks",
+        "cpc",
+        "cpm",
+        "cpp",
         "ctr",
-        "actions"
-    ]
+        "reach",
+        "purchase_roas",
+        "purchases",
+        "add_to_cart",
+        "initiated_checkouts",
+        "conversion_value",
+        "cost_per_purchase",
+        "cost_per_add_to_cart",
+        "conversion_rate",
+        "engagement"
+      ];
 
       const metrics = availableMetrics.reduce((acc, metric) => {
-        const isCurrency = ['spend'].includes(metric.toLowerCase());
-        const isPercent = metric.toLowerCase().includes('rate');
+        const isCurrency = ['spend', 'cost_per_purchase', 'cost_per_add_to_cart', 'conversion_value'].includes(metric.toLowerCase());
+        const isPercent = ['ctr', 'conversion_rate'].includes(metric.toLowerCase());
         const isRoas = metric.toLowerCase().includes('roas');
-        const isInt = ['purchases', 'conversions'].includes(metric.toLowerCase());
+        const isInt = ['purchases', 'add_to_cart', 'initiated_checkouts', 'engagement', 'impressions', 'clicks', 'reach'].includes(metric.toLowerCase());
 
         let value = isInt ? Math.floor(Math.random() * 200)
           : isPercent || isRoas ? +(Math.random() * 5).toFixed(2)

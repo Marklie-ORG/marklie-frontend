@@ -24,8 +24,7 @@ export class EditReportContentComponent implements OnInit {
   @Input() panelToggles: Record<MetricSectionKey, boolean> | undefined = undefined;
 
   @Input() metricSelections: MetricSelections | undefined = undefined;
-
-  @Input() campaignColumnOrder: string[] = [];
+  
   @Input() mockData: MockData | undefined = undefined;
   @Input() campaignAvailableMetrics: string[] = [];
 

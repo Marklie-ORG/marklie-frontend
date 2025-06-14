@@ -48,7 +48,8 @@
       <div *ngSwitchCase="'campaigns'" class="table-container">
 
         <campaign-table
-        [campaignColumnOrder]="campaignColumnOrder"
+        [metrics]="section.metrics"
+        [metricSelections]="metricSelections"
         [campaigns]="mockData.campaigns"
         ></campaign-table>
       </div>

@@ -63,8 +63,6 @@
   user-select: none;
 }
 
-
-
 .section-title {
   font-size: 24px;
   font-weight: 600;
@@ -221,13 +219,6 @@ input:checked + .slider::before {
   border: 1px solid #e5e7eb;
 }
 
-.ad-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  padding: 0 8px;
-}
-
 .ad-card .metrics {
   display: grid;
   grid-template-columns: repeat(2, 1fr); // Two columns
@@ -342,11 +333,6 @@ input:checked + .slider::before {
 .campaign-table tr:hover td {
   background-color: #f9fafb;
 }
-
-
-
-
-
 .drag-handle {
   cursor: grab;
   margin-right: 8px;
@@ -357,17 +343,3 @@ input:checked + .slider::before {
 .drag-handle:hover {
   color: #2563eb;
 }
-
-.bordered-section {
-  border: 2px dashed #d1d5db;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 24px;
-  background-color: #ffffff;
-  transition: box-shadow 0.2s ease;
-}
-
-.bordered-section:hover {
-  box-shadow: 0 0 0 2px #2563eb40;
-}
-

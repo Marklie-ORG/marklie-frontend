@@ -121,6 +121,8 @@ export class EditReportComponent {
         { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.availableMetrics.campaigns }
       ];
 
+      console.log(this.reportSections)
+
       await this.loadReport();
       
     });

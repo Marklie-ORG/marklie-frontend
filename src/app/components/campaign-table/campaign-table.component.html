@@ -3,18 +3,25 @@
       <tr cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropCampaignColumn($event)">
         <th>#</th>
         <th>Campaign Name</th>
-        <th *ngFor="let key of campaignColumnOrder" cdkDrag>
-          {{ metricsService.formatMetricLabel(key) }}
-        </th>
+        <ng-container *ngFor="let key of metrics">
+          <th *ngIf="metricSelections?.campaigns?.[key]" cdkDrag >
+            {{key}}
+          </th>
+        </ng-container>
+        
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let campaign of campaigns; let k = index">
         <td>{{ k + 1 }}</td>
         <td>{{ campaign.campaign_name }}</td>
-        <td *ngFor="let key of campaignColumnOrder">
-          {{ metricsService.formatMetricValue(key, campaign[key]) }}
-        </td>
+
+        <ng-container *ngFor="let key of metrics">
+          <td *ngIf="metricSelections?.campaigns?.[key]" >
+            {{campaign[key]}}
+          </td>
+        </ng-container>
+        
       </tr>
     </tbody>
 </table>

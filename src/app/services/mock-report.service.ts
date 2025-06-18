@@ -40,14 +40,27 @@ export class MockReportService {
 
   private mockAds() {
     return Array.from({ length: 10 }).map((_, i) => ({
-      id: `ad-${i + 1}`,
-      name: `Ad Creative #${i + 1}`,
+      adId: `ad-${i + 1}`,
+      adCreativeId: `creative-${i + 1}`,
       thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
+      sourceUrl: `https://facebook.com/ads/${i + 1}`,
       spend: +(Math.random() * 500).toFixed(2),
-      addToCart: Math.floor(Math.random() * 150),
+      impressions: Math.floor(Math.random() * 10000),
+      clicks: Math.floor(Math.random() * 500),
+      cpc: +(Math.random() * 2).toFixed(2),
+      ctr: +(Math.random() * 5).toFixed(2),
+      cpm: +(Math.random() * 10).toFixed(2),
+      cpp: +(Math.random() * 20).toFixed(2),
+      reach: Math.floor(Math.random() * 5000),
+      purchase_roas: +(Math.random() * 5).toFixed(2),
       purchases: Math.floor(Math.random() * 80),
-      roas: +(Math.random() * 5).toFixed(2),
-      sourceUrl: `https://facebook.com/ads/${i + 1}`
+      add_to_cart: Math.floor(Math.random() * 150),
+      initiated_checkouts: Math.floor(Math.random() * 100),
+      conversion_value: +(Math.random() * 2000).toFixed(2),
+      cost_per_purchase: +(Math.random() * 30).toFixed(2),
+      cost_per_add_to_cart: +(Math.random() * 15).toFixed(2),
+      conversion_rate: +(Math.random() * 5).toFixed(2),
+      engagement: Math.floor(Math.random() * 200)
     }));
   }
 
@@ -64,15 +77,27 @@ export class MockReportService {
         "spend",
         "impressions",
         "clicks",
+        "cpc",
+        "cpm",
+        "cpp",
         "ctr",
-        "actions"
-    ]
+        "reach",
+        "purchase_roas",
+        "purchases",
+        "add_to_cart",
+        "initiated_checkouts",
+        "conversion_value",
+        "cost_per_purchase",
+        "cost_per_add_to_cart",
+        "conversion_rate",
+        "engagement"
+      ];
 
       const metrics = availableMetrics.reduce((acc, metric) => {
-        const isCurrency = ['spend'].includes(metric.toLowerCase());
-        const isPercent = metric.toLowerCase().includes('rate');
+        const isCurrency = ['spend', 'cost_per_purchase', 'cost_per_add_to_cart', 'conversion_value'].includes(metric.toLowerCase());
+        const isPercent = ['ctr', 'conversion_rate'].includes(metric.toLowerCase());
         const isRoas = metric.toLowerCase().includes('roas');
-        const isInt = ['purchases', 'conversions'].includes(metric.toLowerCase());
+        const isInt = ['purchases', 'add_to_cart', 'initiated_checkouts', 'engagement', 'impressions', 'clicks', 'reach'].includes(metric.toLowerCase());
 
         let value = isInt ? Math.floor(Math.random() * 200)
           : isPercent || isRoas ? +(Math.random() * 5).toFixed(2)

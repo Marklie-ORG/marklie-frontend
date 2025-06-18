@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { MetricSelections } from '../edit-report-content/edit-report-content.component';
 
 @Component({
   selector: 'ad-card',
@@ -8,13 +9,12 @@ import { MetricsService } from 'src/app/services/metrics.service';
 })
 export class AdCardComponent {
 
-  @Input() thumbnail: string = '';
   @Input() metrics: string[] = [];
-  @Input() metricSelections: any;
-  @Input() sourceUrl: string = '';
-  @Input() ad: any;
+  @Input() metricSelections: MetricSelections | undefined = undefined;
+  @Input() ads: any[] = [];
 
-  constructor(public metricsService: MetricsService) {}
+  constructor(public metricsService: MetricsService) {
+  }
 
   openAd(url: string): void {
     window.open(url, '_blank');

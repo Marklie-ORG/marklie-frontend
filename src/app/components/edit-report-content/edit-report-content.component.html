@@ -1,5 +1,5 @@
-<div *ngFor="let section of reportSections; let i = index" cdkDrag class="report-section p-3 mb-4">
-  
+<div *ngFor="let section of reportSections; let i = index"  class="report-section p-3 mb-4">
+  <!-- cdkDrag -->
   <ng-container *ngIf="panelToggles && panelToggles[section.key] && mockData">
 
     <div class="section-toggle">
@@ -25,7 +25,14 @@
       [metricSelections]="metricSelections"
       ></charts>
 
-      <div *ngSwitchCase="'ads'" class="ad-grid">
+      <ad-card
+      *ngSwitchCase="'ads'"
+      [metrics]="section.metrics"
+      [metricSelections]="metricSelections"
+      [ads]="mockData.ads"
+      ></ad-card>
+
+      <!-- <div *ngSwitchCase="'ads'" class="ad-grid d-flex flex-wrap">
 
         <ad-card
         *ngFor="let ad of mockData.ads"
@@ -36,12 +43,13 @@
         [ad]="ad"
         ></ad-card>
 
-      </div>
+      </div> -->
 
       <div *ngSwitchCase="'campaigns'" class="table-container">
 
         <campaign-table
-        [campaignColumnOrder]="campaignColumnOrder"
+        [metrics]="section.metrics"
+        [metricSelections]="metricSelections"
         [campaigns]="mockData.campaigns"
         ></campaign-table>
       </div>

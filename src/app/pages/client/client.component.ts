@@ -33,6 +33,7 @@ interface ScheduledReport {
 export class ClientComponent implements OnInit {
   clientUuid: string | null = null;
   client: Client | null = null;
+  groupedLogs: any[] = [];
   scheduleOptions: ScheduledReport[] = [];
 
   scheduleOptionsLoading = true;
@@ -77,10 +78,78 @@ export class ClientComponent implements OnInit {
   private async loadClientDetails() {
     if (!this.clientUuid) return;
     this.client = await this.clientService.getClient(this.clientUuid);
-    console.log(this.client);
+    const logs = await this.clientService.getClientsLogs(this.clientUuid);
+    this.filterLogs(logs)
     this.scheduleOptions = this.client.crons || [];
     this.scheduleOptionsLoading = false;
   }
+
+  private filterLogs(logs: any[]){
+    const groupedMap = new Map<string, any>();
+
+    for (const log of logs) {
+      if (log.action === 'report_sent' && log.targetUuid) {
+        const key = `report_sent-${log.targetUuid}`;
+        if (!groupedMap.has(key)) {
+          groupedMap.set(key, { ...log, recipients: [] });
+        }
+        const grouped = groupedMap.get(key);
+        grouped.recipients.push(
+          log.metadata?.phoneNumber || log.metadata?.email || log.metadata?.slackConversationId || 'Unknown'
+        );
+        grouped.createdAt = log.createdAt;
+      } else {
+        this.groupedLogs.push(log);
+      }
+    }
+
+    this.groupedLogs.push(...Array.from(groupedMap.values()));
+    this.groupedLogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  }
+
+  formatTimeOrDate(date: string | Date): string {
+    const d = new Date(date);
+    const now = new Date();
+
+    const isToday = d.toDateString() === now.toDateString();
+
+    if (isToday) {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' Today';
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday = d.toDateString() === yesterday.toDateString();
+
+    if (isYesterday) {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' Yesterday';
+    }
+
+    return d.toLocaleDateString();
+  }
+
+  getLogMessage(log: any): string {
+    switch (log.action) {
+      case 'report_sent':
+        return `Report has been sent to `;
+      case 'report_generated':
+        return `Report has been generated`;
+      case 'created_schedule':
+        return `Schedule created`;
+      case 'updated_schedule':
+        return `Schedule updated`;
+      case 'paused_schedule':
+        return `Schedule paused`;
+      case 'added_collaborator':
+        return `Collaborator added`;
+      case 'client_added':
+        return `Client ${log.client?.name || 'unknown'} successfully added! 🎉`;
+      default:
+        return log.message || 'Activity logged';
+    }
+  }
+
 
   onEditClient() {
     const dialogRef = this.dialog.open(ClientSettingsComponent, {

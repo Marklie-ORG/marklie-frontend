@@ -31,6 +31,12 @@ export class ClientService {
     );
   }
 
+  async getClientsLogs(clientUuid: string) {
+    return firstValueFrom(
+      this.http.get<any[]>(`${this.apiUrl}/${clientUuid}/logs`)
+    );
+  }
+
   async getIsSlackWorkspaceConnected(clientUuid: string) {
     return firstValueFrom(
       this.http.get<{

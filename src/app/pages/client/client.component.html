@@ -1,12 +1,10 @@
 <div class="container" style="height: 85%;">
-  
+
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
-        <div 
+        <div
         class="block"
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-  
-          <!-- Content for left block -->
           <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
               <h3>Reports</h3>
               <button class="blue" (click)="scheduleReport()" >
@@ -23,9 +21,9 @@
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Next activity</div>
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
             </div>
-    
+
             <div class="list">
-              <div 
+              <div
               *ngFor="let scheduleOption of scheduleOptions"
               (click)="onEditReport(scheduleOption.uuid)"
               class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
@@ -43,7 +41,7 @@
                 Add your first report for {{client?.name}}!
             </button>
           </div>
-            
+
         </div>
 
         <div class="d-flex flex-column gap-4">
@@ -52,16 +50,16 @@
                 <div>
                     <h3 *ngIf="client">{{client.name}}</h3>
                 </div>
-                
+
                 <button class="blue" (click)="onEditClient()">
                     Client Settings
                 </button>
             </div>
 
-            <div 
+            <div
             class="block"
             style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow); height: 100%;">
-            
+
             <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
             <h3>Activity</h3>
                 <button class="subtle" >
@@ -73,38 +71,19 @@
             <div class="table">
 
                 <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
-                    <div style="width: 10%; color: #333333cb !important;"></div>
-                    <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-start">Date</div>
-                    <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-start">Client name</div>
-                    <div style="width: 40%; color: #333333cb !important;" class="d-flex align-center justify-start">Activity</div>
                 </div>
+              <div class="activity-list pl-4 pr-4 pb-4">
+                <app-activity-log-item
+                  *ngFor="let log of groupedLogs"
+                  [log]="log"
+                  [formatTimeOrDate]="formatTimeOrDate"
+                ></app-activity-log-item>
+              </div>
 
-                <div class="list">
-                    <div 
-                    class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" *ngFor="let activity of activities">
-                        <div style="width: 10%;">
-                        <fa-icon [icon]="activity.status === 'new' ? faCircleDot : faCircle" style="opacity: 0.3;"></fa-icon>
-                        </div>
-                        <div style="width: 25%;" class="d-flex align-center justify-start">
-                        {{formatDate(activity.date)}}
-                        </div>
-                        <div style="width: 25%;" class="d-flex align-center justify-start">
-                        {{activity.clientName}}
-                        </div>
-                        <div style="width: 40%;" class="d-flex align-center justify-start">
-                        {{activity.activity}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="d-flex align-center justify-center mt-4" style="opacity: 0.6;">
-                Activity related to {{client?.name}} will appear here!
-            </div>
-
+             </div>
             </div>
         </div>
-  
+
     </div>
 </div>
 

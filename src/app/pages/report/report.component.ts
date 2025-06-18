@@ -74,7 +74,6 @@ export class ReportComponent implements OnInit, OnDestroy {
       this.campaigns = res.data[0].campaigns;
       this.bestAds = res.data[0].ads;
 
-      console.log(res.data[0].ads)
       this.ref.detectChanges();
 
       setTimeout(() => {

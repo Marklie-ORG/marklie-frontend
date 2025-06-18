@@ -8,14 +8,7 @@ import { ClientService } from "../../services/api/client.service.js";
 import { FacebookLoginService } from "../../services/api/facebook-login.service.js";
 import { Client } from 'src/app/services/api/client.service.js';
 import { User, UserService } from 'src/app/services/api/user.service.js';
-import { faCircle, faCircleDot } from '@fortawesome/free-solid-svg-icons';
-
-interface Activity {
-  status: 'new' | 'old',
-  date: Date,
-  clientName: string,
-  activity: string
-}
+import {OrganizationService} from "../../services/api/organization.service.js";
 
 @Component({
   selector: 'app-dashboard',
@@ -25,47 +18,17 @@ interface Activity {
 export class DashboardComponent implements OnInit, OnDestroy {
   isFacebookConnected: boolean | undefined = undefined;
   randomNumber = this.getRandomNumber(1, 3);
-  faCircle = faCircle;
-  faCircleDot = faCircleDot;
+  groupedLogs: any[] = [];
+
+  logs: any[] = [];
 
   clients: Client[] = [];
-  activities: Activity[] = [
-  // {
-  //   status: 'new',
-  //   date: new Date(),
-  //   clientName: 'Acme Corp',
-  //   activity: 'Report generated for Q1 2024'
-  // },
-  // {
-  //   status: 'new',
-  //   date: new Date(Date.now() - 86400000), // 1 day ago
-  //   clientName: 'TechStart Inc',
-  //   activity: 'New client added'
-  // },
-  // {
-  //   status: 'old',
-  //   date: new Date(Date.now() - 172800000), // 2 days ago
-  //   clientName: 'Global Services',
-  //   activity: 'Report sent via email'
-  // },
-  // {
-  //   status: 'old',
-  //   date: new Date(Date.now() - 259200000), // 3 days ago
-  //   clientName: 'Innovation Labs',
-  //   activity: 'Facebook account connected'
-  // },
-  // {
-  //   status: 'old',
-  //   date: new Date(Date.now() - 345600000), // 4 days ago
-  //   clientName: 'Digital Solutions',
-  //   activity: 'Report configuration updated'
-  // }
-  ];
 
   constructor(
     private router: Router,
     private onboardingService: OnboardingService,
     private clientService: ClientService,
+    private organizationService: OrganizationService,
     private dialog: MatDialog,
     private facebookLoginService: FacebookLoginService,
     private userService: UserService
@@ -96,11 +59,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.isFacebookConnected = true;
       document.body.classList.remove('no-scroll');
     }
-    
 
-    // if (!onboardingSteps.organizationCreated) {
-    //   this.router.navigate(['/onboarding']);
-    // }
+    const logs = await this.organizationService.getLogs(user.activeOrganization)
+
+    const groupedMap = new Map<string, any>();
+
+    for (const log of logs) {
+      if (log.action === 'report_sent' && log.targetUuid) {
+        const key = `report_sent-${log.targetUuid}`;
+        if (!groupedMap.has(key)) {
+          groupedMap.set(key, { ...log, recipients: [] });
+        }
+        const grouped = groupedMap.get(key);
+        grouped.recipients.push(
+          log.metadata?.phoneNumber || log.metadata?.email || log.metadata?.slackConversationId ||'Unknown'
+        );
+        grouped.createdAt = log.createdAt;
+      } else {
+        this.logs.push(log);
+      }
+    }
+
+    this.groupedLogs.push(...Array.from(groupedMap.values()));
+    this.groupedLogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   ngOnDestroy() {
@@ -134,17 +115,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // this.router.navigate(['/report'], { queryParams: { clientId } });
   }
 
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleString('en-US', {
-      // year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  formatTimeOrDate(date: string | Date): string {
+    const d = new Date(date);
+    const now = new Date();
+
+    const isToday = d.toDateString() === now.toDateString();
+
+    if (isToday) {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' Today';
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday = d.toDateString() === yesterday.toDateString();
+
+    if (isYesterday) {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' Yesterday';
+    }
+
+    return d.toLocaleDateString();
   }
 
-getRandomNumber(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+
+  getRandomNumber(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 }

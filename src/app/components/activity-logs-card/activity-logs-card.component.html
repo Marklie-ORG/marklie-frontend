@@ -1,0 +1,70 @@
+<div
+  class="row d-flex align-center justify-start pt-3 pb-3"
+  [ngClass]="{ 'highlight': log.status === 'new' }"
+  style="border-bottom: 1px solid #f0f0f0;"
+>
+  <div style="width: 5%;">
+    <fa-icon
+      [icon]="log.status === 'new' ? faCircleDot : faCircle"
+      class="text-blue"
+      style="font-size: 8px;"
+    ></fa-icon>
+  </div>
+
+  <div style="width: 20%;" class="text-muted">
+    {{ formatTimeOrDate(log.createdAt) }}
+  </div>
+
+  <div style="width: 75%;">
+    <ng-container [ngSwitch]="log.action">
+
+      <ng-container *ngSwitchCase="'report_sent'">
+        <a [routerLink]="['/view-report', log.targetUuid]" class="text-primary">Report</a>
+        has been sent to
+        <strong *ngFor="let recipient of log.recipients; let i = index">
+          {{ recipient }}{{ i < log.recipients.length - 1 ? ', ' : '.' }}
+        </strong>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'report_generated'">
+        <a [routerLink]="['/view-report', log.targetUuid]" class="text-primary">Report</a>
+        has been generated.
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'created_schedule'">
+        Schedule created for
+        <a [routerLink]="['/clients', log.client?.uuid]" class="text-primary">
+          {{ log.client?.name || 'Client' }}
+        </a>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'updated_schedule'">
+        Schedule updated for
+        <a [routerLink]="['/clients', log.client?.uuid]" class="text-primary">
+          {{ log.client?.name || 'Client' }}
+        </a>.
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'paused_schedule'">
+        Schedule paused.
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'added_collaborator'">
+        Collaborator added.
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'client_added'">
+        Client
+        <a [routerLink]="['/clients', log.client?.uuid]" class="text-primary">
+          {{ log.client?.name || 'unknown' }}
+        </a>
+        successfully added! 🥳
+      </ng-container>
+
+      <ng-container *ngSwitchDefault>
+        {{ log.message || 'Activity logged' }}
+      </ng-container>
+
+    </ng-container>
+  </div>
+</div>

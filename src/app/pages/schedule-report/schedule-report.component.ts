@@ -108,7 +108,7 @@ export class ScheduleReportComponent implements OnInit {
   private initMetricSelections(): void {
 
     const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
-    
+
     this.metricSelections = {
       kpis: initSelection(this.availableMetrics.kpis, this.availableMetrics.kpis.slice(0, 4)),
       graphs: initSelection(this.availableMetrics.graphs, this.availableMetrics.graphs.slice(0, 4)),
@@ -116,7 +116,6 @@ export class ScheduleReportComponent implements OnInit {
       campaigns: initSelection(this.availableMetrics.campaigns, this.availableMetrics.campaigns.slice(0, 4)),
     }
 
-    console.log(this.metricSelections)
 
   }
 
@@ -144,6 +143,6 @@ export class ScheduleReportComponent implements OnInit {
     });
   }
 
-  
+
 
 }

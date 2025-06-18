@@ -14,15 +14,12 @@ style="height: 85%;"
 >
 
   <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
-    <!-- p-4   -->
-    <div 
+    <div
     class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-      <!-- Content for left block -->
       <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
         <button class="blue" (click)="showAddClientModal()" *ngIf="clients.length > 0">
-          <!-- <i class="fa-solid fa-plus color-white"></i> -->
           Add client
         </button>
       </div>
@@ -39,7 +36,7 @@ style="height: 85%;"
         </div>
 
         <div class="list">
-          <div 
+          <div
           (click)="viewReport(client.uuid); $event.stopPropagation()"
           class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" *ngFor="let client of clients">
             <div style="width: 20%;">{{client.name}}</div>
@@ -68,11 +65,11 @@ style="height: 85%;"
         </button>
       </div>
     </div>
-    
-    <div 
+
+    <div
     class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-      
+
       <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
       <h3>Activity</h3>
         <button class="subtle" >
@@ -84,35 +81,18 @@ style="height: 85%;"
       <div class="table">
 
         <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
-          <div style="width: 10%; color: #333333cb !important;"></div>
-          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-center">Date</div>
-          <div style="width: 25%; color: #333333cb !important;" class="d-flex align-center justify-center">Client name</div>
-          <div style="width: 40%; color: #333333cb !important;" class="d-flex align-center justify-center">Activity</div>
+
         </div>
 
-        <div class="list">
-          <div 
-          class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" *ngFor="let activity of activities">
-            <div style="width: 10%;">
-              <fa-icon [icon]="activity.status === 'new' ? faCircleDot : faCircle" style="opacity: 0.3;"></fa-icon>
-            </div>
-            <div style="width: 25%;" class="d-flex align-center justify-start">
-              {{formatDate(activity.date)}}
-            </div>
-            <div style="width: 25%;" class="d-flex align-center justify-start">
-              {{activity.clientName}}
-            </div>
-            <div style="width: 40%;" class="d-flex align-center justify-start">
-              {{activity.activity}}
-            </div>
-          </div>
+        <div class="activity-list pl-4 pr-4 pb-4">
+          <app-activity-log-item
+            *ngFor="let log of groupedLogs"
+            [log]="log"
+            [formatTimeOrDate]="formatTimeOrDate"
+          ></app-activity-log-item>
         </div>
-      </div>
-
-      <div class="d-flex align-center justify-center mt-4" style="opacity: 0.6;">
-        Activity related to your clients will appear here!
-      </div>
 
     </div>
   </div>
+</div>
 </div>

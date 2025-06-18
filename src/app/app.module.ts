@@ -50,6 +50,7 @@ import { KpiCardComponent } from './components/kpi-card/kpi-card.component';
 import { AdCardComponent } from './components/ad-card/ad-card.component';
 import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
 import { ChartsComponent } from './components/charts/charts.component';
+import {LogsCardComponent} from "./components/activity-logs-card/activity-logs-card.component";
 
 register();
 
@@ -75,12 +76,12 @@ register();
     ReportComponent,
     PdfReportComponent,
     OnboardingComponent,
-    
+
     LoginComponent,
     RegisterComponent,
     AuthDialogComponent,
     ForgotPasswordEmailFormComponent,
-    
+
 
     ProfileComponent,
     VerifyEmailChangeComponent,
@@ -96,7 +97,9 @@ register();
     KpiCardComponent,
     AdCardComponent,
     CampaignTableComponent,
-    ChartsComponent
+    ChartsComponent,
+
+    LogsCardComponent
 
   ],
   imports: [

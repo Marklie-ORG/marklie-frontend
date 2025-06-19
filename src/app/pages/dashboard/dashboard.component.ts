@@ -18,8 +18,6 @@ import {OrganizationService} from "../../services/api/organization.service.js";
 export class DashboardComponent implements OnInit, OnDestroy {
   isFacebookConnected: boolean | undefined = undefined;
   randomNumber = this.getRandomNumber(1, 3);
-  groupedLogs: any[] = [];
-
   logs: any[] = [];
 
   clients: Client[] = [];
@@ -49,6 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     await this.getClients();
+    this.logs = await this.organizationService.getLogs(user.activeOrganization)
 
     const onboardingSteps = await this.onboardingService.getOnboardingSteps();
 
@@ -60,28 +59,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       document.body.classList.remove('no-scroll');
     }
 
-    const logs = await this.organizationService.getLogs(user.activeOrganization)
-
-    const groupedMap = new Map<string, any>();
-
-    for (const log of logs) {
-      if (log.action === 'report_sent' && log.targetUuid) {
-        const key = `report_sent-${log.targetUuid}`;
-        if (!groupedMap.has(key)) {
-          groupedMap.set(key, { ...log, recipients: [] });
-        }
-        const grouped = groupedMap.get(key);
-        grouped.recipients.push(
-          log.metadata?.phoneNumber || log.metadata?.email || log.metadata?.slackConversationId ||'Unknown'
-        );
-        grouped.createdAt = log.createdAt;
-      } else {
-        this.logs.push(log);
-      }
-    }
-
-    this.groupedLogs.push(...Array.from(groupedMap.values()));
-    this.groupedLogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   ngOnDestroy() {
@@ -110,7 +87,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.facebookLoginService.connectFacebook();
   }
 
-  viewReport(clientId: string) {
+  openClient(clientId: string) {
     this.router.navigate(['/client', clientId]);
     // this.router.navigate(['/report'], { queryParams: { clientId } });
   }

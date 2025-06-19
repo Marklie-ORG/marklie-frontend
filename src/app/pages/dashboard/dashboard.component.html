@@ -37,7 +37,7 @@ style="height: 85%;"
 
         <div class="list">
           <div
-          (click)="viewReport(client.uuid); $event.stopPropagation()"
+          (click)="openClient(client.uuid); $event.stopPropagation()"
           class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" *ngFor="let client of clients">
             <div style="width: 20%;">{{client.name}}</div>
             <div style="width: 20%;">
@@ -86,9 +86,9 @@ style="height: 85%;"
 
         <div class="activity-list pl-4 pr-4 pb-4">
           <app-activity-log-item
-            *ngFor="let log of groupedLogs"
-            [log]="log"
+            [logs]="logs"
             [formatTimeOrDate]="formatTimeOrDate"
+            [level]="'organization'"
           ></app-activity-log-item>
         </div>
 

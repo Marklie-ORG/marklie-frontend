@@ -1,19 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Daum, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { MetricSectionKey, MockData, ReportSection } from '../schedule-report/schedule-report.component';
+import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
 import { Chart } from 'chart.js';
 import { MatDialog } from '@angular/material/dialog';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
 import { SchedulingOption } from '../edit-report/edit-report.component';
 import { MetricsService } from 'src/app/services/metrics.service';
-
-export interface PdfReportSection {
-  key: MetricSectionKey;
-  title: string;
-  enabled: boolean;
-}
 
 @Component({
   selector: 'app-pdf-report',

@@ -27,6 +27,14 @@ export interface CreateScheduleRequest extends Schedule {
   datePreset: string
   clientUuid: string
   timeZone: string
+  messages: {
+    whatsapp: string,
+    slack: string,
+    email: {
+      title: string,
+      body: string,
+    }
+  };
 }
 
 export interface Schedule {
@@ -37,6 +45,11 @@ export interface Schedule {
   intervalDays: number
   cronExpression: string
   reviewNeeded: boolean
+}
+
+interface Metric {
+  name: string
+  order: number
 }
 
 export interface Metrics {
@@ -151,7 +164,7 @@ export class ReportService {
     }
   }
 
-  updateSchedulingOption(scheduleUuid: string, data: any): Promise<any> {
+  updateSchedulingOption(scheduleUuid: string, data: CreateScheduleRequest): Promise<any> {
     return firstValueFrom(this.http.put(`${this.apiUrl}/reports/scheduling-option/${scheduleUuid}`, data));
   }
 

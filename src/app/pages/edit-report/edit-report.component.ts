@@ -23,6 +23,7 @@ export interface SchedulingOption {
   nextRun: string
   bullJobId: string
   client: string
+  
 }
 
 interface JobData {
@@ -37,7 +38,15 @@ interface JobData {
   intervalDays: number
   reviewNeeded: boolean
   cronExpression: string
-  organizationUuid: string
+  organizationUuid: string,
+  messages: {
+    whatsapp: string,
+    slack: string,
+    email: {
+      title: string,
+      body: string,
+    }
+  }
 }
 
 @Component({
@@ -177,7 +186,15 @@ export class EditReportComponent {
         schedule: this.schedule,
         isEditMode: true,
         datePreset: this.schedulingOption?.datePreset || '',
-        schedulingOptionId: this.schedulingOptionId || ''
+        schedulingOptionId: this.schedulingOptionId || '',
+        messages: {
+          whatsapp: this.schedulingOption?.jobData.messages.whatsapp || '',
+          slack: this.schedulingOption?.jobData.messages.slack || '',
+          email: {
+            title: this.schedulingOption?.jobData.messages.email.title || '',
+            body: this.schedulingOption?.jobData.messages.email.body || ''
+          }
+        }
       }
     });
 

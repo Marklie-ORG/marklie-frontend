@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
 import { CreateScheduleRequest, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -15,6 +14,14 @@ interface ScheduleOptionsMatDialogData {
   isEditMode: boolean;
   datePreset: string;
   schedulingOptionId: string;
+  messages: {
+    whatsapp: string,
+    slack: string,
+    email: {
+      title: string,
+      body: string,
+    }
+  }
 }
 
 @Component({
@@ -29,6 +36,21 @@ export class ScheduleOptionsComponent {
   @Input() metricSelections: Record<MetricSectionKey, Record<string, boolean>> | undefined = undefined;
   @Input() schedule: Schedule | undefined = undefined;
   @Input() isEditMode: boolean = false;
+  @Input() messages: {
+    whatsapp: string,
+    slack: string,
+    email: {
+      title: string,
+      body: string,
+    }
+  } = {
+    whatsapp: '',
+    slack: '',
+    email: {
+      title: '',
+      body: ''
+    }
+  } 
 
   @Output() scheduleOptionUpdated = new EventEmitter<void>();
 
@@ -57,7 +79,6 @@ export class ScheduleOptionsComponent {
 
   selectedDatePreset = this.DATE_PRESETS[6].value;
   schedulingOptionId: string = '';
-  
 
   constructor(
     private reportsService: ReportService,
@@ -72,6 +93,7 @@ export class ScheduleOptionsComponent {
     this.isEditMode = data.isEditMode;
     this.selectedDatePreset = this.isEditMode ? data.datePreset : this.DATE_PRESETS[6].value;
     this.schedulingOptionId = data.schedulingOptionId;
+    this.messages = data.messages;
   }
 
   async saveConfiguration() {
@@ -102,7 +124,8 @@ export class ScheduleOptionsComponent {
       metrics,
       datePreset: this.selectedDatePreset,
       clientUuid: this.clientUuid,
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      messages: this.messages
     };
 
     try {

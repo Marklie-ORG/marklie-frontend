@@ -1,31 +1,32 @@
-
-<!-- <div class="container"> -->
-
-    <div class="dashboard-header flex-row justify-between align-center">
-        <div class="d-flex flex-row align-center gap-30">
-            <div routerLink="/dashboard" class="logo"><img src="../../../favicon.png" alt="logo" width="40px"></div>
-            <a routerLink="/dashboard">Dashboard</a>
-            <a routerLink="/billing">Reports</a>
-            <a routerLink="/billing">Activity</a>
-            <a routerLink="/billing">Templates</a>
-        </div>
-        
-       <div class="d-flex flex-row align-center gap-30">
-        <!-- <div>👤</div> -->
-        <a routerLink="/profile">Profile</a>
-        <a (click)="signOut()">Sign out</a>
-       </div>
+<div class="dashboard-header flex-row justify-between align-center">
+  <div class="d-flex flex-row align-center gap-30">
+    <div routerLink="/dashboard" class="logo">
+      <img src="../../../favicon.png" alt="logo" width="40px" />
     </div>
+    <a routerLink="/dashboard">Dashboard</a>
+    <a routerLink="/billing">Reports</a>
+    <a routerLink="/billing">Request Feature</a>
+  </div>
 
-    <div class="mobile-dashboard-header flex-row justify-between align-center">
-        <div>
-            Saas
-        </div>
-        
-        <nav>
+  <div class="d-flex flex-row align-center gap-20">
+    <button class="header-btn">
+      <fa-icon [icon]="faComment"></fa-icon>
+      Give Feedback
+    </button>
 
-        </nav>
+    <button class="header-btn icon-only">
+      <fa-icon [icon]="faBell"></fa-icon>
+    </button>
+
+    <div class="header-btn user-dropdown" (click)="toggleDropdown()" tabindex="0" (blur)="closeDropdown()">
+      <span>{{ userName }}</span>
+      <fa-icon [icon]="faChevronDown"></fa-icon>
+
+      <div class="dropdown-menu" *ngIf="isDropdownOpen">
+        <a routerLink="/profile"><fa-icon [icon]="faUser"></fa-icon> Profile</a>
+        <a routerLink="/billing"><fa-icon [icon]="faCreditCard"></fa-icon> Billing</a>
+        <a routerLink="/support"><fa-icon [icon]="faCommentDots"></fa-icon> Support</a>
+        <a (click)="signOut()"><fa-icon [icon]="faArrowRightFromBracket"></fa-icon> Logout</a>      </div>
     </div>
-
-<!-- </div> -->
-
+  </div>
+</div>

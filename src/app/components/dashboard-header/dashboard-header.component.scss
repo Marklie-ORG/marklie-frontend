@@ -1,46 +1,130 @@
-
-// :host {
-//     position: fixed;
-//     width: 100%;
-// }
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 5%;
+  background: var(--block-color);
+  box-shadow: 0 4px 6px rgba(67, 46, 134, 0.04);
+  border-bottom: 1px solid #8080803d;
+}
 
 .logo {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 a {
-    cursor: pointer;
-}
-
-.dashboard-header {
-    display: flex;
-    // padding: 14px 60px;
-    // position: fixed;
-    // width: 100%;
-    padding: 14px 5%;
-    background: var(--block-color);
-    // border-radius: 20px;
-    // margin-top: 15px;
-    // box-shadow: var(--box-shadow);
-
-    box-shadow: 0 4px 6px 0 rgba(67, 46, 134, .04);
-    border-bottom: 1px solid #8080803d;
-}
-
-.mobile-dashboard-header {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .mobile-dashboard-header {
-        display: flex;
-    }
-
-    .dashboard-header {
-        display: none;
-    }
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 .gap-30 {
-    gap: 30px;
+  gap: 30px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.header-btn {
+  background: white;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3d475c;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #f9fafb;
+  }
+
+  &.icon-only {
+    padding: 6px;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+  }
+}
+
+.ok-badge {
+  background: #f1f4f9;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #3d475c;
+}
+
+.user-dropdown {
+  @extend .header-btn;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+
+  fa-icon {
+    font-size: 12px;
+    margin-top: 1px;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: white;
+    border: 1px solid #e3e8ef;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    padding: 8px 0;
+    z-index: 100;
+    overflow: hidden;
+
+    a,
+    button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      text-align: left;
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #3d475c;
+      cursor: pointer;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background-color: #f5f7fa;
+      }
+
+      fa-icon {
+        font-size: 16px;
+      }
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    display: none;
+  }
+
+  .mobile-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 5%;
+  }
 }

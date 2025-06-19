@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
 
@@ -18,13 +19,13 @@ export class AppComponent {
       if (event instanceof NavigationEnd) {
         // console.log(event.url)
         const url = event.url.split('?')[0];
-        this.showHeader = 
-          url === '/' 
+        this.showHeader =
+          url === '/'
           // ||
           // url === '/auth';
 
-        this.showDashboardHeader = 
-          url === '/dashboard' || 
+        this.showDashboardHeader =
+          url === '/dashboard' ||
           url.startsWith('/client/') ||
           url === '/profile' ||
           url.startsWith('/edit-report/') ||

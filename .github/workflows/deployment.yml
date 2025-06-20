@@ -3,7 +3,7 @@ name: Deploy Marklie
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-and-deploy:
@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Build project 
+    - name: Build project
       run: npm run build
 
     - name: Deploy to server

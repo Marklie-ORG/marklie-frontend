@@ -12,6 +12,7 @@ export interface SchedulingOption {
   uuid: string
   createdAt: string
   updatedAt: string
+  reportName: string
   cronExpression: string
   datePreset: string
   isActive: boolean
@@ -56,6 +57,7 @@ interface JobData {
 export class EditReportComponent {
 
   schedule: Schedule = {
+    reportName: '',
     frequency: 'weekly',
     time: '09:00',
     dayOfWeek: 'Monday',
@@ -101,7 +103,7 @@ export class EditReportComponent {
       this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
       await this.loadReport();
-      
+
     });
   }
 
@@ -117,6 +119,7 @@ export class EditReportComponent {
     const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
 
     this.schedule = {
+      reportName: schedulingOption.reportName,
       frequency: schedulingOption.jobData.frequency,
       time: schedulingOption.jobData.time,
       dayOfWeek: schedulingOption.jobData.dayOfWeek,
@@ -126,7 +129,10 @@ export class EditReportComponent {
       reviewNeeded: schedulingOption.reviewNeeded,
     };
 
+
     this.reportSections.forEach(section => {
+      console.log(section);
+
       section.enabled = schedulingOption.jobData.metrics[section.key].metrics.length > 0;
       section.metrics.forEach(metric => {
         metric.enabled = schedulingOption.jobData.metrics[section.key].metrics.some(m => m.name === metric.name);

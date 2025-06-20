@@ -1,6 +1,12 @@
 <div class="config-step1 p-4" *ngIf="schedule">
     <h3>Report Schedule</h3>
 
+  <div class="form-row">
+    <label>Report Name:</label>
+    <input type="text" class="form-control" [(ngModel)]="schedule.reportName"/>
+
+  </div>
+
     <div class="form-row">
       <label>Date Preset:</label>
       <select class="form-control" [(ngModel)]="selectedDatePreset">

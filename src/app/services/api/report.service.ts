@@ -32,6 +32,7 @@ export interface CreateScheduleRequest extends Schedule {
   metrics: Metrics
   datePreset: string
   clientUuid: string
+  reportName: string
   timeZone: string
   messages: {
     whatsapp: string,
@@ -45,6 +46,7 @@ export interface CreateScheduleRequest extends Schedule {
 
 export interface Schedule {
   frequency: string
+  reportName: string
   time: string
   dayOfWeek: string
   dayOfMonth: number
@@ -181,6 +183,10 @@ export class ReportService {
 
   async getReport(uuid: string): Promise<GetReportResponse> {
     return firstValueFrom(this.http.get<GetReportResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
+  }
+
+  async getReports(): Promise<any[]> {
+    return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/reports/`, {headers: this.headers}));
   }
 
   async getReportStats(datePreset: string): Promise<ReportStatsResponse> {

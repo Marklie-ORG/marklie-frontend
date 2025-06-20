@@ -1,13 +1,11 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SlackLoginService } from 'src/app/services/slack-login.service';
-import { BehaviorSubject, Subscription } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ClientSettingsComponent } from '../../components/client-settings/client-settings.component';
 import { Client, ClientService } from 'src/app/services/api/client.service.js';
 import { ReportService } from 'src/app/services/api/report.service.js';
 import { AuthService } from 'src/app/services/api/auth.service.js';
-import { faCircle, faCircleDot } from '@fortawesome/free-solid-svg-icons';
 
 interface Activity {
   status: 'new' | 'old',
@@ -19,7 +17,10 @@ interface Activity {
 interface ScheduledReport {
   uuid: string;
   cronExpression: string;
+  frequency: string;
+  reportName: string;
   nextRun: string;
+  lastActivity: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -75,6 +76,7 @@ export class ClientComponent implements OnInit {
     this.client = await this.clientService.getClient(this.clientUuid);
     this.logs = await this.clientService.getClientsLogs(this.clientUuid);
     this.scheduleOptions = this.client.crons || [];
+    console.log(this.scheduleOptions)
     this.scheduleOptionsLoading = false;
   }
 

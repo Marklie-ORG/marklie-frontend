@@ -51,6 +51,7 @@ import { AdCardComponent } from './components/ad-card/ad-card.component';
 import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
 import { ChartsComponent } from './components/charts/charts.component';
 import {LogsCardComponent} from "./components/activity-logs-card/activity-logs-card.component";
+import {ReportsPageComponent} from "./pages/reports/reports-page.component.js";
 
 register();
 
@@ -99,7 +100,8 @@ register();
     CampaignTableComponent,
     ChartsComponent,
 
-    LogsCardComponent
+    LogsCardComponent,
+    ReportsPageComponent
 
   ],
   imports: [

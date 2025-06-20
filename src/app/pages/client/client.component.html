@@ -27,11 +27,11 @@
               *ngFor="let scheduleOption of scheduleOptions"
               (click)="onEditReport(scheduleOption.uuid)"
               class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
-                <div style="width: 20%;"></div>
-                <div style="width: 20%;">{{scheduleOption.cronExpression}}</div>
+                <div style="width: 20%;">{{scheduleOption.reportName}}</div>
+                <div style="width: 20%;">{{scheduleOption.frequency}}</div>
                 <div style="width: 20%;"></div>
                 <div style="width: 20%;" class="d-flex align-center justify-center">{{formatDate(scheduleOption.nextRun)}}</div>
-                <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
+                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
               </div>
             </div>
           </div>

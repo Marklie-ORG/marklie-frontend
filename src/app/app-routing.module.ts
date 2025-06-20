@@ -19,6 +19,7 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { EditReportContentComponent } from './components/edit-report-content/edit-report-content.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
+import {ReportsPageComponent} from "./pages/reports/reports-page.component.js";
 const routes: Routes = [
   {
     path: '',
@@ -91,12 +92,17 @@ const routes: Routes = [
   },
   {
     path: 'edit-report/:schedulingOptionId',
-    component: EditReportComponent, 
+    component: EditReportComponent,
     canActivate: [authGuard]
   },
   {
     path: 'review-report/:id',
     component: ReviewReportComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'reports',
+    component: ReportsPageComponent,
     canActivate: [authGuard]
   }
 ];

@@ -17,6 +17,7 @@ import { ReportsDataService } from 'src/app/services/reports-data.service';
 export class PdfReportComponent implements OnInit {
 
   schedule: Schedule = {
+    reportName: '',
     frequency: 'weekly',
     time: '09:00',
     dayOfWeek: 'Monday',
@@ -73,7 +74,7 @@ export class PdfReportComponent implements OnInit {
       this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
       await this.loadReport();
-      
+
     });
   }
 
@@ -81,7 +82,7 @@ export class PdfReportComponent implements OnInit {
     if (!this.reportId) return;
     const res = await this.reportService.getReport(this.reportId);
     const data = res.data[0];
-    
+
     // this.report = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
     this.convertOptionIntoTemplate(data);
     this.generateMockData(data);
@@ -102,7 +103,7 @@ export class PdfReportComponent implements OnInit {
       ads: initSelection(this.availableMetrics.ads, data.ads[0] ? Object.keys(data.ads[0]) : []),
       campaigns: initSelection(this.availableMetrics.campaigns, data.campaigns[0] ? Object.keys(data.campaigns[0]) : []),
     }
-    
+
   }
 
   private generateMockData(data: Daum): void {
@@ -115,5 +116,5 @@ export class PdfReportComponent implements OnInit {
   openAd(url: string): void {
     window.open(url, '_blank');
   }
-  
+
 }

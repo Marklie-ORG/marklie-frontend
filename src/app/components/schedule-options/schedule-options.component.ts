@@ -50,7 +50,7 @@ export class ScheduleOptionsComponent {
       title: '',
       body: ''
     }
-  } 
+  }
   reportSections: ReportSection[] = [];
 
   @Output() scheduleOptionUpdated = new EventEmitter<void>();

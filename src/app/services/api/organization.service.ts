@@ -29,7 +29,17 @@ export class OrganizationService {
     );
   }
 
+  async getSchedulingOptions(): Promise<any[]> {
+    return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/scheduling-options`));
+  }
+
   async getLogs(orgUuid: string) {
+    return firstValueFrom(
+      this.http.get<any[]>(`${this.apiUrl}/${orgUuid}/logs`)
+    );
+  }
+
+  async getReports(orgUuid: string) {
     return firstValueFrom(
       this.http.get<any[]>(`${this.apiUrl}/${orgUuid}/logs`)
     );

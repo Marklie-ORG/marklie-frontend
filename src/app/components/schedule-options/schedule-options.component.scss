@@ -1,0 +1,89 @@
+.config-step1 {
+    // background: #ffffff;
+    // padding: 32px;
+    // border-radius: 16px;
+    // box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    // width: 100%;
+    // max-width: 640px;
+    // margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .config-step1 h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .config-step1 .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  @media (min-width: 600px) {
+    .config-step1 .form-row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  
+    .config-step1 .form-row label {
+      min-width: 160px;
+      margin-bottom: 0;
+    }
+  }
+  
+  .config-step1 label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 4px;
+  }
+  
+  .config-step1 .form-control {
+    padding: 10px 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: #fff;
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .config-step1 select.form-control {
+    max-width: 280px;
+    width: 100%;
+    min-width: 200px;
+  }
+  
+  input[type="time"].form-control {
+    text-align: center;
+  }
+  
+  .config-step1 .form-control:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  
+  .config-step1 .btn {
+    align-self: flex-end;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #22c55e;
+    color: #fff;
+    transition: background 0.3s ease;
+  }
+  
+  .config-step1 .btn:hover {
+    background: #16a34a;
+  }
+  

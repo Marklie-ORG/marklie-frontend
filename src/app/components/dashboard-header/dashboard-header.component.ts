@@ -1,15 +1,61 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { jwtDecode } from "jwt-decode";
+import { AuthService } from '../../services/api/auth.service.js';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {
+  faArrowRightFromBracket,
+  faBell,
+  faChevronDown,
+  faCoffee,
+  faComment, faCommentAlt, faCommentDollar,
+  faCommentDots,
+  faCreditCard,
+  faUser
+} from "@fortawesome/free-solid-svg-icons";
 @Component({
   selector: 'app-dashboard-header',
   templateUrl: './dashboard-header.component.html',
-  styleUrl: './dashboard-header.component.scss'
+  styleUrl: './dashboard-header.component.scss',
 })
-export class DashboardHeaderComponent {
-  isMobileMenuOpen: boolean = false;
+export class DashboardHeaderComponent implements OnInit {
+  isDropdownOpen = false;
+  userName: string = 'Oleksii Konts';
+  email: string = '';
 
-  toggleMobileMenu() {
-    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.email = this.authService.getDecodedAccessTokenInfo().email || '';
   }
 
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  closeDropdown() {
+    setTimeout(() => {
+      this.isDropdownOpen = false;
+    }, 150);
+  }
+
+  signOut() {
+    this.authService.clearTokens();
+    this.router.navigate(['/']);
+  }
+
+
+  protected readonly faCoffee = faCoffee;
+  protected readonly faUser = faUser;
+  protected readonly faComment = faComment;
+  protected readonly faBell = faBell;
+  protected readonly faChevronDown = faChevronDown;
+  protected readonly faCreditCard = faCreditCard;
+  protected readonly faCommentDots = faCommentDots;
+  protected readonly faArrowRightFromBracket = faArrowRightFromBracket;
+  protected readonly faCommentAlt = faCommentAlt;
+  protected readonly faCommentDollar = faCommentDollar;
 }

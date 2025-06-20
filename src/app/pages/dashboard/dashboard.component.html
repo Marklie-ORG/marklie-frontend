@@ -1,0 +1,90 @@
+
+<div class="connect-facebook" *ngIf="isFacebookConnected === false">
+  <div class="d-flex flex-column justify-center align-center gap-4 block p-5">
+    <h4 class="text-center">To complete setup,<br>connect your Facebook account</h4>
+    <p class="text-center">On the next page, grant Marklie permission<br>to access your ad data.</p>
+    <button class="blue" (click)="connectFacebook()">
+      Connect Facebook
+    </button>
+  </div>
+</div>
+
+<div class="container" *ngIf="isFacebookConnected === true"
+style="height: 85%;"
+>
+
+  <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
+    <div
+    class="block"
+    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+      <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+        <h3>Clients</h3>
+        <button class="blue" (click)="showAddClientModal()" *ngIf="clients.length > 0">
+          Add client
+        </button>
+      </div>
+
+
+      <div class="table">
+
+        <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
+          <div style="width: 20%; color: #333333cb !important;">Client name</div>
+          <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Platforms</div>
+          <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Channels</div>
+          <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Active reports</div>
+          <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Last activity</div>
+        </div>
+
+        <div class="list">
+          <div
+          (click)="openClient(client.uuid); $event.stopPropagation()"
+          class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" *ngFor="let client of clients">
+            <div style="width: 20%;">{{client.name}}</div>
+            <div style="width: 20%;">
+              <div class="d-flex align-center gap-2 justify-center">
+                <img src="../../../assets/img/meta_icon.png" alt="Meta Platform">
+                <!-- <img src="../../../assets/img/tt_icon.png" alt="TikTok Platform" *ngIf="randomNumber === 1"> -->
+              </div>
+            </div>
+            <div style="width: 20%;">
+              <div class="d-flex align-center gap-2 justify-center">
+                <img src="../../../assets/img/emai_icon.png" alt="Email icon">
+                <img src="../../../assets/img/slack_icon.png" alt="Slack icon" *ngIf="randomNumber === 2">
+                <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon" *ngIf="randomNumber === 3">
+              </div>
+            </div>
+            <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption.length}}</div>
+            <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="clients.length === 0" class="d-flex align-center justify-center mt-4">
+        <button class="blue" (click)="showAddClientModal()">
+          <!-- <i class="fa-solid fa-plus color-white"></i> -->
+          Add your first client
+        </button>
+      </div>
+    </div>
+
+    <div
+    class="block"
+    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+
+
+
+        <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
+
+        </div>
+
+        <div class="activity-list pl-4 pr-4 pb-4">
+          <app-activity-log-item
+            [logs]="logs"
+            [formatTimeOrDate]="formatTimeOrDate"
+            [level]="'organization'"
+          ></app-activity-log-item>
+        </div>
+
+
+  </div>
+</div>
+</div>

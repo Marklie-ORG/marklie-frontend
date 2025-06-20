@@ -1,0 +1,116 @@
+// body {
+//     font-family: 'Inter', 'Segoe UI', sans-serif;
+//     margin: 0;
+//     background-color: #f8f9fa;
+//     -webkit-font-smoothing: antialiased;
+//     -moz-osx-font-smoothing: grayscale;
+//   }
+  
+  .section-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #1f2937;
+  }
+  
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9fafb;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .section-title label {
+    font-weight: 500;
+    font-size: 15px;
+  }
+  
+  .kpi-grid {
+    // display: grid;
+    // grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    // gap: 20px;
+    // padding: 0 8px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    .ad-card .metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .table-container {
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    margin-top: 16px;
+  }
+
+  kpi-card[cdkDrag] {
+    cursor: move;
+  }
+  
+  .kpi-grid[cdkDropList] {
+    min-height: 60px;
+  }
+  
+  
+  
+  .cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+                0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  }
+  
+  .cdk-drag-placeholder {
+    opacity: 0;
+  }
+
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .grid-item {
+    background: #2196f3;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    user-select: none;
+    cursor: grab;
+    transition: transform 0.2s ease;
+  }
+
+  .sortable-drag {
+    opacity: 0.8;
+    transform: scale(1.05);
+    z-index: 1000;
+  }
+  
+  /* the placeholder where the item would go */
+  .sortable-ghost {
+    opacity: 0.3;
+    background-color: #ccc;
+    border: 2px dashed #999;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .sortable-drag {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    cursor: grabbing;
+  }

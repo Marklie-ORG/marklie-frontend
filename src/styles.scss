@@ -1,4 +1,3 @@
-
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
@@ -59,9 +58,11 @@ body {
 
 h1 { font-size: 2rem !important; font-weight: 600 !important; line-height: 2.5rem;}
 h2 { font-size: 1.8rem !important; }
-h3 { font-size: 1.6rem !important; }
-p { font-size: 1.2rem !important; line-height: 1.6rem; }
+h3 { font-size: 1.6rem !important; font-weight: 500 !important; }
+h4 { font-size: 1.3rem !important; font-weight: 500; }
+p { font-size: 1.1rem !important; line-height: 1.6rem; }
 a { text-decoration: none !important; font-size: 1rem !important; }
+hr { opacity: 0.3; border-radius: 20px;}
 
 @media (max-width: 768px) {
     h1 { font-size: 1.5rem !important; font-weight: 600 !important; line-height: 2rem;}
@@ -82,6 +83,8 @@ a { text-decoration: none !important; font-size: 1rem !important; }
 
 .height-100 { height: 100% !important; }
 
+.max-content { width: max-content !important; }
+
 .d-flex { display: flex !important; }
 .justify-between { justify-content: space-between !important; }
 .justify-center { justify-content: center !important; }
@@ -93,7 +96,7 @@ a { text-decoration: none !important; font-size: 1rem !important; }
 .position-fixed { position: fixed !important; }
 .flex-row { flex-direction: row !important; }
 .flex-column { flex-direction: column !important; }
-
+.flex-wrap { flex-wrap: wrap !important; }
 .pos-relative { position: relative !important; }
 
 
@@ -236,54 +239,42 @@ a { text-decoration: none !important; font-size: 1rem !important; }
 
 
 .container {
-    max-width: 95%;
+    max-width: 90%;
     margin: 0 auto;
 }
-// @media (max-width: 1450px) {
-//     .container {
-//         max-width: 1300px;
-//     }
-// }
-// @media (max-width: 1350px) {
-//     .container {
-//         max-width: 1200px;
-//     }
-// }
-// @media (max-width: 1250px) {
-//     .container {
-//         max-width: 1100px;
-//     }
-// }
-// @media (max-width: 1150px) {
-//     .container {
-//         max-width: 1000px;
-//     }
-// }
-// @media (max-width: 1050px) {
-//     .container {
-//         max-width: 900px;
-//     }
-// }
-// @media (max-width: 767px) {
-//     .container {
-//         max-width: 95%;
-//     }
-// }
+
+.landing-container {
+    max-width: 1160px;
+    margin: 0 auto;
+}
+
 button {
     border: none;
-    // background: rgb(0, 162, 16);
-    color: #fff;
-    padding: 10px 14px;
+    color: #333;
+    // padding: 8px 10px;
+    padding: 10px 30px;
+    font-size: 16px;
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 2.7px 0px;
+    font-weight: 500;
+    // font-size: 0.9rem;
+    box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
     letter-spacing: .03rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    background-color: #f7f7f7;
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:hover {
+        background-color: #f1f1f1;
+    }
+
 
     &.green {
         background: rgb(0, 162, 16);
+        color: #fff;
     }
     &.green:hover {
         background: rgb(1 147 15);
@@ -291,72 +282,112 @@ button {
     }
 
     &.blue {
-        background: rgb(24, 59, 161);
+        background: #1F8DED;
+        color: #fff;
     }
     &.blue:hover {
-        background: rgb(24, 59, 161);
-        box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
+        background: #1F8DED;
+        box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
+    }
+
+    &.subtle {
+        background: none;
+        color: #BBBBBB;
+        border: none;
+        box-shadow: none;
+        padding: 8px 10px;
     }
 }
 
 select {
     border: none;
-    background: rgb(0, 162, 16);
-    color: #fff;
-    padding: 10px 40px 10px 14px; /* Increased right padding for arrow */
+    color: #333;
+    padding: 8px 26px 8px 10px;
     border-radius: 6px;
-    font-weight: 600;
-    font-size: 1rem;
-    box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 2.7px 0px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
     letter-spacing: .03rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     outline: none;
-    appearance: none; /* Remove default arrow */
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    appearance: none;
+    background-color: #f7f7f7;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
-    background-position: right 14px top 50%;
-    background-size: 12px auto;
+    background-position: right 10px top 50%;
+    background-size: 10px auto;
+    text-align: center;
 
     &:hover {
-        background-color: rgb(1 147 15);
+        // background-color: rgb(1 147 15);
         box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
     }
 
     option {
-        background: rgb(0, 162, 16);
-        color: #fff;
+        // background: rgb(0, 162, 16);
+        // color: #fff;
         font-weight: 600;
         font-size: 1rem;
         padding: 10px 14px;
 
-        &:hover {
-            background: rgb(1 147 15);
-        }
+        // &:hover {
+        //     background: rgb(1 147 15);
+        // }
     }
 }
 
 input, textarea {
-    // width: 100%;
-    font-size: 1rem;
-    padding: 12px;
-    width: calc(100% - 28px);
-    // width: calc(100% - 24px);
-    border-radius: 6px;
-    // border: 2px solid #2d2ab1c2;
-    border: 1.5px solid #bfbfbf;
-    transition: all 0.2s ease-in-out;
-    &:focus {
-      outline: none;
-      border-color: #82baff !important;
-      box-shadow: 0 0 0px 3px #62a9ff47;
+
+    &.text {
+        // width: 100%;
+        font-size: 1rem;
+        padding: 8px 12px;
+        width: calc(100% - 28px);
+        // width: calc(100% - 24px);
+        border-radius: 6px;
+        // border: 2px solid #2d2ab1c2;
+        border: 1.5px solid #bfbfbf;
+        transition: all 0.2s ease-in-out;
+        &:focus {
+        outline: none;
+        border-color: #82baff !important;
+        box-shadow: 0 0 0px 3px #62a9ff47;
+        }
     }
+
 }
 
-// html, body { height: 100%; }
-// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.block {
+    background: var(--block-color);
+    border: var(--block-border);
+    border-radius: 20px;
+    box-shadow: var(--box-shadow);
+}
+
+
 
 // Angular components
 .mat-mdc-dialog-surface {
     border-radius: 12px !important;
+}
+
+fa-icon {
+    &.light {
+        path {
+            color: #fff !important;
+        }
+    }
+    &.dark {
+        path {
+            color: #000 !important;
+        }
+    }
+}
+
+body.no-scroll {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }

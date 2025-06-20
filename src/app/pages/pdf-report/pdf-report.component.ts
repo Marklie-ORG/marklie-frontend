@@ -1,381 +1,120 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import Chart from 'chart.js/auto';
-import { BestAd, Campaign, Graph, Kpis, ReportService } from '../../services/report.service';
 import { ActivatedRoute } from '@angular/router';
-
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Daum, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
+import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
+import { Chart } from 'chart.js';
+import { MatDialog } from '@angular/material/dialog';
+import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
+import { SchedulingOption } from '../edit-report/edit-report.component';
+import { MetricsService } from 'src/app/services/metrics.service';
+import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 @Component({
   selector: 'app-pdf-report',
   templateUrl: './pdf-report.component.html',
-  styleUrl: './pdf-report.component.scss'
+  styleUrls: ['./pdf-report.component.scss']
 })
-export class PdfReportComponent {
-  KPIs!: Kpis;
+export class PdfReportComponent implements OnInit {
 
-  graphs: Graph[] = [];
-
-  campaigns: Campaign[] = [];
-
-  bestAds: BestAd[] = [];
-
+  schedule: Schedule = {
+    reportName: '',
+    frequency: 'weekly',
+    time: '09:00',
+    dayOfWeek: 'Monday',
+    dayOfMonth: 1,
+    intervalDays: 1,
+    cronExpression: '',
+    reviewNeeded: false,
+  };
+  clientUuid: string = '';
   reportStatsLoading = false;
 
+  metricSelections: MetricSelections = {
+    kpis: {} as Record<string, boolean>,
+    graphs: {} as Record<string, boolean>,
+    ads: {} as Record<string, boolean>,
+    campaigns: {} as Record<string, boolean>
+  };
+
+  metricsGraphConfig: any[] = [];
+
+  data: MockData = {
+    KPIs: {},
+    ads: [],
+    campaigns: [],
+    graphs: []
+  }
+
+  private chartRefs: Record<string, Chart> = {};
+
+  reportId: string | null = null;
+
+  schedulingOption: SchedulingOption | null = null;
+
+  availableMetrics: GetAvailableMetricsResponse = {};
+
+  reportSections: ReportSection[] = []
+
   constructor(
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
     private reportService: ReportService,
-    private ref: ChangeDetectorRef,
-    private route: ActivatedRoute
-  ) {}
+    public metricsService: MetricsService,
+    public ref: ChangeDetectorRef,
+    private reportsDataService: ReportsDataService
+  ) {
+  }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.route.params.subscribe(async params => {
+      this.reportId = params['uuid'];
 
-    const reportId = this.route.snapshot.params['id'];
+      this.availableMetrics = await this.reportService.getAvailableMetrics();
 
-    if (reportId) {
-      this.updateReportStats(reportId);
+      this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
+
+      await this.loadReport();
+
+    });
+  }
+
+  private async loadReport() {
+    if (!this.reportId) return;
+    const res = await this.reportService.getReport(this.reportId);
+    const data = res.data[0];
+
+    // this.report = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
+    this.convertOptionIntoTemplate(data);
+    this.generateMockData(data);
+  }
+
+  convertOptionIntoTemplate(data: Daum) {
+
+    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
+
+    if (data.ads.length === 0) this.reportSections.find(s => s.key === 'ads')!.enabled = false;
+    if (data.graphs.length === 0) this.reportSections.find(s => s.key === 'graphs')!.enabled = false;
+    if (data.campaigns.length === 0) this.reportSections.find(s => s.key === 'campaigns')!.enabled = false;
+    if (!data.KPIs || Object.keys(data.KPIs).length === 0) this.reportSections.find(s => s.key === 'kpis')!.enabled = false;
+
+    this.metricSelections = {
+      kpis: initSelection(this.availableMetrics.kpis, data?.KPIs ? Object.keys(data.KPIs) : []),
+      graphs: initSelection(this.availableMetrics.graphs, data.graphs[0] ? Object.keys(data.graphs[0]) : []),
+      ads: initSelection(this.availableMetrics.ads, data.ads[0] ? Object.keys(data.ads[0]) : []),
+      campaigns: initSelection(this.availableMetrics.campaigns, data.campaigns[0] ? Object.keys(data.campaigns[0]) : []),
     }
+
   }
 
-  async updateReportStats(reportId: string) {
-    this.reportStatsLoading = true; 
-    const start = performance.now();
-    ({ KPIs: this.KPIs, graphs: this.graphs, campaigns: this.campaigns, bestAds: this.bestAds } = await this.reportService.getWeeklyReportById(reportId));
-    const end = performance.now();
-    console.log(`getReportStats execution time: ${end - start}ms`);
-    this.reportStatsLoading = false;
-    this.ref.detectChanges();
-    setTimeout(() => {
-      this.initializeCharts();
-    });
+  private generateMockData(data: Daum): void {
+    this.data.KPIs = data.KPIs;
+    this.data.ads = data.ads;
+    this.data.campaigns = data.campaigns;
+    this.data.graphs = data.graphs;
   }
-  
 
-  private initializeCharts() {
-    const formatDate = (dateStr: string) => {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric'
-      });
-    };
-
-    const dates = this.graphs.map(g => g.date);
-    const formattedDates = dates.map(formatDate);
-
-    Chart.register(ChartDataLabels); // Register the plugin globally
-    
-    new Chart('spendChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Daily Spend',
-          data: this.graphs.map(g => parseFloat(g.spend)),
-          borderColor: '#3498db',
-          backgroundColor: 'rgba(52, 152, 219, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 4,
-          pointBackgroundColor: '#3498db',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointHoverRadius: 6,
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: '#3498db',
-          pointHoverBorderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        // maintainAspectRatio: false,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Daily Ad Spend',
-            font: {
-              size: 16,
-              weight: 'bold'
-            },
-            padding: 20
-          },
-          legend: {
-            labels: {
-              font: {
-                size: 12
-              }
-            }
-          },
-          tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            titleColor: '#333',
-            bodyColor: '#333',
-            borderColor: '#3498db',
-            borderWidth: 1.5,
-            padding: 15,
-            displayColors: false,
-            callbacks: {
-              label: function(context) {
-                return `$${context.parsed.y.toFixed(2)}`;
-              }
-            }
-          },
-          // ADD DATALABELS CONFIGURATION HERE
-          datalabels: {
-            anchor: 'end', // Position the label at the end of the point
-            align: 'bottom',  // Align the label to the top of the point
-            offset: 8,     // Add some offset for better spacing
-            font: {
-              size: 10,
-              // weight: 'bold'
-            },
-            color: '#333', // Label text color
-            formatter: function(value, context) { // Format the label value
-              return '$' + value.toFixed(0); // Display with dollar sign and 2 decimal places
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              display: false
-            },
-            ticks: {
-              font: {
-                size: 11
-              }
-            }
-          },
-          y: {
-            beginAtZero: true,
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
-            },
-            ticks: {
-              font: {
-                size: 11
-              },
-              callback: function(value) {
-                return '$' + value;
-              }
-            }
-          }
-        },
-      }
-    });
-
-    // Spend Chart
-    
-
-    // ROAS Chart
-    new Chart('roasChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'ROAS',
-          data: this.graphs.map(g => parseFloat(g.purchaseRoas)),
-          borderColor: '#2ecc71'
-        }]
-      },
-      options: {
-        responsive: true,
-        // maintainAspectRatio: false,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Return on Ad Spend'
-          }
-        }
-      }
-    });
-
-    // Conversion Chart
-    new Chart('conversionChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Purchases',
-          data: this.graphs.map(g => parseInt(g.purchases)),
-          borderColor: '#e74c3c'
-        }, {
-          label: 'Add to Cart', 
-          data: this.graphs.map(g => parseInt(g.addToCart)),
-          borderColor: '#f1c40f'
-        }, {
-          label: 'Checkouts',
-          data: this.graphs.map(g => parseInt(g.initiatedCheckouts)),
-          borderColor: '#9b59b6'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Conversion Metrics'
-          }
-        }
-      }
-    });
-
-    // Engagement Chart
-    new Chart('engagementChart', {
-      type: 'line', 
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Clicks',
-          data: this.graphs.map(g => parseInt(g.clicks)),
-          borderColor: '#e67e22'
-        }, {
-          label: 'Impressions',
-          data: this.graphs.map(g => parseInt(g.impressions)),
-          borderColor: '#1abc9c'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Engagement Metrics'
-          }
-        }
-      }
-    });
-
-    // CTR Chart
-    new Chart('ctrChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Click-Through Rate',
-          data: this.graphs.map(g => parseFloat(g.ctr)),
-          borderColor: '#34495e'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Click-Through Rate'
-          }
-        }
-      }
-    });
-
-    // CPC Chart
-    new Chart('cpcChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Cost Per Click',
-          data: this.graphs.map(g => parseFloat(g.cpc)),
-          borderColor: '#16a085'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Cost Per Click'
-          }
-        }
-      }
-    });
-
-    // Cost Per Purchase Chart
-    new Chart('costPerPurchaseChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Cost Per Purchase',
-          data: this.graphs.map(g => parseFloat(g.costPerPurchase)),
-          borderColor: '#8e44ad'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Cost Per Purchase'
-          }
-        }
-      }
-    });
-
-    // Conversion Value Chart
-    new Chart('conversionValueChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Conversion Value',
-          data: this.graphs.map(g => parseFloat(g.conversionValue)),
-          borderColor: '#c0392b'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Conversion Value'
-          }
-        }
-      }
-    });
-
-    // Cost Per Add to Cart Chart
-    new Chart('costPerCartChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Cost Per Add to Cart',
-          data: this.graphs.map(g => parseFloat(g.costPerAddToCart)),
-          borderColor: '#d35400'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Cost Per Add to Cart'
-          }
-        }
-      }
-    });
-
-    // Initiated Checkouts Chart
-    new Chart('checkoutsChart', {
-      type: 'line',
-      data: {
-        labels: formattedDates,
-        datasets: [{
-          label: 'Initiated Checkouts',
-          data: this.graphs.map(g => parseInt(g.initiatedCheckouts)),
-          borderColor: '#27ae60'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Initiated Checkouts'
-          }
-        }
-      }
-    });
+  openAd(url: string): void {
+    window.open(url, '_blank');
   }
+
 }

@@ -1,10 +1,13 @@
 :root {
-    --main-background-color: #F4F4F4;
-    // --main-background-color: #F4F4F4;
+    // --main-background-color: #F1F1F1;
+    --main-background-color: #fff;
     
-    --block-color: #fbf8f8;
+    --block-color: #fff;
 
     --text-color: #282828;
 
-    --box-shadow: rgba(13, 16, 23, 0.06) 0px 1.3px 2.7px 0px;
+    --box-shadow: 0 4px 6px 0 rgba(67, 46, 134, 0.04);
+    // --box-shadow: 0px 0px 2px #00000033;
+
+    --block-border: 1px solid rgba(128, 128, 128, 0.2392156863);
 }

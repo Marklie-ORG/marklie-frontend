@@ -1,0 +1,30 @@
+.campaign-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+
+    th,
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    th {
+      background: #f9fafb;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    tr:hover td {
+      background-color: #f9fafb;
+    }
+
+    th[cdkDrag] {
+        cursor: move;
+        background-color: #e5e7eb;
+        user-select: none;
+      }
+
+  }

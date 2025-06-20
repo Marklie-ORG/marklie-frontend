@@ -1,0 +1,69 @@
+<div class="container">
+
+    <div 
+    class="p-4 block mt-4"
+    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+
+        <div>
+            <h4 class="mt-2">Change Email</h4>
+            <div class="d-flex gap-4 mt-3">
+                <div class="d-flex flex-column gap-2" style="width: 280px;">
+                    <label for="email">New Email</label>
+                    <input id="email" type="text" class="text" [(ngModel)]="email">
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <label for="changeEmailPassword">Current Password</label>
+                    <div class="password-wrapper">
+                        <input id="changeEmailPassword" [type]="showChangeEmailPassword ? 'text' : 'password'" class="text" [(ngModel)]="changeEmailPassword" placeholder="•••••••••••">
+                        <span class="toggle-password" (click)="showChangeEmailPassword = !showChangeEmailPassword">
+                            <fa-icon [icon]="showChangeEmailPassword ? faEyeSlash : faEye"></fa-icon>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <button (click)="changeEmail()" class="mt-3">Change Email</button>
+        </div>
+
+        <hr class="mt-4 mb-4">
+
+        <div>
+            <h4 class="">Change Password</h4>
+            <div class="d-flex gap-4 mt-3">
+                <div class="d-flex flex-column gap-2">  
+                    <label for="currentPassword">Current Password</label>
+                    <div class="password-wrapper">
+                        <input id="currentPassword" [type]="showCurrentPassword ? 'text' : 'password'" class="text" [(ngModel)]="changePasswordPassword" placeholder="•••••••••••">
+                        <span class="toggle-password" (click)="showCurrentPassword = !showCurrentPassword">
+                            <fa-icon [icon]="showCurrentPassword ? faEyeSlash : faEye"></fa-icon>
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="d-flex gap-4 mt-3">
+                <div class="d-flex flex-column gap-2">
+                    <label for="newPassword">New Password</label>
+                    <div class="password-wrapper">
+                        <input id="newPassword" [type]="showNewPassword ? 'text' : 'password'" class="text" [(ngModel)]="newPassword" placeholder="•••••••••••">
+                        <span class="toggle-password" (click)="showNewPassword = !showNewPassword">
+                            <fa-icon [icon]="showNewPassword ? faEyeSlash : faEye"></fa-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <label for="confirmNewPassword">Confirm New Password</label>
+                    <div class="password-wrapper">
+                        <input id="confirmNewPassword" [type]="showConfirmNewPassword ? 'text' : 'password'" class="text" [(ngModel)]="newPasswordRepeated" placeholder="•••••••••••">
+                        <span class="toggle-password" (click)="showConfirmNewPassword = !showConfirmNewPassword">
+                            <fa-icon [icon]="showConfirmNewPassword ? faEyeSlash : faEye"></fa-icon>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <button (click)="changePassword()" class="mt-3">Change Password</button>
+        </div>
+
+    </div>
+</div>

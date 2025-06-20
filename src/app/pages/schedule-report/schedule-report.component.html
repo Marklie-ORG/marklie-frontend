@@ -1,0 +1,34 @@
+<div>
+
+  <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
+
+    <div class="d-flex flex-column pt-3 pl-5 pr-5">
+      <main>
+        <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+    
+        <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
+          <edit-report-content
+            [reportSections]="reportSections"
+            [mockData]="mockData"
+            [clientUuid]="clientUuid"
+            [schedule]="schedule"
+          ></edit-report-content>
+        </div>
+
+      </main>
+    </div>
+
+    <div class="side-panel d-flex flex-column p-3">
+
+      <button class="blue mb-3" (click)="scheduleReportDelivery()">
+        Schedule Report Delivery
+      </button>
+
+      <edit-metrics
+        [(reportSections)]="reportSections"
+      ></edit-metrics>
+
+    </div>
+  </div>
+
+</div>

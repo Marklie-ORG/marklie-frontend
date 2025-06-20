@@ -1,4 +1,4 @@
-name: Deploy Saas
+name: Deploy Marklie
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: npm install 
+      run: npm install --legacy-peer-deps
 
     - name: Build project
       run: npm run build
@@ -31,8 +31,8 @@ jobs:
     - name: Deploy to server
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
-        server: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        password: ${{ secrets.SERVER_PASSWORD }}
+        server: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PWD }}
         local-dir: "./dist/saas/browser/"
-        server-dir: "derevian.co/saas/"
+        server-dir: "public_html/"

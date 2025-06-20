@@ -1,0 +1,75 @@
+<div class="container" style="height: 85%;">
+
+    <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
+
+        <div
+        class="block"
+        style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+          <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+              <h3>Reports</h3>
+              <button class="blue" (click)="scheduleReport()" >
+                  Add report
+              </button>
+          </div>
+
+          <div class="table">
+
+            <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
+              <div style="width: 20%; color: #333333cb !important;">Report name</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Frequency</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Last activity</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Next activity</div>
+              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
+            </div>
+
+            <div class="list">
+              <div
+              *ngFor="let scheduleOption of scheduleOptions"
+              (click)="onEditReport(scheduleOption.uuid)"
+              class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
+                <div style="width: 20%;">{{scheduleOption.reportName}}</div>
+                <div style="width: 20%;">{{scheduleOption.frequency}}</div>
+                <div style="width: 20%;"></div>
+                <div style="width: 20%;" class="d-flex align-center justify-center">{{formatDate(scheduleOption.nextRun)}}</div>
+                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-center justify-center mt-4" *ngIf="!scheduleOptionsLoading && scheduleOptions.length === 0">
+            <button class="blue" (click)="scheduleReport()" >
+                Add your first report for {{client?.name}}!
+            </button>
+          </div>
+
+        </div>
+
+        <div class="d-flex flex-column gap-4">
+
+            <div class="p-4 block d-flex align-center justify-between">
+                <div>
+                    <h3 *ngIf="client">{{client.name}}</h3>
+                </div>
+
+                <button class="blue" (click)="onEditClient()">
+                    Client Settings
+                </button>
+            </div>
+
+            <div
+            class="block"
+            style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow); height: 100%;">
+
+
+
+              <div class="activity-list pl-4 pr-4 pb-4">
+                <app-activity-log-item
+                  [logs]="logs"
+                  [formatTimeOrDate]="formatTimeOrDate"
+                ></app-activity-log-item>
+              </div>
+
+    </div>
+    </div>
+    </div>
+</div>

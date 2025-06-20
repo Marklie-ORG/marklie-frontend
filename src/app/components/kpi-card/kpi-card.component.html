@@ -1,0 +1,6 @@
+<div class="kpi-card">
+    <div class="kpi-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
+    <div class="kpi-value" [ngClass]="metricsService.getMetricStyle(metric.name)">
+      {{ metricsService.formatMetricValue(metric.name, value) }}
+    </div>
+</div>

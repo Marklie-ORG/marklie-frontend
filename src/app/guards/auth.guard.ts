@@ -1,16 +1,21 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/api/auth.service.js';
 
 export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.isAdmin()) {
+  const currentUrl = router.url;
+
+  if (currentUrl.startsWith('/view-report')) {
     return true;
   }
 
-  // Redirect to login page if not authenticated
+  if (authService.getAccessToken()) {
+    return true;
+  }
+
   router.navigate(['/']);
   return false;
-};  
+};

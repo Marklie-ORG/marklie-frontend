@@ -1,55 +1,7 @@
-<!-- <div *ngFor="let section of reportSections; let i = index" class="p-3 mb-4">
-  
-  <div class="section-toggle">
-    <label>{{ section.title }}</label>
-  </div>
 
-  <div *ngIf="panelToggles && panelToggles[section.key] && data">
-
-    <ng-container [ngSwitch]="section.key">
-
-      <div *ngSwitchCase="'kpis'" class="kpi-grid">
-        <ng-container *ngFor="let metric of section.metrics">
-          <kpi-card
-          *ngIf="metricSelections && metricSelections.kpis[metric]" 
-          [metric]="metric" 
-          [value]="data.KPIs[metric]"
-          ></kpi-card>
-        </ng-container>
-      </div>
-
-      <charts
-      *ngSwitchCase="'graphs'"
-      [data]="data"
-      [metricSelections]="metricSelections"
-      ></charts>
-
-      <div *ngSwitchCase="'ads'" class="ad-grid">
-
-        <ad-card
-        *ngFor="let ad of data.ads"
-        [thumbnail]="ad.thumbnailUrl"
-        [metrics]="section.metrics"
-        [metricSelections]="metricSelections"
-        [sourceUrl]="ad.sourceUrl"
-        [ad]="ad"
-        ></ad-card>
-
-      </div>
-
-      <campaign-table
-      *ngSwitchCase="'campaigns'"
-      [campaignColumnOrder]="availableMetrics.campaigns"
-      [campaigns]="data.campaigns"
-      ></campaign-table>
-      
-    </ng-container>
-  </div>
-</div> -->
 
 <edit-report-content
   [reportSections]="reportSections"
-  [panelToggles]="panelToggles"
   [metricSelections]="metricSelections"
   [campaignColumnOrder]="availableMetrics.campaigns"
   [mockData]="data"

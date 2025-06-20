@@ -4,8 +4,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
-import { Metrics, ReportService } from 'src/app/services/api/report.service';
+import { GetAvailableMetricsResponse, Metric, Metrics, ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
+import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 export type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
@@ -13,7 +14,8 @@ export interface ReportSection {
   key: MetricSectionKey;
   title: string;
   enabled: boolean;
-  metrics: string[];
+  metrics: Metric[];
+  order: number;
 }
 
 export interface MockData {
@@ -48,20 +50,6 @@ export class ScheduleReportComponent implements OnInit {
   clientUuid: string = '';
   reportStatsLoading = true;
 
-  metricSelections = {
-    kpis: {} as Record<string, boolean>,
-    graphs: {} as Record<string, boolean>,
-    ads: {} as Record<string, boolean>,
-    campaigns: {} as Record<string, boolean>
-  };
-
-  panelToggles = {
-    kpis: true,
-    graphs: true,
-    ads: true,
-    campaigns: true
-  };
-
   metricsGraphConfig: any[] = [];
 
   mockData: MockData = {
@@ -73,19 +61,15 @@ export class ScheduleReportComponent implements OnInit {
 
   reportSections: ReportSection[] = []
 
-  availableMetrics: Metrics = {
-    kpis: [],
-    graphs: [],
-    ads: [],
-    campaigns: []
-  };
+  availableMetrics: GetAvailableMetricsResponse = {};
 
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private reportService: ReportService,
-    private mockReportService: MockReportService
+    private mockReportService: MockReportService,
+    private reportsDataService: ReportsDataService
   ) {}
 
   async ngOnInit() {
@@ -93,48 +77,67 @@ export class ScheduleReportComponent implements OnInit {
 
     this.availableMetrics = await this.reportService.getAvailableMetrics();
 
-    this.reportSections = [
-      { key: 'kpis', title: 'KPIs', enabled: true, metrics: this.availableMetrics.kpis },
-      { key: 'graphs', title: 'Graphs', enabled: true, metrics: this.availableMetrics.graphs },
-      { key: 'ads', title: 'Ads', enabled: true, metrics: this.availableMetrics.ads },
-      { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.availableMetrics.campaigns }
-    ];
+    this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
-    this.initMetricSelections();
-    this.generateMockData();
+    this.reportSections.forEach(section => {
+      for (let i = 0; i < 3; i++) {
+        section.metrics[i].enabled = true;
+      }
+    });
+
+    // console.log(this.reportSections)
+
+    // this.initMetricSelections();
+    this.mockData = this.mockReportService.generateMockData();
     this.reportStatsLoading = false;
   }
 
-  private initMetricSelections(): void {
-
-    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
-
-    this.metricSelections = {
-      kpis: initSelection(this.availableMetrics.kpis, this.availableMetrics.kpis.slice(0, 4)),
-      graphs: initSelection(this.availableMetrics.graphs, this.availableMetrics.graphs.slice(0, 4)),
-      ads: initSelection(this.availableMetrics.ads, this.availableMetrics.ads.slice(0, 4)),
-      campaigns: initSelection(this.availableMetrics.campaigns, this.availableMetrics.campaigns.slice(0, 4)),
+  ngOnChanges() {
+    if (this.reportSections) {
+      console.log(this.reportSections)
+      this.reportSections.sort((a, b) => a.order - b.order);
     }
-
-
   }
 
-  private generateMockData(): void {
-    this.mockData = this.mockReportService.generateMockData();
-  }
+  // private initMetricSelections(): void {
+
+  //   const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
+
+  //   this.metricSelections = {
+  //     kpis: initSelection(this.availableMetrics.kpis, this.availableMetrics.kpis.slice(0, 4)),
+  //     graphs: initSelection(this.availableMetrics.graphs, this.availableMetrics.graphs.slice(0, 4)),
+  //     ads: initSelection(this.availableMetrics.ads, this.availableMetrics.ads.slice(0, 4)),
+  //     campaigns: initSelection(this.availableMetrics.campaigns, this.availableMetrics.campaigns.slice(0, 4)),
+  //   }
+
+  // }
 
   dropSection(event: CdkDragDrop<ReportSection[]>): void {
     moveItemInArray(this.reportSections, event.previousIndex, event.currentIndex);
+
+    this.reportSections.forEach((section, index) => {
+      section.order = index + 1;
+    });
+
+    console.log(this.reportSections)
   }
 
   scheduleReportDelivery() {
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
       data: {
-        panelToggles: this.panelToggles,
+        reportSections: this.reportSections,
         clientUuid: this.clientUuid,
-        metricSelections: this.metricSelections,
-        schedule: this.schedule
+        // metricSelections: this.metricSelections,
+        schedule: this.schedule,
+        messages: {
+          whatsapp: '',
+          slack: '',
+          email: {
+            title: '',
+            body: ''
+          }
+        }
       }
     });
 

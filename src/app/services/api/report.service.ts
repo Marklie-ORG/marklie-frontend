@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { Client } from './client.service.js';
+import { Point } from '@angular/cdk/drag-drop';
+
 export interface ReportStatsResponse {
   data: {
     ads: any[]
@@ -11,6 +13,10 @@ export interface ReportStatsResponse {
     graphs: any[]
     adAccountId: string
   }[]
+}
+
+export interface GetAvailableMetricsResponse {
+  [key: string]: string[]
 }
 
 export interface Report {
@@ -47,16 +53,17 @@ export interface Schedule {
   reviewNeeded: boolean
 }
 
-interface Metric {
+export interface Metric {
   name: string
   order: number
+  enabled?: boolean
 }
 
 export interface Metrics {
-  kpis: string[]
-  graphs: string[]
-  ads: string[]
-  campaigns: string[]
+  [key: string]: {
+    metrics: Metric[],
+    order: number
+  }
 }
 
 export interface GetReportResponse {
@@ -192,8 +199,8 @@ export class ReportService {
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/reports/scheduling-option/${uuid}`, {headers: this.headers}));
   }
 
-  async getAvailableMetrics(): Promise<Metrics> {
-    return firstValueFrom(this.http.get<Metrics>(`${this.apiUrl}/reports/available-metrics`));
+  async getAvailableMetrics(): Promise<GetAvailableMetricsResponse> {
+    return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/reports/available-metrics`));
   }
 }
 

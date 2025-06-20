@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
+import { GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
+import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 export interface SchedulingOption {
   uuid: string
@@ -23,7 +23,6 @@ export interface SchedulingOption {
   nextRun: string
   bullJobId: string
   client: string
-  
 }
 
 interface JobData {
@@ -68,20 +67,6 @@ export class EditReportComponent {
   clientUuid: string = '';
   reportStatsLoading = false;
 
-  metricSelections: MetricSelections = {
-    kpis: {} as Record<string, boolean>,
-    graphs: {} as Record<string, boolean>,
-    ads: {} as Record<string, boolean>,
-    campaigns: {} as Record<string, boolean>
-  };
-
-  panelToggles = {
-    kpis: true,
-    graphs: true,
-    ads: true,
-    campaigns: true
-  };
-
   metricsGraphConfig: any[] = [];
 
   mockData: MockData = {
@@ -95,12 +80,7 @@ export class EditReportComponent {
 
   schedulingOption: SchedulingOption | null = null;
 
-  availableMetrics: Metrics = {
-    kpis: [],
-    graphs: [],
-    ads: [],
-    campaigns: []
-  };
+  availableMetrics: GetAvailableMetricsResponse = {};
 
   reportSections: ReportSection[] = []
 
@@ -108,7 +88,8 @@ export class EditReportComponent {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private reportService: ReportService,
-    private mockReportService: MockReportService
+    private mockReportService: MockReportService,
+    private reportsDataService: ReportsDataService
   ) {}
 
   ngOnInit() {
@@ -116,21 +97,8 @@ export class EditReportComponent {
       this.schedulingOptionId = params['schedulingOptionId'];
 
       this.availableMetrics = await this.reportService.getAvailableMetrics();
-      // this.availableMetrics = {
-      //   kpis: ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'actions', 'action_values', 'purchase_roas', 'reach'],
-      //   graphs: ['spend', 'impressions', 'clicks', 'cpc', 'ctr', 'purchaseRoas', 'conversionValue', 'purchases', 'addToCart', 'initiatedCheckouts', 'costPerPurchase', 'costPerCart'],
-      //   ads: ['spend', 'addToCart', 'purchases', 'roas'],
-      //   campaigns: ['spend', 'purchases', 'conversionRate', 'purchaseRoas'],
-      // }
 
-      this.reportSections = [
-        { key: 'kpis', title: 'KPIs', enabled: true, metrics: this.availableMetrics.kpis },
-        { key: 'graphs', title: 'Graphs', enabled: true, metrics: this.availableMetrics.graphs },
-        { key: 'ads', title: 'Ads', enabled: true, metrics: this.availableMetrics.ads },
-        { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.availableMetrics.campaigns }
-      ];
-
-      console.log(this.reportSections)
+      this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
       await this.loadReport();
       
@@ -158,21 +126,12 @@ export class EditReportComponent {
       reviewNeeded: schedulingOption.reviewNeeded,
     };
 
-    this.panelToggles = {
-      kpis: schedulingOption.jobData.metrics.kpis.length > 0,
-      graphs: schedulingOption.jobData.metrics.graphs.length > 0,
-      ads: schedulingOption.jobData.metrics.ads.length > 0,
-      campaigns: schedulingOption.jobData.metrics.campaigns.length > 0
-    }
-
-    this.metricSelections = {
-      kpis: initSelection(this.availableMetrics.kpis, schedulingOption.jobData.metrics.kpis),
-      graphs: initSelection(this.availableMetrics.graphs, schedulingOption.jobData.metrics.graphs),
-      ads: initSelection(this.availableMetrics.ads, schedulingOption.jobData.metrics.ads),
-      campaigns: initSelection(this.availableMetrics.campaigns, schedulingOption.jobData.metrics.campaigns),
-    }
-
-    console.log(this.metricSelections)
+    this.reportSections.forEach(section => {
+      section.enabled = schedulingOption.jobData.metrics[section.key].metrics.length > 0;
+      section.metrics.forEach(metric => {
+        metric.enabled = schedulingOption.jobData.metrics[section.key].metrics.some(m => m.name === metric.name);
+      });
+    });
 
   }
 
@@ -180,9 +139,8 @@ export class EditReportComponent {
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
       data: {
-        panelToggles: this.panelToggles,
         clientUuid: this.clientUuid,
-        metricSelections: this.metricSelections,
+        reportSections: this.reportSections,
         schedule: this.schedule,
         isEditMode: true,
         datePreset: this.schedulingOption?.datePreset || '',

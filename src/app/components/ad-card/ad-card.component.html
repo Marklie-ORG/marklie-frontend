@@ -4,11 +4,11 @@
       <img class="ad-media" [src]="ad.thumbnailUrl"/>
     </div>
     <div class="metrics">
-      <ng-container *ngFor="let key of metrics">
-        <div class="metric" *ngIf="metricSelections?.ads?.[key]">
-          <div class="metric-label">{{ metricsService.formatMetricLabel(key) }}</div>
+      <ng-container *ngFor="let metric of metrics">
+        <div class="metric" *ngIf="metric.enabled">
+          <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
           <div class="metric-value">
-            {{ad[key]}}
+            {{ad[metric.name]}}
           </div>
         </div>
       </ng-container>

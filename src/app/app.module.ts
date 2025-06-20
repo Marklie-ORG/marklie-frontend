@@ -112,10 +112,8 @@ register();
     DragDropModule,
     NgSelectModule,
     BrowserAnimationsModule,
-    DragDropModule,
     FaIconComponent,
     FontAwesomeModule
-
   ],
   providers: [
     provideAnimationsAsync(),

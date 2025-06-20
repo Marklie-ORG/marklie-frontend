@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Daum, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
+import { Daum, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
 import { Chart } from 'chart.js';
 import { MatDialog } from '@angular/material/dialog';
 import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
 import { SchedulingOption } from '../edit-report/edit-report.component';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 @Component({
   selector: 'app-review-report',
@@ -33,13 +34,6 @@ export class ReviewReportComponent implements OnInit {
     campaigns: {} as Record<string, boolean>
   };
 
-  panelToggles = {
-    kpis: true,
-    graphs: true,
-    ads: true,
-    campaigns: true
-  };
-
   metricsGraphConfig: any[] = [];
 
   data: MockData = {
@@ -55,12 +49,7 @@ export class ReviewReportComponent implements OnInit {
 
   schedulingOption: SchedulingOption | null = null;
 
-  availableMetrics: Metrics = {
-    kpis: [],
-    graphs: [],
-    ads: [],
-    campaigns: []
-  };
+  availableMetrics: GetAvailableMetricsResponse = {};
 
   reportSections: ReportSection[] = []
 
@@ -69,7 +58,8 @@ export class ReviewReportComponent implements OnInit {
     private route: ActivatedRoute,
     private reportService: ReportService,
     public metricsService: MetricsService,
-    public ref: ChangeDetectorRef
+    public ref: ChangeDetectorRef,
+    private reportsDataService: ReportsDataService
   ) {
   }
 
@@ -78,46 +68,8 @@ export class ReviewReportComponent implements OnInit {
       this.reportId = params['id'];
 
       this.availableMetrics = await this.reportService.getAvailableMetrics();
-      // this.availableMetrics = {
-      //   kpis: [
-      //     'spend',
-      //     'purchaseRoas',
-      //     'conversionValue',
-      //     'purchases',
-      //     'impressions',
-      //     'clicks',
-      //     'cpc',
-      //     'ctr',
-      //     'costPerPurchase',
-      //     'addToCart',
-      //     'costPerAddToCart',
-      //     'initiatedCheckouts'
-      //   ],
-      //   graphs: 
-      //   [
-      //       'spend', 'impressions', 'clicks', 'ctr', 'cpc', 'purchaseRoas',
-      //       'conversionValue', 'engagement', 'purchases', 'costPerPurchase',
-      //       'costPerCart', 'addToCart', 'initiatedCheckouts', 'conversionRate',
-      //       'date_start', 'date_stop'
-      //     ],
-      //   ads: 
-      //   [
-      //     'adId', 'adCreativeId', 'thumbnailUrl', 'spend',
-      //     'addToCart', 'purchases', 'roas', 'sourceUrl'
-      //   ],
-      //   campaigns: 
-      //   [
-      //       'index', 'campaign_name', 'spend', 'purchases',
-      //       'conversionRate', 'purchaseRoas'
-      //   ]
-      // }
 
-      this.reportSections = [
-        { key: 'kpis', title: 'KPIs', enabled: true, metrics: this.availableMetrics.kpis },
-        { key: 'graphs', title: 'Graphs', enabled: true, metrics: this.availableMetrics.graphs },
-        { key: 'ads', title: 'Ads', enabled: true, metrics: this.availableMetrics.ads },
-        { key: 'campaigns', title: 'Campaigns', enabled: true, metrics: this.availableMetrics.campaigns }
-      ];
+      this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
       await this.loadReport();
       
@@ -138,10 +90,10 @@ export class ReviewReportComponent implements OnInit {
 
     const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
 
-    if (data.ads.length === 0) this.panelToggles.ads = false;
-    if (data.graphs.length === 0) this.panelToggles.graphs = false;
-    if (data.campaigns.length === 0) this.panelToggles.campaigns = false;
-    if (!data.KPIs || Object.keys(data.KPIs).length === 0) this.panelToggles.kpis = false;
+    if (data.ads.length === 0) this.reportSections.find(s => s.key === 'ads')!.enabled = false;
+    if (data.graphs.length === 0) this.reportSections.find(s => s.key === 'graphs')!.enabled = false;
+    if (data.campaigns.length === 0) this.reportSections.find(s => s.key === 'campaigns')!.enabled = false;
+    if (!data.KPIs || Object.keys(data.KPIs).length === 0) this.reportSections.find(s => s.key === 'kpis')!.enabled = false;
 
     this.metricSelections = {
       kpis: initSelection(this.availableMetrics.kpis, data?.KPIs ? Object.keys(data.KPIs) : []),

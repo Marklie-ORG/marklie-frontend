@@ -9,11 +9,7 @@
         <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
           <edit-report-content
             [reportSections]="reportSections"
-            [panelToggles]="panelToggles"
-            [metricSelections]="metricSelections"
-            [campaignColumnOrder]="availableMetrics.campaigns"
             [mockData]="mockData"
-            [campaignAvailableMetrics]="availableMetrics.campaigns"
             [clientUuid]="clientUuid"
             [schedule]="schedule"
           ></edit-report-content>
@@ -29,10 +25,7 @@
       </button>
 
       <edit-metrics
-        [reportSections]="reportSections"
-        [panelToggles]="panelToggles"
-        [(metricSelections)]="metricSelections"
-        [campaignColumnOrder]="availableMetrics.campaigns"
+        [(reportSections)]="reportSections"
       ></edit-metrics>
 
     </div>

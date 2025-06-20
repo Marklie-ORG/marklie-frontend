@@ -1,20 +1,28 @@
+<!-- <div #gridContainer class="grid-container">
+  <div class="grid-item" *ngFor="let item of items">
+    {{ item }}
+  </div>
+</div> -->
+<!-- cdkDrag -->
 <div *ngFor="let section of reportSections; let i = index"  class="report-section p-3 mb-4">
-  <!-- cdkDrag -->
-  <ng-container *ngIf="panelToggles && panelToggles[section.key] && mockData">
 
-    <div class="section-toggle">
+  <!-- cdkDrag -->
+  <ng-container *ngIf="section.enabled && mockData">
+
+    <div class="section-title">
       <label>{{ section.title }}</label>
     </div>
 
     <ng-container [ngSwitch]="section.key">
 
-      <div *ngSwitchCase="'kpis'" class="kpi-grid" cdkDropList (cdkDropListDropped)="dropKPICard($event)">
+      <!-- cdkDropList (cdkDropListDropped)="dropKPICard($event)" -->
+      <div *ngSwitchCase="'kpis'" class="kpi-grid" #gridContainer>
         <ng-container *ngFor="let metric of section.metrics">
           <kpi-card 
-          cdkDrag
-          *ngIf="metricSelections && metricSelections.kpis[metric]" 
+          class="grid-item"
+          *ngIf="metric.enabled" 
           [metric]="metric" 
-          [value]="mockData.KPIs[metric]"
+          [value]="mockData.KPIs[metric.name]"
           ></kpi-card>
         </ng-container>
       </div>
@@ -22,34 +30,20 @@
       <charts
       *ngSwitchCase="'graphs'"
       [data]="mockData"
-      [metricSelections]="metricSelections"
+      [reportSections]="reportSections"
       ></charts>
 
       <ad-card
       *ngSwitchCase="'ads'"
       [metrics]="section.metrics"
-      [metricSelections]="metricSelections"
       [ads]="mockData.ads"
       ></ad-card>
-
-      <!-- <div *ngSwitchCase="'ads'" class="ad-grid d-flex flex-wrap">
-
-        <ad-card
-        *ngFor="let ad of mockData.ads"
-        [thumbnail]="ad.thumbnailUrl"
-        [metrics]="section.metrics"
-        [metricSelections]="metricSelections"
-        [sourceUrl]="ad.sourceUrl"
-        [ad]="ad"
-        ></ad-card>
-
-      </div> -->
 
       <div *ngSwitchCase="'campaigns'" class="table-container">
 
         <campaign-table
         [metrics]="section.metrics"
-        [metricSelections]="metricSelections"
+        [reportSections]="reportSections"
         [campaigns]="mockData.campaigns"
         ></campaign-table>
       </div>

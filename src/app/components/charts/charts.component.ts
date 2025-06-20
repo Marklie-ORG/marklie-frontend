@@ -2,7 +2,7 @@ import { Component, Input, SimpleChanges } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Chart } from 'chart.js';
-import { MockData } from 'src/app/pages/schedule-report/schedule-report.component';
+import { MockData, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { MetricSelections } from '../edit-report-content/edit-report-content.component';
 
@@ -21,7 +21,7 @@ interface GraphConfig {
 export class ChartsComponent {
 
   @Input() data: MockData | undefined = undefined;
-  @Input() metricSelections: MetricSelections | undefined = undefined;
+  @Input() reportSections: ReportSection[] = [];
 
   graphConfigs: GraphConfig[] = [];
 
@@ -29,9 +29,9 @@ export class ChartsComponent {
 
   initializeGraphs() {
     setTimeout(() => {
-      if (!this.metricSelections) return
-      const { graphs } = this.metricSelections;
-      this.graphConfigs = this.getGraphConfigs().filter(config => graphs[config.metric]);
+      if (!this.reportSections.length) return
+      const graphs = this.reportSections.find(s => s.key === 'graphs')?.metrics.map(m => { if (m.enabled) return m.name; else return null }) || [];
+      this.graphConfigs = this.getGraphConfigs().filter(config => graphs.includes(config.metric));
       setTimeout(() => this.renderCharts(), 0);
     }, 100);
   }
@@ -41,7 +41,7 @@ export class ChartsComponent {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['metricSelections']) {
+    if (changes['reportSections']) {
       this.initializeGraphs();
     }
   }

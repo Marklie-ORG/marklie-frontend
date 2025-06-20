@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { CreateScheduleRequest, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
+import { CreateScheduleRequest, Metric, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
 interface ScheduleOptionsMatDialogData {
-  panelToggles: Record<MetricSectionKey, boolean>;
+  reportSections: ReportSection[];
   clientUuid: string;
-  metricSelections: Record<MetricSectionKey, Record<string, boolean>>;
+  // metricSelections: Record<MetricSectionKey, Record<string, boolean>>;
   schedule: any;
   isEditMode: boolean;
   datePreset: string;
@@ -31,9 +32,8 @@ interface ScheduleOptionsMatDialogData {
 })
 export class ScheduleOptionsComponent {
 
-  @Input() panelToggles: Record<MetricSectionKey, boolean> | undefined = undefined;
   @Input() clientUuid: string = '';
-  @Input() metricSelections: Record<MetricSectionKey, Record<string, boolean>> | undefined = undefined;
+  // @Input() metricSelections: Record<MetricSectionKey, Record<string, boolean>> | undefined = undefined;
   @Input() schedule: Schedule | undefined = undefined;
   @Input() isEditMode: boolean = false;
   @Input() messages: {
@@ -51,6 +51,7 @@ export class ScheduleOptionsComponent {
       body: ''
     }
   } 
+  reportSections: ReportSection[] = [];
 
   @Output() scheduleOptionUpdated = new EventEmitter<void>();
 
@@ -86,9 +87,9 @@ export class ScheduleOptionsComponent {
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ScheduleOptionsMatDialogData,
   ) {
-    this.panelToggles = data.panelToggles;
+    this.reportSections = data.reportSections;
     this.clientUuid = data.clientUuid;
-    this.metricSelections = data.metricSelections;
+    // this.metricSelections = data.metricSelections;
     this.schedule = data.schedule;
     this.isEditMode = data.isEditMode;
     this.selectedDatePreset = this.isEditMode ? data.datePreset : this.DATE_PRESETS[6].value;
@@ -98,20 +99,37 @@ export class ScheduleOptionsComponent {
 
   async saveConfiguration() {
 
-    if (!this.panelToggles || !this.metricSelections) {
+    if (!this.reportSections) {
       return;
     }
 
-    const metrics: Metrics = {
-      kpis: [],
-      graphs: [],
-      ads: [],
-      campaigns: []
+    const selections: Metrics = {
+      kpis: {
+        metrics: [],
+        order: 1
+      },
+      graphs: {
+        metrics: [],
+        order: 2
+      },
+      ads: {
+        metrics: [],
+        order: 3
+      },
+      campaigns: {
+        metrics: [],
+        order: 4
+      }
     };
 
-    (Object.keys(this.panelToggles) as MetricSectionKey[]).forEach(sectionKey => {
-      if (this.panelToggles && this.panelToggles[sectionKey] && this.metricSelections) {
-        metrics[sectionKey] = this.getSelected(this.metricSelections[sectionKey]);
+    this.reportSections.forEach(section => {
+      if (section.enabled) {
+        // selections[section.key].metrics = this.getSelected(this.metricSelections[section.key]);
+        selections[section.key].metrics = section.metrics.filter(m => m.enabled);
+        selections[section.key].order = section.order;
+        selections[section.key].metrics.forEach((m: any) => {
+          delete m.enabled;
+        });
       }
     });
 
@@ -121,19 +139,23 @@ export class ScheduleOptionsComponent {
 
     const payload: CreateScheduleRequest = {
       ...(this.schedule),
-      metrics,
+      metrics: selections,
       datePreset: this.selectedDatePreset,
       clientUuid: this.clientUuid,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       messages: this.messages
     };
 
+    console.log(payload);
+    // return
+
     try {
       if (this.isEditMode && this.schedulingOptionId) {
         await this.reportsService.updateSchedulingOption(this.schedulingOptionId, payload);
         this.scheduleOptionUpdated.emit();
       } else {
-        await this.reportsService.createSchedule(payload);
+        const response = await this.reportsService.createSchedule(payload) as { uuid: string };
+        this.router.navigate(['/edit-report', response.uuid]);
       }
       this.dialogRef.close();
     } catch (e) {
@@ -141,7 +163,7 @@ export class ScheduleOptionsComponent {
     }
   }
 
-  private getSelected(selection: Record<string, boolean>): string[] {
-    return Object.keys(selection).filter(k => selection[k]);
+  private getSelected(selection: Record<string, boolean>): Metric[] {
+    return Object.keys(selection).filter(k => selection[k]).map(k => ({ name: k, order: 0, enabled: true }));
   }
 }

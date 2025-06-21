@@ -1,9 +1,9 @@
-<div class="ad-grid">
-  <div class="ad-card" *ngFor="let ad of ads">
+<div class="ad-grid" >
+  <div class="ad-card" *ngFor="let ad of ads; let i = index">
     <div class="ad-image-container">
       <img class="ad-media" [src]="ad.thumbnailUrl"/>
     </div>
-    <div class="metrics">
+    <div class="metrics" #adsGridContainer>
       <ng-container *ngFor="let metric of metrics">
         <div class="metric" *ngIf="metric.enabled">
           <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>

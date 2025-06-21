@@ -5,8 +5,6 @@ import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.com
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { Metric } from 'src/app/services/api/report.service';
 import Sortable from 'sortablejs';
 
 export interface MetricSelections {
@@ -22,8 +20,6 @@ export interface MetricSelections {
   styleUrl: './edit-report-content.component.scss'
 })
 export class EditReportContentComponent implements OnInit, OnDestroy {
-
-  items = Array.from({ length: 16 }, (_, i) => `Item ${i + 1}`);
   
   private sortable: Sortable | null = null;
 
@@ -54,14 +50,16 @@ export class EditReportContentComponent implements OnInit, OnDestroy {
     private router: Router,
   ) {}
 
-  ngAfterViewInit() {
-    // SortableJS initialization is now handled by the gridContainer setter.
-  }
-
   reorderItems(event: Sortable.SortableEvent) {
     console.log(event)
-    // const movedItem = this.items.splice(event.oldIndex!, 1)[0];
-    // this.items.splice(event.newIndex!, 0, movedItem);
+    const kpiSection = this.reportSections.find(s => s.key === 'kpis');
+    if (kpiSection) {
+      const movedItem = kpiSection.metrics.splice(event.oldIndex!, 1)[0];
+      kpiSection.metrics.splice(event.newIndex!, 0, movedItem);
+    }
+    kpiSection?.metrics.forEach((m, index) => m.order = index);
+
+    console.log(this.reportSections.find(s => s.key === 'kpis')?.metrics)
   }
 
   ngOnInit(): void {
@@ -71,6 +69,9 @@ export class EditReportContentComponent implements OnInit, OnDestroy {
   ngOnChanges() {
     if (this.reportSections) {
       this.reportSections.sort((a, b) => a.order - b.order);
+      this.reportSections.forEach(section => {
+          section.metrics.sort((a, b) => a.order - b.order);
+      });
     }
   }
 

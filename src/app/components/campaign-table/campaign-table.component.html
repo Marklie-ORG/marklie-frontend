@@ -1,14 +1,13 @@
 <table class="campaign-table">
     <thead>
-      <tr cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropCampaignColumn($event)">
+      <tr #campaignsHeaderContainer>
         <th>#</th>
         <th>Campaign Name</th>
         <ng-container *ngFor="let metric of metrics">
-          <th *ngIf="metric.enabled" cdkDrag >
+          <th *ngIf="metric.enabled" class="draggable-metric-header">
             {{metric.name}}
           </th>
         </ng-container>
-        
       </tr>
     </thead>
     <tbody>

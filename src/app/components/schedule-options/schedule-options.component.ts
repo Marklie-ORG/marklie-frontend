@@ -133,6 +133,8 @@ export class ScheduleOptionsComponent {
       }
     });
 
+    
+
     if (!this.schedule) {
       return;
     }
@@ -146,6 +148,7 @@ export class ScheduleOptionsComponent {
       messages: this.messages
     };
 
+    console.log(selections)
     console.log(payload);
     // return
 

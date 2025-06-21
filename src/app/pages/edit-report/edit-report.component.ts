@@ -100,7 +100,7 @@ export class EditReportComponent {
 
       this.availableMetrics = await this.reportService.getAvailableMetrics();
 
-      this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
+      
 
       await this.loadReport();
 
@@ -110,13 +110,12 @@ export class EditReportComponent {
   private async loadReport() {
     if (!this.schedulingOptionId) return;
     this.schedulingOption = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
+    this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics, this.schedulingOption);
     this.convertOptionIntoTemplate(this.schedulingOption);
     this.mockData = this.mockReportService.generateMockData();
   }
 
   convertOptionIntoTemplate(schedulingOption: SchedulingOption) {
-
-    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
 
     this.schedule = {
       reportName: schedulingOption.reportName,
@@ -137,7 +136,13 @@ export class EditReportComponent {
       section.metrics.forEach(metric => {
         metric.enabled = schedulingOption.jobData.metrics[section.key].metrics.some(m => m.name === metric.name);
       });
+      // section.metrics.forEach(metric => {
+      //   const metricIndex = schedulingOption.jobData.metrics[section.key].metrics.findIndex(m => m.name === metric.name);
+      //   metric.order = metricIndex;
+      // });
     });
+
+    console.log(this.reportSections)
 
   }
 

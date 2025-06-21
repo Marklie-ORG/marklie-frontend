@@ -1,10 +1,11 @@
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Chart } from 'chart.js';
 import { MockData, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { MetricSelections } from '../edit-report-content/edit-report-content.component';
+import Sortable from 'sortablejs';
 
 interface GraphConfig {
   metric: string;
@@ -19,6 +20,25 @@ interface GraphConfig {
   styleUrl: './charts.component.scss'
 })
 export class ChartsComponent {
+
+  private sortable: Sortable | null = null;
+
+  @ViewChild('chartsGridContainer', { static: false }) set gridContainer(el: ElementRef | undefined) {
+    if (this.sortable) {
+      this.sortable.destroy();
+      this.sortable = null;
+    }
+
+    if (el) {
+      this.sortable = Sortable.create(el.nativeElement, {
+        animation: 200,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        onEnd: (event) => this.reorderItems(event),
+      });
+    }
+  }
 
   @Input() data: MockData | undefined = undefined;
   @Input() reportSections: ReportSection[] = [];
@@ -70,11 +90,6 @@ export class ChartsComponent {
       { metric: 'cost_per_add_to_cart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` },
       { metric: 'conversion_rate', label: 'Conversion Rate', color: '#27ae60', format: (v: any) => `${v}%` },
     ];
-  }
-
-  dropGraphCard(event: CdkDragDrop<any[]>): void {
-    moveItemInArray(this.graphConfigs, event.previousIndex, event.currentIndex);
-    setTimeout(() => this.renderCharts(), 100);
   }
 
   private renderCharts(): void {
@@ -140,6 +155,18 @@ export class ChartsComponent {
         plugins: [ChartDataLabels]
       });
     }
+  }
+
+  reorderItems(event: Sortable.SortableEvent) {
+    console.log(event)
+    const graphsSection = this.reportSections.find(s => s.key === 'graphs');
+    if (graphsSection) {
+      const movedItem = graphsSection.metrics.splice(event.oldIndex!, 1)[0];
+      graphsSection.metrics.splice(event.newIndex!, 0, movedItem);
+    }
+    graphsSection?.metrics.forEach((m, index) => m.order = index);
+
+    console.log(this.reportSections)
   }
 
 }

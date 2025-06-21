@@ -1,11 +1,4 @@
-// body {
-//     font-family: 'Inter', 'Segoe UI', sans-serif;
-//     margin: 0;
-//     background-color: #f8f9fa;
-//     -webkit-font-smoothing: antialiased;
-//     -moz-osx-font-smoothing: grayscale;
-//   }
-  
+
   .section-title {
     font-size: 24px;
     font-weight: 600;
@@ -62,39 +55,14 @@
   .kpi-grid[cdkDropList] {
     min-height: 60px;
   }
-  
-  
-  
-  .cdk-drag-preview {
-    box-sizing: border-box;
-    border-radius: 4px;
-    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-                0 8px 10px 1px rgba(0, 0, 0, 0.14),
-                0 3px 14px 2px rgba(0, 0, 0, 0.12);
-  }
-  
-  .cdk-drag-placeholder {
-    opacity: 0;
-  }
 
 
-  .grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 10px;
-  }
-  
-  .grid-item {
-    background: #2196f3;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    border-radius: 8px;
-    user-select: none;
-    cursor: grab;
-    transition: transform 0.2s ease;
-  }
+  // .grid-container {
+  //   display: grid;
+  //   grid-template-columns: repeat(4, 1fr);
+  //   gap: 10px;
+  //   padding: 10px;
+  // }
 
   .sortable-drag {
     opacity: 0.8;

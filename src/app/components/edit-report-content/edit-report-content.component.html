@@ -1,9 +1,4 @@
-<!-- <div #gridContainer class="grid-container">
-  <div class="grid-item" *ngFor="let item of items">
-    {{ item }}
-  </div>
-</div> -->
-<!-- cdkDrag -->
+
 <div *ngFor="let section of reportSections; let i = index"  class="report-section p-3 mb-4">
 
   <!-- cdkDrag -->
@@ -19,7 +14,6 @@
       <div *ngSwitchCase="'kpis'" class="kpi-grid" #gridContainer>
         <ng-container *ngFor="let metric of section.metrics">
           <kpi-card 
-          class="grid-item"
           *ngIf="metric.enabled" 
           [metric]="metric" 
           [value]="mockData.KPIs[metric.name]"
@@ -35,14 +29,13 @@
 
       <ad-card
       *ngSwitchCase="'ads'"
-      [metrics]="section.metrics"
+      [reportSections]="reportSections"
       [ads]="mockData.ads"
       ></ad-card>
 
       <div *ngSwitchCase="'campaigns'" class="table-container">
 
         <campaign-table
-        [metrics]="section.metrics"
         [reportSections]="reportSections"
         [campaigns]="mockData.campaigns"
         ></campaign-table>

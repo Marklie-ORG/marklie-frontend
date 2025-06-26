@@ -73,7 +73,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     }
     adsSection?.metrics.forEach((m, index) => m.order = index);
 
-    console.log(this.reportSections)
+    console.log(this.reportSections.find(s => s.key === 'ads')?.metrics)
   }
 
 }

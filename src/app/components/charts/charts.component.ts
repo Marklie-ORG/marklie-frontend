@@ -1,13 +1,11 @@
 import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
 import { Chart } from 'chart.js';
 import { MockData, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { MetricSelections } from '../edit-report-content/edit-report-content.component';
 import Sortable from 'sortablejs';
+import { Metric } from 'src/app/services/api/report.service';
 
-interface GraphConfig {
+interface GraphConfig extends Metric {
   metric: string;
   label: string;
   color: string;
@@ -47,11 +45,24 @@ export class ChartsComponent {
 
   private chartRefs: Record<string, Chart> = {};
 
+  displayedGraphs: GraphConfig[] = [];
+
   initializeGraphs() {
     setTimeout(() => {
       if (!this.reportSections.length) return
-      const graphs = this.reportSections.find(s => s.key === 'graphs')?.metrics.map(m => { if (m.enabled) return m.name; else return null }) || [];
-      this.graphConfigs = this.getGraphConfigs().filter(config => graphs.includes(config.metric));
+      const metrics = this.reportSections.find(s => s.key === 'graphs')?.metrics.filter(m => m.enabled) || [];
+      const graphConfigs = this.getGraphConfigs();
+      this.displayedGraphs = [];
+      for (const metric of metrics) {
+        const config = graphConfigs.find(c => c.metric === metric.name);
+        if (config) {
+          this.displayedGraphs.push({
+            ...config,
+            ...metric,
+          });
+        }
+      }
+      this.displayedGraphs.sort((a, b) => a.order - b.order);
       setTimeout(() => this.renderCharts(), 0);
     }, 100);
   }
@@ -99,7 +110,7 @@ export class ChartsComponent {
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );
 
-    for (const config of this.graphConfigs) {
+    for (const config of this.displayedGraphs) {
       const canvasId = `${config.metric}Chart`;
       const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
       if (!canvas) continue;
@@ -158,15 +169,24 @@ export class ChartsComponent {
   }
 
   reorderItems(event: Sortable.SortableEvent) {
-    console.log(event)
-    const graphsSection = this.reportSections.find(s => s.key === 'graphs');
-    if (graphsSection) {
-      const movedItem = graphsSection.metrics.splice(event.oldIndex!, 1)[0];
-      graphsSection.metrics.splice(event.newIndex!, 0, movedItem);
-    }
-    graphsSection?.metrics.forEach((m, index) => m.order = index);
+    
+    const movedItem = this.displayedGraphs.splice(event.oldIndex!, 1)[0];
+    this.displayedGraphs.splice(event.newIndex!, 0, movedItem);
+    this.displayedGraphs.forEach((m, index) => m.order = index);
 
-    console.log(this.reportSections)
+    const metrics = this.reportSections.find(s => s.key === 'graphs')?.metrics!;
+    for (let [index, metric] of metrics.entries()) {
+      
+      const order = this.displayedGraphs.findIndex(g => g.name === metric.name);
+      if (order !== -1) {
+        metric.order = order;
+      }
+      else {
+        metric.order = this.displayedGraphs.length + index; 
+      }
+    }
+
+    this.reportSections.find(s => s.key === 'graphs')?.metrics.sort((a, b) => a.order - b.order);
   }
 
 }

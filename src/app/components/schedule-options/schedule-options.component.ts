@@ -98,7 +98,7 @@ export class ScheduleOptionsComponent {
   }
 
   async saveConfiguration() {
-
+    
     if (!this.reportSections) {
       return;
     }
@@ -122,18 +122,21 @@ export class ScheduleOptionsComponent {
       }
     };
 
-    this.reportSections.forEach(section => {
+    const reportSectionsCopy = JSON.parse(JSON.stringify(this.reportSections)) as ReportSection[];
+    reportSectionsCopy.forEach(section => {
       if (section.enabled) {
         // selections[section.key].metrics = this.getSelected(this.metricSelections[section.key]);
-        selections[section.key].metrics = section.metrics.filter(m => m.enabled);
         selections[section.key].order = section.order;
-        selections[section.key].metrics.forEach((m: any) => {
+
+        selections[section.key].metrics = section.metrics.filter(m => m.enabled);
+        selections[section.key].metrics.sort((a: any, b: any) => a.order - b.order);
+        selections[section.key].metrics.forEach((m: any, index: number) => {
+          m.order = index + 1;
           delete m.enabled;
         });
+
       }
     });
-
-    
 
     if (!this.schedule) {
       return;
@@ -150,7 +153,7 @@ export class ScheduleOptionsComponent {
 
     console.log(selections)
     console.log(payload);
-    // return
+    // return // todo: remove
 
     try {
       if (this.isEditMode && this.schedulingOptionId) {

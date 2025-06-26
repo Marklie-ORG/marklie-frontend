@@ -1,7 +1,6 @@
 
 <div *ngFor="let section of reportSections; let i = index"  class="report-section p-3 mb-4">
 
-  <!-- cdkDrag -->
   <ng-container *ngIf="section.enabled && mockData">
 
     <div class="section-title">
@@ -9,12 +8,11 @@
     </div>
 
     <ng-container [ngSwitch]="section.key">
-
-      <!-- cdkDropList (cdkDropListDropped)="dropKPICard($event)" -->
+      
       <div *ngSwitchCase="'kpis'" class="kpi-grid" #gridContainer>
         <ng-container *ngFor="let metric of section.metrics">
           <kpi-card 
-          *ngIf="metric.enabled" 
+          [style.display]="metric.enabled ? 'block' : 'none'"
           [metric]="metric" 
           [value]="mockData.KPIs[metric.name]"
           ></kpi-card>

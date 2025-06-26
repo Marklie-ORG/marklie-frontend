@@ -1,8 +1,8 @@
 <table class="campaign-table">
     <thead>
       <tr #campaignsHeaderContainer>
-        <th>#</th>
-        <th>Campaign Name</th>
+        <th class="non-sortable">#</th>
+        <th class="non-sortable">Campaign Name</th>
         <ng-container *ngFor="let metric of metrics">
           <th *ngIf="metric.enabled" class="draggable-metric-header">
             {{metric.name}}

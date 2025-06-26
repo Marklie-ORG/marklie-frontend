@@ -1,11 +1,12 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MockData } from 'src/app/pages/schedule-report/schedule-report.component';
 import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import Sortable from 'sortablejs';
+import { Metric } from 'src/app/services/api/report.service';
 
 export interface MetricSelections {
   kpis: Record<string, boolean>;
@@ -19,7 +20,7 @@ export interface MetricSelections {
   templateUrl: './edit-report-content.component.html',
   styleUrl: './edit-report-content.component.scss'
 })
-export class EditReportContentComponent implements OnInit, OnDestroy {
+export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges {
   
   private sortable: Sortable | null = null;
 
@@ -51,7 +52,6 @@ export class EditReportContentComponent implements OnInit, OnDestroy {
   ) {}
 
   reorderItems(event: Sortable.SortableEvent) {
-    console.log(event)
     const kpiSection = this.reportSections.find(s => s.key === 'kpis');
     if (kpiSection) {
       const movedItem = kpiSection.metrics.splice(event.oldIndex!, 1)[0];
@@ -63,11 +63,10 @@ export class EditReportContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.generateMockData();
   }
 
-  ngOnChanges() {
-    if (this.reportSections) {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reportSections'] && this.reportSections) {
       this.reportSections.sort((a, b) => a.order - b.order);
       this.reportSections.forEach(section => {
           section.metrics.sort((a, b) => a.order - b.order);
@@ -78,13 +77,6 @@ export class EditReportContentComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.sortable) {
       this.sortable.destroy();
-    }
-  }
-
-  dropKPICard(event: CdkDragDrop<string[]>): void {
-    const kpiSection = this.reportSections.find(s => s.key === 'kpis');
-    if (kpiSection) {
-      moveItemInArray(kpiSection.metrics, event.previousIndex, event.currentIndex);
     }
   }
 

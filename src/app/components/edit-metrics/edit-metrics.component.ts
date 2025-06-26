@@ -1,8 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MetricSectionKey, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
-import { MetricSelections } from '../edit-report-content/edit-report-content.component';
-import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import { MetricsService } from 'src/app/services/metrics.service';
 
 @Component({
@@ -15,38 +12,17 @@ export class EditMetricsComponent {
   @Input() reportSections: ReportSection[] = [];
   @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
 
-  // @Input() metricSelections: MetricSelections | undefined = undefined;
-  // @Output() metricSelectionsChange = new EventEmitter<MetricSelections>();
-
   constructor(
     public metricsService: MetricsService
   ) {}
 
-  dropMetric(event: CdkDragDrop<string[]>, sectionIndex: number): void {
-    // const section = this.reportSections[sectionIndex];
-    // if (event.previousContainer === event.container) {
-    //   moveItemInArray(section.metrics, event.previousIndex, event.currentIndex);
-    // } else {
-    //   const from = this.reportSections.findIndex(s => s.metrics === event.previousContainer.data);
-    //   if (from !== -1) {
-    //     transferArrayItem(this.reportSections[from].metrics, section.metrics, event.previousIndex, event.currentIndex);
-    //   }
-    // }
-  }
-
   onMetricsChange(): void {
-    
+    console.log("onMetricsChange");
     if (!this.reportSections.length) return;
     const reportSections: ReportSection[] = [ // explicitly copy the object so that it triggers changes in paremt component
       ...this.reportSections
     ];
-    // console.log(reportSections)
     this.reportSectionsChange.emit(reportSections);
-    // if (!this.metricSelections) return;
-    // const newSelections = { // explicitly copy the object so that it triggers changes in paremt component
-    //   ...this.metricSelections
-    // };
-    // this.metricSelectionsChange.emit(newSelections);
   }
   
 }

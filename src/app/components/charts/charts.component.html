@@ -1,7 +1,12 @@
 
 
 <div class="graph-grid" #chartsGridContainer>
-    <div class="graph-card d-flex justify-center align-center" *ngFor="let config of graphConfigs">
-        <canvas [id]="config.metric + 'Chart'"></canvas>
+    <div 
+    class="graph-card d-flex justify-center align-center" 
+    *ngFor="let graph of displayedGraphs"
+    
+    >
+    <!-- [attr.data-name]="graph.name" -->
+        <canvas [id]="graph.metric + 'Chart'" ></canvas>
     </div>
 </div>

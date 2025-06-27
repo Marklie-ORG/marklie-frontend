@@ -22,21 +22,40 @@ export interface MetricSelections {
 })
 export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges {
   
-  private sortable: Sortable | null = null;
+  private kpiGridSortable: Sortable | null = null;
 
-  @ViewChild('gridContainer', { static: false }) set gridContainer(el: ElementRef | undefined) {
-    if (this.sortable) {
-      this.sortable.destroy();
-      this.sortable = null;
+  @ViewChild('kpiGridContainer', { static: false }) set kpiGridContainer(el: ElementRef | undefined) {
+    if (this.kpiGridSortable) {
+      this.kpiGridSortable.destroy();
+      this.kpiGridSortable = null;
     }
 
     if (el) {
-      this.sortable = Sortable.create(el.nativeElement, {
+      this.kpiGridSortable = Sortable.create(el.nativeElement, {
         animation: 200,
         easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
         onEnd: (event) => this.reorderItems(event),
+      });
+    }
+  }
+
+  private sectionsGridSortable: Sortable | null = null;
+
+  @ViewChild('sectionsGridContainer', { static: false }) set sectionsGridContainer(el: ElementRef | undefined) {
+    if (this.sectionsGridSortable) {
+      this.sectionsGridSortable.destroy();
+      this.sectionsGridSortable = null;
+    }
+
+    if (el) {
+      this.sectionsGridSortable = Sortable.create(el.nativeElement, {
+        animation: 200,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        onEnd: (event) => this.reorderSections(event),
       });
     }
   }
@@ -62,6 +81,12 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
     console.log(this.reportSections.find(s => s.key === 'kpis')?.metrics)
   }
 
+  reorderSections(event: Sortable.SortableEvent) {
+    const movedSection = this.reportSections.splice(event.oldIndex!, 1)[0];
+    this.reportSections.splice(event.newIndex!, 0, movedSection);
+    this.reportSections.forEach((s, index) => s.order = index);
+  }
+
   ngOnInit(): void {
   }
 
@@ -75,8 +100,11 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
   }
 
   ngOnDestroy() {
-    if (this.sortable) {
-      this.sortable.destroy();
+    if (this.kpiGridSortable) {
+      this.kpiGridSortable.destroy();
+    }
+    if (this.sectionsGridSortable) {
+      this.sectionsGridSortable.destroy();
     }
   }
 

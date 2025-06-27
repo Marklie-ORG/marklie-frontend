@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
 import { MatDialog } from '@angular/material/dialog';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
@@ -173,10 +172,6 @@ export class EditReportComponent {
     dialogRef.componentInstance.scheduleOptionUpdated.subscribe(async () => {
       await this.loadReport();
     });
-  }
-
-  dropSection(event: CdkDragDrop<ReportSection[]>): void {
-    moveItemInArray(this.reportSections, event.previousIndex, event.currentIndex);
   }
 
 }

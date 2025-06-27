@@ -1,46 +1,53 @@
 
-<div *ngFor="let section of reportSections; let i = index"  class="report-section p-3 mb-4">
+<div #sectionsGridContainer>
+  <div 
+  *ngFor="let section of reportSections; let i = index" 
+  class="report-section p-3 mb-4" 
+  
+  >
 
-  <ng-container *ngIf="section.enabled && mockData">
 
-    <div class="section-title">
-      {{ section.title }}
-    </div>
-
-    <ng-container [ngSwitch]="section.key">
-      
-      <div *ngSwitchCase="'kpis'" class="kpi-grid" #gridContainer>
-        <ng-container *ngFor="let metric of section.metrics">
-          <kpi-card 
-          [style.display]="metric.enabled ? 'block' : 'none'"
-          [metric]="metric" 
-          [value]="mockData.KPIs[metric.name]"
-          ></kpi-card>
-        </ng-container>
+    <ng-container *ngIf="section.enabled && mockData">
+      <div class="section-title">
+        {{ section.title }}
       </div>
 
-      <charts
-      *ngSwitchCase="'graphs'"
-      [data]="mockData"
-      [reportSections]="reportSections"
-      ></charts>
+      <ng-container [ngSwitch]="section.key">
+        
+        <div *ngSwitchCase="'kpis'" class="kpi-grid" #kpiGridContainer>
+          <ng-container *ngFor="let metric of section.metrics">
+            <kpi-card 
+            [style.display]="metric.enabled ? 'block' : 'none'"
+            [metric]="metric" 
+            [value]="mockData.KPIs[metric.name]"
+            ></kpi-card>
+          </ng-container>
+        </div>
 
-      <ad-card
-      *ngSwitchCase="'ads'"
-      [reportSections]="reportSections"
-      [ads]="mockData.ads"
-      ></ad-card>
-
-      <div *ngSwitchCase="'campaigns'" class="table-container">
-
-        <campaign-table
+        <charts
+        *ngSwitchCase="'graphs'"
+        [data]="mockData"
         [reportSections]="reportSections"
-        [campaigns]="mockData.campaigns"
-        ></campaign-table>
-      </div>
+        ></charts>
+
+        <ad-card
+        *ngSwitchCase="'ads'"
+        [reportSections]="reportSections"
+        [ads]="mockData.ads"
+        ></ad-card>
+
+        <div *ngSwitchCase="'campaigns'" class="table-container">
+
+          <campaign-table
+          [reportSections]="reportSections"
+          [campaigns]="mockData.campaigns"
+          ></campaign-table>
+        </div>
+        
+      </ng-container>
       
+
     </ng-container>
 
-  </ng-container>
-
+  </div>
 </div>

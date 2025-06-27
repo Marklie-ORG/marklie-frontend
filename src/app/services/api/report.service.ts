@@ -145,6 +145,7 @@ export interface Campaign {
 export interface Metadata {
   datePreset: string
   reviewNeeded: boolean
+  metricsSelections: any
 }
 
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CreateScheduleRequest, Metric, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
+import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 
 type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
@@ -86,6 +87,7 @@ export class ScheduleOptionsComponent {
     private router: Router,
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ScheduleOptionsMatDialogData,
+    private reportsDataService: ReportsDataService
   ) {
     this.reportSections = data.reportSections;
     this.clientUuid = data.clientUuid;
@@ -96,51 +98,14 @@ export class ScheduleOptionsComponent {
     this.schedulingOptionId = data.schedulingOptionId;
     this.messages = data.messages;
   }
-
+  
   async saveConfiguration() {
     
-    if (!this.reportSections) {
+    if (!this.reportSections || !this.schedule) {
       return;
     }
 
-    const selections: Metrics = {
-      kpis: {
-        metrics: [],
-        order: 1
-      },
-      graphs: {
-        metrics: [],
-        order: 2
-      },
-      ads: {
-        metrics: [],
-        order: 3
-      },
-      campaigns: {
-        metrics: [],
-        order: 4
-      }
-    };
-
-    const reportSectionsCopy = JSON.parse(JSON.stringify(this.reportSections)) as ReportSection[];
-    reportSectionsCopy.forEach(section => {
-      if (section.enabled) {
-        // selections[section.key].metrics = this.getSelected(this.metricSelections[section.key]);
-        selections[section.key].order = section.order;
-
-        selections[section.key].metrics = section.metrics.filter(m => m.enabled);
-        selections[section.key].metrics.sort((a: any, b: any) => a.order - b.order);
-        selections[section.key].metrics.forEach((m: any, index: number) => {
-          m.order = index + 1;
-          delete m.enabled;
-        });
-
-      }
-    });
-
-    if (!this.schedule) {
-      return;
-    }
+    const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
 
     const payload: CreateScheduleRequest = {
       ...(this.schedule),

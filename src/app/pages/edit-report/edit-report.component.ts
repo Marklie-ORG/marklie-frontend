@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
+import { Data, ReportSection } from '../schedule-report/schedule-report.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
@@ -70,7 +70,7 @@ export class EditReportComponent {
 
   metricsGraphConfig: any[] = [];
 
-  mockData: MockData = {
+  mockData: Data = {
     KPIs: {},
     ads: [],
     campaigns: [],

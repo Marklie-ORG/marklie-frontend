@@ -7,7 +7,7 @@
   >
 
 
-    <ng-container *ngIf="section.enabled && mockData">
+    <ng-container *ngIf="section.enabled && data">
       <div class="section-title">
         {{ section.title }}
       </div>
@@ -19,28 +19,28 @@
             <kpi-card 
             [style.display]="metric.enabled ? 'block' : 'none'"
             [metric]="metric" 
-            [value]="mockData.KPIs[metric.name]"
+            [value]="data.KPIs[metric.name]"
             ></kpi-card>
           </ng-container>
         </div>
 
         <charts
         *ngSwitchCase="'graphs'"
-        [data]="mockData"
+        [data]="data"
         [reportSections]="reportSections"
         ></charts>
 
         <ad-card
         *ngSwitchCase="'ads'"
         [reportSections]="reportSections"
-        [ads]="mockData.ads"
+        [ads]="data.ads"
         ></ad-card>
 
         <div *ngSwitchCase="'campaigns'" class="table-container">
 
           <campaign-table
           [reportSections]="reportSections"
-          [campaigns]="mockData.campaigns"
+          [campaigns]="data.campaigns"
           ></campaign-table>
         </div>
         

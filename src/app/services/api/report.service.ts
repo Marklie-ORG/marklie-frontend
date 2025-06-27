@@ -209,5 +209,9 @@ export class ReportService {
   async getAvailableMetrics(): Promise<GetAvailableMetricsResponse> {
     return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/reports/available-metrics`));
   }
+
+  async updateReportMetricsSelections(uuid: string, metricsSelections: any): Promise<any> {
+    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-metrics-selections/${uuid}`, metricsSelections, {headers: this.headers}));
+  }
 }
 

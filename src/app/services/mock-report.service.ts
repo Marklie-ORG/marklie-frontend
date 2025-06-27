@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MockData } from '../pages/schedule-report/schedule-report.component';
+import { Data } from '../pages/schedule-report/schedule-report.component';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +8,8 @@ export class MockReportService {
 
   constructor() { }
 
-  public generateMockData(): MockData {
-    let mockData: MockData = {
+  public generateMockData(): Data {
+    let mockData: Data = {
       KPIs: {},
       ads: [],
       campaigns: [],

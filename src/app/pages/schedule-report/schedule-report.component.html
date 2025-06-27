@@ -9,9 +9,7 @@
         <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
           <edit-report-content
             [reportSections]="reportSections"
-            [mockData]="mockData"
-            [clientUuid]="clientUuid"
-            [schedule]="schedule"
+            [data]="mockData"
           ></edit-report-content>
         </div>
 

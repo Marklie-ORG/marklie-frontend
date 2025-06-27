@@ -1,8 +1,5 @@
-
+<button (click)="save()">Save</button>
 <edit-report-content
   [reportSections]="reportSections"
-  [metricSelections]="metricSelections"
-  [campaignColumnOrder]="availableMetrics.campaigns"
-  [mockData]="data"
-  [campaignAvailableMetrics]="availableMetrics.campaigns"
+  [data]="data"
 ></edit-report-content>

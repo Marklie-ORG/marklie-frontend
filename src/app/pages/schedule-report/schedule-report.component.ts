@@ -18,7 +18,7 @@ export interface ReportSection {
   order: number;
 }
 
-export interface MockData {
+export interface Data {
   KPIs: Record<string, any>;
   ads: any[];
   campaigns: any[];
@@ -52,7 +52,7 @@ export class ScheduleReportComponent implements OnInit {
 
   metricsGraphConfig: any[] = [];
 
-  mockData: MockData = {
+  mockData: Data = {
     KPIs: {},
     ads: [],
     campaigns: [],

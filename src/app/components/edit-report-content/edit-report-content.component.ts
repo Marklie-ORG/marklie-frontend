@@ -1,6 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { MockData } from 'src/app/pages/schedule-report/schedule-report.component';
+import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
 import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -62,7 +62,7 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
 
   @Input() reportSections: ReportSection[] = [];
   
-  @Input() mockData: MockData | undefined = undefined;
+  @Input() data: Data | undefined = undefined;
 
   constructor(
     private dialog: MatDialog,

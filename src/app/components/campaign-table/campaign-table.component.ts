@@ -51,14 +51,11 @@ export class CampaignTableComponent implements OnDestroy {
 
   updateMetrics() {
     this.metrics = this.reportSections.find(s => s.key === 'campaigns')?.metrics || [];
-    console.log(this.metrics)
   }
 
   reorderItems(event: Sortable.SortableEvent) {
     const oldIndex = event.oldIndex! - 2; // because there are 2 non-sortable columns in container (two first <th>)
     const newIndex = event.newIndex! - 2;
-    console.log(oldIndex)
-    console.log(newIndex)
     const enabledMetrics = this.metrics.filter(m => m.enabled);
     const movedItem = enabledMetrics.splice(oldIndex, 1)[0];
     enabledMetrics.splice(newIndex, 0, movedItem);
@@ -68,8 +65,6 @@ export class CampaignTableComponent implements OnDestroy {
     disabledMetrics.forEach((m, index) => m.order = index + enabledMetrics.length);
 
     this.metrics = [...enabledMetrics, ...disabledMetrics];
-
-    console.log(this.metrics)
   }
   
   ngOnDestroy(): void {

@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
-import { MockData, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
+import { Data, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Sortable from 'sortablejs';
 import { Metric } from 'src/app/services/api/report.service';
@@ -38,7 +38,7 @@ export class ChartsComponent {
     }
   }
 
-  @Input() data: MockData | undefined = undefined;
+  @Input() data: Data | undefined = undefined;
   @Input() reportSections: ReportSection[] = [];
 
   graphConfigs: GraphConfig[] = [];

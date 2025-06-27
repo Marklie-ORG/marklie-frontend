@@ -4,7 +4,7 @@
   <ng-container *ngIf="section.enabled && mockData">
 
     <div class="section-title">
-      <label>{{ section.title }}</label>
+      {{ section.title }}
     </div>
 
     <ng-container [ngSwitch]="section.key">

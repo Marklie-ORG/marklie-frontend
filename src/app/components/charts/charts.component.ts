@@ -79,27 +79,27 @@ export class ChartsComponent {
 
   getGraphConfigs() {
     return [
-      { metric: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
-      { metric: 'purchase_roas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
-      { metric: 'conversion_value', label: 'Conversion Value', color: '#c0392b', format: (v: any) => `$${v}` },
-      { metric: 'purchases', label: 'Purchases', color: '#e74c3c', format: (v: any) => `${v}` },
-      { metric: 'addToCart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
-      { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
-      { metric: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
-      { metric: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
-      { metric: 'ctr', label: 'Click Through Rate', color: '#34495e', format: (v: any) => `${v}%` },
-      { metric: 'cpm', label: 'Cost Per Mile', color: '#34495e', format: (v: any) => `$${v}` },
-      { metric: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
-      { metric: 'cpp', label: 'CPP', color: '#16a085', format: (v: any) => `$${v}` },
-      { metric: 'reach', label: 'Reach', color: '#16a085', format: (v: any) => `${v}` },
-      { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
-      { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` },
-      { metric: 'add_to_cart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
-      { metric: 'initiated_checkouts', label: 'Initiated Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
-      { metric: 'engagement', label: 'Engagement', color: '#3498db', format: (v: any) => `${v}` },
-      { metric: 'cost_per_purchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
-      { metric: 'cost_per_add_to_cart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` },
-      { metric: 'conversion_rate', label: 'Conversion Rate', color: '#27ae60', format: (v: any) => `${v}%` },
+      { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${v}x` },
+      { metric: 'conversion_value', label: 'Conversion Value', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'purchases', label: 'Purchases', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'addToCart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
+      { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'cpc', label: 'CPC', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'cpp', label: 'CPP', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'reach', label: 'Reach', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'add_to_cart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'initiated_checkouts', label: 'Initiated Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'engagement', label: 'Engagement', color: '#77B6FB', format: (v: any) => `${v}` },
+      { metric: 'cost_per_purchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'cost_per_add_to_cart', label: 'Cost Per Add to Cart', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'conversion_rate', label: 'Conversion Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
     ];
   }
 
@@ -128,9 +128,15 @@ export class ChartsComponent {
             data,
             borderColor: config.color,
             pointBackgroundColor: config.color,
-            pointRadius: 3,
+            pointRadius: 2,
             tension: 0.3,
-            fill: false
+            fill: false,
+            pointStyle: 'circle',
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 2,
+            pointHoverBorderColor: config.color,
+            pointHoverBackgroundColor: config.color,
+            borderWidth: 2,
           }]
         },
         options: {
@@ -139,14 +145,22 @@ export class ChartsComponent {
             title: {
               display: true,
               text: config.label,
-              font: { size: 16, family: 'Inter Variable, sans-serif' }
+              font: { size: 16, family: 'Inter Variable, sans-serif', weight: 'normal' },
+              color: '#000000',
+              padding: {
+                top: 0,
+                bottom: 25
+              }
             },
             tooltip: {
               callbacks: {
                 label: ctx => config.format(ctx.parsed.y.toFixed(2))
               }
             },
-            datalabels: { display: false }
+            datalabels: { display: false },
+            legend: {
+              display: false
+            }
           },
           scales: {
             y: {
@@ -160,6 +174,14 @@ export class ChartsComponent {
             x: {
               ticks: { font: { family: 'Inter Variable, sans-serif' } },
               grid: { color: 'rgba(0,0,0,0.05)' }
+            }
+          },
+          layout: {
+            padding: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
             }
           }
         },

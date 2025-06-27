@@ -48,7 +48,7 @@ export class ReviewReportComponent implements OnInit {
     const res = await this.reportService.getReport(this.reportId);
     const data = res.data[0];
     this.availableMetrics = await this.reportService.getAvailableMetrics();
-    this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics);
+    this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
     console.log(this.reportSections);
 
     this.generateMockData(data);

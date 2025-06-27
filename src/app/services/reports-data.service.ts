@@ -83,13 +83,15 @@ export class ReportsDataService {
 
   MetricsSelectionsToReportSections(
     metricsSelections: any,
-    availableMetrics: GetAvailableMetricsResponse
+    availableMetrics: GetAvailableMetricsResponse,
+    includeDisabledMetrics: boolean = true
   ): ReportSection[] {
     const transformedOutput: ReportSection[] = [];
 
     // Get the keys (category names) from the metricsSelections input to process them.
     for (const categoryKey in metricsSelections) {
         if (Object.prototype.hasOwnProperty.call(metricsSelections, categoryKey)) {
+            let allMetricsForCategory: any[] = [];
             const sourceCategory = metricsSelections[categoryKey];
             const referenceMetricNames = availableMetrics[categoryKey] || []; // Get reference metrics for this category
 
@@ -107,21 +109,27 @@ export class ReportsDataService {
             // Sort the enabled metrics by their adjusted order to ensure correct sequence
             enabledMetricsFromSource.sort((a, b) => a.order - b.order);
 
-            // 2. Process disabled metrics from the reference that are not in the source
-            // These will be appended after the enabled ones
-            const disabledMetricsFromReference: any[] = [];
-            referenceMetricNames.forEach(refMetricName => {
+            if (includeDisabledMetrics) {
+              // 2. Process disabled metrics from the reference that are not in the source
+              // These will be appended after the enabled ones
+              const disabledMetricsFromReference: any[] = [];
+              referenceMetricNames.forEach(refMetricName => {
                 if (!sourceMetricNames.has(refMetricName)) {
                     disabledMetricsFromReference.push({
                         name: refMetricName,
                         order: -1, // Placeholder, will be reassigned sequentially
                         enabled: false
                     });
-                }
-            });
+                  }
+              });
 
-            // Combine enabled and disabled metrics
-            const allMetricsForCategory = enabledMetricsFromSource.concat(disabledMetricsFromReference);
+              // Combine enabled and disabled metrics
+              allMetricsForCategory = enabledMetricsFromSource.concat(disabledMetricsFromReference);
+            } else {
+              allMetricsForCategory = enabledMetricsFromSource;
+            }
+
+            
 
             // Re-assign sequential 0-indexed order for all metrics in the combined list
             allMetricsForCategory.forEach((metric, index) => {

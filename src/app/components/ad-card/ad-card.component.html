@@ -5,7 +5,7 @@
     </div>
     <div class="metrics" #adsGridContainer>
       <ng-container *ngFor="let metric of metrics">
-        <div class="metric" [style.display]="metric.enabled ? 'block' : 'none'">
+        <div class="metric" [style.display]="metric.enabled ? 'flex' : 'none'">
           <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
           <div class="metric-value">
             {{ad[metric.name]}}

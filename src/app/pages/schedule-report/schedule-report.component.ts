@@ -63,6 +63,8 @@ export class ScheduleReportComponent implements OnInit {
 
   availableMetrics: GetAvailableMetricsResponse = {};
 
+  reportTitle: string = 'Report Title';
+
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,

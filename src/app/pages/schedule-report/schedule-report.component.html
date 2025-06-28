@@ -1,8 +1,26 @@
-<div>
+<div class="d-flex flex-column">
+
+  <div class="report-header d-flex align-center justify-between">
+
+    <div routerLink="/" class="logo d-flex align-center">
+      <img src="../../../favicon.png" alt="logo" width="40px">
+    </div>
+
+    <div class="d-flex align-center justify-end">
+      <button (click)="scheduleReportDelivery()">
+        Schedule
+      </button>
+      <button class="blue ml-3">Save</button>
+    </div>
+    
+
+  </div>
 
   <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
 
-    <div class="d-flex flex-column pt-3 pl-5 pr-5">
+    <div 
+    class="d-flex flex-column pt-3 pl-4 pr-3 pb-3" 
+    style="background-color: #f9fafb; overflow-y: auto; height: calc(100vh - 16px - 16px - 16px - 16px - 16px);">
       <main>
         <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
     
@@ -10,6 +28,7 @@
           <edit-report-content
             [reportSections]="reportSections"
             [data]="mockData"
+            [reportTitle]="reportTitle"
           ></edit-report-content>
         </div>
 
@@ -18,12 +37,9 @@
 
     <div class="side-panel d-flex flex-column p-3">
 
-      <button class="blue mb-3" (click)="scheduleReportDelivery()">
-        Schedule Report Delivery
-      </button>
-
       <edit-metrics
         [(reportSections)]="reportSections"
+        [(reportTitle)]="reportTitle"
       ></edit-metrics>
 
     </div>

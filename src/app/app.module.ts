@@ -52,6 +52,7 @@ import { CampaignTableComponent } from './components/campaign-table/campaign-tab
 import { ChartsComponent } from './components/charts/charts.component';
 import {LogsCardComponent} from "./components/activity-logs-card/activity-logs-card.component";
 import {ReportsPageComponent} from "./pages/reports/reports-page.component.js";
+import { ItemComponent } from './components/edit-metrics/components/item/item.component';
 
 register();
 
@@ -101,7 +102,8 @@ register();
     ChartsComponent,
 
     LogsCardComponent,
-    ReportsPageComponent
+    ReportsPageComponent,
+    ItemComponent
 
   ],
   imports: [

@@ -1,22 +1,133 @@
-<div *ngFor="let section of reportSections; let i = index" class="report-section block mb-3">
-    <div class="section-toggle">
-      <label>{{ section.title }}</label>
-      <label class="switch">
-        <input type="checkbox" [(ngModel)]="section.enabled"/>
-        <span class="slider round"></span>
-      </label>
+<!-- <div class="d-flex flex-column gap-3">
+  <div *ngFor="let section of reportSections; let i = index" class="accordion-item">
+    
+    <div class="accordion-header" >
+      <div class="section-toggle" [class.expanded]="isSectionExpanded(i)">
+        <label>{{ section.title }}</label>
+        <div class="header-controls">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="section.enabled" (click)="$event.stopPropagation()"/>
+            <span class="slider round"></span>
+          </label>
+          <div class="accordion-arrow" [class.expanded]="isSectionExpanded(i)" (click)="toggleSection(i)">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div *ngIf="section.enabled">
-      <div class="metric-group p-2" 
-           >
-        <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>
-          <label>
-            <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
+    
+    <div class="accordion-content" [class.expanded]="isSectionExpanded(i)">
+      <div class="metric-group p-2" >
+        <div *ngFor="let metric of section.metrics; let j = index">
+          <label class="prevent-select">
+            <input [disabled]="!section.enabled" type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
             {{metric.name}}
           </label>
         </div>
       </div>
     </div>
-
   </div>
+</div> -->
+
+<button (click)="togglePage('main')" *ngIf="!toggles.main">Back</button>
+
+<div class="main d-flex flex-column gap-3" *ngIf="toggles.main">
+
+  <item
+    [title]="'Header'"
+    (click)="togglePage('header')"
+  ></item>
+
+  <item
+    [title]="'Main KPIs'"
+    (click)="togglePage('mainKPIs')"
+  ></item>
+
+  <item
+    [title]="'Graphs'"
+    (click)="togglePage('graphs')"
+  ></item>
+
+  <item
+    [title]="'Best creatives'"
+    (click)="togglePage('bestCreatives')"
+  ></item>
+
+  <item
+    [title]="'Best campaigns'"
+    (click)="togglePage('bestCampaigns')"
+  ></item>
+  
+</div>
+
+<div class="kpis" *ngIf="toggles.header">
+  <input 
+  type="text" 
+  placeholder="Report title" 
+  [(ngModel)]="reportTitle" 
+  (keyup)="reportTitleChange.emit(reportTitle)"
+  >
+</div>
+
+<div class="kpis" *ngIf="toggles.mainKPIs && mainKPIs">
+  <label class="switch">
+    <input type="checkbox" [(ngModel)]="mainKPIs.enabled" (click)="$event.stopPropagation()"/>
+    <span class="slider round"></span>
+  </label>
+
+  <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+    <label class="prevent-select" *ngFor="let metric of mainKPIs.metrics; let j = index">
+      <input  type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
+      <span class="checkmark"></span>
+      {{metric.name}}
+    </label>
+  </div>
+</div>
+
+<div class="kpis" *ngIf="toggles.graphs && graphs">
+  <label class="switch">
+    <input type="checkbox" [(ngModel)]="graphs.enabled" (click)="$event.stopPropagation()"/>
+    <span class="slider round"></span>
+  </label>
+
+  <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+    <label class="prevent-select" *ngFor="let metric of graphs.metrics; let j = index">
+      <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
+      <span class="checkmark"></span>
+      {{metric.name}}
+    </label>
+  </div>
+</div>
+
+<div class="kpis" *ngIf="toggles.bestCreatives && bestCreatives">
+  <label class="switch">
+    <input type="checkbox" [(ngModel)]="bestCreatives.enabled" (click)="$event.stopPropagation()"/>
+    <span class="slider round"></span>
+  </label>
+
+  <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+    <label class="prevent-select" *ngFor="let metric of bestCreatives.metrics; let j = index">
+      <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
+      <span class="checkmark"></span>
+      {{metric.name}}
+    </label>
+  </div>
+</div>
+
+<div class="kpis" *ngIf="toggles.bestCampaigns && bestCampaigns">
+  <label class="switch">
+    <input type="checkbox" [(ngModel)]="bestCampaigns.enabled" (click)="$event.stopPropagation()"/>
+    <span class="slider round"></span>
+  </label>
+
+  <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+    <label class="prevent-select" *ngFor="let metric of bestCampaigns.metrics; let j = index">
+      <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
+      <span class="checkmark"></span>
+      {{metric.name}}
+    </label>
+  </div>
+</div>
+

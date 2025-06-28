@@ -1,13 +1,13 @@
-import {ChangeDetectorRef, Component, OnInit, OnDestroy, ElementRef, ViewChild} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Daum, GetAvailableMetricsResponse, ReportService } from 'src/app/services/api/report.service';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component';
-import { MatDialog } from '@angular/material/dialog';
-import { MetricsService } from 'src/app/services/metrics.service';
-import { ReportsDataService } from 'src/app/services/reports-data.service';
-import {createInstance, setup} from "@loomhq/record-sdk";
-import { isSupported } from "@loomhq/record-sdk/is-supported";
-import { oembed } from '@loomhq/loom-embed';
+import {ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Daum, GetAvailableMetricsResponse, ReportService} from 'src/app/services/api/report.service';
+import {Data, ReportSection} from '../schedule-report/schedule-report.component';
+import {MatDialog} from '@angular/material/dialog';
+import {MetricsService} from 'src/app/services/metrics.service';
+import {ReportsDataService} from 'src/app/services/reports-data.service';
+import {createInstance, Environment} from "@loomhq/record-sdk";
+import {isSupported} from "@loomhq/record-sdk/is-supported";
+import {oembed} from '@loomhq/loom-embed';
 
 
 @Component({
@@ -28,7 +28,6 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
   availableMetrics: GetAvailableMetricsResponse = {};
   reportSections: ReportSection[] = []
 
-  private loomSdkInitialized: boolean = false;
   private loomButtonInstance: any = null; // To store the Loom button instance
 
   constructor(
@@ -47,13 +46,14 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
       await this.loadReport();
     });
 
+    await this.initializeLoomSDK()
 
   }
 
 
   ngOnDestroy(): void {
     // Clean up Loom button instance if it exists
-    if (this.loomButtonInstance && typeof this.loomButtonInstance.cleanup === 'function') {
+    if (this.loomButtonInstance) {
       this.loomButtonInstance.cleanup();
     }
   }
@@ -106,32 +106,41 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
       return;
     }
 
-    const button = this.loomButtonRef?.nativeElement;
-
-
-    if (!button) {
-      console.warn('Loom button reference not found');
+    const BUTTON_ID = "loom-record-sdk-button";
+    const root = document.getElementById("root");
+    console.log(root);
+    if (!root) {
       return;
     }
 
+    root.innerHTML = `<button id="${BUTTON_ID}">Record</button>`;
+
+    const button = document.getElementById(BUTTON_ID);
+
+    if (!button) {
+      return;
+    }
+
+    console.log(button);
+
     const { configureButton } = await createInstance({
       publicAppId: "22495e2c-fa7c-4ec0-ab4a-7910e51e7bde",
-      mode: "standard"
+      mode: "standard",
+      environment: Environment.Development,
+      config: { insertButtonText: "hello world" }
     });
 
-    this.loomButtonInstance = configureButton({ element: button });
-
-    this.loomButtonInstance.on("insert-click", async (video: { sharedUrl: string; }) => {
-      const { html } = await oembed(video.sharedUrl, { width: 400 });
-      console.log("Loom video HTML embed:", html);
-      // Optionally insert the HTML into the DOM
-    });
-
-    this.loomSdkInitialized = true;
+    configureButton({ element: button, hooks: {
+      onStart: ()=> {
+        console.log("start")
+      },
+        onRecordingComplete: ()=> {
+          console.log("complete")
+        },
+        onUploadComplete: ()=> {
+          console.log("upload")
+        }
+      } });
   }
 
-  async startLoomRecording() {
-    await this.initializeLoomSDK();
-
-  }
 }

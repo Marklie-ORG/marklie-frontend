@@ -8,8 +8,6 @@
     </div>
 
     <div *ngIf="section.enabled">
-      <!-- cdkDropList [cdkDropListData]="section.metrics" -->
-      <!-- (cdkDropListDropped)="dropMetric($event, i)" -->
       <div class="metric-group p-2" 
            >
         <div *ngFor="let metric of section.metrics; let j = index" cdkDrag>

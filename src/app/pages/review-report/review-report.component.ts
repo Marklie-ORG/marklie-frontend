@@ -1,58 +1,35 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, OnDestroy, ElementRef, ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Daum, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
-import { Chart } from 'chart.js';
+import { Daum, GetAvailableMetricsResponse, ReportService } from 'src/app/services/api/report.service';
+import { Data, ReportSection } from '../schedule-report/schedule-report.component';
 import { MatDialog } from '@angular/material/dialog';
-import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
-import { SchedulingOption } from '../edit-report/edit-report.component';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
+import {createInstance, setup} from "@loomhq/record-sdk";
+import { isSupported } from "@loomhq/record-sdk/is-supported";
+import { oembed } from '@loomhq/loom-embed';
+
 
 @Component({
   selector: 'app-review-report',
   templateUrl: './review-report.component.html',
   styleUrl: './review-report.component.scss'
 })
-export class ReviewReportComponent implements OnInit {
-  schedule: Schedule = {
-    reportName: '',
-    frequency: 'weekly',
-    time: '09:00',
-    dayOfWeek: 'Monday',
-    dayOfMonth: 1,
-    intervalDays: 1,
-    cronExpression: '',
-    reviewNeeded: false,
-  };
-  clientUuid: string = '';
-  reportStatsLoading = false;
-
-  metricSelections: MetricSelections = {
-    kpis: {} as Record<string, boolean>,
-    graphs: {} as Record<string, boolean>,
-    ads: {} as Record<string, boolean>,
-    campaigns: {} as Record<string, boolean>
-  };
-
-  metricsGraphConfig: any[] = [];
-
-  data: MockData = {
+export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDestroy for cleanup
+  @ViewChild('loomButton', { static: true }) loomButtonRef!: ElementRef<HTMLButtonElement>;
+  data: Data = {
     KPIs: {},
     ads: [],
     campaigns: [],
     graphs: []
   }
 
-  private chartRefs: Record<string, Chart> = {};
-
   reportId: string | null = null;
-
-  schedulingOption: SchedulingOption | null = null;
-
   availableMetrics: GetAvailableMetricsResponse = {};
-
   reportSections: ReportSection[] = []
+
+  private loomSdkInitialized: boolean = false;
+  private loomButtonInstance: any = null; // To store the Loom button instance
 
   constructor(
     private dialog: MatDialog,
@@ -64,45 +41,36 @@ export class ReviewReportComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.route.params.subscribe(async params => {
       this.reportId = params['id'];
-
-      this.availableMetrics = await this.reportService.getAvailableMetrics();
-
-      this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
-
       await this.loadReport();
-
     });
+
+
+  }
+
+
+  ngOnDestroy(): void {
+    // Clean up Loom button instance if it exists
+    if (this.loomButtonInstance && typeof this.loomButtonInstance.cleanup === 'function') {
+      this.loomButtonInstance.cleanup();
+    }
   }
 
   private async loadReport() {
     if (!this.reportId) return;
-    const res = await this.reportService.getReport(this.reportId);
-    const data = res.data[0];
-
-    // this.report = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
-    this.convertOptionIntoTemplate(data);
-    this.generateMockData(data);
-  }
-
-  convertOptionIntoTemplate(data: Daum) {
-
-    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
-
-    if (data.ads.length === 0) this.reportSections.find(s => s.key === 'ads')!.enabled = false;
-    if (data.graphs.length === 0) this.reportSections.find(s => s.key === 'graphs')!.enabled = false;
-    if (data.campaigns.length === 0) this.reportSections.find(s => s.key === 'campaigns')!.enabled = false;
-    if (!data.KPIs || Object.keys(data.KPIs).length === 0) this.reportSections.find(s => s.key === 'kpis')!.enabled = false;
-
-    this.metricSelections = {
-      kpis: initSelection(this.availableMetrics.kpis, data?.KPIs ? Object.keys(data.KPIs) : []),
-      graphs: initSelection(this.availableMetrics.graphs, data.graphs[0] ? Object.keys(data.graphs[0]) : []),
-      ads: initSelection(this.availableMetrics.ads, data.ads[0] ? Object.keys(data.ads[0]) : []),
-      campaigns: initSelection(this.availableMetrics.campaigns, data.campaigns[0] ? Object.keys(data.campaigns[0]) : []),
+    try {
+      const res = await this.reportService.getReport(this.reportId);
+      const data = res.data[0];
+      this.availableMetrics = await this.reportService.getAvailableMetrics();
+      this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
+      console.log('Report Sections:', this.reportSections);
+      this.generateMockData(data);
+    } catch (error) {
+      console.error('Error loading report:', error);
+      // Handle error, e.g., show a message to the user
     }
-
   }
 
   private generateMockData(data: Daum): void {
@@ -114,5 +82,56 @@ export class ReviewReportComponent implements OnInit {
 
   openAd(url: string): void {
     window.open(url, '_blank');
+  }
+
+  async save() {
+    if (!this.reportId) return;
+    try {
+      const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
+      await this.reportService.updateReportMetricsSelections(this.reportId, metricsSelections);
+      console.log('Report saved successfully!');
+      // Optionally, show a success message
+    } catch (error) {
+      console.error('Error saving report:', error);
+      // Handle error, e.g., show an error message
+    }
+  }
+
+  // New method to initialize Loom SDK
+  private async initializeLoomSDK() {
+    const { supported, error } = await isSupported();
+
+    if (!supported) {
+      console.warn(`Loom is not supported: ${error}`);
+      return;
+    }
+
+    const button = this.loomButtonRef?.nativeElement;
+
+
+    if (!button) {
+      console.warn('Loom button reference not found');
+      return;
+    }
+
+    const { configureButton } = await createInstance({
+      publicAppId: "22495e2c-fa7c-4ec0-ab4a-7910e51e7bde",
+      mode: "standard"
+    });
+
+    this.loomButtonInstance = configureButton({ element: button });
+
+    this.loomButtonInstance.on("insert-click", async (video: { sharedUrl: string; }) => {
+      const { html } = await oembed(video.sharedUrl, { width: 400 });
+      console.log("Loom video HTML embed:", html);
+      // Optionally insert the HTML into the DOM
+    });
+
+    this.loomSdkInitialized = true;
+  }
+
+  async startLoomRecording() {
+    await this.initializeLoomSDK();
+
   }
 }

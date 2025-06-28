@@ -6,10 +6,10 @@
         <main>
           <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
       
-          <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
+          <div *ngIf="!reportStatsLoading">
           <edit-report-content
               [reportSections]="reportSections"
-              [mockData]="mockData"
+              [data]="mockData"
             ></edit-report-content>
           </div>
   

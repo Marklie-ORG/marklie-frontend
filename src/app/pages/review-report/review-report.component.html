@@ -1,8 +1,39 @@
+<button (click)="save()">Save</button>
+<button #loomButton hidden>Hidden Loom Button</button>
 
-<edit-report-content
-  [reportSections]="reportSections"
-  [metricSelections]="metricSelections"
-  [campaignColumnOrder]="availableMetrics.campaigns"
-  [mockData]="data"
-  [campaignAvailableMetrics]="availableMetrics.campaigns"
-></edit-report-content>
+<!-- Your visible button -->
+<button (click)="startLoomRecording()">Start Loom Recording</button>
+<div>
+
+  <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
+
+    <div class="d-flex flex-column pt-3 pl-5 pr-5">
+      <edit-report-content
+        [reportSections]="reportSections"
+        [data]="data"
+      ></edit-report-content>
+    </div>
+
+    <div class="side-panel d-flex flex-column p-3">
+
+      <!-- <div *ngIf="schedulingOption" class="p-3 block d-flex flex-column gap-2">
+        <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div>
+        <div>Date Preset: {{schedulingOption.datePreset}}</div>
+        <div>Frequency: {{schedulingOption.jobData.frequency}}</div>
+        <div>Review before sending: {{schedulingOption.jobData.reviewNeeded ? 'yes' : 'no'}}</div>
+        <div>Next run: {{schedulingOption.nextRun}}</div>
+
+      </div> -->
+
+      <!-- <button class="blue mb-3" (click)="editDelivery()">
+        Edit Delivery
+      </button> -->
+
+      <edit-metrics
+        [(reportSections)]="reportSections"
+      ></edit-metrics>
+
+    </div>
+  </div>
+
+</div>

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Daum, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { MockData, ReportSection } from '../schedule-report/schedule-report.component';
+import { Data, ReportSection } from '../schedule-report/schedule-report.component';
 import { Chart } from 'chart.js';
 import { MatDialog } from '@angular/material/dialog';
 import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
@@ -38,7 +38,7 @@ export class PdfReportComponent implements OnInit {
 
   metricsGraphConfig: any[] = [];
 
-  data: MockData = {
+  data: Data = {
     KPIs: {},
     ads: [],
     campaigns: [],

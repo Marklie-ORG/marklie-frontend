@@ -5,9 +5,9 @@ import {Data, ReportSection} from '../schedule-report/schedule-report.component'
 import {MatDialog} from '@angular/material/dialog';
 import {MetricsService} from 'src/app/services/metrics.service';
 import {ReportsDataService} from 'src/app/services/reports-data.service';
-import {createInstance, Environment} from "@loomhq/record-sdk";
-import {isSupported} from "@loomhq/record-sdk/is-supported";
-import {oembed} from '@loomhq/loom-embed';
+// import {createInstance, Environment} from "@loomhq/record-sdk";
+// import {isSupported} from "@loomhq/record-sdk/is-supported";
+// import {oembed} from '@loomhq/loom-embed';
 
 
 @Component({
@@ -99,12 +99,12 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
 
   // New method to initialize Loom SDK
   private async initializeLoomSDK() {
-    const { supported, error } = await isSupported();
+    // const { supported, error } = await isSupported();
 
-    if (!supported) {
-      console.warn(`Loom is not supported: ${error}`);
-      return;
-    }
+    // if (!supported) {
+    //   console.warn(`Loom is not supported: ${error}`);
+    //   return;
+    // }
 
     const BUTTON_ID = "loom-record-sdk-button";
     const root = document.getElementById("root");
@@ -123,24 +123,24 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
 
     console.log(button);
 
-    const { configureButton } = await createInstance({
-      publicAppId: "22495e2c-fa7c-4ec0-ab4a-7910e51e7bde",
-      mode: "standard",
-      environment: Environment.Development,
-      config: { insertButtonText: "hello world" }
-    });
+    // const { configureButton } = await createInstance({
+    //   publicAppId: "22495e2c-fa7c-4ec0-ab4a-7910e51e7bde",
+    //   mode: "standard",
+    //   environment: Environment.Development,
+    //   config: { insertButtonText: "hello world" }
+    // });
 
-    configureButton({ element: button, hooks: {
-      onStart: ()=> {
-        console.log("start")
-      },
-        onRecordingComplete: ()=> {
-          console.log("complete")
-        },
-        onUploadComplete: ()=> {
-          console.log("upload")
-        }
-      } });
+    // configureButton({ element: button, hooks: {
+    //   onStart: ()=> {
+    //     console.log("start")
+    //   },
+    //     onRecordingComplete: ()=> {
+    //       console.log("complete")
+    //     },
+    //     onUploadComplete: ()=> {
+    //       console.log("upload")
+    //     }
+    //   } });
   }
 
 }

@@ -61,8 +61,8 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
   }
 
   @Input() reportSections: ReportSection[] = [];
-  
   @Input() data: Data | undefined = undefined;
+  @Input() reportTitle: string = 'Report Title';
 
   constructor(
     private dialog: MatDialog,

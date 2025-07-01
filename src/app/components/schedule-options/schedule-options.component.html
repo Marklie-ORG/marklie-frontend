@@ -86,5 +86,9 @@
       <input type="text" class="form-control" [(ngModel)]="messages.email.body" id="email" />
     </div>
 
-    <button class="btn btn-success" (click)="saveConfiguration()">Save Configuration</button>
+    <div class="d-flex justify-end gap-2">
+      <button class="" (click)="saveConfiguration()">Cancel</button>
+      <button class="blue" (click)="saveConfiguration()">Schedule</button>
+    </div>
+    
   </div>

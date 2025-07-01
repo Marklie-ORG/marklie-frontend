@@ -50,7 +50,7 @@ export class ReportsDataService {
     const reportSections: ReportSection[] = [
       { 
         key: 'kpis', 
-        title: 'KPIs', 
+        title: 'Main KPIs', 
         enabled: true, 
         metrics: initMetric('kpis'), 
         order: schedulingOption ?  schedulingOption.jobData.metrics.kpis.order : 1
@@ -64,14 +64,14 @@ export class ReportsDataService {
       },
       { 
         key: 'ads', 
-        title: 'Ads', 
+        title: 'Best creatives', 
         enabled: true, 
         metrics: initMetric('ads'), 
         order: schedulingOption ?  schedulingOption.jobData.metrics.ads.order : 3 
       },
       { 
         key: 'campaigns', 
-        title: 'Campaigns', 
+        title: 'Best campaigns', 
         enabled: true, 
         metrics: initMetric('campaigns'), 
         order: schedulingOption ?  schedulingOption.jobData.metrics.campaigns.order : 4 

@@ -1,14 +1,38 @@
 
-<div #sectionsGridContainer>
+<div 
+#sectionsGridContainer 
+style="background-color: #fff;"
+class="p-5"
+>
+
+  <div class="d-flex justify-between mb-5">
+    <div class="d-flex">
+      <img
+      style="object-fit: contain; width: 100px;"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/1200px-Logo_NIKE.svg.png" alt="">
+    </div>
+    <div class="d-flex flex-column">
+      <div class="text-center">
+        <h2>{{reportTitle}}</h2>
+      </div>
+      <div class="text-center">
+        <h4>Time range</h4>
+      </div>
+    </div>
+    <div class="d-flex">
+      <img
+      style="object-fit: contain; width: 100px;"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/1200px-Logo_NIKE.svg.png" alt="">
+    </div>
+  </div>
+
   <div 
   *ngFor="let section of reportSections; let i = index" 
-  class="report-section p-3 mb-4" 
-  
+  class="report-section mb-4"
   >
 
-
     <ng-container *ngIf="section.enabled && data">
-      <div class="section-title">
+      <div class="section-title mb-3">
         {{ section.title }}
       </div>
 

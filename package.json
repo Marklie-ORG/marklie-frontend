@@ -28,8 +28,6 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@loomhq/loom-embed": "^1.7.0",
-    "@loomhq/record-sdk": "^4.1.1",
     "@ng-select/ng-select": "^14.7.0",
     "@types/facebook-js-sdk": "^3.3.12",
     "chart.js": "^4.4.8",

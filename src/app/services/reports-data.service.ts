@@ -285,7 +285,10 @@ export class ReportsDataService {
 
       const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
 
-      chartStore[canvasId]?.destroy();
+      const existingChart = Chart.getChart(canvasId);
+      if (existingChart) {
+        existingChart.destroy();
+      }
 
       chartStore[canvasId] = new Chart(canvas, {
         type: 'line',

@@ -83,6 +83,14 @@ export class ReportComponent implements OnInit, OnDestroy {
     this.ref.detectChanges();
 
     const prefix = `account_${this.selectedAccountIndex}`;
+
+    for (const key in this.chartInstances) {
+      if (key.startsWith(prefix)) {
+        this.chartInstances[key].destroy();
+        delete this.chartInstances[key];
+      }
+    }
+
     setTimeout(() => {
       this.reportDataService.renderCharts(
         this.graphs,

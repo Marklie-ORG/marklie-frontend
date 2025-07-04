@@ -1,6 +1,149 @@
+<div class="dashboard">
+  <div *ngIf="reportStatsLoading" class="loading">Loading...</div>
 
+  <div *ngIf="!reportStatsLoading">
 
-<edit-report-content
-  [reportSections]="reportSections"
-  [data]="data"
-></edit-report-content>
+    <!-- If multiple accounts -->
+    <ng-container *ngIf="reportData.length > 1; else singleAccountBlock">
+      <div class="account-block" *ngFor="let account of reportData; let i = index">
+        <h2 class="account-title">
+          {{ account.accountName || 'Ad Account ' + (account.adAccountId) }}
+        </h2>
+
+        <div class="kpi-section" *ngIf="account.KPIs">
+          <h3 class="section-title">Account Overview</h3>
+          <div class="kpi-grid">
+            <div class="kpi-card" *ngFor="let key of objectKeys(account.KPIs)">
+              <div class="kpi-label">{{ formatMetricLabel(key) }}</div>
+              <div class="kpi-value" [ngClass]="getMetricStyle(key)">
+                {{ formatMetricValue(key, account.KPIs[key]) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-section" *ngIf="account.graphs?.length">
+          <h3 class="section-title">Performance Trends</h3>
+          <div class="graph-grid">
+            <div class="graph-card" *ngFor="let cfg of chartConfigs">
+              <canvas [id]="'account_' + i + '_' + cfg.key + '_Chart'"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="ads-section" *ngIf="account.ads?.length">
+          <h3 class="section-title">Top {{ account.ads.length }} Ads</h3>
+          <div class="ad-grid">
+            <div class="ad-card" *ngFor="let ad of account.ads">
+              <div class="ad-image-container">
+                <img class="ad-media" [src]="ad.thumbnailUrl || ad.sourceUrl" [alt]="ad.adCreativeId || 'Ad thumbnail'" />
+              </div>
+              <div class="metrics">
+                <div class="metric" *ngFor="let key of ['spend', 'addToCart', 'purchases', 'roas']">
+                  <div class="metric-label">{{ formatMetricLabel(key) }}</div>
+                  <div class="metric-value" [ngClass]="getMetricStyle(key)">
+                    {{ formatMetricValue(key, getAdValue(ad, key)) }}
+                  </div>
+                </div>
+              </div>
+              <a [href]="ad.sourceUrl" target="_blank" class="view-ad-btn">View Ad</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="campaigns-section" *ngIf="account.campaigns?.length">
+          <h3 class="section-title">Campaigns Overview</h3>
+          <div class="table-container">
+            <table class="campaign-table">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Campaign Name</th>
+                <th *ngFor="let key of campaignColumnOrder">{{ formatMetricLabel(key) }}</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let campaign of account.campaigns; let j = index">
+                <td>{{ j + 1 }}</td>
+                <td>{{ campaign.campaign_name }}</td>
+                <td *ngFor="let key of campaignColumnOrder">
+                  {{ formatMetricValue(key, campaign[key]) }}
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- If only one account -->
+    <ng-template #singleAccountBlock>
+      <div class="kpi-section" *ngIf="KPIs">
+        <h2 class="section-title">Account Overview</h2>
+        <div class="kpi-grid">
+          <div class="kpi-card" *ngFor="let key of objectKeys(KPIs)">
+            <div class="kpi-label">{{ formatMetricLabel(key) }}</div>
+            <div class="kpi-value" [ngClass]="getMetricStyle(key)">
+              {{ formatMetricValue(key, KPIs[key]) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="graph-section" *ngIf="graphs?.length">
+        <h2 class="section-title">Performance Trends</h2>
+        <div class="graph-grid">
+          <div class="graph-card" *ngFor="let cfg of chartConfigs">
+            <canvas [id]="cfg.key + 'Chart'"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="ads-section" *ngIf="bestAds?.length">
+        <h2 class="section-title">Top {{ bestAds.length }} Best Performing Ads</h2>
+        <div class="ad-grid">
+          <div class="ad-card" *ngFor="let ad of bestAds">
+            <div class="ad-image-container">
+              <img class="ad-media" [src]="ad.thumbnailUrl || 'https://via.placeholder.com/150'" [alt]="ad.adCreativeId || 'Ad thumbnail'" />
+            </div>
+            <div class="metrics">
+              <div class="metric" *ngFor="let key of ['spend', 'addToCart', 'purchases', 'roas']">
+                <div class="metric-label">{{ formatMetricLabel(key) }}</div>
+                <div class="metric-value" [ngClass]="getMetricStyle(key)">
+                  {{ formatMetricValue(key, getAdValue(ad, key)) }}
+                </div>
+              </div>
+            </div>
+            <a [href]="ad.sourceUrl" target="_blank" class="view-ad-btn">View Ad</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="campaigns-section" *ngIf="campaigns?.length">
+        <h2 class="section-title">Campaigns Overview</h2>
+        <div class="table-container">
+          <table class="campaign-table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Campaign Name</th>
+              <th *ngFor="let key of campaignColumnOrder">{{ formatMetricLabel(key) }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let campaign of campaigns; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ campaign.campaign_name }}</td>
+              <td *ngFor="let key of campaignColumnOrder">
+                {{ formatMetricValue(key, campaign[key]) }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-template>
+
+  </div>
+</div>

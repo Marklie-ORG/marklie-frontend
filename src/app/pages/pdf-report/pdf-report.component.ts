@@ -1,120 +1,118 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Daum, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component';
-import { Chart } from 'chart.js';
-import { MatDialog } from '@angular/material/dialog';
-import { MetricSelections } from 'src/app/components/edit-report-content/edit-report-content.component';
-import { SchedulingOption } from '../edit-report/edit-report.component';
-import { MetricsService } from 'src/app/services/metrics.service';
+import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-pdf-report',
   templateUrl: './pdf-report.component.html',
-  styleUrls: ['./pdf-report.component.scss']
+  styleUrls: ['./pdf-report.component.scss'],
 })
-export class PdfReportComponent implements OnInit {
-
-  schedule: Schedule = {
-    reportName: '',
-    frequency: 'weekly',
-    time: '09:00',
-    dayOfWeek: 'Monday',
-    dayOfMonth: 1,
-    intervalDays: 1,
-    cronExpression: '',
-    reviewNeeded: false,
-  };
-  clientUuid: string = '';
+export class PdfReportComponent implements OnInit, OnDestroy {
+  KPIs!: any;
+  graphs: any[] = [];
+  campaigns: any[] = [];
+  bestAds: any[] = [];
   reportStatsLoading = false;
+  dateRangeLabel = '';
+  chartInstances: Record<string, Record<string, Chart>> = {};
+  reportData: any[] = [];
+  isMultiAccount = false;
 
-  metricSelections: MetricSelections = {
-    kpis: {} as Record<string, boolean>,
-    graphs: {} as Record<string, boolean>,
-    ads: {} as Record<string, boolean>,
-    campaigns: {} as Record<string, boolean>
-  };
-
-  metricsGraphConfig: any[] = [];
-
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
-
-  private chartRefs: Record<string, Chart> = {};
-
-  reportId: string | null = null;
-
-  schedulingOption: SchedulingOption | null = null;
-
-  availableMetrics: GetAvailableMetricsResponse = {};
-
-  reportSections: ReportSection[] = []
+  readonly objectKeys = Object.keys;
+  readonly chartConfigs = this.reportDataService.getChartConfigs();
+  readonly campaignColumnOrder = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
 
   constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
     private reportService: ReportService,
-    public metricsService: MetricsService,
-    public ref: ChangeDetectorRef,
-    private reportsDataService: ReportsDataService
-  ) {
-  }
+    private route: ActivatedRoute,
+    private ref: ChangeDetectorRef,
+    private reportDataService: ReportsDataService
+  ) {}
 
-  ngOnInit() {
-    this.route.params.subscribe(async params => {
-      this.reportId = params['uuid'];
-
-      this.availableMetrics = await this.reportService.getAvailableMetrics();
-
-      this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
-
-      await this.loadReport();
-
-    });
-  }
-
-  private async loadReport() {
-    if (!this.reportId) return;
-    const res = await this.reportService.getReport(this.reportId);
-    const data = res.data[0];
-
-    // this.report = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
-    this.convertOptionIntoTemplate(data);
-    this.generateMockData(data);
-  }
-
-  convertOptionIntoTemplate(data: Daum) {
-
-    const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
-
-    if (data.ads.length === 0) this.reportSections.find(s => s.key === 'ads')!.enabled = false;
-    if (data.graphs.length === 0) this.reportSections.find(s => s.key === 'graphs')!.enabled = false;
-    if (data.campaigns.length === 0) this.reportSections.find(s => s.key === 'campaigns')!.enabled = false;
-    if (!data.KPIs || Object.keys(data.KPIs).length === 0) this.reportSections.find(s => s.key === 'kpis')!.enabled = false;
-
-    this.metricSelections = {
-      kpis: initSelection(this.availableMetrics.kpis, data?.KPIs ? Object.keys(data.KPIs) : []),
-      graphs: initSelection(this.availableMetrics.graphs, data.graphs[0] ? Object.keys(data.graphs[0]) : []),
-      ads: initSelection(this.availableMetrics.ads, data.ads[0] ? Object.keys(data.ads[0]) : []),
-      campaigns: initSelection(this.availableMetrics.campaigns, data.campaigns[0] ? Object.keys(data.campaigns[0]) : []),
+  async ngOnInit(): Promise<void> {
+    const reportUuid = this.route.snapshot.params['uuid'];
+    if (reportUuid) {
+      await this.loadReport(reportUuid);
     }
-
   }
 
-  private generateMockData(data: Daum): void {
-    this.data.KPIs = data.KPIs;
-    this.data.ads = data.ads;
-    this.data.campaigns = data.campaigns;
-    this.data.graphs = data.graphs;
+  ngOnDestroy(): void {
+    Object.values(this.chartInstances).forEach((chartGroup) => {
+      Object.values(chartGroup).forEach((chart) => {
+        chart.destroy();
+      });
+    });  }
+
+  async loadReport(reportUuid: string): Promise<void> {
+    this.reportStatsLoading = true;
+    try {
+      const res = await this.reportService.getReport(reportUuid);
+      this.reportData = res.data;
+      console.log(res.data)
+      this.isMultiAccount = this.reportData.length > 1;
+
+      this.ref.detectChanges();
+
+      this.reportData.forEach((account, index) => {
+        const chartIdPrefix = `account_${index}`;
+        requestAnimationFrame(() => {
+          this.reportDataService.renderCharts(
+            account.graphs,
+            this.getChartInstanceGroup(chartIdPrefix),
+            this.dateRangeLabel,
+            chartIdPrefix
+          );
+        });
+      });
+    } catch (error) {
+      console.error('Error loading report:', error);
+    } finally {
+      this.reportStatsLoading = false;
+    }
   }
 
-  openAd(url: string): void {
-    window.open(url, '_blank');
+  private getChartInstanceGroup(prefix: string): Record<string, Chart> {
+    if (!this.chartInstances[prefix]) {
+      this.chartInstances[prefix] = {};
+    }
+    return this.chartInstances[prefix];
   }
 
+
+  private setDateRangeLabel(): void {
+    if (!this.graphs.length) return;
+
+    const start = new Date(this.graphs[0].date_start);
+    const end = new Date(
+      this.graphs.at(-1)?.date_stop ?? this.graphs.at(-1)?.date_start
+    );
+
+    const diffDays =
+      Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+    this.dateRangeLabel = `${start.toLocaleDateString()} – ${end.toLocaleDateString()} (${diffDays} days)`;
+  }
+
+  getAdValue(ad: any, key: string): any {
+    return ad[key];
+  }
+
+  formatMetricLabel(metric: string): string {
+    return this.reportDataService.formatMetricLabel(metric);
+  }
+
+  formatMetricValue(metric: string, value: any): string {
+    return this.reportDataService.formatMetricValue(metric, value);
+  }
+
+  getMetricStyle(metric: string): string {
+    return this.reportDataService.getMetricStyle(metric);
+  }
 }

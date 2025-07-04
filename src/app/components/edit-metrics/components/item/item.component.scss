@@ -4,3 +4,7 @@
     box-shadow: var(--box-shadow);
     border: var(--block-border);
   }
+
+.handle {
+  cursor: grab;
+}

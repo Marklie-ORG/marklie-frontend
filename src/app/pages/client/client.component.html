@@ -60,14 +60,14 @@
             class="block"
             style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow); height: 100%;">
 
+            <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+              <h3>Activity</h3>
+            </div>
 
-
-              <div class="activity-list pl-4 pr-4 pb-4">
-                <app-activity-log-item
-                  [logs]="logs"
-                  [formatTimeOrDate]="formatTimeOrDate"
-                ></app-activity-log-item>
-              </div>
+            <app-activity-log-item
+              [logs]="logs"
+              [formatTimeOrDate]="formatTimeOrDate"
+            ></app-activity-log-item>
 
     </div>
     </div>

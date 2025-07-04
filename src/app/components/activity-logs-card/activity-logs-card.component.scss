@@ -87,3 +87,22 @@
 .fade-dot {
   opacity: 0;
 }
+
+
+
+.table {
+  .header {
+    font-size: 13px;
+    // color: #3333339c !important;
+    font-weight: 500;
+  }
+  
+  .row, .header {
+    // box-shadow: 0 4px 6px 0 rgba(67, 46, 134, 0.04);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+  }
+
+  .row {
+    cursor: pointer;
+  }
+}

@@ -2,17 +2,24 @@
 
   <div class="report-header d-flex align-center justify-between">
 
-    <div routerLink="/" class="logo d-flex align-center">
-      <img src="../../../favicon.png" alt="logo" width="40px">
+    <div routerLink="/dashboard" class="logo d-flex align-center">
+      <a href="/dashboard">
+        <img src="../../../favicon.png" alt="logo" width="40px">
+      </a>
+      
     </div>
 
     <div class="d-flex align-center justify-end">
-      <button (click)="scheduleReportDelivery()">
-        Schedule
+      <select [(ngModel)]="selectedDatePreset" class="mr-3" (change)="onDatePresetChange($event)">
+        <option *ngFor="let preset of reportsDataService.DATE_PRESETS" [value]="preset.value">
+          {{ preset.text }}
+        </option>
+      </select>
+      <button (click)="editScheduleConfiguration()" class="blue d-flex align-center gap-2">
+        Schedule report
       </button>
-      <button class="blue ml-3">Save</button>
+      <!-- <button class="blue ml-3" (click)="saveConfiguration()">Save</button> -->
     </div>
-    
 
   </div>
 
@@ -29,6 +36,7 @@
             [reportSections]="reportSections"
             [data]="mockData"
             [reportTitle]="reportTitle"
+            [selectedDatePresetText]="selectedDatePresetText"
           ></edit-report-content>
         </div>
 

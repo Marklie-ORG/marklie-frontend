@@ -31,21 +31,26 @@
   </div>
 </div> -->
 
-<button (click)="togglePage('main')" *ngIf="!toggles.main">Back</button>
 
-<div class="main d-flex flex-column gap-3" *ngIf="toggles.main">
+
+<div class="d-flex flex-column gap-3" *ngIf="toggles.main">
 
   <item
+    [hideDrag]="true"
     [title]="'Header'"
     (click)="togglePage('header')"
   ></item>
 
-  <item
-    [title]="'Main KPIs'"
-    (click)="togglePage('mainKPIs')"
-  ></item>
+  <div #sectionsContainer class="d-flex flex-column gap-3">
+    <item
+    *ngFor="let section of reportSections; let i = index"
+    [title]="section.title"
+    (click)="togglePage(section.key)"
+    ></item>
+  </div>
+  
 
-  <item
+  <!-- <item
     [title]="'Graphs'"
     (click)="togglePage('graphs')"
   ></item>
@@ -58,24 +63,54 @@
   <item
     [title]="'Best campaigns'"
     (click)="togglePage('bestCampaigns')"
-  ></item>
+  ></item> -->
   
 </div>
 
-<div class="kpis" *ngIf="toggles.header">
-  <input 
-  type="text" 
-  placeholder="Report title" 
-  [(ngModel)]="reportTitle" 
-  (keyup)="reportTitleChange.emit(reportTitle)"
-  >
+<div *ngIf="toggles.header">
+
+  <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+    <div class="d-flex align-items-center gap-2">
+      <img 
+      class="cursor-pointer"
+      src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
+      <p class="ml-2">Header</p>
+    </div>
+  </div>
+
+  <div class="metric-group mt-2 pt-3 d-flex flex-column gap-2" >
+    <input 
+    class="text"
+    type="text" 
+    placeholder="Report title" 
+    [(ngModel)]="reportTitle" 
+    (keyup)="reportTitleChange.emit(reportTitle)"
+    >
+  </div>
+
+  
 </div>
 
-<div class="kpis" *ngIf="toggles.mainKPIs && mainKPIs">
-  <label class="switch">
-    <input type="checkbox" [(ngModel)]="mainKPIs.enabled" (click)="$event.stopPropagation()"/>
-    <span class="slider round"></span>
-  </label>
+<div *ngIf="toggles.kpis && mainKPIs">
+
+  <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+    <div class="d-flex align-items-center gap-2">
+      <img 
+      class="cursor-pointer"
+      src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
+      <p class="ml-2">Main KPIs</p>
+    </div>
+    
+    <div>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="mainKPIs.enabled" (click)="$event.stopPropagation()"/>
+        <span class="slider round"></span>
+      </label>
+    </div>
+    
+  </div>
+
+  
 
   <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
     <label class="prevent-select" *ngFor="let metric of mainKPIs.metrics; let j = index">
@@ -86,11 +121,23 @@
   </div>
 </div>
 
-<div class="kpis" *ngIf="toggles.graphs && graphs">
-  <label class="switch">
-    <input type="checkbox" [(ngModel)]="graphs.enabled" (click)="$event.stopPropagation()"/>
-    <span class="slider round"></span>
-  </label>
+<div *ngIf="toggles.graphs && graphs">
+
+  <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+    <div class="d-flex align-items-center gap-2">
+      <img 
+      class="cursor-pointer"
+      src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
+      <p class="ml-2">Graphs</p>
+    </div>
+    
+    <div>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="graphs.enabled" (click)="$event.stopPropagation()"/>
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </div>
 
   <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
     <label class="prevent-select" *ngFor="let metric of graphs.metrics; let j = index">
@@ -101,11 +148,23 @@
   </div>
 </div>
 
-<div class="kpis" *ngIf="toggles.bestCreatives && bestCreatives">
-  <label class="switch">
-    <input type="checkbox" [(ngModel)]="bestCreatives.enabled" (click)="$event.stopPropagation()"/>
-    <span class="slider round"></span>
-  </label>
+<div *ngIf="toggles.ads && bestCreatives">
+
+  <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+    <div class="d-flex align-items-center gap-2">
+      <img 
+      class="cursor-pointer"
+      src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
+      <p class="ml-2">Best creatives</p>
+    </div>
+    
+    <div>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="bestCreatives.enabled" (click)="$event.stopPropagation()"/>
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </div>
 
   <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
     <label class="prevent-select" *ngFor="let metric of bestCreatives.metrics; let j = index">
@@ -116,11 +175,25 @@
   </div>
 </div>
 
-<div class="kpis" *ngIf="toggles.bestCampaigns && bestCampaigns">
-  <label class="switch">
-    <input type="checkbox" [(ngModel)]="bestCampaigns.enabled" (click)="$event.stopPropagation()"/>
-    <span class="slider round"></span>
-  </label>
+<div *ngIf="toggles.campaigns && bestCampaigns">
+
+  <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+    <div class="d-flex align-items-center gap-2">
+      <img 
+      class="cursor-pointer"
+      src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
+      <p class="ml-2">Best campaigns</p>
+    </div>
+    
+    <div>
+      <label class="switch">
+        <input type="checkbox" [(ngModel)]="bestCampaigns.enabled" (click)="$event.stopPropagation()"/>
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </div>
+
+  
 
   <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
     <label class="prevent-select" *ngFor="let metric of bestCampaigns.metrics; let j = index">

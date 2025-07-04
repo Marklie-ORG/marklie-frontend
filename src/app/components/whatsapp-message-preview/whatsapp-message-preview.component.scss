@@ -1,0 +1,129 @@
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #1a1a1a; /* Dark background similar to the image */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 1rem; /* Add padding for small screens */
+    box-sizing: border-box; /* Ensure padding is included in element's total width and height */
+}
+
+/* Chat Container */
+.chat-container {
+    width: 100%;
+    max-width: 400px; /* Max width for the chat area */
+    background-color: #2d3748; /* Darker gray for the container */
+    border-radius: 0.5rem; /* Rounded corners for the container */
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Subtle shadow */
+}
+
+/* Message Wrapper - Contains avatar and message bubble */
+.message-wrapper {
+    display: flex;
+    align-items: flex-end; /* Aligns items (avatar and bubble) to the bottom */
+    gap: 0.75rem; /* Space between avatar and message bubble */
+    margin-bottom: 1rem;
+    position: relative; /* For relative positioning of children if needed */
+}
+
+/* Message Bubble */
+.message-bubble {
+    flex-grow: 1; /* Allows the message bubble to take available space */
+    background-color: #4a5568; /* Gray background for the message bubble */
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Subtle shadow */
+    position: relative; /* Needed for the pseudo-element pointer */
+
+    /* Custom border-radius for speech bubble effect */
+    border-top-left-radius: 0.75rem; /* Rounded top-left */
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    border-bottom-left-radius: 0.1rem; /* Small radius at the base of the pointer */
+    /* The pointer will be on the left, so we need space for it */
+    margin-left: 8px;
+}
+
+/* Speech bubble pointer (bottom-left) */
+.message-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: 0; /* Align with the bottom of the bubble */
+    left: -8px; /* Position outside to the left */
+    width: 0;
+    height: 0;
+    border-style: solid;
+    /* Creates a triangle pointing left-down */
+    border-width: 0 0 8px 8px; /* border-bottom and border-left are colored */
+    border-color: transparent transparent #4a5568 transparent; /* Matches bubble background color */
+}
+
+/* Message Header - for sender name */
+.message-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+/* Sender Name */
+.sender-name {
+    color: #48bb78; /* Green color for the name */
+    font-weight: 600; /* Semi-bold font */
+    font-size: 0.875rem; /* Small font size */
+}
+
+/* Message Text */
+.message-text {
+    color: #ffffff; /* White color for the text */
+    font-size: 0.875rem; /* Small font size */
+    line-height: 1.5; /* Snug line height */
+}
+
+/* Message Timestamp */
+.message-timestamp {
+    text-align: right;
+    font-size: 0.75rem; /* Extra small font size */
+    color: #a0aec0; /* Light gray color */
+    margin-top: 0.5rem;
+}
+
+/* Avatar Container */
+.avatar-container {
+    flex-shrink: 0; /* Prevents avatar from shrinking */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Makes it a circle */
+    overflow: hidden; /* Hides parts of the image outside the circle */
+    background-color: #4a5568; /* Gray background for placeholder */
+    /* No negative margin needed here as gap will handle spacing */
+}
+
+/* Avatar Image */
+.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the area */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .chat-container {
+        padding: 0.75rem;
+    }
+    .message-bubble {
+        padding: 0.6rem;
+    }
+    .sender-name, .message-text {
+        font-size: 0.8rem;
+    }
+    .message-timestamp {
+        font-size: 0.65rem;
+    }
+    .avatar-container {
+        width: 35px;
+        height: 35px;
+    }
+}

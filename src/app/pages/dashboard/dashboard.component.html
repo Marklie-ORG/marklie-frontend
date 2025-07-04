@@ -58,6 +58,7 @@ style="height: 85%;"
           </div>
         </div>
       </div>
+
       <div *ngIf="clients.length === 0" class="d-flex align-center justify-center mt-4">
         <button class="blue" (click)="showAddClientModal()">
           <!-- <i class="fa-solid fa-plus color-white"></i> -->
@@ -70,19 +71,17 @@ style="height: 85%;"
     class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
 
+    <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+      <h3>Activity</h3>
+    </div>
 
-
-        <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
-
-        </div>
-
-        <div class="activity-list pl-4 pr-4 pb-4">
-          <app-activity-log-item
-            [logs]="logs"
-            [formatTimeOrDate]="formatTimeOrDate"
-            [level]="'organization'"
-          ></app-activity-log-item>
-        </div>
+        <!-- <div class="activity-list pl-4 pr-4 pb-4"> -->
+      <app-activity-log-item
+        [logs]="logs"
+        [formatTimeOrDate]="formatTimeOrDate"
+        [level]="'organization'"
+      ></app-activity-log-item>
+        <!-- </div> -->
 
 
   </div>

@@ -1,42 +1,80 @@
-<div>
+<div class="d-flex flex-column">
 
-    <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
-  
-      <div class="d-flex flex-column pt-3 pl-5 pr-5">
-        <main>
-          <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+  <div class="report-header d-flex align-center justify-between">
+
+    <div routerLink="/dashboard" class="logo d-flex align-center">
+      <a href="/dashboard">
+        <img src="../../../favicon.png" alt="logo" width="40px">
+      </a>
       
-          <div *ngIf="!reportStatsLoading">
-          <edit-report-content
-              [reportSections]="reportSections"
-              [data]="mockData"
-            ></edit-report-content>
-          </div>
-  
-        </main>
-      </div>
-  
-      <div class="side-panel d-flex flex-column p-3">
-        
-        <div *ngIf="schedulingOption" class="p-3 block d-flex flex-column gap-2">
-          <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div>
-          <div>Date Preset: {{schedulingOption.datePreset}}</div>
-          <div>Frequency: {{schedulingOption.jobData.frequency}}</div>
-          <div>Review before sending: {{schedulingOption.jobData.reviewNeeded ? 'yes' : 'no'}}</div>
-          <div>Next run: {{schedulingOption.nextRun}}</div>
-          
+    </div>
+
+    <p *ngIf="changesMade">Unsaved changes made</p>
+
+    <div *ngIf="schedulingOption" class=" d-flex  gap-5">
+      <!-- <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div> -->
+      <div>Frequency: {{schedulingOption.jobData.frequency | titlecase}} </div>
+      <!-- <div>Review before sending: {{schedulingOption.jobData.reviewNeeded ? 'yes' : 'no'}}</div> -->
+      <div>Next sending<br>{{schedulingOption.nextRun | date:'MMM d, yyyy h:mm'}}</div>
+    </div>
+
+    <div class="d-flex align-center justify-end">
+      <button (click)="isPreviewMode = !isPreviewMode" class="mr-3">
+        Preview
+      </button>
+      <select [(ngModel)]="selectedDatePreset" class="mr-3" (change)="onDatePresetChange($event)">
+        <option *ngFor="let preset of reportsDataService.DATE_PRESETS" [value]="preset.value">
+          {{ preset.text }}
+        </option>
+      </select>
+      <button (click)="editScheduleConfiguration()">
+        Scheduling configuration
+      </button>
+      <button class="blue ml-3" (click)="saveConfiguration()">Save</button>
+    </div>
+
+  </div>
+
+  <div style="display: grid; grid-template-columns: 0% 80% 20%; gap: 0%; background-color: #f9fafb; " 
+  [ngStyle]="{'grid-template-columns': isPreviewMode ? '10% 80% 10%' : '0% 80% 20%'}">
+
+  <div></div>
+
+    <div 
+    class="d-flex flex-column pt-3 pl-5 pr-5"
+    style="
+    background-color: #f9fafb; 
+    overflow-y: auto; 
+    height: calc(100vh - 16px - 16px - 16px - 16px - 16px - 16px);
+    /* max-width: 1395px; */
+    "
+    >
+      <main>
+        <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+    
+        <div *ngIf="!reportStatsLoading">
+        <edit-report-content
+            [reportSections]="reportSections"
+            [data]="mockData"
+            [selectedDatePresetText]="selectedDatePresetText"
+            [reportTitle]="reportTitle"
+          ></edit-report-content>
         </div>
 
-        <button class="blue mb-3" (click)="editDelivery()">
-          Edit Delivery
-        </button>
-  
-        <edit-metrics
-          [(reportSections)]="reportSections"
-        ></edit-metrics>
-  
-      </div>
+      </main>
     </div>
-  
+
+    <div class="side-panel d-flex flex-column p-3" *ngIf="!isPreviewMode">
+      
+      
+
+      <edit-metrics
+        [(reportSections)]="reportSections"
+        [(reportTitle)]="reportTitle"
+      ></edit-metrics>
+
+    </div>
   </div>
+  
+</div>
   

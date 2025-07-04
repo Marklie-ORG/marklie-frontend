@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import Sortable from 'sortablejs';
 import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import { MetricsService } from 'src/app/services/metrics.service';
 
@@ -8,6 +9,25 @@ import { MetricsService } from 'src/app/services/metrics.service';
   styleUrl: './edit-metrics.component.scss'
 })
 export class EditMetricsComponent {
+
+  private sectionsSortable: Sortable | null = null;
+
+  @ViewChild('sectionsContainer', { static: false }) set sectionsContainer(el: ElementRef | undefined) {
+    if (this.sectionsSortable) {
+      this.sectionsSortable.destroy();
+      this.sectionsSortable = null;
+    }
+
+    if (el) {
+      this.sectionsSortable = Sortable.create(el.nativeElement, {
+        animation: 200,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        onEnd: (event) => this.reorderSections(event),
+      });
+    }
+  }
 
   @Input() reportSections: ReportSection[] = [];
   @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
@@ -19,12 +39,12 @@ export class EditMetricsComponent {
   expandedSections: boolean[] = [];
 
   toggles: { [key: string]: boolean } = {
-    main: false,
+    main: true,
     header: false,
-    mainKPIs: true,
+    kpis: false,
     graphs: false,
-    bestCreatives: false,
-    bestCampaigns: false
+    ads: false,
+    campaigns: false
   }
 
   mainKPIs: ReportSection | undefined = undefined;
@@ -57,6 +77,7 @@ export class EditMetricsComponent {
       this.expandedSections = new Array(this.reportSections.length).fill(false);
     }
     if (this.reportSections) {
+      console.log(this.reportSections)
       this.mainKPIs = this.reportSections.find(section => section.key === 'kpis');
       this.graphs = this.reportSections.find(section => section.key === 'graphs');
       this.bestCreatives = this.reportSections.find(section => section.key === 'ads');
@@ -85,6 +106,13 @@ export class EditMetricsComponent {
       ...this.reportSections
     ];
     this.reportSectionsChange.emit(reportSections);
+  }
+
+  reorderSections(event: Sortable.SortableEvent) {
+    const movedSection = this.reportSections.splice(event.oldIndex!, 1)[0];
+    this.reportSections.splice(event.newIndex!, 0, movedSection);
+    this.reportSections.forEach((s, index) => s.order = index);
+    this.reportSections.sort((a, b) => a.order - b.order);
   }
   
 }

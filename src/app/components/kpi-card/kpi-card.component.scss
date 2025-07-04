@@ -3,7 +3,9 @@
     padding: 16px;
     border-radius: 10px;
     // box-shadow: 0 0.5px 1px #CADEF7;
-    border: 0.5px solid #CADEF7;
+    // border: 0.5px solid #CADEF7;
+    box-shadow: var(--box-shadow);
+    border: var(--block-border);
     transition: 0.2s ease-in-out;
     cursor: grab;
   }

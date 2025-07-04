@@ -4,7 +4,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
-import { GetAvailableMetricsResponse, Metric, Metrics, ReportService } from 'src/app/services/api/report.service';
+import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, Metrics, ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 
@@ -24,6 +24,8 @@ export interface Data {
   campaigns: any[];
   graphs: any[];
 }
+
+
 
 @Component({
   selector: 'schedule-report',
@@ -65,14 +67,43 @@ export class ScheduleReportComponent implements OnInit {
 
   reportTitle: string = 'Report Title';
 
+  selectedDatePreset: string = 'last_7d';
+
+  selectedDatePresetText: string | undefined = undefined;
+
+  messages: {
+    whatsapp: string,
+    slack: string,
+    email: {
+      title: string,
+      body: string,
+    }
+  } = {
+    whatsapp: '',
+    slack: '',
+    email: {
+      title: '',
+      body: ''
+    }
+  }
+
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private reportService: ReportService,
     private mockReportService: MockReportService,
-    private reportsDataService: ReportsDataService
-  ) {}
+    public reportsDataService: ReportsDataService,
+    private reportsService: ReportService
+  ) {
+    // this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.selectedDatePreset)?.text || '';
+    this.updateSelectedDatePresetText();
+  }
+
+  onDatePresetChange(event: any) {
+    console.log(event)
+    this.updateSelectedDatePresetText();
+  }
 
   async ngOnInit() {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
@@ -86,12 +117,11 @@ export class ScheduleReportComponent implements OnInit {
         section.metrics[i].enabled = true;
       }
     });
-
-    // console.log(this.reportSections)
-
-    // this.initMetricSelections();
+    
     this.mockData = this.mockReportService.generateMockData();
     this.reportStatsLoading = false;
+
+    // this.editScheduleConfiguration();
   }
 
   ngOnChanges() {
@@ -99,20 +129,16 @@ export class ScheduleReportComponent implements OnInit {
       console.log(this.reportSections)
       this.reportSections.sort((a, b) => a.order - b.order);
     }
+    if (this.selectedDatePreset) {
+      this.updateSelectedDatePresetText();
+    }
   }
 
-  // private initMetricSelections(): void {
-
-  //   const initSelection = (keys: string[], selectedMetrics: string[]) => keys.reduce((acc, k) => ({ ...acc, [k]: selectedMetrics.includes(k) }), {});
-
-  //   this.metricSelections = {
-  //     kpis: initSelection(this.availableMetrics.kpis, this.availableMetrics.kpis.slice(0, 4)),
-  //     graphs: initSelection(this.availableMetrics.graphs, this.availableMetrics.graphs.slice(0, 4)),
-  //     ads: initSelection(this.availableMetrics.ads, this.availableMetrics.ads.slice(0, 4)),
-  //     campaigns: initSelection(this.availableMetrics.campaigns, this.availableMetrics.campaigns.slice(0, 4)),
-  //   }
-
-  // }
+  updateSelectedDatePresetText() {
+    if (this.selectedDatePreset) {
+      this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.selectedDatePreset)?.text || '';
+    }
+  }
 
   dropSection(event: CdkDragDrop<ReportSection[]>): void {
     moveItemInArray(this.reportSections, event.previousIndex, event.currentIndex);
@@ -124,7 +150,7 @@ export class ScheduleReportComponent implements OnInit {
     console.log(this.reportSections)
   }
 
-  scheduleReportDelivery() {
+  editScheduleConfiguration() {
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
       data: {
@@ -132,22 +158,45 @@ export class ScheduleReportComponent implements OnInit {
         clientUuid: this.clientUuid,
         // metricSelections: this.metricSelections,
         schedule: this.schedule,
-        messages: {
-          whatsapp: '',
-          slack: '',
-          email: {
-            title: '',
-            body: ''
-          }
-        }
+        messages: this.messages,
+        datePreset: this.selectedDatePreset,
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+      if (!result) {
+        return;
+      }
       // this.loadClientDetails();
+      this.schedule = result.schedule;
+      this.selectedDatePreset = result.datePreset;
+      this.messages = result.messages;
+      this.updateSelectedDatePresetText();
+
+      this.saveConfiguration();
     });
   }
 
+  async saveConfiguration() {
+    if (!this.reportSections || !this.schedule) {
+      return;
+    }
 
+    const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
+
+    const payload: CreateScheduleRequest = {
+      reportName: this.reportTitle,
+      ...(this.schedule),
+      metrics: selections,
+      datePreset: this.selectedDatePreset,
+      clientUuid: this.clientUuid,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      messages: this.messages
+    };
+
+    const response = await this.reportsService.createSchedule(payload) as { uuid: string };
+    this.router.navigate(['/edit-report', response.uuid]);
+  }
 
 }

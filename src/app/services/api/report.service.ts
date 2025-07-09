@@ -178,6 +178,10 @@ export class ReportService {
     return firstValueFrom(this.http.put(`${this.apiUrl}/reports/scheduling-option/${scheduleUuid}`, data));
   }
 
+  sendAfterReviewing(reportUuid: string): Promise<any> {
+    return firstValueFrom(this.http.post(`${this.apiUrl}/reports/send-after-review`, {reportUuid: reportUuid}));
+  }
+
   deleteSchedule(scheduleUuid: string): Promise<any> {
     return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
   }

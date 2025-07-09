@@ -5,10 +5,6 @@ import {Data, ReportSection} from '../schedule-report/schedule-report.component'
 import {MatDialog} from '@angular/material/dialog';
 import {MetricsService} from 'src/app/services/metrics.service';
 import {ReportsDataService} from 'src/app/services/reports-data.service';
-// import {createInstance, Environment} from "@loomhq/record-sdk";
-// import {isSupported} from "@loomhq/record-sdk/is-supported";
-// import {oembed} from '@loomhq/loom-embed';
-
 
 @Component({
   selector: 'app-review-report',
@@ -24,7 +20,7 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
     graphs: []
   }
 
-  reportId: string | null = null;
+  reportUuid: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = {};
   reportSections: ReportSection[] = []
 
@@ -42,12 +38,9 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.reportId = params['id'];
+      this.reportUuid = params['id'];
       await this.loadReport();
     });
-
-    await this.initializeLoomSDK()
-
   }
 
 
@@ -59,9 +52,9 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
   }
 
   private async loadReport() {
-    if (!this.reportId) return;
+    if (!this.reportUuid) return;
     try {
-      const res = await this.reportService.getReport(this.reportId);
+      const res = await this.reportService.getReport(this.reportUuid);
       const data = res.data[0];
       this.availableMetrics = await this.reportService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
@@ -69,7 +62,6 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
       this.generateMockData(data);
     } catch (error) {
       console.error('Error loading report:', error);
-      // Handle error, e.g., show a message to the user
     }
   }
 
@@ -84,63 +76,17 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
     window.open(url, '_blank');
   }
 
-  async save() {
-    if (!this.reportId) return;
+  async sendReport() {
+    if (!this.reportUuid) return;
     try {
       const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
-      await this.reportService.updateReportMetricsSelections(this.reportId, metricsSelections);
+      await this.reportService.updateReportMetricsSelections(this.reportUuid, metricsSelections);
+
+      await this.reportService.sendAfterReviewing(this.reportUuid)
       console.log('Report saved successfully!');
-      // Optionally, show a success message
     } catch (error) {
       console.error('Error saving report:', error);
-      // Handle error, e.g., show an error message
     }
-  }
-
-  // New method to initialize Loom SDK
-  private async initializeLoomSDK() {
-    // const { supported, error } = await isSupported();
-
-    // if (!supported) {
-    //   console.warn(`Loom is not supported: ${error}`);
-    //   return;
-    // }
-
-    const BUTTON_ID = "loom-record-sdk-button";
-    const root = document.getElementById("root");
-    console.log(root);
-    if (!root) {
-      return;
-    }
-
-    root.innerHTML = `<button id="${BUTTON_ID}">Record</button>`;
-
-    const button = document.getElementById(BUTTON_ID);
-
-    if (!button) {
-      return;
-    }
-
-    console.log(button);
-
-    // const { configureButton } = await createInstance({
-    //   publicAppId: "22495e2c-fa7c-4ec0-ab4a-7910e51e7bde",
-    //   mode: "standard",
-    //   environment: Environment.Development,
-    //   config: { insertButtonText: "hello world" }
-    // });
-
-    // configureButton({ element: button, hooks: {
-    //   onStart: ()=> {
-    //     console.log("start")
-    //   },
-    //     onRecordingComplete: ()=> {
-    //       console.log("complete")
-    //     },
-    //     onUploadComplete: ()=> {
-    //       console.log("upload")
-    //     }
-    //   } });
   }
 
 }

@@ -47,7 +47,7 @@ export class ScheduleReportComponent implements OnInit {
     dayOfMonth: 1,
     intervalDays: 1,
     cronExpression: '',
-    reviewNeeded: false,
+    reviewRequired: false,
   };
   clientUuid: string = '';
   reportStatsLoading = true;
@@ -110,6 +110,7 @@ export class ScheduleReportComponent implements OnInit {
 
     this.availableMetrics = await this.reportService.getAvailableMetrics();
 
+    console.log(this.availableMetrics);
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
     this.reportSections.forEach(section => {
@@ -117,7 +118,7 @@ export class ScheduleReportComponent implements OnInit {
         section.metrics[i].enabled = true;
       }
     });
-    
+
     this.mockData = this.mockReportService.generateMockData();
     this.reportStatsLoading = false;
 

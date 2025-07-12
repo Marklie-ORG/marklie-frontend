@@ -52,7 +52,7 @@ export interface Schedule {
   dayOfMonth: number
   intervalDays: number
   cronExpression: string
-  reviewNeeded: boolean
+  reviewRequired: boolean
 }
 
 export interface Metric {

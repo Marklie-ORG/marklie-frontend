@@ -33,7 +33,7 @@ export class EditMetricsComponent {
   @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
   @Input() reportTitle: string | undefined = undefined;
   @Output() reportTitleChange = new EventEmitter<string>();
-  
+
 
   // Track which sections are expanded in the accordion
   expandedSections: boolean[] = [];
@@ -77,8 +77,9 @@ export class EditMetricsComponent {
       this.expandedSections = new Array(this.reportSections.length).fill(false);
     }
     if (this.reportSections) {
-      console.log(this.reportSections)
       this.mainKPIs = this.reportSections.find(section => section.key === 'kpis');
+      console.log(this.mainKPIs)
+
       this.graphs = this.reportSections.find(section => section.key === 'graphs');
       this.bestCreatives = this.reportSections.find(section => section.key === 'ads');
       this.bestCampaigns = this.reportSections.find(section => section.key === 'campaigns');
@@ -96,8 +97,8 @@ export class EditMetricsComponent {
   onMetricsChange(): void {
     if (!this.reportSections.length) return;
 
-    
-    this.reportSections.forEach(section => { 
+
+    this.reportSections.forEach(section => {
       if (!section.metrics.map(metric => metric.enabled).includes(true)) section.enabled = false; // if all metrics are disabled, disable the section
       else if (!section.enabled && section.metrics.map(metric => metric.enabled).includes(true)) section.enabled = true; // if any metric is enabled, enable the section
     });
@@ -114,5 +115,5 @@ export class EditMetricsComponent {
     this.reportSections.forEach((s, index) => s.order = index);
     this.reportSections.sort((a, b) => a.order - b.order);
   }
-  
+
 }

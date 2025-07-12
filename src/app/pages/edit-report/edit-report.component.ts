@@ -65,7 +65,7 @@ export class EditReportComponent {
     dayOfMonth: 1,
     intervalDays: 1,
     cronExpression: '',
-    reviewNeeded: false,
+    reviewRequired: false,
   };
   clientUuid: string = '';
   reportStatsLoading = false;
@@ -138,7 +138,7 @@ export class EditReportComponent {
       dayOfMonth: schedulingOption.jobData.dayOfMonth,
       intervalDays: schedulingOption.jobData.intervalDays,
       cronExpression: schedulingOption.cronExpression,
-      reviewNeeded: schedulingOption.reviewNeeded,
+      reviewRequired: schedulingOption.reviewNeeded,
     };
 
     this.reportSections.forEach(section => {
@@ -209,7 +209,7 @@ export class EditReportComponent {
   }
 
   async saveConfiguration() {
-    
+
     if (!this.reportSections || !this.schedule) {
       return;
     }

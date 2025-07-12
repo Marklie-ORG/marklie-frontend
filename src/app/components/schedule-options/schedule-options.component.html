@@ -45,8 +45,8 @@
       </div>
 
       <div class="toggle-container w-100">
-        <div class="toggle-button active p-2" [class.active]="schedule.reviewRequired" (click)="schedule.reviewNeeded = true" >Review report before sending to client</div>
-        <div class="toggle-button p-2" [class.active]="!schedule.reviewRequired" (click)="schedule.reviewNeeded = false" >Send report automatically to client without review</div>
+        <div class="toggle-button active p-2" [class.active]="schedule.reviewRequired" (click)="schedule.reviewRequired = true" >Review report before sending to client</div>
+        <div class="toggle-button p-2" [class.active]="!schedule.reviewRequired" (click)="schedule.reviewRequired = false" >Send report automatically to client without review</div>
       </div>
 
       <div class="d-flex justify-end gap-2 mt-5">

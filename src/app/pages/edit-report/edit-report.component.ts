@@ -18,7 +18,7 @@ export interface SchedulingOption {
   reportType: string
   jobData: JobData
   timezone: string
-  reviewNeeded: boolean
+  reviewRequired: boolean
   lastRun: any
   nextRun: string
   bullJobId: string
@@ -35,7 +35,7 @@ interface JobData {
   datePreset: string
   dayOfMonth: number
   intervalDays: number
-  reviewNeeded: boolean
+  reviewRequired: boolean
   cronExpression: string
   organizationUuid: string,
   messages: {
@@ -138,7 +138,7 @@ export class EditReportComponent {
       dayOfMonth: schedulingOption.jobData.dayOfMonth,
       intervalDays: schedulingOption.jobData.intervalDays,
       cronExpression: schedulingOption.cronExpression,
-      reviewRequired: schedulingOption.reviewNeeded,
+      reviewRequired: schedulingOption.reviewRequired,
     };
 
     this.reportSections.forEach(section => {

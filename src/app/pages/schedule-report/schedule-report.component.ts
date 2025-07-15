@@ -196,7 +196,7 @@ export class ScheduleReportComponent implements OnInit {
     };
 
     const response = await this.reportsService.createSchedule(payload) as { uuid: string };
-    this.router.navigate([`/client/${this.clientUuid}`, response.uuid]);
+    this.router.navigate([`/client/${this.clientUuid}`]);
   }
 
 }

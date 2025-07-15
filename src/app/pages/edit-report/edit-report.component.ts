@@ -221,7 +221,7 @@ export class EditReportComponent {
       ...(this.schedule),
       metrics: selections,
       datePreset: this.schedulingOption!.datePreset,
-      clientUuid: this.clientUuid,
+      clientUuid: this.schedulingOption!.client,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       messages: this.schedulingOption!.jobData.messages
     };

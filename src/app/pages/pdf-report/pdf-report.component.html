@@ -4,7 +4,7 @@
   <div *ngIf="!reportStatsLoading">
 
     <!-- If multiple accounts -->
-    <ng-container *ngIf="reportData.length > 1; else singleAccountBlock">
+    <ng-container *ngIf="reportData.length >= 1; else singleAccountBlock">
       <div class="account-block" *ngFor="let account of reportData; let i = index">
         <h2 class="account-title">
           {{ account.accountName || 'Ad Account ' + (account.adAccountId) }}

@@ -25,7 +25,7 @@ export interface Report {
   isActive: boolean,
   nextRun:	Date
   dataPreset:	string
-  reviewNeeded:	boolean
+  reviewRequired:	boolean
 }
 
 export interface CreateScheduleRequest extends Schedule {
@@ -52,7 +52,7 @@ export interface Schedule {
   dayOfMonth: number
   intervalDays: number
   cronExpression: string
-  reviewNeeded: boolean
+  reviewRequired: boolean
 }
 
 export interface Metric {
@@ -144,7 +144,7 @@ export interface Campaign {
 
 export interface Metadata {
   datePreset: string
-  reviewNeeded: boolean
+  reviewRequired: boolean
   metricsSelections: any
 }
 

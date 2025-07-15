@@ -259,13 +259,15 @@ button {
     color: #333;
     padding: 8px 20px;
     font-size: 14px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 400;
     box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
     letter-spacing: .03rem;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    background-color: #f7f7f7;
+    background-color: #fff;
+    // background-color: #fff;
+    // border: 2px solid #e3e3e3;
 
     &:active {
         transform: scale(0.98);
@@ -307,7 +309,7 @@ select {
     border: none;
     color: #333;
     padding: 8px 26px 8px 10px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: 500;
     font-size: 0.9rem;
     box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
@@ -316,47 +318,39 @@ select {
     transition: all 0.2s ease-in-out;
     outline: none;
     appearance: none;
-    background-color: #f7f7f7;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    // background-color: #f7f7f7;
+    background-color: #fff;
+    // border: 2px solid #e3e3e3;
+    background-image: url("./assets/img/icons/arrow_down.svg");
     background-repeat: no-repeat;
     background-position: right 10px top 50%;
     background-size: 10px auto;
-    text-align: center;
+    text-align: left;
 
-    &:hover {
-        // background-color: rgb(1 147 15);
-        box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
-    }
+    // &:hover {
+    //     box-shadow: rgb(13 16 23 / 54%) 0px 1.3px 1px 0px;
+    // }
 
     option {
-        // background: rgb(0, 162, 16);
-        // color: #fff;
         font-weight: 600;
         font-size: 1rem;
         padding: 10px 14px;
-
-        // &:hover {
-        //     background: rgb(1 147 15);
-        // }
     }
 }
 
 input, textarea {
 
     &.text {
-        // width: 100%;
         font-size: 1rem;
-        padding: 8px 12px;
+        padding: 7px 26px 7px 10px;
         width: calc(100% - 28px);
-        // width: calc(100% - 24px);
         border-radius: 6px;
-        // border: 2px solid #2d2ab1c2;
         border: 1.5px solid #bfbfbf;
         transition: all 0.2s ease-in-out;
         &:focus {
-        outline: none;
-        border-color: #82baff !important;
-        box-shadow: 0 0 0px 3px #62a9ff47;
+            outline: none;
+            border-color: #82baff !important;
+            box-shadow: 0 0 0px 3px #62a9ff47;
         }
     }
 

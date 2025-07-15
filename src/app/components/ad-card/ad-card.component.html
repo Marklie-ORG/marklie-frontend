@@ -1,6 +1,6 @@
 <div class="ad-grid" >
   <div class="ad-card" *ngFor="let ad of ads; let i = index">
-    <div class="ad-image-container">
+    <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
       <img class="ad-media" [src]="ad.thumbnailUrl"/>
     </div>
     <div class="metrics" #adsGridContainer>
@@ -13,6 +13,6 @@
         </div>
       </ng-container>
     </div>
-    <button (click)="openAd(ad.sourceUrl)" class="width-100">View Ad</button>
+    <!-- <button (click)="openAd(ad.sourceUrl)" class="width-100">View Ad</button> -->
   </div>
 </div>

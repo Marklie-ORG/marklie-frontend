@@ -1,25 +1,68 @@
-import { Injectable } from '@angular/core';
-import { GetAvailableMetricsResponse, Metrics, ReportService } from './api/report.service';
-import { MetricSectionKey, ReportSection } from '../pages/schedule-report/schedule-report.component';
-import { SchedulingOption } from '../pages/edit-report/edit-report.component';
+import {Injectable} from '@angular/core';
+import {GetAvailableMetricsResponse, Metrics, ReportService} from './api/report.service';
+import {MetricSectionKey, ReportSection} from '../pages/schedule-report/schedule-report.component';
+import {SchedulingOption} from '../pages/edit-report/edit-report.component';
+import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportsDataService {
+  readonly chartConfigs = [
+    { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
+    { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
+    { key: 'conversionValue', label: 'Conversion Value', color: '#c0392b', format: (v: any) => `$${v}` },
+    { key: 'purchases', label: 'Purchases', color: '#e74c3c', format: (v: any) => `${v}` },
+    { key: 'addToCart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
+    { key: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
+    { key: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
+    { key: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
+    { key: 'ctr', label: 'CTR', color: '#34495e', format: (v: any) => `${v}%` },
+    { key: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
+    { key: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
+    { key: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
+  ];
 
   availableMetrics: GetAvailableMetricsResponse = {};
 
+  readonly DATE_PRESETS = [
+    { value: 'today', text: 'Today' },
+    { value: 'yesterday', text: 'Yesterday' },
+    { value: 'this_month', text: 'This Month' },
+    { value: 'last_month', text: 'Last Month' },
+    { value: 'this_quarter', text: 'This Quarter' },
+    { value: 'last_3d', text: 'Last 3 Days' },
+    { value: 'last_7d', text: 'Last 7 Days' },
+    { value: 'last_14d', text: 'Last 14 Days' },
+    { value: 'last_28d', text: 'Last 28 Days' },
+    { value: 'last_30d', text: 'Last 30 Days' },
+    { value: 'last_90d', text: 'Last 90 Days' },
+    { value: 'last_week_mon_sun', text: 'Last Week (Mon-Sun)' },
+    { value: 'last_week_sun_sat', text: 'Last Week (Sun-Sat)' },
+    { value: 'last_quarter', text: 'Last Quarter' },
+    { value: 'last_year', text: 'Last Year' },
+    { value: 'this_week_mon_today', text: 'This Week (Mon-Today)' },
+    { value: 'this_week_sun_today', text: 'This Week (Sun-Today)' },
+    { value: 'this_year', text: 'This Year' },
+    { value: 'maximum', text: 'Maximum' }
+  ];
+  readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
   constructor(
     private reportService: ReportService
-  ) { 
-    
+  ) {
+
+  }
+
+  getChartConfigs() {
+    return this.chartConfigs;
   }
 
   async getInitiatedReportsSections(
     availableMetrics?: GetAvailableMetricsResponse,
     schedulingOption?: SchedulingOption
-  ): Promise<ReportSection[]> { 
+  ): Promise<ReportSection[]> {
 
     if (!availableMetrics) {
       availableMetrics = await this.reportService.getAvailableMetrics();
@@ -27,7 +70,7 @@ export class ReportsDataService {
 
     const initMetric = (key: string) => {
       if (!availableMetrics) return [];
-      
+
       const metrics = availableMetrics[key] || [];
 
       if (!schedulingOption) {
@@ -39,7 +82,7 @@ export class ReportsDataService {
         let order = metricIndex === -1 ? i : metricIndex;
         return { name: metric, order: order, enabled: false }
       })
-      
+
     }
 
     // section.metrics.forEach(metric => {
@@ -47,38 +90,36 @@ export class ReportsDataService {
       //   metric.order = metricIndex;
       // });
 
-    const reportSections: ReportSection[] = [
-      { 
-        key: 'kpis', 
-        title: 'Main KPIs', 
-        enabled: true, 
-        metrics: initMetric('kpis'), 
-        order: schedulingOption ?  schedulingOption.jobData.metrics.kpis.order : 1
+    return [
+      {
+        key: 'kpis',
+        title: 'Main KPIs',
+        enabled: true,
+        metrics: initMetric('kpis'),
+        order: schedulingOption ? schedulingOption.jobData.metrics.kpis.order : 1
       },
-      { 
-        key: 'graphs', 
-        title: 'Graphs', 
-        enabled: true, 
-        metrics: initMetric('graphs'), 
-        order: schedulingOption ?  schedulingOption.jobData.metrics.graphs.order : 2 
+      {
+        key: 'graphs',
+        title: 'Graphs',
+        enabled: true,
+        metrics: initMetric('graphs'),
+        order: schedulingOption ? schedulingOption.jobData.metrics.graphs.order : 2
       },
-      { 
-        key: 'ads', 
-        title: 'Best creatives', 
-        enabled: true, 
-        metrics: initMetric('ads'), 
-        order: schedulingOption ?  schedulingOption.jobData.metrics.ads.order : 3 
+      {
+        key: 'ads',
+        title: 'Best creatives',
+        enabled: true,
+        metrics: initMetric('ads'),
+        order: schedulingOption ? schedulingOption.jobData.metrics.ads.order : 3
       },
-      { 
-        key: 'campaigns', 
-        title: 'Best campaigns', 
-        enabled: true, 
-        metrics: initMetric('campaigns'), 
-        order: schedulingOption ?  schedulingOption.jobData.metrics.campaigns.order : 4 
+      {
+        key: 'campaigns',
+        title: 'Best campaigns',
+        enabled: true,
+        metrics: initMetric('campaigns'),
+        order: schedulingOption ? schedulingOption.jobData.metrics.campaigns.order : 4
       }
     ];
-
-    return reportSections;
   }
 
   MetricsSelectionsToReportSections(
@@ -129,7 +170,7 @@ export class ReportsDataService {
               allMetricsForCategory = enabledMetricsFromSource;
             }
 
-            
+
 
             // Re-assign sequential 0-indexed order for all metrics in the combined list
             allMetricsForCategory.forEach((metric, index) => {
@@ -190,6 +231,124 @@ export class ReportsDataService {
     });
 
     return selections;
+  }
+
+  getDateRangeLabel(graphs: any[]): string {
+    if (!graphs.length) return '';
+    const start = new Date(graphs[0].date_start);
+    const end = new Date(graphs.at(-1)?.date_stop || graphs.at(-1)?.date_start);
+    const diffDays = Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    return `${start.toLocaleDateString()} – ${end.toLocaleDateString()} (${diffDays} days)`;
+  }
+
+
+  aggregateReports(data: any[]): any {
+    const mergedKPIs: any = {};
+    const mergedGraphs: any[] = [];
+    const mergedCampaigns: any[] = [];
+    const mergedAds: any[] = [];
+
+    const kpiKeys = Object.keys(data[0]?.KPIs || {});
+    for (const key of kpiKeys) {
+      const total = data.reduce((sum, d) => sum + parseFloat(d.KPIs[key] || 0), 0);
+      mergedKPIs[key] = (total / data.length).toFixed(2);
+    }
+
+    const graphLength = data[0]?.graphs.length || 0;
+    for (let i = 0; i < graphLength; i++) {
+      const entry = { ...data[0].graphs[i] };
+      for (const key of Object.keys(entry)) {
+        if (key === 'date_start' || key === 'date_stop') continue;
+        const avg = data.reduce((sum, d) => sum + parseFloat(d.graphs[i]?.[key] || 0), 0) / data.length;
+        entry[key] = avg.toFixed(2);
+      }
+      mergedGraphs.push(entry);
+    }
+
+    mergedCampaigns.push(...data.flatMap(d => d.campaigns || []));
+    mergedAds.push(...data.flatMap(d => d.ads || []).sort((a, b) => Number(b.purchases) - Number(a.purchases)).slice(0, 10));
+
+    return { KPIs: mergedKPIs, graphs: mergedGraphs, campaigns: mergedCampaigns, ads: mergedAds };
+  }
+
+  formatMetricLabel(metric: string): string {
+    return metric
+      .replace(/_/g, ' ')
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, c => c.toUpperCase());
+  }
+
+  formatMetricValue(metric: string, value: any): string {
+    const num = typeof value === 'number' ? value : parseFloat(value);
+    if (isNaN(num)) return value ?? '—';
+
+    const rounded = num.toFixed(2);
+    if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
+    if (metric.includes('ctr')) return `${rounded}%`;
+    if (metric.includes('roas')) return `${rounded}x`;
+    return Number(num).toLocaleString();
+  }
+
+  getMetricStyle(metric: string): string {
+    if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
+    if (['spend', 'cpc'].includes(metric)) return 'primary';
+    return '';
+  }
+
+  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
+    const labels = graphs.map(g =>
+      new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    );
+
+    for (const config of this.getChartConfigs()) {
+      const canvasId = `${prefix}_${config.key}_Chart`;
+      console.log(canvasId)
+      const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+      if (!canvas) continue;
+
+      const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
+
+      const existingChart = Chart.getChart(canvasId);
+      if (existingChart) {
+        existingChart.destroy();
+      }
+
+      chartStore[canvasId] = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: config.label,
+            data,
+            borderColor: config.color,
+            pointBackgroundColor: config.color,
+            tension: 0.3,
+            pointRadius: 3,
+            fill: false,
+          }],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `${config.label} (${dateLabel})`,
+              font: { size: 16 },
+            },
+            datalabels: { display: false },
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: {
+                callback: value => config.format(Number(value).toFixed(0))
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    }
   }
 
 }

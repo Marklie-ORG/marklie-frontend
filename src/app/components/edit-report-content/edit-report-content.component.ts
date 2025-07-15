@@ -62,7 +62,8 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
 
   @Input() reportSections: ReportSection[] = [];
   @Input() data: Data | undefined = undefined;
-  @Input() reportTitle: string = 'Report Title';
+  @Input() reportTitle: string | undefined = 'Report Title';
+  @Input() selectedDatePresetText: string | undefined = undefined;
 
   constructor(
     private dialog: MatDialog,
@@ -85,6 +86,7 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
     const movedSection = this.reportSections.splice(event.oldIndex!, 1)[0];
     this.reportSections.splice(event.newIndex!, 0, movedSection);
     this.reportSections.forEach((s, index) => s.order = index);
+    this.reportSections.sort((a, b) => a.order - b.order);
   }
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
+import { CreateScheduleRequest, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { Data, ReportSection } from '../schedule-report/schedule-report.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
@@ -18,7 +18,7 @@ export interface SchedulingOption {
   reportType: string
   jobData: JobData
   timezone: string
-  reviewNeeded: boolean
+  reviewRequired: boolean
   lastRun: any
   nextRun: string
   bullJobId: string
@@ -35,7 +35,7 @@ interface JobData {
   datePreset: string
   dayOfMonth: number
   intervalDays: number
-  reviewNeeded: boolean
+  reviewRequired: boolean
   cronExpression: string
   organizationUuid: string,
   messages: {
@@ -55,6 +55,8 @@ interface JobData {
 })
 export class EditReportComponent {
 
+  changesMade = false;
+
   schedule: Schedule = {
     reportName: '',
     frequency: 'weekly',
@@ -63,7 +65,7 @@ export class EditReportComponent {
     dayOfMonth: 1,
     intervalDays: 1,
     cronExpression: '',
-    reviewNeeded: false,
+    reviewRequired: false,
   };
   clientUuid: string = '';
   reportStatsLoading = false;
@@ -85,12 +87,20 @@ export class EditReportComponent {
 
   reportSections: ReportSection[] = []
 
+  selectedDatePreset: string = '';
+  selectedDatePresetText: string | undefined = undefined;
+
+  reportTitle: string | undefined = undefined;
+
+  isPreviewMode: boolean = false;
+
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private reportService: ReportService,
     private mockReportService: MockReportService,
-    private reportsDataService: ReportsDataService
+    public reportsDataService: ReportsDataService,
+    private reportsService: ReportService,
   ) {}
 
   ngOnInit() {
@@ -99,10 +109,14 @@ export class EditReportComponent {
 
       this.availableMetrics = await this.reportService.getAvailableMetrics();
 
-      
-
       await this.loadReport();
 
+      this.updateSelectedDatePresetText();
+
+      this.reportTitle = this.schedulingOption?.reportName;
+      this.selectedDatePreset = this.schedulingOption?.datePreset || '';
+
+      // this.editScheduleConfiguration()
     });
   }
 
@@ -124,24 +138,15 @@ export class EditReportComponent {
       dayOfMonth: schedulingOption.jobData.dayOfMonth,
       intervalDays: schedulingOption.jobData.intervalDays,
       cronExpression: schedulingOption.cronExpression,
-      reviewNeeded: schedulingOption.reviewNeeded,
+      reviewRequired: schedulingOption.reviewRequired,
     };
 
-
     this.reportSections.forEach(section => {
-      console.log(section);
-
       section.enabled = schedulingOption.jobData.metrics[section.key].metrics.length > 0;
       section.metrics.forEach(metric => {
         metric.enabled = schedulingOption.jobData.metrics[section.key].metrics.some(m => m.name === metric.name);
       });
-      // section.metrics.forEach(metric => {
-      //   const metricIndex = schedulingOption.jobData.metrics[section.key].metrics.findIndex(m => m.name === metric.name);
-      //   metric.order = metricIndex;
-      // });
     });
-
-    console.log(this.reportSections)
 
   }
 
@@ -169,9 +174,87 @@ export class EditReportComponent {
     // dialogRef.afterClosed().subscribe(result => {
     // });
 
-    dialogRef.componentInstance.scheduleOptionUpdated.subscribe(async () => {
-      await this.loadReport();
+    // dialogRef.componentInstance.scheduleOptionUpdated.subscribe(async () => {
+    //   await this.loadReport();
+    // });
+  }
+
+  editScheduleConfiguration() {
+    const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
+      width: '800px',
+      data: {
+        reportSections: this.reportSections,
+        clientUuid: this.clientUuid,
+        schedule: this.schedule,
+        messages: this.schedulingOption?.jobData.messages,
+        datePreset: this.schedulingOption?.datePreset,
+      }
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      this.schedule = result.schedule;
+      this.schedulingOption!.datePreset = result.datePreset;
+      this.schedulingOption!.jobData.messages = result.messages;
+      this.updateSelectedDatePresetText();
+
+      this.saveConfiguration();
+    });
+  }
+
+  updateSelectedDatePresetText() {
+    if (this.schedulingOption?.datePreset) {
+      this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.schedulingOption?.datePreset)?.text || '';
+    }
+  }
+
+  async saveConfiguration() {
+
+    if (!this.reportSections || !this.schedule) {
+      return;
+    }
+
+    const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
+
+    const payload: CreateScheduleRequest = {
+      // reportName: this.reportTitle,
+      ...(this.schedule),
+      metrics: selections,
+      datePreset: this.schedulingOption!.datePreset,
+      clientUuid: this.clientUuid,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      messages: this.schedulingOption!.jobData.messages
+    };
+
+    console.log(selections)
+    console.log(payload);
+
+    if (!this.schedulingOptionId) {
+      return
+    }
+
+    await this.reportsService.updateSchedulingOption(this.schedulingOptionId, payload);
+    await this.loadReport();
+
+    // try {
+    //   if (this.isEditMode && this.schedulingOptionId) {
+    //     await this.reportsService.updateSchedulingOption(this.schedulingOptionId, payload);
+    //     this.scheduleOptionUpdated.emit();
+    //   } else {
+    //     const response = await this.reportsService.createSchedule(payload) as { uuid: string };
+    //     this.router.navigate(['/edit-report', response.uuid]);
+    //   }
+    //   this.dialogRef.close();
+    // } catch (e) {
+    //   console.error(e);
+    // }
+  }
+
+
+  onDatePresetChange(event: any) {
+    console.log(event)
+    this.schedulingOption!.datePreset = this.selectedDatePreset;
+    this.updateSelectedDatePresetText();
   }
 
 }

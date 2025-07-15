@@ -1,3 +1,7 @@
+:host {
+  margin-top: 10px;
+}
+
 .accordion-item {
   margin-bottom: 8px;
   border-radius: 12px;
@@ -165,6 +169,8 @@ input:checked + .slider::before {
     width: 15px;
     background-color: #eee;
     border-radius: 5px;
+    border: var(--block-border);
+    box-shadow: var(--box-shadow);
   }
 
   /* On mouse-over, add a grey background color */

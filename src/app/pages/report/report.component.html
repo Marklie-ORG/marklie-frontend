@@ -2,6 +2,15 @@
 
   <div *ngIf="reportStatsLoading" class="loading">Loading...</div>
 
+  <div class="account-selector">
+    <select id="account-select" [(ngModel)]="selectedAccountIndex" (change)="onAccountChange()">
+      <option [value]="-1">All Accounts (Average)</option>
+      <option *ngFor="let acc of reportData; let i = index" [value]="i">
+        {{ acc.accountName || 'Ad Account ' + (i + 1) }}
+      </option>
+    </select>
+  </div>
+
   <div *ngIf="!reportStatsLoading">
 
     <!-- KPIs -->
@@ -22,8 +31,7 @@
       <h2 class="section-title">Performance Trends</h2>
       <div class="graph-grid">
         <div class="graph-card" *ngFor="let cfg of chartConfigs">
-          <canvas [id]="cfg.key + 'Chart'"></canvas>
-        </div>
+          <canvas [id]="'account_' + selectedAccountIndex + '_' + cfg.key + '_Chart'"></canvas>        </div>
       </div>
     </div>
 

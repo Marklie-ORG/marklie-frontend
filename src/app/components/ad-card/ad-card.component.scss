@@ -1,9 +1,18 @@
 .ad-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(2, auto);
+  // grid-template-columns: repeat(5, 1fr);
+  // grid-template-rows: repeat(2, auto);
   gap: 20px;
+
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-rows: auto;
   // padding: 20px;
+}
+
+.ad-image-container {
+  height: 240px;
+  overflow: hidden;
+  border-bottom: var(--block-border);
 }
 
 .ad-card {
@@ -15,7 +24,9 @@
   overflow: hidden;
   border-radius: 10px;
     // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  border: 0.8px solid #CADEF7;
+  // border: 0.8px solid #CADEF7;
+  box-shadow: var(--box-shadow);
+    border: var(--block-border);
 }
 
 .metrics {
@@ -35,10 +46,7 @@
 
 }
 
-.ad-image-container {
-  height: 200px;
-  overflow: hidden;
-}
+
 
 .ad-media {
   width: 100%;
@@ -64,9 +72,9 @@ button {
 :host {
   width: 20%;
 
-  .ad-image-container {
-    height: 250px;
-  }
+  // .ad-image-container {
+  //   height: 250px;
+  // }
 
   img {
     width: 100%;

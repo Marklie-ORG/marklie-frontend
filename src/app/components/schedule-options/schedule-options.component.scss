@@ -1,89 +1,210 @@
-.config-step1 {
-    // background: #ffffff;
-    // padding: 32px;
-    // border-radius: 16px;
-    // box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    // width: 100%;
-    // max-width: 640px;
-    // margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
+// {
+//     // background: #ffffff;
+//     // padding: 32px;
+//     // border-radius: 16px;
+//     // box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+//     // width: 100%;
+//     // max-width: 640px;
+//     // margin-bottom: 40px;
+//     display: flex;
+//     flex-direction: column;
+//     gap: 24px;
+
+//     max-height: 85vh;
+//   }
   
-  .config-step1 h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1f2937;
-  }
+  // h3 {
+  //   margin: 0;
+  //   font-size: 1.5rem;
+  //   font-weight: 600;
+  //   color: #1f2937;
+  // }
   
-  .config-step1 .form-row {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  // .form-row {
+  //   display: flex;
+  //   flex-direction: column;
+  //   gap: 8px;
+  // }
   
-  @media (min-width: 600px) {
-    .config-step1 .form-row {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
+  // @media (min-width: 600px) {
+  //   .form-row {
+  //     flex-direction: row;
+  //     align-items: center;
+  //     justify-content: space-between;
+  //   }
   
-    .config-step1 .form-row label {
-      min-width: 160px;
-      margin-bottom: 0;
-    }
-  }
+  //   .form-row label {
+  //     min-width: 160px;
+  //     margin-bottom: 0;
+  //   }
+  // }
   
-  .config-step1 label {
-    font-size: 15px;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 4px;
-  }
+  // label {
+  //   font-size: 15px;
+  //   font-weight: 500;
+  //   color: #374151;
+  //   margin-bottom: 4px;
+  // }
   
-  .config-step1 .form-control {
-    padding: 10px 14px;
-    font-size: 15px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    background-color: #fff;
-    width: 100%;
-    max-width: 280px;
-  }
+  // .form-control {
+  //   padding: 10px 14px;
+  //   font-size: 15px;
+  //   border-radius: 8px;
+  //   border: 1px solid #d1d5db;
+  //   background-color: #fff;
+  //   width: 100%;
+  //   max-width: 280px;
+  // }
   
-  .config-step1 select.form-control {
-    max-width: 280px;
-    width: 100%;
-    min-width: 200px;
-  }
+  // select.form-control {
+  //   max-width: 280px;
+  //   width: 100%;
+  //   min-width: 200px;
+  // }
   
-  input[type="time"].form-control {
-    text-align: center;
-  }
+  // input[type="time"].form-control {
+  //   text-align: center;
+  // }
   
-  .config-step1 .form-control:focus {
-    border-color: #2563eb;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  }
+  // .form-control:focus {
+  //   border-color: #2563eb;
+  //   outline: none;
+  //   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  // }
   
-  .config-step1 .btn {
-    align-self: flex-end;
-    padding: 10px 20px;
-    font-size: 15px;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #22c55e;
-    color: #fff;
-    transition: background 0.3s ease;
-  }
+  // .btn {
+  //   align-self: flex-end;
+  //   padding: 10px 20px;
+  //   font-size: 15px;
+  //   font-weight: 600;
+  //   border: none;
+  //   border-radius: 8px;
+  //   cursor: pointer;
+  //   background: #22c55e;
+  //   color: #fff;
+  //   transition: background 0.3s ease;
+  // }
   
-  .config-step1 .btn:hover {
-    background: #16a34a;
-  }
+  // .btn:hover {
+  //   background: #16a34a;
+  // }
   
+select  {
+  width: 40%;
+}
+
+input {
+  width: calc(40% - 36px) !important;
+}
+
+.toggle-container {
+  display: flex;
+  border-radius: 12px; /* Rounded corners for the container */
+  overflow: hidden; /* Ensures inner elements respect border-radius */
+  // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: var(--box-shadow);
+  background-color: #fff; /* White background for the container */
+  // max-width: 300px; /* Max width for responsiveness */
+  width: 100%; /* Full width up to max-width */
+}
+
+.toggle-button {
+  flex: 1; /* Each button takes equal space */
+  // padding: 12px 20px; /* Padding inside buttons */
+  text-align: center;
+  // font-size: 16px;
+  font-weight: 500;
+  color: #333; /* Default text color */
+  background-color: #fff; /* Default background color */
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover/active states */
+  border: var(--block-border);  
+  outline: none; /* Remove outline on focus */
+  user-select: none; /* Prevent text selection */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-button:first-child {
+  border-top-left-radius: 12px; /* Apply radius to the first button's specific corners */
+  border-bottom-left-radius: 12px;
+}
+
+.toggle-button:last-child {
+  border-top-right-radius: 12px; /* Apply radius to the last button's specific corners */
+  border-bottom-right-radius: 12px;
+}
+
+/* Active state for the selected button */
+.toggle-button.active {
+  // background-color: #1a73e8; /* Blue background for active button */
+  background: #1F8DED;
+  color: #fff; /* White text for active button */
+}
+
+/* Hover effect for non-active buttons */
+.toggle-button:not(.active):hover {
+  background-color: #e6e6e6; /* Slightly darker grey on hover */
+}
+
+
+
+
+
+.accordion-container {
+  width: 100%;
+  // max-width: 500px;
+  background-color: #fff;
+  // border-radius: 8px;
+  // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Ensures content doesn't spill out when collapsed */
+}
+
+.accordion-header {
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+}
+
+.whatsapp-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.arrow-icon {
+  font-size: 0.8em;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate arrow when accordion is open */
+.accordion-header.active .arrow-icon {
+  transform: rotate(180deg); /* Up arrow */
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+  padding: 0 20px; /* Initial padding is 0 */
+  border-radius: 20px;
+}
+
+.accordion-content.show {
+  max-height: 200px; /* Adjust as needed based on your content height */
+  padding: 15px 20px; /* Padding when open */
+}
+
+.accordion-content p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.accordion-content p:last-child {
+  margin-bottom: 0;
+}

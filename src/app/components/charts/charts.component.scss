@@ -10,7 +10,9 @@
     padding: 16px;
     border-radius: 10px;
     // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    border: 0.8px solid #CADEF7;
+    // border: 0.8px solid #CADEF7;
+    box-shadow: var(--box-shadow);
+    border: var(--block-border);
   }
 
   .sortable-drag {

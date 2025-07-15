@@ -38,17 +38,20 @@ export class LogsCardComponent implements OnInit, OnChanges {
         const clientId = log.client?.uuid;
         if (!clientId) continue;
 
-        let conversations: Conversations;
+        const hasSlackConversationId = !!log.metadata?.slackConversationId;
 
-        if (this.conversationCache.has(clientId)) {
-          conversations = this.conversationCache.get(clientId)!;
-        } else {
-          try {
-            conversations = await this.clientService.getSlackAvailableConversations(clientId);
-            this.conversationCache.set(clientId, conversations);
-          } catch (err) {
-            console.error(`Failed to fetch conversations for client ${clientId}`, err);
-            conversations = { channels: [], ims: [] };
+        let conversations: Conversations = { channels: [], ims: [] };
+
+        if (hasSlackConversationId) {
+          if (this.conversationCache.has(clientId)) {
+            conversations = this.conversationCache.get(clientId)!;
+          } else {
+            try {
+              conversations = await this.clientService.getSlackAvailableConversations(clientId);
+              this.conversationCache.set(clientId, conversations);
+            } catch (err) {
+              console.error(`Failed to fetch conversations for client ${clientId}`, err);
+            }
           }
         }
 

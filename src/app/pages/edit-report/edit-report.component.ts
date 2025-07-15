@@ -214,6 +214,9 @@ export class EditReportComponent {
       return;
     }
 
+    console.log(this.schedulingOption)
+
+
     const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
 
     const payload: CreateScheduleRequest = {

@@ -27,9 +27,10 @@ interface ScheduleOptionsMatDialogData {
   styleUrl: './schedule-options.component.scss'
 })
 export class ScheduleOptionsComponent {
-  
+
   @Input() schedule: Schedule | undefined = undefined;
   @Input() isEditMode: boolean = false;
+  @Input() clientUuid: string = "";
   @Input() messages: {
     whatsapp: string,
     slack: string,
@@ -58,7 +59,7 @@ export class ScheduleOptionsComponent {
     slack: false,
     email: false
   }
- 
+
   constructor(
     public reportsDataService: ReportsDataService,
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
@@ -67,17 +68,19 @@ export class ScheduleOptionsComponent {
     this.schedule = data.schedule;
     this.selectedDatePreset = data.datePreset ? data.datePreset : this.reportsDataService.DATE_PRESETS[6].value;
     this.messages = data.messages;
+    this.clientUuid = data.clientUuid;
   }
 
-  
+
   save() {
     this.dialogRef.close({
       schedule: this.schedule,
+      clientUuid: this.clientUuid,
       datePreset: this.selectedDatePreset,
       messages: this.messages
     });
   }
-  
-  
+
+
 
 }

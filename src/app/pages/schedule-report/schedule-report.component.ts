@@ -110,7 +110,6 @@ export class ScheduleReportComponent implements OnInit {
 
     this.availableMetrics = await this.reportService.getAvailableMetrics();
 
-    console.log(this.availableMetrics);
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
     this.reportSections.forEach(section => {

@@ -1,0 +1,9 @@
+<div class="graph-grid">
+  @for (graph of displayedGraphs; track graph) {
+    <div class="graph-card d-flex flex-column align-items-center">
+      <h4>{{ graph.label }}</h4>
+      <canvas [id]="prefix + '_' + graph.metric + '_Chart'"></canvas>
+      {{prefix + '_' + graph.metric + '_Chart'}}
+    </div>
+  }
+</div>

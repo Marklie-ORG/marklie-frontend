@@ -1,0 +1,30 @@
+<div class="dashboard">
+
+  @if (reportStatsLoading) {
+    <div class="loading">Loading...</div>
+  }
+
+  @if (reportData()?.data?.length) {
+    <div class="account-selector">
+      <select
+        id="account-select"
+        [ngModel]="selectedAccountIndex()"
+        (ngModelChange)="selectedAccountIndex.set($event)"
+      >
+        <option [value]="-1">All Accounts (Average)</option>
+
+        @for (acc of reportData()!.data; let i = $index; track acc) {
+          <option [value]="i">
+            {{ acc.adAccountId || 'Ad Account ' + (i + 1) }}
+          </option>
+        }
+      </select>
+    </div>
+  }
+
+  <report
+    [data]="selectedData()"
+    [reportSections]="reportSections()"
+  ></report>
+
+</div>

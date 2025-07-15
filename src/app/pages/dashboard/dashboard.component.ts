@@ -90,7 +90,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openClient(clientId: string) {
     this.router.navigate(['/client', clientId]);
-    // this.router.navigate(['/report'], { queryParams: { clientId } });
+    // this.router.navigate(['/view-report'], { queryParams: { clientId } });
   }
 
   formatTimeOrDate(date: string | Date): string {

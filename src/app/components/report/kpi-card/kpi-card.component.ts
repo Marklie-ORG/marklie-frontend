@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { MetricsService } from 'src/app/services/metrics.service';
-import { Metric } from 'src/app/services/api/report.service';
+import { MetricsService } from '../../../services/metrics.service.js';
+import { Metric } from '../../../services/api/report.service.js';
 
 @Component({
   selector: 'kpi-card',

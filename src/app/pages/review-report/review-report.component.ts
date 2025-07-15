@@ -11,19 +11,14 @@ import {ReportsDataService} from 'src/app/services/reports-data.service';
 
 
 @Component({
-  selector: 'app-review-report',
+  selector: 'app-review-view-report',
   templateUrl: './review-report.component.html',
   styleUrl: './review-report.component.scss'
 })
 export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDestroy for cleanup
   @ViewChild('loomButton', { static: true }) loomButtonRef!: ElementRef<HTMLButtonElement>;
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
 
+  data: any
   reportId: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = {};
   reportSections: ReportSection[] = []
@@ -45,9 +40,6 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
       this.reportId = params['id'];
       await this.loadReport();
     });
-
-    await this.initializeLoomSDK()
-
   }
 
 
@@ -62,29 +54,19 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
     if (!this.reportId) return;
     try {
       const res = await this.reportService.getReport(this.reportId);
-      const data = res.data[0];
+      this.data = res.data[1];
+      console.log(this.data);
       this.availableMetrics = await this.reportService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
       console.log('Report Sections:', this.reportSections);
-      this.generateMockData(data);
     } catch (error) {
-      console.error('Error loading report:', error);
+      console.error('Error loading view-report:', error);
       // Handle error, e.g., show a message to the user
     }
   }
 
-  private generateMockData(data: Daum): void {
-    this.data.KPIs = data.KPIs;
-    this.data.ads = data.ads;
-    this.data.campaigns = data.campaigns;
-    this.data.graphs = data.graphs;
-  }
 
-  openAd(url: string): void {
-    window.open(url, '_blank');
-  }
-
-  async save() {
+  async send() {
     if (!this.reportId) return;
     try {
       const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
@@ -92,55 +74,9 @@ export class ReviewReportComponent implements OnInit, OnDestroy { // Added OnDes
       console.log('Report saved successfully!');
       // Optionally, show a success message
     } catch (error) {
-      console.error('Error saving report:', error);
+      console.error('Error saving view-report:', error);
       // Handle error, e.g., show an error message
     }
-  }
-
-  // New method to initialize Loom SDK
-  private async initializeLoomSDK() {
-    // const { supported, error } = await isSupported();
-
-    // if (!supported) {
-    //   console.warn(`Loom is not supported: ${error}`);
-    //   return;
-    // }
-
-    const BUTTON_ID = "loom-record-sdk-button";
-    const root = document.getElementById("root");
-    console.log(root);
-    if (!root) {
-      return;
-    }
-
-    root.innerHTML = `<button id="${BUTTON_ID}">Record</button>`;
-
-    const button = document.getElementById(BUTTON_ID);
-
-    if (!button) {
-      return;
-    }
-
-    console.log(button);
-
-    // const { configureButton } = await createInstance({
-    //   publicAppId: "22495e2c-fa7c-4ec0-ab4a-7910e51e7bde",
-    //   mode: "standard",
-    //   environment: Environment.Development,
-    //   config: { insertButtonText: "hello world" }
-    // });
-
-    // configureButton({ element: button, hooks: {
-    //   onStart: ()=> {
-    //     console.log("start")
-    //   },
-    //     onRecordingComplete: ()=> {
-    //       console.log("complete")
-    //     },
-    //     onUploadComplete: ()=> {
-    //       console.log("upload")
-    //     }
-    //   } });
   }
 
 }

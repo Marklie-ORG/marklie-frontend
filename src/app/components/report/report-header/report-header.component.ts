@@ -1,27 +1,16 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
 import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import Sortable from 'sortablejs';
-import { Metric } from 'src/app/services/api/report.service';
 
-export interface MetricSelections {
-  kpis: Record<string, boolean>;
-  graphs: Record<string, boolean>;
-  ads: Record<string, boolean>;
-  campaigns: Record<string, boolean>;
-}
 
 @Component({
-  selector: 'edit-report-content',
-  templateUrl: './edit-report-content.component.html',
-  styleUrl: './edit-report-content.component.scss'
+  selector: 'report-header',
+  templateUrl: './report-header.component.html',
+  styleUrl: './report-header.component.scss'
 })
-export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges {
-  
+export class ReportHeaderComponent implements OnInit, OnDestroy, OnChanges {
+
   private kpiGridSortable: Sortable | null = null;
 
   @ViewChild('kpiGridContainer', { static: false }) set kpiGridContainer(el: ElementRef | undefined) {
@@ -65,21 +54,16 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
   @Input() reportTitle: string | undefined = 'Report Title';
   @Input() selectedDatePresetText: string | undefined = undefined;
 
-  constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
 
   reorderItems(event: Sortable.SortableEvent) {
-    const kpiSection = this.reportSections.find(s => s.key === 'kpis');
+    const kpiSection = this.reportSections.find(s => s.key === 'KPIs');
     if (kpiSection) {
       const movedItem = kpiSection.metrics.splice(event.oldIndex!, 1)[0];
       kpiSection.metrics.splice(event.newIndex!, 0, movedItem);
     }
     kpiSection?.metrics.forEach((m, index) => m.order = index);
 
-    console.log(this.reportSections.find(s => s.key === 'kpis')?.metrics)
+    console.log(this.reportSections.find(s => s.key === 'KPIs')?.metrics)
   }
 
   reorderSections(event: Sortable.SortableEvent) {

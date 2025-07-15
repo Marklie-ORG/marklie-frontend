@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {GetAvailableMetricsResponse, Metrics, ReportService} from './api/report.service';
 import {MetricSectionKey, ReportSection} from '../pages/schedule-report/schedule-report.component';
-import {SchedulingOption} from '../pages/edit-report/edit-report.component';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
@@ -10,18 +9,27 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 })
 export class ReportsDataService {
   readonly chartConfigs = [
-    { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
-    { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
-    { key: 'conversionValue', label: 'Conversion Value', color: '#c0392b', format: (v: any) => `$${v}` },
-    { key: 'purchases', label: 'Purchases', color: '#e74c3c', format: (v: any) => `${v}` },
-    { key: 'addToCart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
-    { key: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
-    { key: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
-    { key: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
-    { key: 'ctr', label: 'CTR', color: '#34495e', format: (v: any) => `${v}%` },
-    { key: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
-    { key: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
-    { key: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
+    { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${v}x` },
+    { metric: 'conversion_value', label: 'Conversion Value', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'purchases', label: 'Purchases', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'addToCart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
+    { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'cpc', label: 'CPC', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'cpp', label: 'CPP', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'reach', label: 'Reach', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'add_to_cart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'initiated_checkouts', label: 'Initiated Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'engagement', label: 'Engagement', color: '#77B6FB', format: (v: any) => `${v}` },
+    { metric: 'cost_per_purchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'cost_per_add_to_cart', label: 'Cost Per Add to Cart', color: '#77B6FB', format: (v: any) => `$${v}` },
+    { metric: 'conversion_rate', label: 'Conversion Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
   ];
 
   availableMetrics: GetAvailableMetricsResponse = {};
@@ -61,63 +69,58 @@ export class ReportsDataService {
 
   async getInitiatedReportsSections(
     availableMetrics?: GetAvailableMetricsResponse,
-    schedulingOption?: SchedulingOption
+    metadata?: { metricsSelections: any }
   ): Promise<ReportSection[]> {
-
     if (!availableMetrics) {
       availableMetrics = await this.reportService.getAvailableMetrics();
     }
 
-    const initMetric = (key: string) => {
-      if (!availableMetrics) return [];
+    const initMetric = (sectionKey: string): any[] => {
+      const allAvailable = availableMetrics?.[sectionKey] || [];
+      const selectedMetrics = metadata?.metricsSelections?.[sectionKey.toLowerCase()]?.metrics || [];
 
-      const metrics = availableMetrics[key] || [];
+      return allAvailable.map((metricName: string, i: number) => {
+        const match = selectedMetrics.find((m: any) => m.name === metricName);
+        return {
+          name: metricName,
+          order: match?.order ?? i,
+          enabled: !!match
+        };
+      });
+    };
 
-      if (!schedulingOption) {
-        return metrics.map((m, i) => ({ name: m, order: i, enabled: false }));
-      }
-
-      return metrics.map((metric, i) => {
-        const metricIndex = schedulingOption.jobData.metrics[key].metrics.findIndex(m => m.name === metric);
-        let order = metricIndex === -1 ? i : metricIndex;
-        return { name: metric, order: order, enabled: false }
-      })
-
-    }
-
-    // section.metrics.forEach(metric => {
-      //   const metricIndex = schedulingOption.jobData.metrics[section.key].metrics.findIndex(m => m.name === metric.name);
-      //   metric.order = metricIndex;
-      // });
+    const getOrder = (key: string, fallback: number): number => {
+      return metadata?.metricsSelections?.[key]?.order ?? fallback;
+    };
 
     return [
       {
-        key: 'kpis',
+        key: 'KPIs',
         title: 'Main KPIs',
         enabled: true,
-        metrics: initMetric('kpis'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.kpis.order : 1
+        metrics: initMetric('KPIs'), // lowercase key to match incoming data
+        order: getOrder('kpis', 1)
       },
       {
         key: 'graphs',
         title: 'Graphs',
         enabled: true,
         metrics: initMetric('graphs'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.graphs.order : 2
+        order: getOrder('graphs', 2)
       },
       {
         key: 'ads',
         title: 'Best creatives',
         enabled: true,
         metrics: initMetric('ads'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.ads.order : 3
+        order: getOrder('ads', 3)
       },
       {
         key: 'campaigns',
         title: 'Best campaigns',
         enabled: true,
         metrics: initMetric('campaigns'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.campaigns.order : 4
+        order: getOrder('campaigns', 4)
       }
     ];
   }
@@ -196,7 +199,7 @@ export class ReportsDataService {
 
   reportSectionsToMetricsSelections(reportSections: ReportSection[]): Metrics {
     const selections: Metrics = {
-      kpis: {
+      KPIs: {
         metrics: [],
         order: 1
       },
@@ -268,7 +271,7 @@ export class ReportsDataService {
     mergedCampaigns.push(...data.flatMap(d => d.campaigns || []));
     mergedAds.push(...data.flatMap(d => d.ads || []).sort((a, b) => Number(b.purchases) - Number(a.purchases)).slice(0, 10));
 
-    return { KPIs: mergedKPIs, graphs: mergedGraphs, campaigns: mergedCampaigns, ads: mergedAds };
+    return { adAccountId: "average", KPIs: mergedKPIs, graphs: mergedGraphs, campaigns: mergedCampaigns, ads: mergedAds };
   }
 
   formatMetricLabel(metric: string): string {
@@ -295,18 +298,20 @@ export class ReportsDataService {
     return '';
   }
 
-  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
+  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = 'account') {
     const labels = graphs.map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );
 
     for (const config of this.getChartConfigs()) {
-      const canvasId = `${prefix}_${config.key}_Chart`;
-      console.log(canvasId)
+      const canvasId = `${prefix}_${config.metric}_Chart`;
+
       const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+
       if (!canvas) continue;
 
-      const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
+      const data = graphs.map(g => parseFloat(g[config.metric] ?? 0));
+
 
       const existingChart = Chart.getChart(canvasId);
       if (existingChart) {

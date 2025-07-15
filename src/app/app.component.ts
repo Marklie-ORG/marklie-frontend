@@ -28,9 +28,9 @@ export class AppComponent {
           url === '/dashboard' ||
           url.startsWith('/client/') ||
           url === '/profile' ||
-          // url.startsWith('/edit-report/') ||
-          // url.startsWith('/schedule-report/') ||
-          url.startsWith('/review-report/') ||
+          // url.startsWith('/edit-view-report/') ||
+          // url.startsWith('/schedule-view-report/') ||
+          url.startsWith('/review-view-report/') ||
           url.startsWith('/reports');
       }
     });

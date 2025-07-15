@@ -26,7 +26,7 @@
           <h3 class="section-title">Performance Trends</h3>
           <div class="graph-grid">
             <div class="graph-card" *ngFor="let cfg of chartConfigs">
-              <canvas [id]="'account_' + i + '_' + cfg.key + '_Chart'"></canvas>
+              <canvas [id]="'account_' + i + '_' + cfg.metric + '_Chart'"></canvas>
             </div>
           </div>
         </div>
@@ -94,7 +94,7 @@
         <h2 class="section-title">Performance Trends</h2>
         <div class="graph-grid">
           <div class="graph-card" *ngFor="let cfg of chartConfigs">
-            <canvas [id]="cfg.key + 'Chart'"></canvas>
+            <canvas [id]="cfg.metric + 'Chart'"></canvas>
           </div>
         </div>
       </div>

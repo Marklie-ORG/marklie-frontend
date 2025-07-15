@@ -67,7 +67,7 @@ export class ClientComponent implements OnInit {
   }
 
   onViewReport(reportId: string) {
-    // TODO: Implement navigation to report details
+    // TODO: Implement navigation to view-report details
     console.log(`Viewing report with ID: ${reportId}`);
   }
 

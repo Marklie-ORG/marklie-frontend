@@ -1,0 +1,61 @@
+<div
+  class="p-5"
+  style="background-color: #fff; box-shadow: var(--box-shadow); border: var(--block-border); margin-bottom: 50px;"
+>
+
+  <report-header></report-header>
+  <div #sectionsGridContainer>
+    @for (section of reportSections; track section) {
+      @if (section.enabled || mode === 'edit') {
+        <div class="report-section mb-4">
+          <div class="section-title mb-3 d-flex justify-between align-center">
+            <span>{{ section.title }}</span>
+          </div>
+
+          @switch (section.key) {
+            @case ('KPIs') {
+              <div class="kpi-grid" #kpiGridContainer>
+                @for (metric of section.metrics; track metric) {
+                  @if (metric.enabled || mode === 'edit') {
+                    <div class="kpi-cell">
+
+                      <kpi-card
+                        [metric]="metric"
+                        [value]="data.KPIs[metric.name]"
+                      ></kpi-card>
+                    </div>
+                  }
+                }
+              </div>
+            }
+
+
+            @case ('graphs') {
+              <charts
+                [data]="data.graphs"
+                [adAccountId]="data.adAccountId"
+                [reportSection]="section"
+              ></charts>
+            }
+
+            @case ('ads') {
+              <ad-card
+                [reportSections]="reportSections"
+                [ads]="data.ads"
+              ></ad-card>
+            }
+
+            @case ('campaigns') {
+              <div class="table-container">
+                <campaign-table
+                  [reportSections]="reportSections"
+                  [campaigns]="data.campaigns"
+                ></campaign-table>
+              </div>
+            }
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

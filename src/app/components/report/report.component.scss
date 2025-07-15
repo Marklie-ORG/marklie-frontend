@@ -1,0 +1,82 @@
+.section-title {
+  font-weight: 600;
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 16px;
+}
+
+.kpi-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+  border: var(--block-border);
+  transition: 0.2s ease-in-out;
+  cursor: grab;
+
+  // Ensure consistent height across cards
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0; // Prevents overflow in grid
+}
+
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ad-card .metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 12px;
+  margin-top: 8px;
+}
+
+/* Drag styles for KPI cards */
+kpi-card[cdkDrag] {
+  cursor: move;
+}
+
+.kpi-grid[cdkDropList] {
+  min-height: 60px;
+}
+
+/* Dragging placeholder */
+.sortable-ghost {
+  opacity: 0.3;
+  background-color: #e0e0e0;
+  border: 2px dashed #999;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.sortable-drag {
+  opacity: 0.85;
+  transform: scale(1.04);
+  z-index: 1000;
+  cursor: grabbing;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}

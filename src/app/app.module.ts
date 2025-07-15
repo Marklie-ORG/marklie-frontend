@@ -28,7 +28,7 @@ import { NgSelectModule } from "@ng-select/ng-select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
 import { ModalBaseComponent } from './components/modal-base/modal-base.component';
-import {ReportComponent} from "./pages/report/report.component.js";
+import {ViewReportComponent} from "./pages/view-report/view-report.component.js";
 import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 import {LoginComponent} from "./components/login/login.component.js";
 import {RegisterComponent} from "./components/register/register.component.js";
@@ -41,20 +41,21 @@ import { PasswordRecoveryComponent } from './pages/password-recovery/password-re
 import { OnboardingComponent } from './pages/onboarding/onboarding.component';
 import { NotificationComponent } from './components/notification/notification.component';
 import { AuthComponent } from './pages/auth/auth.component';
-import { EditReportComponent } from './pages/edit-report/edit-report.component';
-import { ScheduleOptionsComponent } from './components/schedule-options/schedule-options.component';
-import { EditReportContentComponent } from './components/edit-report-content/edit-report-content.component';
-import { EditMetricsComponent } from './components/edit-metrics/edit-metrics.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
-import { KpiCardComponent } from './components/kpi-card/kpi-card.component';
-import { AdCardComponent } from './components/ad-card/ad-card.component';
-import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
-import { ChartsComponent } from './components/charts/charts.component';
+import { KpiCardComponent } from './components/report/kpi-card/kpi-card.component';
+import { AdCardComponent } from './components/report/ad-card/ad-card.component';
+import { CampaignTableComponent } from './components/report/campaign-table/campaign-table.component';
 import {LogsCardComponent} from "./components/activity-logs-card/activity-logs-card.component";
 import {ReportsPageComponent} from "./pages/reports/reports-page.component.js";
 import { ItemComponent } from './components/edit-metrics/components/item/item.component';
 import { WhatsappMessagePreviewComponent } from './components/whatsapp-message-preview/whatsapp-message-preview.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
+import {ReportHeaderComponent} from "./components/report/report-header/report-header.component.js";
+import {ChartsComponent} from "./components/report/charts/charts.component.js";
+import { EditReportPage} from "./pages/edit-report/edit-report.component.js";
+import {ReportComponent} from "./components/report/report.component.js";
+import {EditMetricsComponent} from "./components/edit-metrics/edit-metrics.component.js";
+import {ScheduleOptionsComponent} from "./components/schedule-options/schedule-options.component.js";
 
 register();
 
@@ -77,7 +78,7 @@ register();
     ModalBaseComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
-    ReportComponent,
+    ViewReportComponent,
     PdfReportComponent,
     OnboardingComponent,
 
@@ -93,10 +94,6 @@ register();
     PasswordRecoveryComponent,
     NotificationComponent,
     AuthComponent,
-    EditReportComponent,
-    ScheduleOptionsComponent,
-    EditReportContentComponent,
-    EditMetricsComponent,
     ReviewReportComponent,
     KpiCardComponent,
     AdCardComponent,
@@ -107,7 +104,13 @@ register();
     ReportsPageComponent,
     ItemComponent,
     WhatsappMessagePreviewComponent,
-    CustomInputComponent
+    CustomInputComponent,
+    ViewReportComponent,
+    ReportHeaderComponent,
+    ReportComponent,
+    EditReportPage,
+    EditMetricsComponent,
+    ScheduleOptionsComponent
 
   ],
   imports: [
@@ -125,7 +128,7 @@ register();
   ],
   providers: [
     provideAnimationsAsync(),
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

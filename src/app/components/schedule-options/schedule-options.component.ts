@@ -27,7 +27,7 @@ interface ScheduleOptionsMatDialogData {
   styleUrl: './schedule-options.component.scss'
 })
 export class ScheduleOptionsComponent {
-  
+
   @Input() schedule: Schedule | undefined = undefined;
   @Input() isEditMode: boolean = false;
   @Input() messages: {
@@ -58,7 +58,7 @@ export class ScheduleOptionsComponent {
     slack: false,
     email: false
   }
- 
+
   constructor(
     public reportsDataService: ReportsDataService,
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
@@ -69,7 +69,7 @@ export class ScheduleOptionsComponent {
     this.messages = data.messages;
   }
 
-  
+
   save() {
     this.dialogRef.close({
       schedule: this.schedule,
@@ -77,7 +77,7 @@ export class ScheduleOptionsComponent {
       messages: this.messages
     });
   }
-  
-  
+
+
 
 }

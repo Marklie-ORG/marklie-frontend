@@ -1,8 +1,7 @@
 import { Component, ElementRef, Input, AfterViewInit, OnDestroy, QueryList, ViewChildren, SimpleChanges } from '@angular/core';
-import { MetricsService } from 'src/app/services/metrics.service';
-import { MetricSelections } from '../edit-report-content/edit-report-content.component';
-import { Metric } from 'src/app/services/api/report.service';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
+import { MetricsService } from '../../../services/metrics.service.js';
+import { Metric } from '../../../services/api/report.service.js';
+import { ReportSection } from '../../../pages/schedule-report/schedule-report.component.js';
 import Sortable from 'sortablejs';
 
 @Component({
@@ -15,7 +14,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   private sortables: Sortable[] = [];
 
   @ViewChildren('adsGridContainer') gridContainers!: QueryList<ElementRef>;
-  
+
   @Input() reportSections: ReportSection[] = [];
   @Input() ads: any[] = [];
 

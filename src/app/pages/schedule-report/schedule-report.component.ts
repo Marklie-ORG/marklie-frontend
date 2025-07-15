@@ -8,7 +8,7 @@ import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, Metrics, Re
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 
-export type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
+export type MetricSectionKey = 'KPIs' | 'graphs' | 'ads' | 'campaigns';
 
 export interface ReportSection {
   key: MetricSectionKey;
@@ -28,7 +28,7 @@ export interface Data {
 
 
 @Component({
-  selector: 'schedule-report',
+  selector: 'schedule-view-report',
   templateUrl: './schedule-report.component.html',
   styleUrls: ['./schedule-report.component.scss'],
   animations: [
@@ -117,7 +117,7 @@ export class ScheduleReportComponent implements OnInit {
         section.metrics[i].enabled = true;
       }
     });
-    
+
     this.mockData = this.mockReportService.generateMockData();
     this.reportStatsLoading = false;
 

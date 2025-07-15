@@ -1,0 +1,23 @@
+<div class="ad-grid">
+  @for (ad of ads; track ad) {
+    <div class="ad-card">
+      <div class="ad-image-container cursor-pointer" (click)="openAd(ad.sourceUrl)">
+        <img class="ad-media" [src]="ad.thumbnailUrl" />
+      </div>
+      <div class="metrics" #adsGridContainer>
+        @for (metric of metrics; track metric) {
+          @if (metric.enabled) {
+            <div class="metric">
+              <div class="metric-label">
+                {{ metricsService.formatMetricLabel(metric.name) }}
+              </div>
+              <div class="metric-value">
+                {{ ad[metric.name] }}
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -10,7 +10,7 @@ import { ReportsDataService } from 'src/app/services/reports-data.service';
 import { Chart } from 'chart.js';
 
 @Component({
-  selector: 'app-pdf-report',
+  selector: 'app-pdf-view-report',
   templateUrl: './pdf-report.component.html',
   styleUrls: ['./pdf-report.component.scss'],
 })
@@ -72,7 +72,7 @@ export class PdfReportComponent implements OnInit, OnDestroy {
         });
       });
     } catch (error) {
-      console.error('Error loading report:', error);
+      console.error('Error loading view-report:', error);
     } finally {
       this.reportStatsLoading = false;
     }

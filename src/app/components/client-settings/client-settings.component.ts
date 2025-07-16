@@ -13,7 +13,7 @@ import { SlackLoginService } from 'src/app/services/slack-login.service';
   selector: 'app-client-settings',
   templateUrl: './client-settings.component.html',
   styleUrl: './client-settings.component.scss'
-})  
+})
 export class ClientSettingsComponent implements OnInit {
 
   conversations: Conversations | null = null;
@@ -47,9 +47,9 @@ export class ClientSettingsComponent implements OnInit {
   ) {
 
     this.clientName = this.data.client.name;
-    this.emails = this.data.client.emails ? 
+    this.emails = this.data.client.emails ?
       this.data.client.emails.map(email => ({email: email, isEditMode: false})) : [];
-    this.phoneNumbers = this.data.client.phoneNumbers ? 
+    this.phoneNumbers = this.data.client.phoneNumbers ?
       this.data.client.phoneNumbers.map(phoneNumber => ({phoneNumber: phoneNumber, isEditMode: false})) : [];
 
     // // Initialize emails if they exist
@@ -73,7 +73,7 @@ export class ClientSettingsComponent implements OnInit {
   }
 
   // async onSubmit() {
-    
+
   //   if (this.clientForm.valid) {
   //     const formValue = this.clientForm.value;
   //     const emails = formValue.emails.map((item: { email: string }) => item.email);
@@ -134,7 +134,7 @@ export class ClientSettingsComponent implements OnInit {
 
   async ngOnInit() {
 
-    
+
     // try {
     //   this.businesses = await this.adAccountsService.getBusinessesHierarchy();
     //   const adAccounts = this.businesses.map(business => business.ad_accounts);
@@ -144,7 +144,7 @@ export class ClientSettingsComponent implements OnInit {
     //   console.error('Error fetching businesses:', error);
     // }
 
-    this.selectedConversationId = this.data.client.slackConversationId;
+    this.selectedConversationId = this.data.client.slack[0];
 
     await this.getWorkspaces();
 
@@ -156,7 +156,7 @@ export class ClientSettingsComponent implements OnInit {
         }
       })
     );
-    
+
     // if user are
     if (this.data.client.slackConversationId) {
       this.isSlackWorkspaceConnectedSubject.next(true);
@@ -165,11 +165,12 @@ export class ClientSettingsComponent implements OnInit {
       this.loadIsSlackWorkspaceConnected();
     }
 
-    
+
   }
 
   async getWorkspaces() {
     this.workspaces = await this.clientService.getConnectedWorkspaces(this.data.client.uuid!);
+
     this.currentWorkspace = this.workspaces?.find(workspace => workspace.clientId === this.data.client.uuid) || null;
     this.currentWorkspaceTokenId = this.currentWorkspace?.tokenId || null;
   }
@@ -236,6 +237,6 @@ export class ClientSettingsComponent implements OnInit {
     this.updateClient(this.clientName, this.emails.map(email => email.email), this.phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber));
     this.dialogRef.close();
   }
-  
+
 
 }

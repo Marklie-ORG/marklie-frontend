@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { Client } from './client.service.js';
 import { Point } from '@angular/cdk/drag-drop';
+import {ScheduledReport} from "../../pages/client/client.component.js";
 
 export interface ReportStatsResponse {
   data: {
@@ -188,6 +189,10 @@ export class ReportService {
 
   async getReport(uuid: string): Promise<GetReportResponse> {
     return firstValueFrom(this.http.get<GetReportResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
+  }
+
+  async getSchedulingOptions(clientUuid: string) {
+    return firstValueFrom(this.http.get<ScheduledReport[]>(`${this.apiUrl}/reports/scheduling-options/${clientUuid}`, {headers: this.headers}));
   }
 
   async getReports(): Promise<any[]> {

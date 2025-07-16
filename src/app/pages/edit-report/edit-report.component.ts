@@ -1,4 +1,4 @@
-import { Component, SimpleChanges } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CreateScheduleRequest, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { Data, ReportSection } from '../schedule-report/schedule-report.component';
@@ -23,6 +23,10 @@ export interface SchedulingOption {
   nextRun: string
   bullJobId: string
   client: string
+  images: {
+    clientLogo: string
+    agencyLogo: string
+  }
 }
 
 interface JobData {
@@ -46,6 +50,10 @@ interface JobData {
       body: string,
     }
   }
+  images: {
+    clientLogo: string
+    agencyLogo: string
+  }
 }
 
 @Component({
@@ -68,7 +76,6 @@ export class EditReportComponent {
     reviewRequired: false,
   };
   clientUuid: string = '';
-  reportStatsLoading = false;
 
   metricsGraphConfig: any[] = [];
 
@@ -93,6 +100,12 @@ export class EditReportComponent {
   reportTitle: string | undefined = undefined;
 
   isPreviewMode: boolean = false;
+
+  clientImageUrl = signal<string>('');
+  agencyImageUrl = signal<string>('');
+
+  clientImageGsUri = signal<string>('');
+  agencyImageGsUri = signal<string>('');
 
   constructor(
     private dialog: MatDialog,
@@ -123,6 +136,11 @@ export class EditReportComponent {
   private async loadReport() {
     if (!this.schedulingOptionId) return;
     this.schedulingOption = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
+    console.log(this.schedulingOption?.images)
+    this.clientImageUrl.set(this.schedulingOption?.images.clientLogo || '');
+    this.agencyImageUrl.set(this.schedulingOption?.images.agencyLogo || '');
+    this.clientImageGsUri.set(this.schedulingOption?.jobData.images.clientLogo || '');
+    this.agencyImageGsUri.set(this.schedulingOption?.jobData.images.agencyLogo || '');
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics, this.schedulingOption);
     this.convertOptionIntoTemplate(this.schedulingOption);
     this.mockData = this.mockReportService.generateMockData();
@@ -226,7 +244,11 @@ export class EditReportComponent {
       datePreset: this.schedulingOption!.datePreset,
       clientUuid: this.schedulingOption!.client,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      messages: this.schedulingOption!.jobData.messages
+      messages: this.schedulingOption!.jobData.messages,
+      images: {
+        clientLogo: this.clientImageGsUri(),
+        agencyLogo: this.agencyImageGsUri()
+      }
     };
 
     console.log(selections)

@@ -23,7 +23,6 @@ export class ForgotPasswordEmailFormComponent {
   isLinkSent = false;
 
   constructor(
-    // public dialogRef: MatDialogRef<ForgotPasswordEmailFormComponent>,
     public formService: AuthFormService,
     private userService: UserService
   ) {

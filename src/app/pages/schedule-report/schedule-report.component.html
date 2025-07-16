@@ -29,14 +29,16 @@
     class="d-flex flex-column pt-3 pl-4 pr-3 pb-3" 
     style="background-color: #f9fafb; overflow-y: auto; height: calc(100vh - 16px - 16px - 16px - 16px - 16px);">
       <main>
-        <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
+        <div *ngIf="reportStatsLoading()" class="loading text-center">Loading...</div>
     
-        <div *ngIf="!reportStatsLoading" cdkDropList (cdkDropListDropped)="dropSection($event)">
+        <div *ngIf="!reportStatsLoading()" cdkDropList (cdkDropListDropped)="dropSection($event)">
           <edit-report-content
             [reportSections]="reportSections"
             [data]="mockData"
             [reportTitle]="reportTitle"
             [selectedDatePresetText]="selectedDatePresetText"
+            [(clientImageGsUri)]="clientImageGsUri"
+            [(agencyImageGsUri)]="agencyImageGsUri"
           ></edit-report-content>
         </div>
 

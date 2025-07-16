@@ -42,6 +42,10 @@ export interface CreateScheduleRequest extends Schedule {
       body: string,
     }
   };
+  images: {
+    clientLogo: string,
+    agencyLogo: string
+  }
 }
 
 export interface Schedule {

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { ClientService, Conversations } from '../../services/api/client.service.js';
 
 @Component({
@@ -16,7 +16,11 @@ export class LogsCardComponent implements OnInit, OnChanges {
 
   private conversationCache = new Map<string, Conversations>();
 
-  constructor(private clientService: ClientService) {}
+  private clientService = inject(ClientService)
+
+
+  // constructor(private clientService: ClientService) {}
+  
 
   ngOnInit(): void {
     const seen = localStorage.getItem('seenLogs');

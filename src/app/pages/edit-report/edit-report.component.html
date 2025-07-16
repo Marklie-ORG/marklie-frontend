@@ -50,16 +50,17 @@
     "
     >
       <main>
-        <div *ngIf="reportStatsLoading" class="loading text-center">Loading...</div>
     
-        <div *ngIf="!reportStatsLoading">
         <edit-report-content
-            [reportSections]="reportSections"
-            [data]="mockData"
-            [selectedDatePresetText]="selectedDatePresetText"
-            [reportTitle]="reportTitle"
-          ></edit-report-content>
-        </div>
+          [reportSections]="reportSections"
+          [data]="mockData"
+          [selectedDatePresetText]="selectedDatePresetText"
+          [reportTitle]="reportTitle"
+          [(clientImageUrl)]="clientImageUrl"
+          [(agencyImageUrl)]="agencyImageUrl"
+          [(clientImageGsUri)]="clientImageGsUri"
+          [(agencyImageGsUri)]="agencyImageGsUri"
+        ></edit-report-content>
 
       </main>
     </div>

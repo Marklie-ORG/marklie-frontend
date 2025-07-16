@@ -14,13 +14,13 @@ interface Activity {
   activity: string
 }
 
-interface ScheduledReport {
+export interface ScheduledReport {
   uuid: string;
   cronExpression: string;
   frequency: string;
   reportName: string;
   nextRun: string;
-  lastActivity: string;
+  lastRun: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -74,8 +74,9 @@ export class ClientComponent implements OnInit {
   private async loadClientDetails() {
     if (!this.clientUuid) return;
     this.client = await this.clientService.getClient(this.clientUuid);
+    console.log(this.client);
     this.logs = await this.clientService.getClientsLogs(this.clientUuid);
-    this.scheduleOptions = this.client.crons || [];
+    this.scheduleOptions = await this.reportService.getSchedulingOptions(this.clientUuid)
     console.log(this.scheduleOptions)
     this.scheduleOptionsLoading = false;
   }

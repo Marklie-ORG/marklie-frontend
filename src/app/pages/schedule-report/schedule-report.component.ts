@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, model, OnInit, signal } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
@@ -50,7 +50,7 @@ export class ScheduleReportComponent implements OnInit {
     reviewRequired: false,
   };
   clientUuid: string = '';
-  reportStatsLoading = true;
+  reportStatsLoading = signal(true);
 
   metricsGraphConfig: any[] = [];
 
@@ -87,6 +87,9 @@ export class ScheduleReportComponent implements OnInit {
     }
   }
 
+  clientImageGsUri = signal<string>('');
+  agencyImageGsUri = signal<string>('');
+
   constructor(
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -98,6 +101,10 @@ export class ScheduleReportComponent implements OnInit {
   ) {
     // this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.selectedDatePreset)?.text || '';
     this.updateSelectedDatePresetText();
+
+    // effect(() => {
+    //   console.log(`The count is: ${this.clientImageGsUri()}`);
+    // });
   }
 
   onDatePresetChange(event: any) {
@@ -119,7 +126,9 @@ export class ScheduleReportComponent implements OnInit {
     });
 
     this.mockData = this.mockReportService.generateMockData();
-    this.reportStatsLoading = false;
+
+    this.reportStatsLoading.set(false);
+    // this.reportStatsLoading = false;
 
     // this.editScheduleConfiguration();
   }
@@ -168,7 +177,7 @@ export class ScheduleReportComponent implements OnInit {
       if (!result) {
         return;
       }
-      // this.loadClientDetails();
+      
       this.schedule = result.schedule;
       this.selectedDatePreset = result.datePreset;
       this.messages = result.messages;
@@ -192,7 +201,11 @@ export class ScheduleReportComponent implements OnInit {
       datePreset: this.selectedDatePreset,
       clientUuid: this.clientUuid,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      messages: this.messages
+      messages: this.messages,
+      images: {
+        clientLogo: this.clientImageGsUri(),
+        agencyLogo: this.agencyImageGsUri()
+      }
     };
 
     const response = await this.reportsService.createSchedule(payload) as { uuid: string };

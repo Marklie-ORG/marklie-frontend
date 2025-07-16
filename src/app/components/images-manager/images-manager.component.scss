@@ -1,0 +1,42 @@
+
+.image-grid {
+    max-height: 370px;
+    overflow: hidden;
+    overflow-y: scroll;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-rows: auto;
+}
+
+.image-container {
+    border: var(--block-border);
+    border-radius: 5px;
+}
+
+.image-item {
+    border-radius: 5px;
+    
+    &:hover {
+        background-color: #f8f8f8;
+    }
+
+    &.selected {
+        background-color: #f8f8f8;
+    }
+}
+
+input {
+    top: 0.5rem;
+    left: 0.5rem;
+}
+
+fa-icon {
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1000;
+}
+
+.text {
+    font-size: 0.8rem;
+}

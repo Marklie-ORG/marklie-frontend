@@ -53,7 +53,9 @@ style="height: 85%;"
                 <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon" *ngIf="randomNumber === 3">
               </div>
             </div>
-            <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption.length}}</div>
+            @if (client.schedulingOption && client.schedulingOption.length > 0) {
+              <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption.length}}</div>
+            }
             <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
           </div>
         </div>

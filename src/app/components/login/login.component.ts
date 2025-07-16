@@ -28,7 +28,6 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    // public dialogRef: MatDialogRef<LoginComponent>,
     public formService: AuthFormService
   ) {
     const saved = this.formService.getFormData();

@@ -28,7 +28,6 @@ export class RegisterComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    // public dialogRef: MatDialogRef<RegisterComponent>,
     public formService: AuthFormService
   ) {
     const saved = this.formService.getFormData();

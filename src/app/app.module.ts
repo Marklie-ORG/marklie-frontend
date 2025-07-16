@@ -55,6 +55,7 @@ import {ReportsPageComponent} from "./pages/reports/reports-page.component.js";
 import { ItemComponent } from './components/edit-metrics/components/item/item.component';
 import { WhatsappMessagePreviewComponent } from './components/whatsapp-message-preview/whatsapp-message-preview.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
+import { ImagesManagerComponent } from './components/images-manager/images-manager.component';
 
 register();
 
@@ -107,7 +108,8 @@ register();
     ReportsPageComponent,
     ItemComponent,
     WhatsappMessagePreviewComponent,
-    CustomInputComponent
+    CustomInputComponent,
+    ImagesManagerComponent
 
   ],
   imports: [

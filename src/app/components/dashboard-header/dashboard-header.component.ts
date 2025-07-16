@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { jwtDecode } from "jwt-decode";
 import { AuthService } from '../../services/api/auth.service.js';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {
   faArrowRightFromBracket,
   faBell,

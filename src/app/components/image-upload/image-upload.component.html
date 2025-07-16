@@ -1,0 +1,16 @@
+<input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput>
+<button (click)="fileInput.click()">Select Image</button>
+<button (click)="onUpload()" [disabled]="!selectedFile">Upload</button>
+
+<div *ngIf="imagePreview">
+  <img [src]="imagePreview" alt="Image Preview" style="max-width: 200px; max-height: 200px;">
+  <p>{{ selectedFile?.name }} ({{ (selectedFile!.size / 1024).toFixed(2) }} KB)</p>
+  <button (click)="removeImage()">Remove</button>
+</div>
+
+<div *ngIf="uploadStatus">
+  <p>Upload Status: {{ uploadStatus }}</p>
+  <div *ngIf="uploadProgress > 0 && uploadProgress < 100">
+    <progress [value]="uploadProgress" max="100"></progress> {{ uploadProgress }}%
+  </div>
+</div>

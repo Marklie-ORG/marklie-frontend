@@ -1,0 +1,43 @@
+<modal-base>
+    <input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput style="display: none;">
+    <button (click)="fileInput.click()">Add Image</button>
+
+    <div class="image-grid mt-3 mb-3 p-3 pos-relative">
+        @for (item of images; track $index) {
+            
+
+            <div 
+            (click)="selectImage(item)" 
+            class="image-item d-flex flex-column justify-center align-center gap-2 p-3 cursor-pointer pos-relative"
+            [class.selected]="selectedImage?.uuid === item.uuid"
+            >
+
+                <fa-icon [icon]="faTrash"
+                [style.display]="selectedImage?.uuid === item.uuid ? 'block' : 'none'"
+                class="cursor-pointer pos-absolute"
+                (click)="removeImage(item.uuid)"
+                ></fa-icon>
+            
+
+                <div style="width: 100px; height: 100px;" class="image-container p-2 d-flex justify-center align-center pos-relative">
+                    <input type="checkbox" class="pos-absolute" [checked]="selectedImage?.uuid === item.uuid">
+
+                    <img [src]="item.imageUrl" alt="Image Preview" style="object-fit: cover; max-width: 100px; max-height: 100px;">
+                </div>
+                
+                <div class="text-center text">
+                  {{
+                    item.imageName.length > 18
+                      ? (item.imageName | slice:0:15) + '...'
+                      : item.imageName
+                  }}
+                </div>
+            </div>
+        }
+    </div>
+    
+    <div class="d-flex justify-end">
+        <button class="mr-3" (click)="cancel()">Cancel</button>
+        <button class="blue" (click)="done()">Done</button>
+    </div>
+</modal-base>

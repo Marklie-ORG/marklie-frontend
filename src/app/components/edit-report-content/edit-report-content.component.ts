@@ -1,12 +1,8 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input, model, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
 import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import Sortable from 'sortablejs';
-import { Metric } from 'src/app/services/api/report.service';
+import { ImagesManagerService } from 'src/app/services/images-manager.service';
 
 export interface MetricSelections {
   kpis: Record<string, boolean>;
@@ -65,11 +61,18 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
   @Input() reportTitle: string | undefined = 'Report Title';
   @Input() selectedDatePresetText: string | undefined = undefined;
 
-  constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
+  clientImageUrl = model<string | undefined>(undefined);
+  agencyImageUrl = model<string | undefined>(undefined);
+
+  clientImageGsUri = model<string>('');
+  agencyImageGsUri = model<string>('');
+
+  private imagesManagerService = inject(ImagesManagerService);
+
+  constructor() {}
+
+  ngOnInit(): void {
+  }
 
   reorderItems(event: Sortable.SortableEvent) {
     const kpiSection = this.reportSections.find(s => s.key === 'kpis');
@@ -89,9 +92,6 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
     this.reportSections.sort((a, b) => a.order - b.order);
   }
 
-  ngOnInit(): void {
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['reportSections'] && this.reportSections) {
       this.reportSections.sort((a, b) => a.order - b.order);
@@ -107,6 +107,22 @@ export class EditReportContentComponent implements OnInit, OnDestroy, OnChanges 
     }
     if (this.sectionsGridSortable) {
       this.sectionsGridSortable.destroy();
+    }
+  }
+
+  async getImage(type: 'client' | 'agency', preselectedImage?: string) {
+    const image = await this.imagesManagerService.getImage(preselectedImage);
+
+    const isClient = type === 'client';
+    const urlModel = isClient ? this.clientImageUrl : this.agencyImageUrl;
+    const gsUriModel = isClient ? this.clientImageGsUri : this.agencyImageGsUri;
+
+    if (image) {
+      urlModel.set(image.imageUrl);
+      gsUriModel.set(image.gsUri);
+    } else {
+      urlModel.set('');
+      gsUriModel.set('');
     }
   }
 

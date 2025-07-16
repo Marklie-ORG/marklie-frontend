@@ -144,7 +144,7 @@ export class ClientSettingsComponent implements OnInit {
     //   console.error('Error fetching businesses:', error);
     // }
 
-    this.selectedConversationId = this.data.client.slack[0];
+    this.selectedConversationId = this.data.client.slack;
 
     await this.getWorkspaces();
 

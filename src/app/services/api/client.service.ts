@@ -120,7 +120,7 @@ export interface Client {
     slackConversationId: string | null;
     emails: string[];
     phoneNumbers: string[];
-    slack: string[];
+    slack: string;
     schedulingOption: any[];
 }
 

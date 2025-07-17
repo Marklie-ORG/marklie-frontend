@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CreateScheduleRequest, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
 import { Data, ReportSection } from '../schedule-report/schedule-report.component';
@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
+import {SchedulesService} from "../../services/api/schedules.service.js";
 
 export interface SchedulingOption {
   uuid: string
@@ -62,6 +63,7 @@ interface JobData {
   styleUrl: './edit-report.component.scss'
 })
 export class EditReportComponent {
+  private schedulesService = inject(SchedulesService);
 
   changesMade = false;
 
@@ -120,7 +122,7 @@ export class EditReportComponent {
     this.route.params.subscribe(async params => {
       this.schedulingOptionId = params['schedulingOptionId'];
 
-      this.availableMetrics = await this.reportService.getAvailableMetrics();
+      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
 
       await this.loadReport();
 
@@ -135,12 +137,11 @@ export class EditReportComponent {
 
   private async loadReport() {
     if (!this.schedulingOptionId) return;
-    this.schedulingOption = await this.reportService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
-    console.log(this.schedulingOption?.images)
+    this.schedulingOption = await this.schedulesService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
     this.clientImageUrl.set(this.schedulingOption?.images.clientLogo || '');
     this.agencyImageUrl.set(this.schedulingOption?.images.agencyLogo || '');
-    this.clientImageGsUri.set(this.schedulingOption?.jobData.images.clientLogo || '');
-    this.agencyImageGsUri.set(this.schedulingOption?.jobData.images.agencyLogo || '');
+    this.clientImageGsUri.set(this.schedulingOption?.jobData.images?.clientLogo || '');
+    this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.agencyLogo || '');
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics, this.schedulingOption);
     this.convertOptionIntoTemplate(this.schedulingOption);
     this.mockData = this.mockReportService.generateMockData();
@@ -247,7 +248,7 @@ export class EditReportComponent {
       messages: this.schedulingOption!.jobData.messages,
       images: {
         clientLogo: this.clientImageGsUri(),
-        agencyLogo: this.agencyImageGsUri()
+        organizationLogo: this.agencyImageGsUri()
       }
     };
 
@@ -258,7 +259,7 @@ export class EditReportComponent {
       return
     }
 
-    await this.reportsService.updateSchedulingOption(this.schedulingOptionId, payload);
+    await this.schedulesService.updateSchedulingOption(this.schedulingOptionId, payload);
     await this.loadReport();
 
     // try {

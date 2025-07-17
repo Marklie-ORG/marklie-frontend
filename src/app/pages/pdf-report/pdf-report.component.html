@@ -25,11 +25,15 @@
         <div class="graph-section" *ngIf="account.graphs?.length">
           <h3 class="section-title">Performance Trends</h3>
           <div class="graph-grid">
-            <div class="graph-card" *ngFor="let cfg of chartConfigs">
+            <div
+              class="graph-card"
+              *ngFor="let cfg of getAvailableChartConfigs(account); let j = index"
+            >
               <canvas [id]="'account_' + i + '_' + cfg.key + '_Chart'"></canvas>
             </div>
           </div>
         </div>
+
 
         <div class="ads-section" *ngIf="account.ads?.length">
           <h3 class="section-title">Top {{ account.ads.length }} Ads</h3>

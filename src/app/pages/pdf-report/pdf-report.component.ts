@@ -55,10 +55,10 @@ export class PdfReportComponent implements OnInit, OnDestroy {
     try {
       const res = await this.reportService.getReport(reportUuid);
       this.reportData = res.data;
-      console.log(res.data)
       this.isMultiAccount = this.reportData.length > 1;
 
       this.ref.detectChanges();
+
 
       this.reportData.forEach((account, index) => {
         const chartIdPrefix = `account_${index}`;
@@ -67,7 +67,8 @@ export class PdfReportComponent implements OnInit, OnDestroy {
             account.graphs,
             this.getChartInstanceGroup(chartIdPrefix),
             this.dateRangeLabel,
-            chartIdPrefix
+            chartIdPrefix,
+            account
           );
         });
       });
@@ -77,6 +78,16 @@ export class PdfReportComponent implements OnInit, OnDestroy {
       this.reportStatsLoading = false;
     }
   }
+
+  getAvailableChartConfigs(account: any): typeof this.chartConfigs {
+    const graphs = account?.graphs ?? [];
+    if (!graphs.length) return [];
+
+    return this.chartConfigs.filter(cfg =>
+      graphs.some((point: any) => point.hasOwnProperty(cfg.key))
+    );
+  }
+
 
   private getChartInstanceGroup(prefix: string): Record<string, Chart> {
     if (!this.chartInstances[prefix]) {

@@ -1,14 +1,16 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {GetAvailableMetricsResponse, Metrics, ReportService} from './api/report.service';
 import {MetricSectionKey, ReportSection} from '../pages/schedule-report/schedule-report.component';
 import {SchedulingOption} from '../pages/edit-report/edit-report.component';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import {SchedulesService} from "./api/schedules.service.js";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportsDataService {
+  private schedulesService = inject(SchedulesService);
   readonly chartConfigs = [
     { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
     { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
@@ -49,12 +51,6 @@ export class ReportsDataService {
   ];
   readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  constructor(
-    private reportService: ReportService
-  ) {
-
-  }
-
   getChartConfigs() {
     return this.chartConfigs;
   }
@@ -65,7 +61,7 @@ export class ReportsDataService {
   ): Promise<ReportSection[]> {
 
     if (!availableMetrics) {
-      availableMetrics = await this.reportService.getAvailableMetrics();
+      availableMetrics = await this.schedulesService.getAvailableMetrics();
     }
 
     const initMetric = (key: string) => {
@@ -295,16 +291,26 @@ export class ReportsDataService {
     return '';
   }
 
-  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
+  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '', account: any) {
     const labels = graphs.map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );
 
     for (const config of this.getChartConfigs()) {
       const canvasId = `${prefix}_${config.key}_Chart`;
-      console.log(canvasId)
+
       const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
       if (!canvas) continue;
+
+      const hasData = graphs.some(g => g[config.key] !== undefined && g[config.key] !== null);
+      if (!hasData) {
+        if (canvas) {
+          canvas.style.display = 'none';
+        }
+        continue;
+      }
+
+
 
       const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
 

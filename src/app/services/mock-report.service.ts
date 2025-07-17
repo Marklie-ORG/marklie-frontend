@@ -34,7 +34,8 @@ export class MockReportService {
       actions: 9876,
       action_values: 11340,
       purchase_roas: 3.12,
-      reach: 89000
+      reach: 89000,
+      leads: 143
     };
   }
 

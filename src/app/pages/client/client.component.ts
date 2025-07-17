@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import {Component, OnInit, OnDestroy, Inject, inject} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SlackLoginService } from 'src/app/services/slack-login.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
@@ -6,6 +6,7 @@ import { ClientSettingsComponent } from '../../components/client-settings/client
 import { Client, ClientService } from 'src/app/services/api/client.service.js';
 import { ReportService } from 'src/app/services/api/report.service.js';
 import { AuthService } from 'src/app/services/api/auth.service.js';
+import {SchedulesService} from "../../services/api/schedules.service.js";
 
 interface Activity {
   status: 'new' | 'old',
@@ -38,6 +39,7 @@ export class ClientComponent implements OnInit {
   scheduleOptions: ScheduledReport[] = [];
 
   scheduleOptionsLoading = true;
+  private schedulesService = inject(SchedulesService);
 
   constructor(
     private route: ActivatedRoute,
@@ -74,10 +76,8 @@ export class ClientComponent implements OnInit {
   private async loadClientDetails() {
     if (!this.clientUuid) return;
     this.client = await this.clientService.getClient(this.clientUuid);
-    console.log(this.client);
     this.logs = await this.clientService.getClientsLogs(this.clientUuid);
-    this.scheduleOptions = await this.reportService.getSchedulingOptions(this.clientUuid)
-    console.log(this.scheduleOptions)
+    this.scheduleOptions = await this.schedulesService.getSchedulingOptions(this.clientUuid)
     this.scheduleOptionsLoading = false;
   }
 

@@ -1,4 +1,4 @@
-import { Component, effect, model, OnInit, signal } from '@angular/core';
+import {Component, effect, inject, model, OnInit, signal} from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
@@ -7,6 +7,7 @@ import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/sc
 import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, Metrics, ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
+import {SchedulesService} from "../../services/api/schedules.service.js";
 
 export type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
@@ -39,6 +40,7 @@ export interface Data {
   ]
 })
 export class ScheduleReportComponent implements OnInit {
+  private schedulesService = inject(SchedulesService);
 
   schedule = {
     frequency: 'weekly',
@@ -51,8 +53,6 @@ export class ScheduleReportComponent implements OnInit {
   };
   clientUuid: string = '';
   reportStatsLoading = signal(true);
-
-  metricsGraphConfig: any[] = [];
 
   mockData: Data = {
     KPIs: {},
@@ -94,28 +94,21 @@ export class ScheduleReportComponent implements OnInit {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
-    private reportService: ReportService,
     private mockReportService: MockReportService,
     public reportsDataService: ReportsDataService,
     private reportsService: ReportService
   ) {
-    // this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.selectedDatePreset)?.text || '';
     this.updateSelectedDatePresetText();
-
-    // effect(() => {
-    //   console.log(`The count is: ${this.clientImageGsUri()}`);
-    // });
   }
 
   onDatePresetChange(event: any) {
-    console.log(event)
     this.updateSelectedDatePresetText();
   }
 
   async ngOnInit() {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
 
-    this.availableMetrics = await this.reportService.getAvailableMetrics();
+    this.availableMetrics = await this.schedulesService.getAvailableMetrics();
 
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
 
@@ -155,8 +148,6 @@ export class ScheduleReportComponent implements OnInit {
     this.reportSections.forEach((section, index) => {
       section.order = index + 1;
     });
-
-    console.log(this.reportSections)
   }
 
   editScheduleConfiguration() {
@@ -173,11 +164,10 @@ export class ScheduleReportComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
       if (!result) {
         return;
       }
-      
+
       this.schedule = result.schedule;
       this.selectedDatePreset = result.datePreset;
       this.messages = result.messages;
@@ -204,11 +194,10 @@ export class ScheduleReportComponent implements OnInit {
       messages: this.messages,
       images: {
         clientLogo: this.clientImageGsUri(),
-        agencyLogo: this.agencyImageGsUri()
+        organizationLogo: this.agencyImageGsUri()
       }
     };
 
-    const response = await this.reportsService.createSchedule(payload) as { uuid: string };
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 

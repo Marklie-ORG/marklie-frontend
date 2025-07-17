@@ -2,19 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
-import { Client } from './client.service.js';
-import { Point } from '@angular/cdk/drag-drop';
-import {ScheduledReport} from "../../pages/client/client.component.js";
-
-export interface ReportStatsResponse {
-  data: {
-    ads: any[]
-    KPIs: any
-    campaigns: any[]
-    graphs: any[]
-    adAccountId: string
-  }[]
-}
 
 export interface GetAvailableMetricsResponse {
   [key: string]: string[]
@@ -45,7 +32,7 @@ export interface CreateScheduleRequest extends Schedule {
   };
   images: {
     clientLogo: string,
-    agencyLogo: string
+    organizationLogo: string
   }
 }
 
@@ -159,7 +146,6 @@ export interface Metadata {
 })
 export class ReportService {
   private apiUrl = `${environment.reportsApiUrl}`;
-  // private apiUrl = 'https://0758-77-174-130-35.ngrok-free.app';
 
   private headers = {
     'ngrok-skip-browser-warning': 'true'
@@ -167,60 +153,13 @@ export class ReportService {
 
   constructor(private http: HttpClient) { }
 
-  // @ts-ignore
-  createSchedule(data: CreateScheduleRequest) {
-    try {
-      console.log(this.apiUrl)
+  async createSchedule(data: CreateScheduleRequest) {
       return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
-
-    }catch (e) {
-      console.log(e)
-
-    }
-  }
-
-  updateSchedulingOption(scheduleUuid: string, data: CreateScheduleRequest): Promise<any> {
-    return firstValueFrom(this.http.put(`${this.apiUrl}/reports/scheduling-option/${scheduleUuid}`, data));
-  }
-
-  deleteSchedule(scheduleUuid: string): Promise<any> {
-    return firstValueFrom(this.http.delete(`${this.apiUrl}/reports/${scheduleUuid}`));
   }
 
   async getReport(uuid: string): Promise<GetReportResponse> {
     return firstValueFrom(this.http.get<GetReportResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
   }
 
-  async getSchedulingOptions(clientUuid: string) {
-    return firstValueFrom(this.http.get<ScheduledReport[]>(`${this.apiUrl}/reports/scheduling-options/${clientUuid}`, {headers: this.headers}));
-  }
-
-  async getReports(): Promise<any[]> {
-    return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/reports/`, {headers: this.headers}));
-  }
-
-  async getReportStats(datePreset: string): Promise<ReportStatsResponse> {
-    return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports?datePreset=${datePreset}&organizationName=test`, {headers: this.headers}));
-  }
-
-  async getWeeklyReportById(id: string): Promise<ReportStatsResponse> {
-    return firstValueFrom(this.http.get<ReportStatsResponse>(`${this.apiUrl}/reports/${id}`, {headers: this.headers}));
-  }
-
-  async getClientReports(clientUuid: string): Promise<Report[]> {
-    return firstValueFrom(this.http.get<Report[]>(`${this.apiUrl}/reports/client/${clientUuid}`, {headers: this.headers}));
-  }
-
-  async getSchedulingOption(uuid: string): Promise<any> {
-    return firstValueFrom(this.http.get<any>(`${this.apiUrl}/reports/scheduling-option/${uuid}`, {headers: this.headers}));
-  }
-
-  async getAvailableMetrics(): Promise<GetAvailableMetricsResponse> {
-    return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/reports/available-metrics`));
-  }
-
-  async updateReportMetricsSelections(uuid: string, metricsSelections: any): Promise<any> {
-    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-metrics-selections/${uuid}`, metricsSelections, {headers: this.headers}));
-  }
 }
 

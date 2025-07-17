@@ -96,7 +96,8 @@ export class ReportComponent implements OnInit, OnDestroy {
         this.graphs,
         this.chartInstances,
         this.dateRangeLabel,
-        prefix
+        prefix,
+        data
       );
     }, 0);
   }

@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./header-new.component.scss'],
 })
 export class HeaderNewComponent {
+  ngOnInit() {
+    console.log('HeaderNewComponent mounted');
+  }
 }

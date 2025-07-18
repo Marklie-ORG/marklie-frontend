@@ -1,8 +1,6 @@
-import { Component, ElementRef, Input, AfterViewInit, OnDestroy, QueryList, ViewChildren, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Input, AfterViewInit, OnDestroy, QueryList, ViewChildren, input, model } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { MetricSelections } from '../edit-report-content/edit-report-content.component';
 import { Metric } from 'src/app/services/api/report.service';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import Sortable from 'sortablejs';
 
 @Component({
@@ -16,18 +14,11 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
 
   @ViewChildren('adsGridContainer') gridContainers!: QueryList<ElementRef>;
   
-  @Input() reportSections: ReportSection[] = [];
   @Input() ads: any[] = [];
-
-  metrics: Metric[] = [];
+  metrics = model<Metric[]>([]);
+  isViewMode = input<boolean>(false);
 
   constructor(public metricsService: MetricsService) {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['reportSections']) {
-      this.metrics = this.reportSections.find(s => s.key === 'ads')?.metrics || [];
-    }
   }
 
   ngAfterViewInit(): void {
@@ -53,6 +44,10 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
         onEnd: (event) => this.reorderItems(event),
       }));
     });
+
+    if (this.isViewMode()) {
+      this.sortables.forEach(s => s.option('disabled', true));
+    }
   }
 
   private destroySortables(): void {
@@ -65,15 +60,13 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   }
 
   reorderItems(event: Sortable.SortableEvent) {
-    console.log(event)
-    const adsSection = this.reportSections.find(s => s.key === 'ads');
-    if (adsSection) {
-      const movedItem = adsSection.metrics.splice(event.oldIndex!, 1)[0];
-      adsSection.metrics.splice(event.newIndex!, 0, movedItem);
+    let metrics = this.metrics();
+    if (metrics) {
+      const movedItem = metrics.splice(event.oldIndex!, 1)[0];
+      metrics.splice(event.newIndex!, 0, movedItem);
     }
-    adsSection?.metrics.forEach((m, index) => m.order = index);
-
-    console.log(this.reportSections.find(s => s.key === 'ads')?.metrics)
+    metrics.forEach((m, index) => m.order = index);
+    this.metrics.set(metrics);
   }
 
 }

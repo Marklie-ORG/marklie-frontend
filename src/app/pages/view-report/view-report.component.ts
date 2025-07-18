@@ -1,17 +1,23 @@
-import {ChangeDetectorRef, Component, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {GetAvailableMetricsResponse, ReportService} from 'src/app/services/api/report.service';
-import {Data, ReportSection} from '../schedule-report/schedule-report.component';
-import {MetricsService} from 'src/app/services/metrics.service';
-import {ReportsDataService} from 'src/app/services/reports-data.service';
-import { SchedulesService } from 'src/app/services/api/schedules.service';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  signal,
+  inject,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+import { GetAvailableMetricsResponse, ReportService } from '../../services/api/report.service.js';
+import { ReportsDataService } from '../../services/reports-data.service.js';
+import { Data, ReportSection } from '../schedule-report/schedule-report.component.js';
+import { MetricsService } from 'src/app/services/metrics.service.js';
 
 @Component({
-  selector: 'app-review-report',
-  templateUrl: './review-report.component.html',
-  styleUrl: './review-report.component.scss'
+  selector: 'app-view-report',
+  templateUrl: './view-report.component.html',
+  styleUrls: ['./view-report.component.scss'],
 })
-export class ReviewReportComponent implements OnInit {
+export class ViewReportComponent implements OnInit {
 
   data: Data = {
     KPIs: {},
@@ -23,7 +29,6 @@ export class ReviewReportComponent implements OnInit {
   reportId: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = {};
   reportSections: ReportSection[] = []
-  private schedulesService = inject(SchedulesService);
 
   isPreviewMode: boolean = false;
 
@@ -37,6 +42,11 @@ export class ReviewReportComponent implements OnInit {
 
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
+
+  //
+  selectedAdAccountIndex = -1;
+  reportData: any[] = [];
+  //
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
@@ -55,7 +65,7 @@ export class ReviewReportComponent implements OnInit {
     if (!this.reportId) return;
     try {
       const res = await this.reportService.getReport(this.reportId);
-      const data = res.data[0];
+      this.reportData = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
@@ -65,19 +75,13 @@ export class ReviewReportComponent implements OnInit {
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.agencyLogo || '');
 
-      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
+      this.availableMetrics = await this.reportService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
 
-      this.data = {
-        KPIs: data.KPIs,
-        ads: data.ads,
-        campaigns: data.campaigns,
-        graphs: data.graphs
-      }
+      this.processSelectedAccount();
       
     } catch (error) {
       console.error('Error loading report:', error);
-      // Handle error, e.g., show a message to the user
     }
   }
 
@@ -85,20 +89,20 @@ export class ReviewReportComponent implements OnInit {
     window.open(url, '_blank');
   }
 
-  async save() {
-    if (!this.reportId) return;
-    try {
-      const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
-      await this.reportService.updateReportMetricsSelections(this.reportId, metricsSelections);
-      await this.reportService.updateReportImages(this.reportId, {
-        clientLogo: this.clientImageGsUri(),
-        agencyLogo: this.agencyImageGsUri()
-      });
-      console.log('Report saved successfully!');
-      // Optionally, show a success message
-    } catch (error) {
-      console.error('Error saving report:', error);
+  public processSelectedAccount(): void {
+    const isAllAccounts = Number(this.selectedAdAccountIndex) === -1;
+    const data = isAllAccounts
+      ? this.reportsDataService.aggregateReports(this.reportData)
+      : this.reportData[this.selectedAdAccountIndex];
+
+    this.data = {
+      KPIs: data.KPIs,
+      ads: data.ads,
+      campaigns: data.campaigns,
+      graphs: data.graphs
     }
+    
+    this.ref.detectChanges();
   }
 
 }

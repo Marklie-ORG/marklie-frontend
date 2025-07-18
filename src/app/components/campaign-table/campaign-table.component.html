@@ -1,26 +1,32 @@
-<table class="campaign-table">
+<div class="table-container">
+  <table class="campaign-table">
     <thead>
       <tr #campaignsHeaderContainer>
         <th class="non-sortable">#</th>
         <th class="non-sortable">Campaign Name</th>
-        <ng-container *ngFor="let metric of metrics">
-          <th *ngIf="metric.enabled" class="draggable-metric-header">
-            {{metric.name}}
-          </th>
+        <ng-container *ngFor="let metric of metrics()">
+          @if (metric.enabled) {
+            <th class="draggable-metric-header">
+              {{metric.name}}
+            </th>
+          }
         </ng-container>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let campaign of campaigns; let k = index">
-        <td>{{ k + 1 }}</td>
-        <td>{{ campaign.campaign_name }}</td>
-
-        <ng-container *ngFor="let metric of metrics">
-          <td *ngIf="metric.enabled" >
-            {{campaign[metric.name]}}
-          </td>
-        </ng-container>
-        
-      </tr>
+        @for (campaign of campaigns; track campaign.campaign_id; let k = $index) {
+          <tr>
+            <td>{{ k + 1 }}</td>
+            <td>{{ campaign.campaign_name }}</td>
+            @for (metric of metrics(); track metric.name) {
+              @if (metric.enabled) {
+                <td>
+                  {{campaign[metric.name]}}
+                </td>
+              }
+            }
+          </tr>
+        }
     </tbody>
-</table>
+  </table>
+</div>

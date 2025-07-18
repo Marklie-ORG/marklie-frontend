@@ -37,21 +37,6 @@ html, body {
   scrollbar-color: #cbd5e1 #f9fafb;
 }
 
-.loading {
-  font-size: 18px;
-  font-weight: 500;
-  text-align: center;
-  padding: 40px 0;
-  color: #4b5563;
-}
-
-.side-panel {
-  background-color: #fff;
-  // border-right: 1px solid #e5e7eb;
-  box-shadow: var(--box-shadow);
-  border-left: var(--block-border);
-}
-
 .report-header {
   padding: 14px 5%;
   background: var(--block-color);
@@ -59,7 +44,8 @@ html, body {
   border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
 }
 
-// main {
-//   transform: scale(0.75);
-//   transform-origin: top center;
-// }
+.report-container {
+  background-color: #f9fafb; 
+  overflow-y: auto; 
+  height: calc(100vh - 16px - 16px - 16px - 16px - 16px - 16px);
+}

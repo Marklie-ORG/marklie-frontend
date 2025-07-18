@@ -57,10 +57,6 @@ export class ImagesManagerComponent {
     this.dialogRef.close(this.selectedImage);
   }
 
-  cancel() {
-    this.dialogRef.close();
-  }
-
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {

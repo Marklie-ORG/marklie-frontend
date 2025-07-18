@@ -1,0 +1,23 @@
+
+<div class="kpi-grid" #kpiGridContainer>
+  @if (kpis()) {
+
+    @for (metric of metrics(); track metric.name) {
+
+      <div class="kpi-card"
+      [style.display]="metric.enabled ? 'block' : 'none'"
+      [style.cursor]="isViewMode() ? 'auto' : 'grab'"
+      >
+        <div class="kpi-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
+        <div class="kpi-value">
+          {{ metricsService.formatMetricValue(metric.name, kpis()[metric.name]) }}
+        </div>
+      </div>
+
+    }
+    
+  }
+  
+</div>
+
+

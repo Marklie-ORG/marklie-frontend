@@ -285,13 +285,7 @@ export class ReportsDataService {
     return Number(num).toLocaleString();
   }
 
-  getMetricStyle(metric: string): string {
-    if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
-    if (['spend', 'cpc'].includes(metric)) return 'primary';
-    return '';
-  }
-
-  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '', account: any) {
+  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
     const labels = graphs.map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );

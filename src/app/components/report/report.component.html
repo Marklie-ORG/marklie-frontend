@@ -1,0 +1,60 @@
+
+<div class="report-container p-5">
+
+  <report-header
+  [reportTitle]="reportTitle"
+  [selectedDatePresetText]="selectedDatePresetText"
+  [(clientImageUrl)]="clientImageUrl"
+  [(clientImageGsUri)]="clientImageGsUri"
+  [(agencyImageUrl)]="agencyImageUrl"
+  [(agencyImageGsUri)]="agencyImageGsUri"
+  [isViewMode]="isViewMode()"
+  ></report-header>
+
+  <div #sectionsGridContainer>
+
+    @for (section of reportSections; track section.key; let i = $index) {
+      <div class="report-section mb-4">
+        @if (section.enabled && data) {
+          <div class="section-title mb-3">
+            {{ section.title }}
+          </div>
+    
+          <ng-container [ngSwitch]="section.key">
+    
+            <kpi-grid
+            *ngSwitchCase="'kpis'"
+            [kpis]="data.KPIs"
+            [(metrics)]="section.metrics"
+            [isViewMode]="isViewMode()"
+            ></kpi-grid>
+    
+            <charts
+            *ngSwitchCase="'graphs'"
+            [graphs]="data.graphs"
+            [(metrics)]="section.metrics"
+            [isViewMode]="isViewMode()"
+            ></charts>
+    
+            <ad-card
+            *ngSwitchCase="'ads'"
+            [ads]="data.ads"
+            [(metrics)]="section.metrics"
+            [isViewMode]="isViewMode()"
+            ></ad-card>
+    
+            <campaign-table
+            *ngSwitchCase="'campaigns'"
+            [campaigns]="data.campaigns"
+            [(metrics)]="section.metrics"
+            [isViewMode]="isViewMode()"
+            ></campaign-table>
+            
+          </ng-container>
+        }
+      </div>
+    }
+  </div>
+  
+
+</div>

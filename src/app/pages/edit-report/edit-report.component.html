@@ -35,46 +35,34 @@
 
   </div>
 
-  <div style="display: grid; grid-template-columns: 0% 80% 20%; gap: 0%; background-color: #f9fafb; " 
-  [ngStyle]="{'grid-template-columns': isPreviewMode ? '10% 80% 10%' : '0% 80% 20%'}">
+  <div 
+  style="display: grid; grid-template-columns: 0% 80% 20%; gap: 0%; background-color: #f9fafb;" 
+  [style]="{'grid-template-columns': isPreviewMode ? '10% 80% 10%' : '0% 80% 20%'}">
 
-  <div></div>
+    <div></div>
 
-    <div 
-    class="d-flex flex-column pt-3 pl-5 pr-5"
-    style="
-    background-color: #f9fafb; 
-    overflow-y: auto; 
-    height: calc(100vh - 16px - 16px - 16px - 16px - 16px - 16px);
-    /* max-width: 1395px; */
-    "
-    >
-      <main>
+    <div class="report-container d-flex flex-column pt-3 pl-5 pr-5">
     
-        <edit-report-content
-          [reportSections]="reportSections"
-          [data]="mockData"
-          [selectedDatePresetText]="selectedDatePresetText"
-          [reportTitle]="reportTitle"
-          [(clientImageUrl)]="clientImageUrl"
-          [(agencyImageUrl)]="agencyImageUrl"
-          [(clientImageGsUri)]="clientImageGsUri"
-          [(agencyImageGsUri)]="agencyImageGsUri"
-        ></edit-report-content>
+      <report
+        [reportSections]="reportSections"
+        [data]="mockData"
+        [selectedDatePresetText]="selectedDatePresetText"
+        [reportTitle]="reportTitle"
+        [(clientImageUrl)]="clientImageUrl"
+        [(agencyImageUrl)]="agencyImageUrl"
+        [(clientImageGsUri)]="clientImageGsUri"
+        [(agencyImageGsUri)]="agencyImageGsUri"
+      ></report>
 
-      </main>
     </div>
 
-    <div class="side-panel d-flex flex-column p-3" *ngIf="!isPreviewMode">
-      
-      
-
+    @if(!isPreviewMode) {
       <edit-metrics
-        [(reportSections)]="reportSections"
-        [(reportTitle)]="reportTitle"
+      [(reportSections)]="reportSections"
+      [(reportTitle)]="reportTitle"
       ></edit-metrics>
+    }
 
-    </div>
   </div>
   
 </div>

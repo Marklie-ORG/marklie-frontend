@@ -1,14 +1,11 @@
 <div class="d-flex flex-column">
 
   <div class="report-header d-flex align-center justify-between">
-
     <div routerLink="/dashboard" class="logo d-flex align-center">
       <a href="/dashboard">
         <img src="../../../favicon.png" alt="logo" width="40px">
       </a>
-      
     </div>
-
     <div class="d-flex align-center justify-end">
       <select [(ngModel)]="selectedDatePreset" class="mr-3" (change)="onDatePresetChange($event)">
         <option *ngFor="let preset of reportsDataService.DATE_PRESETS" [value]="preset.value">
@@ -18,41 +15,29 @@
       <button (click)="editScheduleConfiguration()" class="blue d-flex align-center gap-2">
         Schedule report
       </button>
-      <!-- <button class="blue ml-3" (click)="saveConfiguration()">Save</button> -->
     </div>
-
   </div>
 
   <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
 
-    <div 
-    class="d-flex flex-column pt-3 pl-4 pr-3 pb-3" 
-    style="background-color: #f9fafb; overflow-y: auto; height: calc(100vh - 16px - 16px - 16px - 16px - 16px);">
-      <main>
-        <div *ngIf="reportStatsLoading()" class="loading text-center">Loading...</div>
-    
-        <div *ngIf="!reportStatsLoading()" cdkDropList (cdkDropListDropped)="dropSection($event)">
-          <edit-report-content
-            [reportSections]="reportSections"
-            [data]="mockData"
-            [reportTitle]="reportTitle"
-            [selectedDatePresetText]="selectedDatePresetText"
-            [(clientImageGsUri)]="clientImageGsUri"
-            [(agencyImageGsUri)]="agencyImageGsUri"
-          ></edit-report-content>
-        </div>
-
-      </main>
-    </div>
-
-    <div class="side-panel d-flex flex-column p-3">
-
-      <edit-metrics
-        [(reportSections)]="reportSections"
-        [(reportTitle)]="reportTitle"
-      ></edit-metrics>
+    <div class="report-container d-flex flex-column pt-3 pl-4 pr-3 pb-3" >
+        
+      <report
+        [reportSections]="reportSections"
+        [data]="mockData"
+        [reportTitle]="reportTitle"
+        [selectedDatePresetText]="selectedDatePresetText"
+        [(clientImageGsUri)]="clientImageGsUri"
+        [(agencyImageGsUri)]="agencyImageGsUri"
+      ></report>
 
     </div>
+
+    <edit-metrics
+      [(reportSections)]="reportSections"
+      [(reportTitle)]="reportTitle"
+    ></edit-metrics>
+      
   </div>
 
 </div>

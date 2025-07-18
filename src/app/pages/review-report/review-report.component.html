@@ -1,38 +1,42 @@
-<button (click)="save()">Save</button>
 
-<div id="root"></div>
 
-<div>
+<div class="d-flex flex-column">
+
+  <div class="report-header d-flex align-center justify-between">
+    <div routerLink="/dashboard" class="logo d-flex align-center">
+      <a href="/dashboard">
+        <img src="../../../favicon.png" alt="logo" width="40px">
+      </a>
+    </div>
+    <p *ngIf="changesMade">Unsaved changes made</p>
+    <div class="d-flex align-center justify-end">
+      <button (click)="isPreviewMode = !isPreviewMode" class="mr-3">
+        Preview
+      </button>
+      <button class="blue ml-3" (click)="save()">Save</button>
+    </div>
+  </div>
 
   <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
 
-    <div class="d-flex flex-column pt-3 pl-5 pr-5">
-      <edit-report-content
+    <div class="report-container d-flex flex-column pt-3 pl-5 pr-5">
+      <report
         [reportSections]="reportSections"
         [data]="data"
-      ></edit-report-content>
+        [selectedDatePresetText]="selectedDatePresetText()"
+        [reportTitle]="reportTitle()"
+        [(clientImageUrl)]="clientImageUrl"
+        [(agencyImageUrl)]="agencyImageUrl"
+        [(clientImageGsUri)]="clientImageGsUri"
+        [(agencyImageGsUri)]="agencyImageGsUri"
+      ></report>
     </div>
 
-    <div class="side-panel d-flex flex-column p-3">
+    <edit-metrics
+      [(reportSections)]="reportSections"
+      [(reportTitle)]="reportTitle"
+    ></edit-metrics>
 
-      <!-- <div *ngIf="schedulingOption" class="p-3 block d-flex flex-column gap-2">
-        <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div>
-        <div>Date Preset: {{schedulingOption.datePreset}}</div>
-        <div>Frequency: {{schedulingOption.jobData.frequency}}</div>
-        <div>Review before sending: {{schedulingOption.jobData.reviewNeeded ? 'yes' : 'no'}}</div>
-        <div>Next run: {{schedulingOption.nextRun}}</div>
-
-      </div> -->
-
-      <!-- <button class="blue mb-3" (click)="editDelivery()">
-        Edit Delivery
-      </button> -->
-
-      <edit-metrics
-        [(reportSections)]="reportSections"
-      ></edit-metrics>
-
-    </div>
   </div>
 
 </div>

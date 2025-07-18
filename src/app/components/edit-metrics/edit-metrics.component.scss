@@ -1,5 +1,5 @@
 :host {
-  margin-top: 10px;
+  // margin-top: 10px;
 }
 
 .accordion-item {
@@ -215,3 +215,9 @@ input:checked + .slider::before {
 }
 
 
+.side-panel {
+  background-color: #fff;
+  box-shadow: var(--box-shadow);
+  border-left: var(--block-border);
+  height: 100%;
+}

@@ -1,10 +1,9 @@
-import {Component, effect, inject, model, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
-import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, Metrics, ReportService } from 'src/app/services/api/report.service';
+import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
@@ -25,8 +24,6 @@ export interface Data {
   campaigns: any[];
   graphs: any[];
 }
-
-
 
 @Component({
   selector: 'schedule-report',
@@ -49,7 +46,7 @@ export class ScheduleReportComponent implements OnInit {
     dayOfMonth: 1,
     intervalDays: 1,
     cronExpression: '',
-    reviewRequired: false,
+    reviewNeeded: false,
   };
   clientUuid: string = '';
   reportStatsLoading = signal(true);
@@ -69,7 +66,7 @@ export class ScheduleReportComponent implements OnInit {
 
   selectedDatePreset: string = 'last_7d';
 
-  selectedDatePresetText: string | undefined = undefined;
+  selectedDatePresetText: string = '';
 
   messages: {
     whatsapp: string,
@@ -90,14 +87,14 @@ export class ScheduleReportComponent implements OnInit {
   clientImageGsUri = signal<string>('');
   agencyImageGsUri = signal<string>('');
 
-  constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private router: Router,
-    private mockReportService: MockReportService,
-    public reportsDataService: ReportsDataService,
-    private reportsService: ReportService
-  ) {
+  private dialog = inject(MatDialog);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private reportService = inject(ReportService);
+  private mockReportService = inject(MockReportService);
+  public reportsDataService = inject(ReportsDataService);
+
+  constructor() {
     this.updateSelectedDatePresetText();
   }
 
@@ -121,9 +118,6 @@ export class ScheduleReportComponent implements OnInit {
     this.mockData = this.mockReportService.generateMockData();
 
     this.reportStatsLoading.set(false);
-    // this.reportStatsLoading = false;
-
-    // this.editScheduleConfiguration();
   }
 
   ngOnChanges() {
@@ -142,21 +136,12 @@ export class ScheduleReportComponent implements OnInit {
     }
   }
 
-  dropSection(event: CdkDragDrop<ReportSection[]>): void {
-    moveItemInArray(this.reportSections, event.previousIndex, event.currentIndex);
-
-    this.reportSections.forEach((section, index) => {
-      section.order = index + 1;
-    });
-  }
-
   editScheduleConfiguration() {
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
       data: {
         reportSections: this.reportSections,
         clientUuid: this.clientUuid,
-        // metricSelections: this.metricSelections,
         schedule: this.schedule,
         messages: this.messages,
         datePreset: this.selectedDatePreset,
@@ -198,6 +183,7 @@ export class ScheduleReportComponent implements OnInit {
       }
     };
 
+    const response = await this.reportService.createSchedule(payload) as { uuid: string };
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 

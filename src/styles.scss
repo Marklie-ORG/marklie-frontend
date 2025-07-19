@@ -1,6 +1,8 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
+@use './styles/breakpoints' as *;
+@use './styles/variables' as *;
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -251,9 +253,27 @@ hr { opacity: 0.3; border-radius: 20px;}
 }
 
 .landing-container {
-    max-width: 1160px;
+    width: 100%;
     margin: 0 auto;
-}
+    padding-left: 1rem;
+    padding-right: 1rem;
+  
+    max-width: var(--container-max-width);
+  
+    @include from-mobile {
+      max-width: var(--container-sm);
+    }
+    @include from-tablet {
+      max-width: var(--container-md);
+    }
+    @include from-desktop {
+      max-width: var(--container-lg);
+    }
+    @include desktop-large {
+      max-width: var(--container-2xl);
+    }
+  }
+  
 
 button {
     border: none;

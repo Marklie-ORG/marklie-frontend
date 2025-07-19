@@ -1,0 +1,40 @@
+<ng-container *ngIf="!isLink; else linkTemplate">
+  <button
+    [type]="type"
+    [class]="buttonClasses"
+    [disabled]="disabled || loading"
+    (click)="onClick()"
+  >
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="btn__spinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Projected content -->
+    <ng-container *ngTemplateOutlet="projected"></ng-container>
+  </button>
+</ng-container>
+
+<ng-template #linkTemplate>
+  <a
+    [href]="link"
+    [target]="target"
+    [class]="buttonClasses"
+    [class.btn--disabled]="disabled"
+    [class.btn--loading]="loading"
+    (click)="onClick()"
+  >
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="btn__spinner">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Projected content -->
+    <ng-container *ngTemplateOutlet="projected"></ng-container>
+  </a>
+</ng-template>
+
+<!-- Single definition for projected content -->
+<ng-template #projected>
+  <ng-content></ng-content>
+</ng-template>

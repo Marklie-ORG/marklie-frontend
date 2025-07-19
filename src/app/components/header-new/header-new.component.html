@@ -1,3 +1,27 @@
 <header class="landing-container header">
-  <h1>Header New</h1>
+  <div class="header__content">
+    <div class="header__content-left">
+      <a routerLink="/dashboard" class="logo">
+        <img src="/assets/img/logo.png" alt="logo" />
+        <span>Marklie</span>
+      </a>
+    </div>
+    <div class="header__content-right">
+      <div class="desktop-buttons">
+        <app-button variant="ghost" size="medium" link="/auth">
+          Log in
+        </app-button>
+        <app-button variant="primary" size="medium" link="/auth">
+          Sign up
+        </app-button>
+      </div>
+
+      <div class="mobile-buttons">
+        <app-button variant="primary" size="medium"> Sign up </app-button>
+        <span class="mobile-menu">
+          <img src="/assets/icons/burger-menu.svg" alt="menu" />
+        </span>
+      </div>
+    </div>
+  </div>
 </header>

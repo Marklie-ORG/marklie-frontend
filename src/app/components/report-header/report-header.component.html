@@ -1,0 +1,42 @@
+<div class="d-flex justify-between mb-5">
+    <div class="d-flex">
+      @if (clientImageUrl()) {
+        <img
+        (click)="!isViewMode() ? getImage('client', clientImageGsUri()) : null"
+        [class.cursor-pointer]="!isViewMode()"
+        style="object-fit: contain; width: 100px; height: 100px;"
+        [src]="clientImageUrl()" alt="Client Logo">
+      }
+      @else {
+        <div class="d-flex justify-center align-center" style="width: 100px; height: 100px;">
+          <button (click)="getImage('client')">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      }
+    </div>
+    <div class="d-flex flex-column">
+      <div class="text-center">
+        <h2>{{reportTitle()}}</h2>
+      </div>
+      <div class="text-center" *ngIf="selectedDatePresetText()">
+        <h4 >{{selectedDatePresetText()}}</h4>
+      </div>
+    </div>
+    <div class="d-flex">
+      @if (agencyImageUrl()) {
+        <img
+        (click)="!isViewMode() ? getImage('agency', agencyImageGsUri()) : null"
+        [class.cursor-pointer]="!isViewMode()"
+        style="object-fit: contain; width: 100px; height: 100px;"
+        [src]="agencyImageUrl()" alt="Agency Logo">
+      }
+      @else {
+        <div class="d-flex justify-center align-center" style="width: 100px; height: 100px;">
+          <button (click)="getImage('agency')">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      }
+    </div>
+</div>

@@ -2,128 +2,86 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-  OnDestroy,
+  inject,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ReportService } from 'src/app/services/api/report.service';
+import { GetAvailableMetricsResponse, ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import { Chart } from 'chart.js';
+import { Data, ReportSection } from '../schedule-report/schedule-report.component';
+import { MetricsService } from 'src/app/services/metrics.service';
 
 @Component({
   selector: 'app-pdf-report',
   templateUrl: './pdf-report.component.html',
   styleUrls: ['./pdf-report.component.scss'],
 })
-export class PdfReportComponent implements OnInit, OnDestroy {
-  KPIs!: any;
-  graphs: any[] = [];
-  campaigns: any[] = [];
-  bestAds: any[] = [];
-  reportStatsLoading = false;
-  dateRangeLabel = '';
-  chartInstances: Record<string, Record<string, Chart>> = {};
-  reportData: any[] = [];
-  isMultiAccount = false;
-
-  readonly objectKeys = Object.keys;
-  readonly chartConfigs = this.reportDataService.getChartConfigs();
-  readonly campaignColumnOrder = ['spend', 'purchases', 'conversionRate', 'purchaseRoas'];
-
-  constructor(
-    private reportService: ReportService,
-    private route: ActivatedRoute,
-    private ref: ChangeDetectorRef,
-    private reportDataService: ReportsDataService
-  ) {}
-
-  async ngOnInit(): Promise<void> {
-    const reportUuid = this.route.snapshot.params['uuid'];
-    if (reportUuid) {
-      await this.loadReport(reportUuid);
-    }
+export class PdfReportComponent implements OnInit {
+  data: Data = {
+    KPIs: {},
+    ads: [],
+    campaigns: [],
+    graphs: []
   }
 
-  ngOnDestroy(): void {
-    Object.values(this.chartInstances).forEach((chartGroup) => {
-      Object.values(chartGroup).forEach((chart) => {
-        chart.destroy();
-      });
-    });  }
+  reportId: string | null = null;
+  availableMetrics: GetAvailableMetricsResponse = {};
+  reportSections: ReportSection[] = []
 
-  async loadReport(reportUuid: string): Promise<void> {
-    this.reportStatsLoading = true;
+  isPreviewMode: boolean = false;
+
+  changesMade = false;
+
+  clientImageUrl = signal<string>('');
+  agencyImageUrl = signal<string>('');
+
+  clientImageGsUri = signal<string>('');
+  agencyImageGsUri = signal<string>('');
+
+  reportTitle = signal<string>('');
+  selectedDatePresetText = signal<string>('');
+
+  //
+  reportData: any[] = [];
+  //
+
+  private route = inject(ActivatedRoute);
+  private reportService = inject(ReportService);
+  public metricsService = inject(MetricsService);
+  public ref = inject(ChangeDetectorRef);
+  private reportsDataService = inject(ReportsDataService);
+
+  async ngOnInit() {
+    this.route.params.subscribe(async params => {
+      this.reportId = params['id'];
+      await this.loadReport();
+    });
+  }
+
+  private async loadReport() {
+    if (!this.reportId) return;
     try {
-      const res = await this.reportService.getReport(reportUuid);
+      const res = await this.reportService.getReport(this.reportId);
       this.reportData = res.data;
-      this.isMultiAccount = this.reportData.length > 1;
 
-      this.ref.detectChanges();
+      this.reportTitle.set(res.metadata.reportName);
+      this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
+      this.clientImageUrl.set(res.images?.clientLogo || '');
+      this.agencyImageUrl.set(res.images?.agencyLogo || '');
+      this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
+      this.agencyImageGsUri.set(res.metadata.images?.agencyLogo || '');
 
-      this.reportData.forEach((account, index) => {
-        const chartIdPrefix = `account_${index}`;
-        requestAnimationFrame(() => {
-          this.reportDataService.renderCharts(
-            account.graphs,
-            this.getChartInstanceGroup(chartIdPrefix),
-            this.dateRangeLabel,
-            chartIdPrefix,
-            account
-          );
-        });
-      });
+      this.availableMetrics = await this.reportService.getAvailableMetrics();
+      this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
+      
     } catch (error) {
       console.error('Error loading report:', error);
-    } finally {
-      this.reportStatsLoading = false;
     }
   }
 
-  getAvailableChartConfigs(account: any): typeof this.chartConfigs {
-    const graphs = account?.graphs ?? [];
-    if (!graphs.length) return [];
-
-    return this.chartConfigs.filter(cfg =>
-      graphs.some((point: any) => point.hasOwnProperty(cfg.key))
-    );
+  openAd(url: string): void {
+    window.open(url, '_blank');
   }
 
-
-  private getChartInstanceGroup(prefix: string): Record<string, Chart> {
-    if (!this.chartInstances[prefix]) {
-      this.chartInstances[prefix] = {};
-    }
-    return this.chartInstances[prefix];
-  }
-
-
-  private setDateRangeLabel(): void {
-    if (!this.graphs.length) return;
-
-    const start = new Date(this.graphs[0].date_start);
-    const end = new Date(
-      this.graphs.at(-1)?.date_stop ?? this.graphs.at(-1)?.date_start
-    );
-
-    const diffDays =
-      Math.ceil(Math.abs(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-
-    this.dateRangeLabel = `${start.toLocaleDateString()} – ${end.toLocaleDateString()} (${diffDays} days)`;
-  }
-
-  getAdValue(ad: any, key: string): any {
-    return ad[key];
-  }
-
-  formatMetricLabel(metric: string): string {
-    return this.reportDataService.formatMetricLabel(metric);
-  }
-
-  formatMetricValue(metric: string, value: any): string {
-    return this.reportDataService.formatMetricValue(metric, value);
-  }
-
-  getMetricStyle(metric: string): string {
-    return this.reportDataService.getMetricStyle(metric);
-  }
 }

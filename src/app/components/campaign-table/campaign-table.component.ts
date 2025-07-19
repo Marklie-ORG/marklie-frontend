@@ -1,9 +1,6 @@
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Input, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, input, Input, model, OnDestroy, ViewChild } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { MetricSelections } from '../edit-report-content/edit-report-content.component';
 import { Metric } from 'src/app/services/api/report.service';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import Sortable from 'sortablejs';
 
 @Component({
@@ -32,39 +29,32 @@ export class CampaignTableComponent implements OnDestroy {
         onEnd: (event) => this.reorderItems(event),
       });
     }
-  }
 
-  @Input() reportSections: ReportSection[] = [];
-  @Input() campaigns: any[] = [];
-
-  metrics: Metric[] = [];
-  enabledMetrics: Metric[] = [];
-
-  constructor(public metricsService: MetricsService) {
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['reportSections']) {
-      this.updateMetrics();
+    if (this.isViewMode()) {
+      this.sortable?.option('disabled', true);
     }
   }
 
-  updateMetrics() {
-    this.metrics = this.reportSections.find(s => s.key === 'campaigns')?.metrics || [];
-  }
+  @Input() campaigns: any[] = [];
+  metrics = model<Metric[]>([]);
+  isViewMode = input<boolean>(false);
+
+  enabledMetrics: Metric[] = [];
+
+  public metricsService = inject(MetricsService);
 
   reorderItems(event: Sortable.SortableEvent) {
     const oldIndex = event.oldIndex! - 2; // because there are 2 non-sortable columns in container (two first <th>)
     const newIndex = event.newIndex! - 2;
-    const enabledMetrics = this.metrics.filter(m => m.enabled);
+    const enabledMetrics = this.metrics().filter(m => m.enabled);
     const movedItem = enabledMetrics.splice(oldIndex, 1)[0];
     enabledMetrics.splice(newIndex, 0, movedItem);
     enabledMetrics?.forEach((m, index) => m.order = index);
 
-    const disabledMetrics = this.metrics.filter(m => !m.enabled);
+    const disabledMetrics = this.metrics().filter(m => !m.enabled);
     disabledMetrics.forEach((m, index) => m.order = index + enabledMetrics.length);
 
-    this.metrics = [...enabledMetrics, ...disabledMetrics];
+    this.metrics.set([...enabledMetrics, ...disabledMetrics]);
   }
   
   ngOnDestroy(): void {

@@ -10,14 +10,13 @@ import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.co
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { SlackLoginCallbackComponent } from './pages/slack-login-callback/slack-login-callback.component';
 import { ScheduleReportComponent } from "./pages/schedule-report/schedule-report.component.js";
-import {ReportComponent} from "./pages/report/report.component.js";
+import {ViewReportComponent} from "./pages/view-report/view-report.component.js";
 import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 import { ProfileComponent } from './pages/profile/profile.component';
 import { VerifyEmailChangeComponent } from './pages/verify-email-change/verify-email-change.component';
 import { PasswordRecoveryComponent } from './pages/password-recovery/password-recovery.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
-import { EditReportContentComponent } from './components/edit-report-content/edit-report-content.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
 import {ReportsPageComponent} from "./pages/reports/reports-page.component.js";
 const routes: Routes = [
@@ -62,15 +61,17 @@ const routes: Routes = [
     path: 'terms-of-service',
     component: TermsOfServiceComponent
   },
-  { path: 'schedule-report/:clientUuid',
+  { 
+    path: 'schedule-report/:clientUuid',
     component: ScheduleReportComponent,
     canActivate: [authGuard]
-
   },
-  { path: 'view-report/:uuid',
-    component: ReportComponent
+  { 
+    path: 'view-report/:id',
+    component: ViewReportComponent
   },
-  { path: 'pdf-report/:uuid',
+  { 
+    path: 'pdf-report/:id',
     component: PdfReportComponent
   },
   {
@@ -78,16 +79,16 @@ const routes: Routes = [
     component: ProfileComponent,
     canActivate: [authGuard]
   },
-  { path: 'verify-email-change',
+  { 
+    path: 'verify-email-change',
     component: VerifyEmailChangeComponent
   },
-  { path: 'password-recovery',
+  { 
+    path: 'password-recovery',
     component: PasswordRecoveryComponent
   },
-  { path: 'view-report/:uuid',
-    component: ReportComponent
-  },
-  { path: 'pdf-report/:uuid',
+  { 
+    path: 'pdf-report/:uuid',
     component: PdfReportComponent
   },
   {

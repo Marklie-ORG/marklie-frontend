@@ -14,12 +14,6 @@ export class MetricsService {
       .replace(/^./, c => c.toUpperCase());
   }
 
-  getMetricStyle(metric: string): string {
-    if (['purchase_roas', 'purchaseRoas', 'ctr'].includes(metric)) return 'success';
-    if (['spend', 'cpc'].includes(metric)) return 'primary';
-    return '';
-  }
-
   formatMetricValue(metric: string, value: any): string {
     const num = typeof value === 'number' ? value : parseFloat(value);
     if (isNaN(num)) return value ?? '—';

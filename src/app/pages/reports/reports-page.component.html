@@ -106,7 +106,7 @@
           </td>
 
           <td>
-              <span *ngIf="report.reviewRequired; else noReview" class="review-needed-flag">
+              <span *ngIf="report.reviewNeeded; else noReview" class="review-needed-flag">
                 Yes
               </span>
             <ng-template #noReview>No</ng-template>

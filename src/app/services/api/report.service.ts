@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
+import { ScheduledReport } from 'src/app/pages/client/client.component';
 
 export interface GetAvailableMetricsResponse {
   [key: string]: string[]
@@ -13,7 +14,7 @@ export interface Report {
   isActive: boolean,
   nextRun:	Date
   dataPreset:	string
-  reviewRequired:	boolean
+  reviewNeeded:	boolean
 }
 
 export interface CreateScheduleRequest extends Schedule {
@@ -44,7 +45,7 @@ export interface Schedule {
   dayOfMonth: number
   intervalDays: number
   cronExpression: string
-  reviewRequired: boolean
+  reviewNeeded: boolean
 }
 
 export interface Metric {
@@ -70,6 +71,10 @@ export interface GetReportResponse {
   gcsUrl: string
   data: Daum[]
   metadata: Metadata
+  images?: {
+    clientLogo: string
+    agencyLogo: string
+  }
 }
 
 export interface Daum {
@@ -136,10 +141,19 @@ export interface Campaign {
 
 export interface Metadata {
   datePreset: string
-  reviewRequired: boolean
+  reviewNeeded: boolean
   metricsSelections: any
+  reportName: string
+  images?: {
+    clientLogo: string
+    agencyLogo: string
+  }
 }
 
+export interface ReportImages {
+  clientLogo: string
+  agencyLogo: string
+}
 
 @Injectable({
   providedIn: 'root'
@@ -161,5 +175,32 @@ export class ReportService {
     return firstValueFrom(this.http.get<GetReportResponse>(`${this.apiUrl}/reports/${uuid}`, {headers: this.headers}));
   }
 
+  async getSchedulingOptions(clientUuid: string) {
+    return firstValueFrom(this.http.get<ScheduledReport[]>(`${this.apiUrl}/reports/scheduling-options/${clientUuid}`, {headers: this.headers}));
+  }
+
+  async getReports(): Promise<any[]> {
+    return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/reports/`, {headers: this.headers}));
+  }
+
+  async getClientReports(clientUuid: string): Promise<Report[]> {
+    return firstValueFrom(this.http.get<Report[]>(`${this.apiUrl}/reports/client/${clientUuid}`, {headers: this.headers}));
+  }
+
+  async getSchedulingOption(uuid: string): Promise<any> {
+    return firstValueFrom(this.http.get<any>(`${this.apiUrl}/reports/scheduling-option/${uuid}`, {headers: this.headers}));
+  }
+
+  async getAvailableMetrics(): Promise<GetAvailableMetricsResponse> {
+    return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/reports/available-metrics`));
+  }
+
+  async updateReportMetricsSelections(uuid: string, metricsSelections: any): Promise<any> {
+    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-metrics-selections/${uuid}`, metricsSelections, {headers: this.headers}));
+  }
+
+  async updateReportImages(uuid: string, images: ReportImages): Promise<any> {
+    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-images/${uuid}`, images, {headers: this.headers}));
+  }
 }
 

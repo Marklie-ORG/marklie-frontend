@@ -4,15 +4,12 @@
       <img class="ad-media" [src]="ad.thumbnailUrl"/>
     </div>
     <div class="metrics" #adsGridContainer>
-      <ng-container *ngFor="let metric of metrics">
+      <ng-container *ngFor="let metric of this.metrics()">
         <div class="metric" [style.display]="metric.enabled ? 'flex' : 'none'">
           <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
-          <div class="metric-value">
-            {{ad[metric.name]}}
-          </div>
+          <div class="metric-value">{{ad[metric.name]}}</div>
         </div>
       </ng-container>
     </div>
-    <!-- <button (click)="openAd(ad.sourceUrl)" class="width-100">View Ad</button> -->
   </div>
 </div>

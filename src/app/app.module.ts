@@ -28,7 +28,7 @@ import { NgSelectModule } from "@ng-select/ng-select";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ClientSettingsComponent } from './components/client-settings/client-settings.component';
 import { ModalBaseComponent } from './components/modal-base/modal-base.component';
-import {ReportComponent} from "./pages/report/report.component.js";
+import {ViewReportComponent} from "./pages/view-report/view-report.component.js";
 import {PdfReportComponent} from "./pages/pdf-report/pdf-report.component.js";
 import {LoginComponent} from "./components/login/login.component.js";
 import {RegisterComponent} from "./components/register/register.component.js";
@@ -43,10 +43,10 @@ import { NotificationComponent } from './components/notification/notification.co
 import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { ScheduleOptionsComponent } from './components/schedule-options/schedule-options.component';
-import { EditReportContentComponent } from './components/edit-report-content/edit-report-content.component';
+import { ReportComponent } from './components/report/report.component';
 import { EditMetricsComponent } from './components/edit-metrics/edit-metrics.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
-import { KpiCardComponent } from './components/kpi-card/kpi-card.component';
+import { KpiGridComponent } from './components/kpi-grid/kpi-grid.component';
 import { AdCardComponent } from './components/ad-card/ad-card.component';
 import { CampaignTableComponent } from './components/campaign-table/campaign-table.component';
 import { ChartsComponent } from './components/charts/charts.component';
@@ -56,6 +56,7 @@ import { ItemComponent } from './components/edit-metrics/components/item/item.co
 import { WhatsappMessagePreviewComponent } from './components/whatsapp-message-preview/whatsapp-message-preview.component';
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
 import { ImagesManagerComponent } from './components/images-manager/images-manager.component';
+import { ReportHeaderComponent } from './components/report-header/report-header.component';
 
 register();
 
@@ -78,7 +79,7 @@ register();
     ModalBaseComponent,
     SlackLoginCallbackComponent,
     ClientSettingsComponent,
-    ReportComponent,
+    ViewReportComponent,
     PdfReportComponent,
     OnboardingComponent,
 
@@ -96,10 +97,10 @@ register();
     AuthComponent,
     EditReportComponent,
     ScheduleOptionsComponent,
-    EditReportContentComponent,
+    ReportComponent,
     EditMetricsComponent,
     ReviewReportComponent,
-    KpiCardComponent,
+    KpiGridComponent,
     AdCardComponent,
     CampaignTableComponent,
     ChartsComponent,
@@ -109,7 +110,8 @@ register();
     ItemComponent,
     WhatsappMessagePreviewComponent,
     CustomInputComponent,
-    ImagesManagerComponent
+    ImagesManagerComponent,
+    ReportHeaderComponent
 
   ],
   imports: [

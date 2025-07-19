@@ -19,7 +19,7 @@ export interface SchedulingOption {
   reportType: string
   jobData: JobData
   timezone: string
-  reviewRequired: boolean
+  reviewNeeded: boolean
   lastRun: any
   nextRun: string
   bullJobId: string
@@ -40,7 +40,7 @@ interface JobData {
   datePreset: string
   dayOfMonth: number
   intervalDays: number
-  reviewRequired: boolean
+  reviewNeeded: boolean
   cronExpression: string
   organizationUuid: string,
   messages: {
@@ -63,10 +63,7 @@ interface JobData {
   styleUrl: './edit-report.component.scss'
 })
 export class EditReportComponent {
-  private schedulesService = inject(SchedulesService);
-
-  changesMade = false;
-
+  
   schedule: Schedule = {
     reportName: '',
     frequency: 'weekly',
@@ -75,7 +72,7 @@ export class EditReportComponent {
     dayOfMonth: 1,
     intervalDays: 1,
     cronExpression: '',
-    reviewRequired: false,
+    reviewNeeded: false,
   };
   clientUuid: string = '';
 
@@ -97,11 +94,13 @@ export class EditReportComponent {
   reportSections: ReportSection[] = []
 
   selectedDatePreset: string = '';
-  selectedDatePresetText: string | undefined = undefined;
+  selectedDatePresetText: string = '';
 
-  reportTitle: string | undefined = undefined;
+  reportTitle: string = '';
 
   isPreviewMode: boolean = false;
+
+  changesMade = false;
 
   clientImageUrl = signal<string>('');
   agencyImageUrl = signal<string>('');
@@ -109,14 +108,12 @@ export class EditReportComponent {
   clientImageGsUri = signal<string>('');
   agencyImageGsUri = signal<string>('');
 
-  constructor(
-    private dialog: MatDialog,
-    private route: ActivatedRoute,
-    private reportService: ReportService,
-    private mockReportService: MockReportService,
-    public reportsDataService: ReportsDataService,
-    private reportsService: ReportService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  private reportService = inject(ReportService);
+  private dialog = inject(MatDialog);
+  private mockReportService = inject(MockReportService);
+  public reportsDataService = inject(ReportsDataService);
+  private schedulesService = inject(SchedulesService);
 
   ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -128,20 +125,20 @@ export class EditReportComponent {
 
       this.updateSelectedDatePresetText();
 
-      this.reportTitle = this.schedulingOption?.reportName;
+      this.reportTitle = this.schedulingOption?.reportName || '';
       this.selectedDatePreset = this.schedulingOption?.datePreset || '';
-
-      // this.editScheduleConfiguration()
     });
   }
 
   private async loadReport() {
     if (!this.schedulingOptionId) return;
+    
     this.schedulingOption = await this.schedulesService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
     this.clientImageUrl.set(this.schedulingOption?.images.clientLogo || '');
     this.agencyImageUrl.set(this.schedulingOption?.images.agencyLogo || '');
     this.clientImageGsUri.set(this.schedulingOption?.jobData.images?.clientLogo || '');
     this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.agencyLogo || '');
+
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics, this.schedulingOption);
     this.convertOptionIntoTemplate(this.schedulingOption);
     this.mockData = this.mockReportService.generateMockData();
@@ -157,7 +154,7 @@ export class EditReportComponent {
       dayOfMonth: schedulingOption.jobData.dayOfMonth,
       intervalDays: schedulingOption.jobData.intervalDays,
       cronExpression: schedulingOption.cronExpression,
-      reviewRequired: schedulingOption.reviewRequired,
+      reviewNeeded: schedulingOption.reviewNeeded,
     };
 
     this.reportSections.forEach(section => {
@@ -233,17 +230,13 @@ export class EditReportComponent {
       return;
     }
 
-    console.log(this.schedulingOption)
-
-
     const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
 
     const payload: CreateScheduleRequest = {
-      // reportName: this.reportTitle,
       ...(this.schedule),
       metrics: selections,
       datePreset: this.schedulingOption!.datePreset,
-      clientUuid: this.schedulingOption!.client,
+      clientUuid: this.schedulingOption!.jobData.clientUuid,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       messages: this.schedulingOption!.jobData.messages,
       images: {
@@ -252,33 +245,15 @@ export class EditReportComponent {
       }
     };
 
-    console.log(selections)
-    console.log(payload);
-
     if (!this.schedulingOptionId) {
       return
     }
 
     await this.schedulesService.updateSchedulingOption(this.schedulingOptionId, payload);
     await this.loadReport();
-
-    // try {
-    //   if (this.isEditMode && this.schedulingOptionId) {
-    //     await this.reportsService.updateSchedulingOption(this.schedulingOptionId, payload);
-    //     this.scheduleOptionUpdated.emit();
-    //   } else {
-    //     const response = await this.reportsService.createSchedule(payload) as { uuid: string };
-    //     this.router.navigate(['/edit-report', response.uuid]);
-    //   }
-    //   this.dialogRef.close();
-    // } catch (e) {
-    //   console.error(e);
-    // }
   }
 
-
   onDatePresetChange(event: any) {
-    console.log(event)
     this.schedulingOption!.datePreset = this.selectedDatePreset;
     this.updateSelectedDatePresetText();
   }

@@ -1,12 +1,9 @@
 
 
 <div class="graph-grid" #chartsGridContainer>
-    <div 
-    class="graph-card d-flex justify-center align-center" 
-    *ngFor="let graph of displayedGraphs"
-    
-    >
-    <!-- [attr.data-name]="graph.name" -->
-        <canvas [id]="graph.metric + 'Chart'" ></canvas>
-    </div>
+    @for (graph of displayedGraphs; track graph.metric) {
+        <div class="graph-card d-flex justify-center align-center" >
+            <canvas [id]="graph.metric + 'Chart'" ></canvas>
+        </div>
+    }
 </div>

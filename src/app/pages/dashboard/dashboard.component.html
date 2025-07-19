@@ -53,9 +53,7 @@ style="height: 85%;"
                 <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon" *ngIf="randomNumber === 3">
               </div>
             </div>
-            @if (client.schedulingOption && client.schedulingOption.length > 0) {
-              <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption.length}}</div>
-            }
+            <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption?.length ?? 0}}</div>
             <div style="width: 20%;" class="d-flex align-center justify-center">Last activity</div>
           </div>
         </div>
@@ -63,7 +61,6 @@ style="height: 85%;"
 
       <div *ngIf="clients.length === 0" class="d-flex align-center justify-center mt-4">
         <button class="blue" (click)="showAddClientModal()">
-          <!-- <i class="fa-solid fa-plus color-white"></i> -->
           Add your first client
         </button>
       </div>
@@ -73,19 +70,16 @@ style="height: 85%;"
     class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
 
-    <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-      <h3>Activity</h3>
-    </div>
+      <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+        <h3>Activity</h3>
+      </div>
 
-        <!-- <div class="activity-list pl-4 pr-4 pb-4"> -->
       <app-activity-log-item
-        [logs]="logs"
-        [formatTimeOrDate]="formatTimeOrDate"
-        [level]="'organization'"
+      [logs]="logs"
+      [formatTimeOrDate]="formatTimeOrDate"
+      [level]="'organization'"
       ></app-activity-log-item>
-        <!-- </div> -->
 
-
-  </div>
+    </div>
 </div>
 </div>

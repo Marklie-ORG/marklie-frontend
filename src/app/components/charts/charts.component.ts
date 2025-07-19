@@ -1,6 +1,5 @@
-import { Component, ElementRef, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, input, model, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
-import { Data, ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Sortable from 'sortablejs';
 import { Metric } from 'src/app/services/api/report.service';
@@ -36,10 +35,15 @@ export class ChartsComponent {
         onEnd: (event) => this.reorderItems(event),
       });
     }
+
+    if (this.isViewMode()) {
+      this.sortable?.option('disabled', true);
+    }
   }
 
-  @Input() data: Data | undefined = undefined;
-  @Input() reportSections: ReportSection[] = [];
+  graphs = input<any[]>([]);
+  metrics = model<Metric[]>([]);
+  isViewMode = input<boolean>(false);
 
   graphConfigs: GraphConfig[] = [];
 
@@ -47,10 +51,20 @@ export class ChartsComponent {
 
   displayedGraphs: GraphConfig[] = [];
 
+  constructor() {
+    effect(() => {
+      if (this.metrics().length) {
+        this.initializeGraphs();
+      }
+    });
+  }
+  
+
   initializeGraphs() {
     setTimeout(() => {
-      if (!this.reportSections.length) return
-      const metrics = this.reportSections.find(s => s.key === 'graphs')?.metrics.filter(m => m.enabled) || [];
+      console.log(this.metrics())
+      if (!this.metrics().length) return
+      const metrics = this.metrics().filter(m => m.enabled) || [];
       const graphConfigs = this.getGraphConfigs();
       this.displayedGraphs = [];
       for (const metric of metrics) {
@@ -63,18 +77,9 @@ export class ChartsComponent {
         }
       }
       this.displayedGraphs.sort((a, b) => a.order - b.order);
+      
       setTimeout(() => this.renderCharts(), 0);
     }, 100);
-  }
-
-  ngAfterViewInit(): void {
-    this.initializeGraphs();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['reportSections']) {
-      this.initializeGraphs();
-    }
   }
 
   getGraphConfigs() {
@@ -104,22 +109,26 @@ export class ChartsComponent {
   }
 
   private renderCharts(): void {
-    if (!this.data || !this.data.graphs?.length) return;
+    if (!this.graphs()?.length) return;
 
-    const labels = this.data.graphs.map(g =>
+    const labels = this.graphs().map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );
 
     for (const config of this.displayedGraphs) {
-      const canvasId = `${config.metric}Chart`;
-      const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-      if (!canvas) continue;
+      const canvases = document.querySelectorAll(`#${config.metric}Chart`);
+      
+      if (!canvases.length) continue;
 
-      const data = this.data.graphs.map(g => parseFloat(g[config.metric]) || 0);
+      let currentCanvas = canvases[canvases.length - 1];
+      let canvasId = `${config.metric}Chart-${canvases.length}`
+      currentCanvas.id = canvasId;
+
+      const data = this.graphs().map(g => parseFloat(g[config.metric]) || 0);
 
       this.chartRefs[canvasId]?.destroy();
 
-      this.chartRefs[canvasId] = new Chart(canvas, {
+      this.chartRefs[canvasId] = new Chart(currentCanvas as HTMLCanvasElement, {
         type: 'line',
         data: {
           labels,
@@ -196,8 +205,7 @@ export class ChartsComponent {
     this.displayedGraphs.splice(event.newIndex!, 0, movedItem);
     this.displayedGraphs.forEach((m, index) => m.order = index);
 
-    const metrics = this.reportSections.find(s => s.key === 'graphs')?.metrics!;
-    for (let [index, metric] of metrics.entries()) {
+    for (let [index, metric] of this.metrics().entries()) {
       
       const order = this.displayedGraphs.findIndex(g => g.name === metric.name);
       if (order !== -1) {
@@ -208,7 +216,7 @@ export class ChartsComponent {
       }
     }
 
-    this.reportSections.find(s => s.key === 'graphs')?.metrics.sort((a, b) => a.order - b.order);
+    this.metrics.set(this.metrics().sort((a, b) => a.order - b.order));
   }
 
 }

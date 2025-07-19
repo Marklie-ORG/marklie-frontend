@@ -11,6 +11,7 @@ import { GetAvailableMetricsResponse, ReportService } from '../../services/api/r
 import { ReportsDataService } from '../../services/reports-data.service.js';
 import { Data, ReportSection } from '../schedule-report/schedule-report.component.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
+import { SchedulesService } from 'src/app/services/api/schedules.service.js';
 
 @Component({
   selector: 'app-view-report',
@@ -53,6 +54,7 @@ export class ViewReportComponent implements OnInit {
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
+  private schedulesService = inject(SchedulesService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -75,7 +77,7 @@ export class ViewReportComponent implements OnInit {
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.agencyLogo || '');
 
-      this.availableMetrics = await this.reportService.getAvailableMetrics();
+      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
 
       this.processSelectedAccount();

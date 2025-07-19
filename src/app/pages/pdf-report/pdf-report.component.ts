@@ -10,6 +10,7 @@ import { GetAvailableMetricsResponse, ReportService } from 'src/app/services/api
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import { Data, ReportSection } from '../schedule-report/schedule-report.component';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { SchedulesService } from 'src/app/services/api/schedules.service';
 
 @Component({
   selector: 'app-pdf-report',
@@ -50,6 +51,7 @@ export class PdfReportComponent implements OnInit {
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
+  private schedulesService = inject(SchedulesService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -72,7 +74,7 @@ export class PdfReportComponent implements OnInit {
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.agencyLogo || '');
 
-      this.availableMetrics = await this.reportService.getAvailableMetrics();
+      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
       
     } catch (error) {

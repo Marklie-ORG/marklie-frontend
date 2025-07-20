@@ -5,8 +5,4 @@ import { Component } from '@angular/core';
   templateUrl: './header-new.component.html',
   styleUrls: ['./header-new.component.scss'],
 })
-export class HeaderNewComponent {
-  ngOnInit() {
-    console.log('HeaderNewComponent mounted');
-  }
-}
+export class HeaderNewComponent {}

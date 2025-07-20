@@ -11,7 +11,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { FormsModule } from '@angular/forms';
-import { HeaderComponent } from './components/header/header.component';
 import { HeaderNewComponent } from './components/header-new/header-new.component';
 
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
@@ -70,7 +69,6 @@ register();
   declarations: [
     AppComponent,
     LandingComponent,
-    HeaderComponent,
     HeaderNewComponent,
     FbLoginCallbackComponent,
     DashboardHeaderComponent,

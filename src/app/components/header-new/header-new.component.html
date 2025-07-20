@@ -8,19 +8,22 @@
     </div>
     <div class="header__content-right">
       <div class="desktop-buttons">
-        <app-button variant="ghost" size="medium" link="/auth">
+        <a class="desktop-buttons__login" target="_self" routerLink="/auth">
           Log in
-        </app-button>
+        </a>
         <app-button variant="primary" size="medium" link="/auth">
           Sign up
         </app-button>
       </div>
 
       <div class="mobile-buttons">
-        <app-button variant="primary" size="medium"> Sign up </app-button>
-        <span class="mobile-menu">
+        <app-button variant="primary" size="medium" link="/auth">
+          Sign up
+        </app-button>
+        <!-- TODO: Implement mobile menu when needed -->
+        <!-- <span class="mobile-menu">
           <img src="/assets/icons/burger-menu.svg" alt="menu" />
-        </span>
+        </span> -->
       </div>
     </div>
   </div>

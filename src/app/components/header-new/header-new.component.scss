@@ -24,6 +24,7 @@
       border-radius: 1.25rem;
       width: fit-content;
       padding: 0.375rem 0.75rem;
+      color: var(--text-color);
       cursor: pointer;
 
       @include from-tablet {

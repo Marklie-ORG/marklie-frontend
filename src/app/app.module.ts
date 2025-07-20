@@ -62,6 +62,9 @@ import { CustomInputComponent } from './components/custom-input/custom-input.com
 import { ImagesManagerComponent } from './components/images-manager/images-manager.component';
 import { ReportHeaderComponent } from './components/report-header/report-header.component';
 import { ButtonComponent } from './components/button/button.component';
+import { InfoTagComponent } from './components/info-tag/info-tag.component';
+import { LandingNewComponent } from './pages/landing-new/landing-new.component';
+import { LandingHeroSectionComponent } from './pages/landing-new/components/landing-hero-section/landing-hero-section..component';
 
 register();
 
@@ -69,6 +72,7 @@ register();
   declarations: [
     AppComponent,
     LandingComponent,
+    LandingNewComponent,
     HeaderNewComponent,
     FbLoginCallbackComponent,
     DashboardHeaderComponent,
@@ -117,6 +121,8 @@ register();
     ImagesManagerComponent,
     ReportHeaderComponent,
     ButtonComponent,
+    InfoTagComponent,
+    LandingHeroSectionComponent,  
   ],
   imports: [
     BrowserModule,

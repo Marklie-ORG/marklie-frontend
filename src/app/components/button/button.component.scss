@@ -78,6 +78,11 @@
       color: var(--btn-disabled-text);
       cursor: not-allowed;
     }
+
+    // Default icon color for primary buttons (only if no custom iconColor is provided)
+    .btn__icon {
+      color: var(--white);
+    }
   }
 
   &--secondary {
@@ -163,6 +168,53 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--left {
+      margin-right: 0.5rem;
+    }
+
+    &--right {
+      margin-left: 0.5rem;
+    }
+
+    &--dark {
+      color: var(--text-color) !important;
+
+      fa-icon,
+      fa-icon svg,
+      fa-icon path {
+        color: var(--text-color);
+      }
+    }
+
+    &--light {
+      color: var(--white) !important;
+
+      fa-icon,
+      fa-icon svg,
+      fa-icon path {
+        color: var(--white);
+      }
+    }
+  }
+
+  // Icon positioning classes
+  &--with-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  &--icon-left {
+    flex-direction: row;
   }
 
   .spinner {

@@ -10,8 +10,30 @@
       <div class="spinner"></div>
     </div>
 
+    <!-- Left Icon -->
+    <fa-icon
+      *ngIf="icon && iconPosition === 'left' && !loading"
+      [icon]="icon"
+      class="btn__icon btn__icon--left"
+      [ngClass]="{
+        'btn__icon--dark': iconVariant === 'dark',
+        'btn__icon--light': iconVariant === 'light'
+      }"
+    ></fa-icon>
+
     <!-- Projected content -->
     <ng-container *ngTemplateOutlet="projected"></ng-container>
+
+    <!-- Right Icon -->
+    <fa-icon
+      *ngIf="icon && iconPosition === 'right' && !loading"
+      [icon]="icon"
+      class="btn__icon btn__icon--right"
+      [ngClass]="{
+        'btn__icon--dark': iconVariant === 'dark',
+        'btn__icon--light': iconVariant === 'light'
+      }"
+    ></fa-icon>
   </button>
 </ng-container>
 
@@ -29,8 +51,30 @@
       <div class="spinner"></div>
     </div>
 
+    <!-- Left Icon -->
+    <fa-icon
+      *ngIf="icon && iconPosition === 'left' && !loading"
+      [icon]="icon"
+      class="btn__icon btn__icon--left"
+      [ngClass]="{
+        'btn__icon--dark': iconVariant === 'dark',
+        'btn__icon--light': iconVariant === 'light'
+      }"
+    ></fa-icon>
+
     <!-- Projected content -->
     <ng-container *ngTemplateOutlet="projected"></ng-container>
+
+    <!-- Right Icon -->
+    <fa-icon
+      *ngIf="icon && iconPosition === 'right' && !loading"
+      [icon]="icon"
+      class="btn__icon btn__icon--right"
+      [ngClass]="{
+        'btn__icon--dark': iconVariant === 'dark',
+        'btn__icon--light': iconVariant === 'light'
+      }"
+    ></fa-icon>
   </a>
 </ng-template>
 

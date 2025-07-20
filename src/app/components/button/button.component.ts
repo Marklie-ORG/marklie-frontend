@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostBinding,
+} from '@angular/core';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   ButtonSize,
   ButtonVariant,
@@ -20,6 +27,9 @@ export class ButtonComponent {
   @Input() fullWidth: boolean = false;
   @Input() link?: string;
   @Input() target: '_blank' | '_self' | '_parent' | '_top' = '_self';
+  @Input() icon?: IconDefinition;
+  @Input() iconPosition?: 'left' | 'right' = 'left';
+  @Input() iconVariant?: 'dark' | 'light' = 'dark';
 
   @Output() clicked = new EventEmitter<void>();
 
@@ -38,6 +48,7 @@ export class ButtonComponent {
       this.disabled ? 'btn--disabled' : '',
       this.loading ? 'btn--loading' : '',
       this.isLink ? 'btn--link' : '',
+      this.icon ? `btn--with-icon btn--icon-${this.iconPosition}` : '',
     ];
 
     return classes.filter(Boolean).join(' ');

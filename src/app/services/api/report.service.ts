@@ -168,7 +168,7 @@ export class ReportService {
   constructor(private http: HttpClient) { }
 
   async createSchedule(data: CreateScheduleRequest) {
-      return firstValueFrom(this.http.post(`${this.apiUrl}/reports/schedule`, data));
+      return firstValueFrom(this.http.post(`${this.apiUrl}/scheduling-options/schedule`, data));
   }
 
   async getReport(uuid: string): Promise<GetReportResponse> {

@@ -73,15 +73,15 @@ export class ViewReportComponent implements OnInit {
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
       this.clientImageUrl.set(res.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.images?.agencyLogo || '');
+      this.agencyImageUrl.set(res.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
-      this.agencyImageGsUri.set(res.metadata.images?.agencyLogo || '');
+      this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
       this.availableMetrics = await this.schedulesService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
 
       this.processSelectedAccount();
-      
+
     } catch (error) {
       console.error('Error loading report:', error);
     }
@@ -103,7 +103,7 @@ export class ViewReportComponent implements OnInit {
       campaigns: data.campaigns,
       graphs: data.graphs
     }
-    
+
     this.ref.detectChanges();
   }
 

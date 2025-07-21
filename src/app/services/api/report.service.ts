@@ -73,7 +73,7 @@ export interface GetReportResponse {
   metadata: Metadata
   images?: {
     clientLogo: string
-    agencyLogo: string
+    organizationLogo: string
   }
 }
 
@@ -146,13 +146,13 @@ export interface Metadata {
   reportName: string
   images?: {
     clientLogo: string
-    agencyLogo: string
+    organizationLogo: string
   }
 }
 
 export interface ReportImages {
   clientLogo: string
-  agencyLogo: string
+  organizationLogo: string
 }
 
 @Injectable({

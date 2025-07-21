@@ -26,7 +26,7 @@ export interface SchedulingOption {
   client: string
   images: {
     clientLogo: string
-    agencyLogo: string
+    organizationLogo: string
   }
 }
 
@@ -53,7 +53,7 @@ interface JobData {
   }
   images: {
     clientLogo: string
-    agencyLogo: string
+    organizationLogo: string
   }
 }
 
@@ -63,7 +63,7 @@ interface JobData {
   styleUrl: './edit-report.component.scss'
 })
 export class EditReportComponent {
-  
+
   schedule: Schedule = {
     reportName: '',
     frequency: 'weekly',
@@ -132,12 +132,12 @@ export class EditReportComponent {
 
   private async loadReport() {
     if (!this.schedulingOptionId) return;
-    
+
     this.schedulingOption = await this.schedulesService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
     this.clientImageUrl.set(this.schedulingOption?.images.clientLogo || '');
-    this.agencyImageUrl.set(this.schedulingOption?.images.agencyLogo || '');
+    this.agencyImageUrl.set(this.schedulingOption?.images.organizationLogo || '');
     this.clientImageGsUri.set(this.schedulingOption?.jobData.images?.clientLogo || '');
-    this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.agencyLogo || '');
+    this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.organizationLogo || '');
 
     this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics, this.schedulingOption);
     this.convertOptionIntoTemplate(this.schedulingOption);

@@ -61,9 +61,9 @@ export class ReviewReportComponent implements OnInit {
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
       this.clientImageUrl.set(res.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.images?.agencyLogo || '');
+      this.agencyImageUrl.set(res.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
-      this.agencyImageGsUri.set(res.metadata.images?.agencyLogo || '');
+      this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
       this.availableMetrics = await this.schedulesService.getAvailableMetrics();
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
@@ -74,7 +74,7 @@ export class ReviewReportComponent implements OnInit {
         campaigns: data.campaigns,
         graphs: data.graphs
       }
-      
+
     } catch (error) {
       console.error('Error loading report:', error);
       // Handle error, e.g., show a message to the user
@@ -92,7 +92,7 @@ export class ReviewReportComponent implements OnInit {
       await this.reportService.updateReportMetricsSelections(this.reportId, metricsSelections);
       await this.reportService.updateReportImages(this.reportId, {
         clientLogo: this.clientImageGsUri(),
-        agencyLogo: this.agencyImageGsUri()
+        organizationLogo: this.agencyImageGsUri()
       });
       console.log('Report saved successfully!');
       // Optionally, show a success message

@@ -22,8 +22,8 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build project
-        run: npm run build
+      - name: Build project (Production)
+        run: npm run build -- --configuration=production
 
       - name: Deploy to server
         uses: SamKirkland/FTP-Deploy-Action@4.0.0

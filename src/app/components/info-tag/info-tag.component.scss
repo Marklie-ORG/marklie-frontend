@@ -1,0 +1,16 @@
+@use "breakpoints" as *;
+
+.info-tag {
+  display: inline-block;
+  color: var(--blue-primary);
+  background-color: var(--blue-secondary);
+  border-radius: 0.75rem;
+  padding: 0.625rem;
+  font-size: 1.25rem;
+  line-height: 1.25;
+  font-weight: 500;
+
+  @include tablet {
+    font-size: 1rem;
+  }
+}

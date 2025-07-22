@@ -1,0 +1,30 @@
+<header class="landing-container header">
+  <div class="header__content">
+    <div class="header__content-left">
+      <a routerLink="/dashboard" class="logo">
+        <img src="/assets/img/logo.png" alt="logo" />
+        <span>Marklie</span>
+      </a>
+    </div>
+    <div class="header__content-right">
+      <div class="desktop-buttons">
+        <a class="desktop-buttons__login" target="_self" routerLink="/auth">
+          Log in
+        </a>
+        <app-button variant="primary" size="medium" link="/auth">
+          Sign up
+        </app-button>
+      </div>
+
+      <div class="mobile-buttons">
+        <app-button variant="primary" size="medium" link="/auth">
+          Sign up
+        </app-button>
+        <!-- TODO: Implement mobile menu when needed -->
+        <!-- <span class="mobile-menu">
+          <img src="/assets/icons/burger-menu.svg" alt="menu" />
+        </span> -->
+      </div>
+    </div>
+  </div>
+</header>

@@ -95,14 +95,19 @@ export class MockReportService {
       ];
 
       const metrics = availableMetrics.reduce((acc, metric) => {
+        if (metric === "campaign_id" || metric === "campaign_name") return acc;
+
         const isCurrency = ['spend', 'cost_per_purchase', 'cost_per_add_to_cart', 'conversion_value'].includes(metric.toLowerCase());
         const isPercent = ['ctr', 'conversion_rate'].includes(metric.toLowerCase());
         const isRoas = metric.toLowerCase().includes('roas');
         const isInt = ['purchases', 'add_to_cart', 'initiated_checkouts', 'engagement', 'impressions', 'clicks', 'reach'].includes(metric.toLowerCase());
 
-        let value = isInt ? Math.floor(Math.random() * 200)
-          : isPercent || isRoas ? +(Math.random() * 5).toFixed(2)
-            : isCurrency ? +(Math.random() * 1500).toFixed(2)
+        let value = isInt
+          ? Math.floor(Math.random() * 200)
+          : isPercent || isRoas
+            ? +(Math.random() * 5).toFixed(2)
+            : isCurrency
+              ? +(Math.random() * 1500).toFixed(2)
               : +(Math.random() * 100).toFixed(2);
 
         acc[metric] = value;

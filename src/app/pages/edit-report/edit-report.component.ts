@@ -237,6 +237,7 @@ export class EditReportComponent {
       metrics: selections,
       datePreset: this.schedulingOption!.datePreset,
       clientUuid: this.schedulingOption!.jobData.clientUuid,
+      reportName: this.reportTitle,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       messages: this.schedulingOption!.jobData.messages,
       images: {

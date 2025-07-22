@@ -27,7 +27,9 @@ export class DashboardHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.email = this.authService.getDecodedAccessTokenInfo().email || '';
+    const userInfo = this.authService.getDecodedAccessTokenInfo()
+    this.email = userInfo.email;
+    this.userName = userInfo.firstName + ' ' + userInfo.lastName;
   }
 
   toggleDropdown() {

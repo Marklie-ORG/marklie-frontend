@@ -61,34 +61,30 @@ const routes: Routes = [
     path: 'terms-of-service',
     component: TermsOfServiceComponent
   },
-  { 
+  {
     path: 'schedule-report/:clientUuid',
     component: ScheduleReportComponent,
     canActivate: [authGuard]
   },
-  { 
+  {
     path: 'view-report/:id',
     component: ViewReportComponent
-  },
-  { 
-    path: 'pdf-report/:id',
-    component: PdfReportComponent
   },
   {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [authGuard]
   },
-  { 
+  {
     path: 'verify-email-change',
     component: VerifyEmailChangeComponent
   },
-  { 
+  {
     path: 'password-recovery',
     component: PasswordRecoveryComponent
   },
-  { 
-    path: 'pdf-report/:uuid',
+  {
+    path: 'pdf-report/:id',
     component: PdfReportComponent
   },
   {

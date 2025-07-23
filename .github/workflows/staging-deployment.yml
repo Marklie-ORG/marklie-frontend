@@ -1,4 +1,4 @@
-name: Deploy Marklie
+name: Deploy Staging -Marklie
 
 on:
   push:

@@ -35,13 +35,14 @@
       margin-top: 1rem;
 
       h1 {
-        font-size: 4rem;
         font-weight: 700;
         line-height: 1.25;
+        font-size: 2.5rem;
 
-        @include tablet {
-          font-size: 2.5rem;
+        @include from-desktop-large {
+          font-size: 4rem;
         }
+
         @include mobile {
           font-size: 2rem;
         }
@@ -51,7 +52,7 @@
         font-size: 1.5rem;
         font-weight: 500;
 
-        @include tablet {
+        @include desktop {
           font-size: 1.1rem;
         }
         @include mobile {
@@ -124,7 +125,7 @@
     height: fit-content;
     display: none;
 
-    @include from-desktop-large {
+    @include from-desktop {
       display: flex;
     }
 
@@ -133,9 +134,17 @@
       display: block;
       width: 100%;
       height: auto;
-      width: 45rem;
-      height: 30.625rem;
       object-fit: cover;
+
+      @include desktop {
+        width: 28rem;
+        height: 19rem;
+      }
+
+      @include desktop-large {
+        width: 45rem;
+        height: 30.625rem;
+      }
     }
   }
 }

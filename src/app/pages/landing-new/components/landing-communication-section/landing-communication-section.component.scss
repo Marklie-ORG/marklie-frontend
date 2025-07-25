@@ -1,0 +1,122 @@
+@use "variables" as *;
+@use "breakpoints" as *;
+
+@mixin communicationCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  gap: 1rem;
+  border-radius: 1.25rem;
+  height: 35.75rem;
+  width: 31.375rem;
+
+  @include mobile {
+    height: fit-content;
+    width: 100%;
+  }
+
+  &-text {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+    gap: 1rem;
+
+    //!TODO: remove !important once the global styles file are adjusted
+    h2 {
+      font-weight: 700;
+      font-size: 2rem !important;
+    }
+    p {
+      font-weight: 400;
+      font-size: 1.125rem !important;
+    }
+
+    @include mobile {
+      padding: 1.25rem;
+      h2 {
+        font-weight: 700;
+        font-size: 1.5rem !important;
+      }
+      p {
+        font-weight: 400;
+        font-size: 0.875rem !important;
+      }
+    }
+  }
+
+  &-image {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex: 1 0 auto;
+    width: 100%;
+    transform: none;
+
+    img {
+      width: 19.125rem;
+      height: 21.3125rem;
+    }
+
+    @include mobile {
+      img {
+        width: 12.5rem;
+        height: 13.0625rem;
+        transform: none;
+      }
+    }
+  }
+}
+
+.communication-section {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5.875rem;
+
+  &__content {
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 100%;
+    @include from-desktop {
+      flex-direction: row;
+      gap: 1rem;
+    }
+
+    &-broken {
+      @include communicationCard;
+      background-color: var(--gray-light);
+
+      &-text {
+        color: var(--gray-dark);
+      }
+    }
+
+    &-fixed {
+      @include communicationCard;
+      background-color: var(--blue-light);
+
+      &-text {
+        color: white;
+      }
+    }
+
+    &-direction {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      width: 5.625rem; // 90px = 5.625rem
+      height: 5.625rem; // 90px = 5.625rem
+
+      @include from-desktop {
+        display: flex;
+      }
+    }
+  }
+}

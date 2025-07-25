@@ -65,6 +65,7 @@ import { ButtonComponent } from './components/button/button.component';
 import { InfoTagComponent } from './components/info-tag/info-tag.component';
 import { LandingNewComponent } from './pages/landing-new/landing-new.component';
 import { LandingHeroSectionComponent } from './pages/landing-new/components/landing-hero-section/landing-hero-section..component';
+import { LandingCommunicationSectionComponent } from './pages/landing-new/components/landing-communication-section/landing-communication-section.component';
 
 register();
 
@@ -122,7 +123,8 @@ register();
     ReportHeaderComponent,
     ButtonComponent,
     InfoTagComponent,
-    LandingHeroSectionComponent,  
+    LandingHeroSectionComponent,
+    LandingCommunicationSectionComponent,
   ],
   imports: [
     BrowserModule,

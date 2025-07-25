@@ -1,23 +1,23 @@
-<ng-container *ngIf="!isLink; else linkTemplate">
+<ng-container *ngIf="!isLink(); else linkTemplate">
   <button
-    [type]="type"
-    [class]="buttonClasses"
-    [disabled]="disabled || loading"
+    [type]="type()"
+    [class]="buttonClasses()"
+    [disabled]="disabled() || loading()"
     (click)="onClick()"
   >
     <!-- Loading spinner -->
-    <div *ngIf="loading" class="btn__spinner">
+    <div *ngIf="loading()" class="btn__spinner">
       <div class="spinner"></div>
     </div>
 
     <!-- Left Icon -->
     <fa-icon
-      *ngIf="icon && iconPosition === 'left' && !loading"
-      [icon]="icon"
+      *ngIf="icon() && iconPosition() === 'left' && !loading()"
+      [icon]="icon()"
       class="btn__icon btn__icon--left"
       [ngClass]="{
-        'btn__icon--dark': iconVariant === 'dark',
-        'btn__icon--light': iconVariant === 'light'
+        'btn__icon--dark': iconVariant() === 'dark',
+        'btn__icon--light': iconVariant() === 'light'
       }"
     ></fa-icon>
 
@@ -26,12 +26,12 @@
 
     <!-- Right Icon -->
     <fa-icon
-      *ngIf="icon && iconPosition === 'right' && !loading"
-      [icon]="icon"
+      *ngIf="icon() && iconPosition() === 'right' && !loading()"
+      [icon]="icon()"
       class="btn__icon btn__icon--right"
       [ngClass]="{
-        'btn__icon--dark': iconVariant === 'dark',
-        'btn__icon--light': iconVariant === 'light'
+        'btn__icon--dark': iconVariant() === 'dark',
+        'btn__icon--light': iconVariant() === 'light'
       }"
     ></fa-icon>
   </button>
@@ -39,26 +39,26 @@
 
 <ng-template #linkTemplate>
   <a
-    [routerLink]="link"
-    [target]="target"
-    [class]="buttonClasses"
-    [class.btn--disabled]="disabled"
-    [class.btn--loading]="loading"
+    [routerLink]="link()"
+    [target]="target()"
+    [class]="buttonClasses()"
+    [class.btn--disabled]="disabled()"
+    [class.btn--loading]="loading()"
     (click)="onClick()"
   >
     <!-- Loading spinner -->
-    <div *ngIf="loading" class="btn__spinner">
+    <div *ngIf="loading()" class="btn__spinner">
       <div class="spinner"></div>
     </div>
 
     <!-- Left Icon -->
     <fa-icon
-      *ngIf="icon && iconPosition === 'left' && !loading"
-      [icon]="icon"
+      *ngIf="icon() && iconPosition() === 'left' && !loading()"
+      [icon]="icon()"
       class="btn__icon btn__icon--left"
       [ngClass]="{
-        'btn__icon--dark': iconVariant === 'dark',
-        'btn__icon--light': iconVariant === 'light'
+        'btn__icon--dark': iconVariant() === 'dark',
+        'btn__icon--light': iconVariant() === 'light'
       }"
     ></fa-icon>
 
@@ -67,12 +67,12 @@
 
     <!-- Right Icon -->
     <fa-icon
-      *ngIf="icon && iconPosition === 'right' && !loading"
-      [icon]="icon"
+      *ngIf="icon() && iconPosition() === 'right' && !loading()"
+      [icon]="icon()"
       class="btn__icon btn__icon--right"
       [ngClass]="{
-        'btn__icon--dark': iconVariant === 'dark',
-        'btn__icon--light': iconVariant === 'light'
+        'btn__icon--dark': iconVariant() === 'dark',
+        'btn__icon--light': iconVariant() === 'light'
       }"
     ></fa-icon>
   </a>

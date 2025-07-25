@@ -1,10 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { CommonModule } from "@angular/common";
+import { Component, input, Input } from "@angular/core";
 
 @Component({
-  selector: 'app-info-tag',
-  templateUrl: './info-tag.component.html',
-  styleUrls: ['./info-tag.component.scss']
+  selector: "app-info-tag",
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: "./info-tag.component.html",
+  styleUrls: ["./info-tag.component.scss"]
 })
 export class InfoTagComponent {
-  @Input() text: string = '';
-} 
+  text = input<string>("");
+}

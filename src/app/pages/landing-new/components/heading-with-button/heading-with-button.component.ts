@@ -19,7 +19,7 @@ export class HeadingWithButtonComponent {
 
   constructor(private sanitizer: DomSanitizer) {}
 
-  getTitleHtml(): SafeHtml {
+  get titleHTML(): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(this.title());
   }
 

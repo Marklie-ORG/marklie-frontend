@@ -11,8 +11,8 @@
   }
 
   &__image {
-    width: 491px;
-    height: 424px;
+    width: 30.6875rem;
+    height: 26.5rem;
     display: none;
     @include from-desktop {
       display: block;
@@ -30,58 +30,58 @@
         font-style: italic;
         color: var(--blue-primary);
       }
-      margin-bottom: 18px;
-      font-size: 28px !important;
+      margin-bottom: 1.125rem;
+      font-size: 1.75rem !important;
 
       @include from-tablet {
-        font-size: 44px !important;
+        font-size: 2.75rem !important;
       }
     }
     &__description {
-      font-size: 15px !important;
+      font-size: 0.9375rem !important;
       font-weight: 600;
       color: var(--black-90);
-      margin-bottom: 24px;
+      margin-bottom: 1.5rem;
 
       @include from-tablet {
-        font-size: 20px !important;
+        font-size: 1.25rem !important;
       }
     }
     &__form {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 1rem;
       width: 100%;
-      max-width: 250px;
+      max-width: 15.625rem;
       @include from-tablet {
-        max-width: 400px;
+        max-width: 25rem;
       }
       div {
-        margin-top: 16px;
+        margin-top: 1rem;
         @include from-tablet {
-          margin-top: 35px;
+          margin-top: 2.1875rem;
         }
       }
     }
     &__privacy-policy {
-      font-size: 12px !important;
+      font-size: 0.75rem !important;
       font-weight: 500;
       color: var(--black-60);
-      margin-top: 16px;
-      line-height: 111%;
-      max-width: 450px;
+      margin-top: 1rem;
+      line-height: 1.11;
+      max-width: 28.125rem;
 
       @include from-tablet {
-        font-size: 14px !important;
+        font-size: 0.875rem !important;
       }
 
       a {
         color: var(--blue-primary);
-        font-size: 10px;
+        font-size: 0.625rem;
         font-weight: 500;
 
         @include from-tablet {
-          font-size: 12px;
+          font-size: 0.75rem;
         }
       }
     }

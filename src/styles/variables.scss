@@ -26,6 +26,7 @@
   // Colors
   --blue-primary: #1f8ded;
   --blue-secondary: #1f8ded1a;
+  --blue-subtitle: #5788b3;
   --blue-light: #67a0d1;
   --gray-light: #f7f9fd;
   --white: #fff;
@@ -55,3 +56,4 @@
 }
 
 $border-primary: 0.0625rem solid var(--border-blue);
+$font-family-secondary: "Shantell Sans", cursive;

@@ -1,5 +1,15 @@
+@use "breakpoints" as *;
+
 .landing {
   display: flex;
   flex-direction: column;
   padding: 0 1rem;
+}
+
+.heading-point-section {
+  margin-top: 6.25rem;
+
+  @include from-tablet {
+    margin-top: 9.375rem;
+  }
 }

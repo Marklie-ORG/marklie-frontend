@@ -1,0 +1,56 @@
+@use "variables" as *;
+@use "mixins" as *;
+@use "breakpoints" as *;
+
+.heading-point-section {
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem;
+
+    .titleLarge {
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      display: none;
+
+      @include from-tablet {
+        display: block;
+      }
+    }
+
+    .titleSmall {
+      font-size: 2.125rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      display: block;
+
+      @include from-tablet {
+        display: none;
+      }
+    }
+
+    //!TODO: remove !important once global styles files are adjusted
+    .subtitle {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--blue-subtitle) !important;
+      @include font-secondary;
+    }
+
+    .description {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+  }
+}

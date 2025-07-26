@@ -1,0 +1,7 @@
+@use "variables" as *;
+
+//!TODO: remove !important once global styles files are adjusted
+@mixin font-secondary {
+  font-family: $font-family-secondary !important;
+  font-style: italic;
+}

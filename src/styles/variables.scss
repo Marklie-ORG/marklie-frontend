@@ -24,6 +24,9 @@
   --border-blue: #b7d2e9;
 
   // Colors
+  --black-90: #333333e5;
+  --black-60: #33333399;
+  --black-30: #3333334d;
   --blue-primary: #1f8ded;
   --blue-secondary: #1f8ded1a;
   --blue-subtitle: #5788b3;
@@ -31,19 +34,20 @@
   --blue-table: #e6f0ff;
   --gray-light: #f7f9fd;
   --white: #fff;
+  --error-red: #dc3545;
 
   // Button Colors
   --btn-primary-hover: #1a7fd8;
   --btn-primary-shadow: rgba(31, 141, 237, 0.3);
   --btn-disabled-bg: #ccc;
   --btn-disabled-text: #666;
-  --btn-secondary-bg: #f3f4f6;
-  --btn-secondary-text: #374151;
-  --btn-secondary-border: #d1d5db;
-  --btn-secondary-hover-bg: #e5e7eb;
-  --btn-secondary-hover-border: #9ca3af;
-  --btn-secondary-disabled-bg: #f9fafb;
-  --btn-secondary-disabled-text: #9ca3af;
+  --btn-secondary-bg: #132637;
+  --btn-secondary-text: #fff;
+  --btn-secondary-border: #132637;
+  --btn-secondary-hover-bg: #223a54;
+  --btn-secondary-hover-border: #223a54;
+  --btn-secondary-disabled-bg: #ccc;
+  --btn-secondary-disabled-text: #666;
   --btn-secondary-disabled-border: #e5e7eb;
   --btn-outline-disabled-text: #9ca3af;
   --btn-outline-disabled-border: #d1d5db;
@@ -60,3 +64,4 @@ $border-primary: 0.0625rem solid var(--border-blue);
 $font-family-secondary: "Shantell Sans", cursive;
 $table-box-shadow: 0 0 80px 9px rgba(51, 51, 51, 0.07);
 $table-border-color: #33333308;
+$input-placeholder-color: #3333338a;

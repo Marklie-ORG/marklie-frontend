@@ -7,6 +7,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AutomaticDeliverySectionComponent } from "./components/automatic-delivery-section/automatic-delivery-section.component";
 import { TemplatesDeliverySectionComponent } from "./components/templates-delivery-section/templates-delivery-section.component";
 import { FeaturesTableSectionComponent } from "./components/features-table-section/features-table-section.component";
+import { FreeDemoSectionComponent } from "./components/free-demo-section/free-demo-section.component";
 
 @Component({
   selector: "app-landing-new",
@@ -21,7 +22,8 @@ import { FeaturesTableSectionComponent } from "./components/features-table-secti
     FontAwesomeModule,
     AutomaticDeliverySectionComponent,
     TemplatesDeliverySectionComponent,
-    FeaturesTableSectionComponent
+    FeaturesTableSectionComponent,
+    FreeDemoSectionComponent
   ]
 })
 export class LandingNewComponent {}

@@ -58,7 +58,6 @@ import { LogsCardComponent } from "./components/activity-logs-card/activity-logs
 import { ReportsPageComponent } from "./pages/reports/reports-page.component.js";
 import { ItemComponent } from "./components/edit-metrics/components/item/item.component";
 import { WhatsappMessagePreviewComponent } from "./components/whatsapp-message-preview/whatsapp-message-preview.component";
-import { CustomInputComponent } from "./components/custom-input/custom-input.component";
 import { ImagesManagerComponent } from "./components/images-manager/images-manager.component";
 import { ReportHeaderComponent } from "./components/report-header/report-header.component";
 import { LandingNewComponent } from "./pages/landing-new/landing-new.component";
@@ -112,7 +111,6 @@ register();
     ReportsPageComponent,
     ItemComponent,
     WhatsappMessagePreviewComponent,
-    CustomInputComponent,
     ImagesManagerComponent,
     ReportHeaderComponent
   ],

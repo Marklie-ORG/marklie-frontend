@@ -10,4 +10,5 @@ import { Component, input, Input } from "@angular/core";
 })
 export class InfoTagComponent {
   text = input<string>("");
+  size = input<'small' | 'big'>('big');
 }

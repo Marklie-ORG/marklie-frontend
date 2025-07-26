@@ -7,9 +7,16 @@
 }
 
 .heading-point-section {
-  margin-top: 6.25rem;
+  margin: 4.25rem 0;
 
-  @include from-tablet {
-    margin-top: 9.375rem;
+  @include from-desktop {
+    margin: 9.375rem 0;
   }
+}
+
+.delivery-sections {
+  display: flex;
+  flex-direction: column;
+  max-width: 79.25rem;
+  margin: 0 auto;
 }

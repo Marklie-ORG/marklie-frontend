@@ -6,6 +6,7 @@ import { LandingCommunicationSectionComponent } from "./components/landing-commu
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AutomaticDeliverySectionComponent } from "./components/automatic-delivery-section/automatic-delivery-section.component";
 import { TemplatesDeliverySectionComponent } from "./components/templates-delivery-section/templates-delivery-section.component";
+import { FeaturesTableSectionComponent } from "./components/features-table-section/features-table-section.component";
 
 @Component({
   selector: "app-landing-new",
@@ -19,7 +20,8 @@ import { TemplatesDeliverySectionComponent } from "./components/templates-delive
     HeadingPointSectionComponent,
     FontAwesomeModule,
     AutomaticDeliverySectionComponent,
-    TemplatesDeliverySectionComponent
+    TemplatesDeliverySectionComponent,
+    FeaturesTableSectionComponent
   ]
 })
 export class LandingNewComponent {}

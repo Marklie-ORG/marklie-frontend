@@ -78,3 +78,31 @@ $breakpoint-desktop-large-min: 1921px; // Large desktop starts
     @content;
   }
 }
+
+// Less than tablet (<744px)
+@mixin less-than-tablet {
+  @media (max-width: #{$breakpoint-tablet-min - 1}) {
+    @content;
+  }
+}
+
+// Less than mobile (<576px)
+@mixin less-than-mobile {
+  @media (max-width: #{$breakpoint-small-mobile-max}) {
+    @content;
+  }
+}
+
+// Less than desktop (<1280px)
+@mixin less-than-desktop {
+  @media (max-width: #{$breakpoint-desktop-min - 1}) {
+    @content;
+  }
+}
+
+// Less than large desktop (<1921px)
+@mixin less-than-desktop-large {
+  @media (max-width: #{$breakpoint-desktop-large-min - 1}) {
+    @content;
+  }
+}

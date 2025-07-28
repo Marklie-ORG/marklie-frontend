@@ -9,6 +9,7 @@ import { TemplatesDeliverySectionComponent } from "./components/templates-delive
 import { FeaturesTableSectionComponent } from "./components/features-table-section/features-table-section.component";
 import { FreeDemoSectionComponent } from "./components/free-demo-section/free-demo-section.component";
 import { FeaturesSectionComponent } from "./components/features-section/features-section.component";
+import { AgencyGrowSectionComponent } from "./components/agency-grow-section/agency-grow-section.component";
 
 @Component({
   selector: "app-landing-new",
@@ -25,7 +26,8 @@ import { FeaturesSectionComponent } from "./components/features-section/features
     TemplatesDeliverySectionComponent,
     FeaturesTableSectionComponent,
     FreeDemoSectionComponent,
-    FeaturesSectionComponent
+    FeaturesSectionComponent,
+    AgencyGrowSectionComponent
   ]
 })
 export class LandingNewComponent {}

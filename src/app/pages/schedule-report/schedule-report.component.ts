@@ -1,22 +1,13 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, model, OnInit, signal } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
-import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, ReportService } from 'src/app/services/api/report.service';
+import { ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
-
-export type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
-
-export interface ReportSection {
-  key: MetricSectionKey;
-  title: string;
-  enabled: boolean;
-  metrics: Metric[];
-  order: number;
-}
+import { CreateScheduleRequest, GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
 
 export interface Data {
   KPIs: Record<string, any>;
@@ -58,7 +49,7 @@ export class ScheduleReportComponent implements OnInit {
     graphs: []
   }
 
-  reportSections: ReportSection[] = []
+  reportSections = model<ReportSection[]>([]);
 
   availableMetrics: GetAvailableMetricsResponse = {};
 
@@ -105,15 +96,17 @@ export class ScheduleReportComponent implements OnInit {
   async ngOnInit() {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
 
-    this.availableMetrics = await this.schedulesService.getAvailableMetrics();
+    this.reportSections.set(await this.reportsDataService.getInitiatedReportsSections(this.clientUuid));
 
-    this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
+    // console.log(this.reportSections)
 
-    this.reportSections.forEach(section => {
-      for (let i = 0; i < 3; i++) {
-        section.metrics[i].enabled = true;
-      }
-    });
+    // return
+
+    // this.reportSections.forEach(section => {
+    //   for (let i = 0; i < 3; i++) {
+    //     section.metrics[i].enabled = true;
+    //   }
+    // });
 
     this.mockData = this.mockReportService.generateMockData();
 
@@ -123,7 +116,7 @@ export class ScheduleReportComponent implements OnInit {
   ngOnChanges() {
     if (this.reportSections) {
       console.log(this.reportSections)
-      this.reportSections.sort((a, b) => a.order - b.order);
+      this.reportSections.update(prev => prev.sort((a, b) => a.order - b.order));
     }
     if (this.selectedDatePreset) {
       this.updateSelectedDatePresetText();
@@ -167,7 +160,7 @@ export class ScheduleReportComponent implements OnInit {
       return;
     }
 
-    const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
+    const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections());
 
     const payload: CreateScheduleRequest = {
       reportName: this.reportTitle,

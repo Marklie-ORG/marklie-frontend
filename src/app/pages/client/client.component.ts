@@ -61,7 +61,7 @@ export class ClientComponent implements OnInit {
   }
 
   onEditReport(reportId: string) {
-    this.router.navigate(['/edit-report', reportId]);
+    this.router.navigate(['/edit-report', this.clientUuid, reportId]);
   }
 
   scheduleReport(): void {

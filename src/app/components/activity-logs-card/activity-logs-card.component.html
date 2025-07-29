@@ -119,6 +119,7 @@
               </ng-container>
             </ng-container>
   
+            <!-- todo: add clientUuid to the links -->
             <ng-container *ngSwitchCase="'report_generated'">
               <a [routerLink]="['/view-report', log.targetUuid]" class="text-primary">Report </a>
               has been generated

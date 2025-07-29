@@ -1,5 +1,5 @@
 <div class="dashboard-header flex-row justify-between align-center">
-  <div class="d-flex flex-row align-center gap-30">
+  <div class="d-flex flex-row align-center gap-3">
     <div routerLink="/dashboard" class="logo">
       <img src="../../../favicon.png" alt="logo" width="40px" />
     </div>
@@ -8,17 +8,17 @@
     <a routerLink="/billing">Request Feature</a>
   </div>
 
-  <div class="d-flex flex-row align-center gap-20">
-    <button class="header-btn">
+  <div class="d-flex flex-row align-center gap-3">
+    <button>
       <fa-icon [icon]="faComment"></fa-icon>
       Give Feedback
     </button>
 
-    <button class="header-btn icon-only">
+    <button class="icon-only">
       <fa-icon [icon]="faBell"></fa-icon>
     </button>
 
-    <div class="header-btn user-dropdown" (click)="toggleDropdown()" tabindex="0" (blur)="closeDropdown()">
+    <div class="user-dropdown" (click)="toggleDropdown()" tabindex="0" (blur)="closeDropdown()">
       <span>{{ userName }}</span>
       <fa-icon [icon]="faChevronDown"></fa-icon>
 
@@ -26,7 +26,9 @@
         <a routerLink="/profile"><fa-icon [icon]="faUser"></fa-icon> Profile</a>
         <a routerLink="/billing"><fa-icon [icon]="faCreditCard"></fa-icon> Billing</a>
         <a routerLink="/support"><fa-icon [icon]="faCommentDots"></fa-icon> Support</a>
-        <a (click)="signOut()"><fa-icon [icon]="faArrowRightFromBracket"></fa-icon> Logout</a>      </div>
+        <a (click)="signOut()"><fa-icon [icon]="faArrowRightFromBracket"></fa-icon> Logout</a>
+      </div>
+      
     </div>
   </div>
 </div>

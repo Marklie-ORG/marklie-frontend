@@ -13,7 +13,7 @@
 
   <div #sectionsGridContainer>
 
-    @for (section of reportSections; track section.key; let i = $index) {
+    @for (section of reportSections(); track section.key; let i = $index) {
       <div class="report-section mb-4">
         @if (section.enabled && data) {
           <div class="section-title mb-3">
@@ -25,28 +25,28 @@
             <kpi-grid
             *ngSwitchCase="'kpis'"
             [kpis]="data.KPIs"
-            [(metrics)]="section.metrics"
+            [(adAccounts)]="section.adAccounts"
             [isViewMode]="isViewMode()"
             ></kpi-grid>
     
             <charts
             *ngSwitchCase="'graphs'"
             [graphs]="data.graphs"
-            [(metrics)]="section.metrics"
+            [(adAccounts)]="section.adAccounts"
             [isViewMode]="isViewMode()"
             ></charts>
     
             <ad-card
             *ngSwitchCase="'ads'"
             [ads]="data.ads"
-            [(metrics)]="section.metrics"
+            [(adAccounts)]="section.adAccounts"
             [isViewMode]="isViewMode()"
             ></ad-card>
     
             <campaign-table
             *ngSwitchCase="'campaigns'"
             [campaigns]="data.campaigns"
-            [(metrics)]="section.metrics"
+            [(adAccounts)]="section.adAccounts"
             [isViewMode]="isViewMode()"
             ></campaign-table>
             

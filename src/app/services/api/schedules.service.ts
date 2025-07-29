@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import {ScheduledReport} from "../../pages/client/client.component.js";
-import {CreateScheduleRequest, GetAvailableMetricsResponse} from "./report.service.js";
+import {CreateScheduleRequest, GetAvailableMetricsResponse} from "../../interfaces/interfaces.js";
 
 
 @Injectable({
@@ -36,8 +36,8 @@ export class SchedulesService {
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/${uuid}`, {headers: this.headers}));
   }
 
-  async getAvailableMetrics(): Promise<GetAvailableMetricsResponse> {
-    return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/available-metrics`));
+  async getAvailableMetrics(clientUuid: string): Promise<GetAvailableMetricsResponse> {
+    return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/available-metrics/${clientUuid}`));
   }
 
   async updateReportMetricsSelections(uuid: string, metricsSelections: any): Promise<any> {

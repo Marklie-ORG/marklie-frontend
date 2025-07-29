@@ -62,15 +62,6 @@ const routes: Routes = [
     component: TermsOfServiceComponent
   },
   {
-    path: 'schedule-report/:clientUuid',
-    component: ScheduleReportComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'view-report/:id',
-    component: ViewReportComponent
-  },
-  {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [authGuard]
@@ -84,23 +75,32 @@ const routes: Routes = [
     component: PasswordRecoveryComponent
   },
   {
-    path: 'pdf-report/:id',
+    path: 'reports',
+    component: ReportsPageComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'pdf-report/:clientUuid/:reportUuid',
     component: PdfReportComponent
   },
   {
-    path: 'edit-report/:schedulingOptionId',
+    path: 'edit-report/:clientUuid/:schedulingOptionId',
     component: EditReportComponent,
     canActivate: [authGuard]
   },
   {
-    path: 'review-report/:id',
+    path: 'review-report/:clientUuid/:reportUuid',
     component: ReviewReportComponent,
     canActivate: [authGuard]
   },
   {
-    path: 'reports',
-    component: ReportsPageComponent,
+    path: 'schedule-report/:clientUuid',
+    component: ScheduleReportComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'view-report/:clientUuid/:reportUuid',
+    component: ViewReportComponent
   }
 ];
 

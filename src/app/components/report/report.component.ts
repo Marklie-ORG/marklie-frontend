@@ -1,7 +1,8 @@
-import { Component, ElementRef, input, Input, model, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, inject, input, Input, model, SimpleChanges, ViewChild } from '@angular/core';
 import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
 import Sortable from 'sortablejs';
+import { SchedulesService } from 'src/app/services/api/schedules.service';
+import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
 
 export interface MetricSelections {
   kpis: Record<string, boolean>;
@@ -40,7 +41,7 @@ export class ReportComponent {
     }
   }
 
-  @Input() reportSections: ReportSection[] = [];
+  reportSections = model<ReportSection[]>([]);
   @Input() data: Data | undefined = undefined;
   @Input() reportTitle: string = 'Report Title';
   @Input() selectedDatePresetText: string = '';
@@ -53,20 +54,35 @@ export class ReportComponent {
 
   isViewMode = input<boolean>(false);
 
+  schedulesService = inject(SchedulesService);
+
+  availableMetrics: GetAvailableMetricsResponse = {};
+
+  constructor() {
+    effect(() => {
+      console.log(this.reportSections())
+    })
+  }
+
   reorderSections(event: Sortable.SortableEvent) {
-    const movedSection = this.reportSections.splice(event.oldIndex!, 1)[0];
-    this.reportSections.splice(event.newIndex!, 0, movedSection);
-    this.reportSections.forEach((s, index) => s.order = index);
-    this.reportSections.sort((a, b) => a.order - b.order);
+    let sections = this.reportSections();
+
+    const movedSection = sections.splice(event.oldIndex!, 1)[0];
+    sections.splice(event.newIndex!, 0, movedSection);
+    sections.forEach((s, index) => s.order = index);
+    sections.sort((a, b) => a.order - b.order);
+
+    this.reportSections.set(sections);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['reportSections'] && this.reportSections) {
-      this.reportSections.sort((a, b) => a.order - b.order);
-      this.reportSections.forEach(section => {
-          section.metrics.sort((a, b) => a.order - b.order);
-      });
-    }
+    // if (changes['reportSections']) console.log(this.reportSections)
+    // if (changes['reportSections'] && this.reportSections) {
+    //   this.reportSections.sort((a, b) => a.order - b.order);
+    //   this.reportSections.forEach(section => {
+    //       section.metrics.sort(((a: any, b: any) => a.order - b.order));
+    //   });
+    // }
   }
 
   ngOnDestroy() {

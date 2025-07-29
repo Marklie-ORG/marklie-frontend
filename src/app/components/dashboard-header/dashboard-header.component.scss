@@ -18,113 +18,113 @@ a {
   color: inherit;
 }
 
-.gap-30 {
-  gap: 30px;
-}
+// .gap-30 {
+//   gap: 30px;
+// }
 
-.gap-20 {
-  gap: 20px;
-}
+// .gap-20 {
+//   gap: 20px;
+// }
 
-.header-btn {
-  background: white;
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #3d475c;
-  cursor: pointer;
-  transition: background 0.2s ease;
+// // .header-btn {
+// //   background: white;
+// //   border: 1px solid #e3e8ef;
+// //   border-radius: 8px;
+// //   padding: 6px 12px;
+// //   font-size: 14px;
+// //   display: flex;
+// //   align-items: center;
+// //   gap: 8px;
+// //   color: #3d475c;
+// //   cursor: pointer;
+// //   transition: background 0.2s ease;
 
-  &:hover {
-    background: #f9fafb;
-  }
+// //   &:hover {
+// //     background: #f9fafb;
+// //   }
 
-  &.icon-only {
-    padding: 6px;
-    width: 34px;
-    height: 34px;
-    justify-content: center;
-  }
-}
+// //   &.icon-only {
+// //     padding: 6px;
+// //     width: 34px;
+// //     height: 34px;
+// //     justify-content: center;
+// //   }
+// // }
 
-.ok-badge {
-  background: #f1f4f9;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-weight: 600;
-  font-size: 14px;
-  color: #3d475c;
-}
+// .ok-badge {
+//   background: #f1f4f9;
+//   border-radius: 8px;
+//   padding: 6px 12px;
+//   font-weight: 600;
+//   font-size: 14px;
+//   color: #3d475c;
+// }
 
-.user-dropdown {
-  @extend .header-btn;
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
+// .user-dropdown {
+//   @extend .header-btn;
+//   position: relative;
+//   display: flex;
+//   align-items: center;
+//   gap: 6px;
+//   font-size: 14px;
 
-  fa-icon {
-    font-size: 12px;
-    margin-top: 1px;
-  }
+//   fa-icon {
+//     font-size: 12px;
+//     margin-top: 1px;
+//   }
 
-  .dropdown-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    min-width: 180px;
-    background: white;
-    border: 1px solid #e3e8ef;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-    padding: 8px 0;
-    z-index: 100;
-    overflow: hidden;
+//   .dropdown-menu {
+//     position: absolute;
+//     top: calc(100% + 8px);
+//     right: 0;
+//     min-width: 180px;
+//     background: white;
+//     border: 1px solid #e3e8ef;
+//     border-radius: 12px;
+//     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+//     padding: 8px 0;
+//     z-index: 100;
+//     overflow: hidden;
 
-    a,
-    button {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      text-align: left;
-      padding: 10px 16px;
-      background: none;
-      border: none;
-      font-size: 14px;
-      color: #3d475c;
-      cursor: pointer;
-      transition: background 0.2s ease;
+//     a,
+//     button {
+//       display: flex;
+//       align-items: center;
+//       gap: 10px;
+//       width: 100%;
+//       text-align: left;
+//       padding: 10px 16px;
+//       background: none;
+//       border: none;
+//       font-size: 14px;
+//       color: #3d475c;
+//       cursor: pointer;
+//       transition: background 0.2s ease;
 
-      &:hover {
-        background-color: #f5f7fa;
-      }
+//       &:hover {
+//         background-color: #f5f7fa;
+//       }
 
-      fa-icon {
-        font-size: 16px;
-      }
-    }
+//       fa-icon {
+//         font-size: 16px;
+//       }
+//     }
 
-    button {
-      width: 100%;
-    }
-  }
-}
+//     button {
+//       width: 100%;
+//     }
+//   }
+// }
 
-@media (max-width: 768px) {
-  .dashboard-header {
-    display: none;
-  }
+// @media (max-width: 768px) {
+//   .dashboard-header {
+//     display: none;
+//   }
 
-  .mobile-dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 5%;
-  }
-}
+//   .mobile-dashboard-header {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     padding: 14px 5%;
+//   }
+// }

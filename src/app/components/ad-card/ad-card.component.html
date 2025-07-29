@@ -1,15 +1,25 @@
-<div class="ad-grid" >
-  <div class="ad-card" *ngFor="let ad of ads; let i = index">
-    <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
-      <img class="ad-media" [src]="ad.thumbnailUrl"/>
-    </div>
-    <div class="metrics" #adsGridContainer>
-      <ng-container *ngFor="let metric of this.metrics()">
-        <div class="metric" [style.display]="metric.enabled ? 'flex' : 'none'">
-          <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
-          <div class="metric-value">{{ad[metric.name]}}</div>
+@for (adAccount of adAccounts(); track adAccount.id) {
+  @if (adAccount.enabled) {
+    <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+    <div class="ad-grid" >
+      
+      <div class="ad-card" *ngFor="let ad of ads; let i = index">
+        <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
+          <img class="ad-media" [src]="ad.thumbnailUrl"/>
         </div>
-      </ng-container>
+        <div class="metrics" #adsGridContainer>
+          <ng-container *ngFor="let metric of adAccount.metrics">
+            <div class="metric" [style.display]="metric.enabled ? 'flex' : 'none'">
+              <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
+              <div class="metric-value">{{ad[metric.name]}}</div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    
     </div>
-  </div>
-</div>
+  }
+  
+}
+

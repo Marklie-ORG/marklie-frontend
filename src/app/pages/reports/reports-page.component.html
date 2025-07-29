@@ -7,7 +7,7 @@
 
         <div class="right-actions">
           @if (selectedReports.size > 0) {
-            <div class="bulk-actions">
+            <div class="bulk-actions" [class.visible]="selectedReports.size > 0">
               <button class="gray" (click)="bulkPause()">
                 <fa-icon [icon]="faPause" class="icon-channel"></fa-icon>
               </button>
@@ -110,8 +110,8 @@
                 </span>
               </td>
               <td>{{ report.reviewNeeded ? 'Yes' : 'No' }}</td>
-              <td>{{ formatRelativeDate(report.lastRun) }}</td>
-              <td>{{ formatRelativeDate(report.nextRun) }}</td>
+              <td>{{ report.lastRun }}</td>
+              <td>{{ report.nextRun }}</td>
               <td>{{ report.timezone }}</td>
             </tr>
           }

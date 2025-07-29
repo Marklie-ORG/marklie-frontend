@@ -90,14 +90,78 @@
 .review-needed-flag {
   font-weight: 600;
 }
-
 .actions-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 1rem;
-  justify-content: flex-end;   // move buttons to right
-  position: relative;          // needed for absolute positioning of filter-panel
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .actions-container {
+    gap: 16px;
+    margin-bottom: 1.5rem;
+  }
+
+
+  .right-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.5rem 1rem;
+
+    .btn {
+      padding: 6px 12px;
+      background: #ffffff;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+      color: #333;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: #e2e2e2;
+      }
+
+      &.delete {
+        background: #ffffff;
+        color: red;
+
+        &:hover {
+          background: #ffd4d4;
+        }
+      }
+    }
+  }
+}
+
+  .input-search {
+    min-width: 180px;
+  }
+
+  .btn-filter,
+  .btn-new-report {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+
+
+.right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .input-search {
@@ -106,6 +170,37 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   width: 200px;
+}
+
+.bulk-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.5rem 1rem;
+
+  .btn {
+    padding: 6px 8px;
+    background: #ffffff;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    font-size: 8px;
+    color: #333;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: #e2e2e2;
+    }
+
+    &.delete {
+      background: #ffffff;
+      color: red;
+
+      &:hover {
+        background: #ffd4d4;
+      }
+    }
+  }
 }
 
 .btn-filter {

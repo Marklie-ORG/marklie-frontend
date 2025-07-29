@@ -23,8 +23,16 @@ export class SchedulesService {
     return firstValueFrom(this.http.put(`${this.apiUrl}/${scheduleUuid}`, data));
   }
 
-  deleteSchedule(scheduleUuid: string): Promise<any> {
-    return firstValueFrom(this.http.delete(`${this.apiUrl}/${scheduleUuid}`));
+  bulkPauseSchedules(uuids: string[]): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/stop`, {uuids}));
+  }
+
+  bulkActivateSchedule(uuids: string[]): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/activate`, {uuids}));
+  }
+
+  bulkDeleteSchedules(uuids: string[]): Promise<any> {
+    return firstValueFrom(this.http.put(`${this.apiUrl}/delete`, { uuids }));
   }
 
   async getSchedulingOptions(clientUuid: string) {

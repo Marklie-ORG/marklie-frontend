@@ -1,30 +1,47 @@
 <div class="reports-page-container">
-
   <div class="reports-card">
-
     <div class="reports-container">
-      <div class="actions-container flex-row align-center gap-10" style="position: relative;">
-        <h1 class="page-title">Scheduled Reports</h1>
 
-        <input
-          type="text"
-          placeholder="Search reports..."
-          [(ngModel)]="searchTerm"
-          (input)="onSearchChange()"
-          class="input-search"
-        />
+      <div class="actions-container">
+        <h1 class="page-title">All reports</h1>
 
-        <button class="btn-filter" (click)="toggleFilter()" #filterBtn>
-          Filter
-          <fa-icon [icon]="faFilter" class="icon-filter"></fa-icon>
-        </button>
+        <div class="right-actions">
+          @if (selectedReports.size > 0) {
+            <div class="bulk-actions">
+              <button class="gray" (click)="bulkPause()">
+                <fa-icon [icon]="faPause" class="icon-channel"></fa-icon>
+              </button>
+              <button class="gray" (click)="bulkActivate()">
+                <fa-icon [icon]="faPlay" class="icon-channel"></fa-icon>
+              </button>
+              <button class="red" (click)="bulkDelete()">
+                <fa-icon [icon]="faTrashCan" class="icon-channel text-red"></fa-icon>
+              </button>
+            </div>
+          }
+          <input
+            type="text"
+            placeholder="Search"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            class="input-search"
+          />
 
-        <button class="btn-new-report" [routerLink]="['/schedule']">New report</button>
+          <button class="btn-filter" (click)="toggleFilter()">
+            <fa-icon [icon]="faFilter" class="icon-filter"></fa-icon> Filter
+          </button>
 
-        <div *ngIf="filterVisible" class="filter-panel">
+          <button class="btn-new-report" [routerLink]="['/schedule']">
+            New report
+          </button>
+        </div>
+      </div>
+
+      @if (filterVisible) {
+        <div class="filter-panel">
           <div class="filter-section">
             <label>Status:</label>
-            <select [(ngModel)]="filterActive" (change)="setActiveFilter(filterActive)">
+            <select [(ngModel)]="filterActive" (change)="applyFilters()">
               <option value="all">All</option>
               <option value="active">Active</option>
               <option value="paused">Paused</option>
@@ -33,23 +50,25 @@
 
           <div class="filter-section">
             <label>Platforms:</label>
-            <div *ngFor="let platform of availablePlatforms">
-              <input
-                type="checkbox"
-                [checked]="filterPlatforms.has(platform)"
-                (change)="togglePlatform(platform)"
-                id="platform-{{ platform }}"
-              />
-              <label for="platform-{{ platform }}">{{ platform | titlecase }}</label>
-            </div>
+            @for (platform of availablePlatforms; track platform) {
+              <div>
+                <input
+                  type="checkbox"
+                  [checked]="filterPlatforms.has(platform)"
+                  (change)="togglePlatform(platform)"
+                  id="platform-{{ platform }}"
+                />
+                <label for="platform-{{ platform }}">{{ platform | titlecase }}</label>
+              </div>
+            }
           </div>
         </div>
-      </div>
+      }
 
       <table class="reports-table">
         <thead>
         <tr>
-          <th><input type="checkbox" /></th>
+          <th><input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll($event)" /></th>
           <th>Client</th>
           <th>Report name</th>
           <th>Frequency</th>
@@ -63,80 +82,50 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let report of pagedReports; let i = index">
-          <td>
-            <input
-              type="checkbox"
-              [checked]="selectedReports.has(i)"
-              (change)="toggleReportSelection(i)"
-            />
-          </td>
-          <td>{{ report.client.name }}</td>
-          <td>{{ report.reportName }}</td>
-          <td>{{ capitalizeFirstLetter(report.jobData.frequency) }}</td>
-          <td>
-            <ng-container *ngIf="report.platform">
-              <fa-icon [icon]="faMeta" class="icon-channel"></fa-icon>
-            </ng-container>
-          </td>
-          <td>
-            <div class="icons-container">
-              <ng-container *ngIf="report.client.emails && report.client.emails.length > 0">
-                <fa-icon [icon]="faEnvelope" class="icon-channel"></fa-icon>
-              </ng-container>
-
-              <ng-container *ngIf="report.client.slackConversationId">
-                <fa-icon [icon]="faSlack" class="icon-channel"></fa-icon>
-              </ng-container>
-
-              <ng-container *ngIf="report.client.phoneNumbers && report.client.phoneNumbers.length > 0">
-                <fa-icon [icon]="faPhone" class="icon-channel"></fa-icon>
-              </ng-container>
-            </div>
-          </td>
-
-          <td>
-              <span
-                [class]="
-                  report.isActive ? 'status-active' : 'status-paused'
-                "
-              >
-                {{ report.isActive ? 'Active' : 'Paused' }}
-              </span>
-          </td>
-
-          <td>
-              <span *ngIf="report.reviewNeeded; else noReview" class="review-needed-flag">
-                Yes
-              </span>
-            <ng-template #noReview>No</ng-template>
-          </td>
-          <td>{{ formatRelativeDate(report.lastRun) }}</td>
-          <td>{{ formatRelativeDate(report.nextRun) }}</td>
-          <td>{{ report.timezone }}</td>
-        </tr>
+          @for (report of pagedReports; track report.uuid) {
+            <tr>
+              <td>
+                <input
+                  type="checkbox"
+                  [checked]="selectedReports.has(report.uuid)"
+                  (change)="toggleReportSelection(report.uuid)"
+                />
+              </td>
+              <td>{{ report.client.name }}</td>
+              <td>{{ report.reportName }}</td>
+              <td>{{ capitalizeFirstLetter(report.jobData.frequency) }}</td>
+              <td>
+                <fa-icon *ngIf="report.platform" [icon]="faMeta" class="icon-channel"></fa-icon>
+              </td>
+              <td>
+                <div class="icons-container">
+                  <fa-icon *ngIf="report.client.emails?.length" [icon]="faEnvelope" class="icon-channel"></fa-icon>
+                  <fa-icon *ngIf="report.client.slackConversationId" [icon]="faSlack" class="icon-channel"></fa-icon>
+                  <fa-icon *ngIf="report.client.phoneNumbers?.length" [icon]="faPhone" class="icon-channel"></fa-icon>
+                </div>
+              </td>
+              <td>
+                <span [ngClass]="report.isActive ? 'status-active' : 'status-paused'">
+                  {{ report.isActive ? 'Active' : 'Paused' }}
+                </span>
+              </td>
+              <td>{{ report.reviewNeeded ? 'Yes' : 'No' }}</td>
+              <td>{{ formatRelativeDate(report.lastRun) }}</td>
+              <td>{{ formatRelativeDate(report.nextRun) }}</td>
+              <td>{{ report.timezone }}</td>
+            </tr>
+          }
         </tbody>
       </table>
 
-      <div class="pagination-and-total flex-row justify-between align-center">
-        <div class="total-reports">
-          Total reports: {{ filteredReports.length }}
-        </div>
-
-        <div class="pagination pagination-centered">
-          <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
-            &lt;
-          </button>
-          <button
-            (click)="goToPage(currentPage + 1)"
-            [disabled]="
-              currentPage === Math.ceil(filteredReports.length / reportsPerPage)
-            "
-          >
-            &gt;
-          </button>
+      <div class="pagination-and-total flex-row justify-between align-center mt-3">
+        <div>Total reports: {{ filteredReports.length }}</div>
+        <div class="pagination">
+          <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">&lt;</button>
+          <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === Math.ceil(filteredReports.length / reportsPerPage)">&gt;</button>
         </div>
       </div>
+
     </div>
   </div>
 </div>

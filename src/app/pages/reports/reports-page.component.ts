@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, inject, Inject, OnInit} from '@angular/core';
 import {
-  faEnvelope,
-  faPhone,
-  faFilter,
+  faEnvelope, faPhone, faFilter, faPause, faPlay, faTrashCan
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  faFacebook,
-  faMeta,
-  faSlack,
-} from '@fortawesome/free-brands-svg-icons';
-import { OrganizationService } from '../../services/api/organization.service.js';
+import { OrganizationService } from '../../services/api/organization.service';
+import {SchedulesService} from "../../services/api/schedules.service.js";
+import { faMeta, faSlack } from '@fortawesome/free-brands-svg-icons';
 
 @Component({
   selector: 'app-reports-page',
@@ -23,7 +18,8 @@ export class ReportsPageComponent implements OnInit {
 
   currentPage = 1;
   reportsPerPage = 20;
-  selectedReports = new Set<number>();
+  selectedReports = new Set<string>();
+  allSelected = false;
 
   searchTerm = '';
   filterActive = 'all';
@@ -38,38 +34,69 @@ export class ReportsPageComponent implements OnInit {
   faMeta = faMeta;
   faFilter = faFilter;
 
-  constructor(private organizationService: OrganizationService) {}
+  private schedulesService = inject(SchedulesService)
+
 
   async ngOnInit() {
-    this.schedules = await this.organizationService.getSchedulingOptions();
-    this.filteredReports = [...this.schedules];
+    await this.loadOptions()
     this.updatePagedReports();
   }
 
-  capitalizeFirstLetter(str: string): string {
-    if (!str) return str;
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  async loadOptions() {
+    this.schedules = await this.schedulesService.getSchedulingOptions("c5b300eb-ab4d-4db6-bae7-c81610dd9f5a");
+    this.filteredReports = [...this.schedules];
   }
 
-  toggleReportSelection(index: number) {
-    if (this.selectedReports.has(index)) {
-      this.selectedReports.delete(index);
-    } else {
-      this.selectedReports.add(index);
-    }
+  capitalizeFirstLetter(str: string): string {
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+  }
+
+  toggleReportSelection(uuid: string) {
+    this.selectedReports.has(uuid) ? this.selectedReports.delete(uuid) : this.selectedReports.add(uuid);
+    this.allSelected = this.selectedReports.size === this.filteredReports.length;
+  }
+
+  toggleSelectAll(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.allSelected = checked;
+    this.selectedReports = new Set(
+      checked ? this.filteredReports.map(r => r.uuid) : []
+    );
+  }
+
+  async refreshDate() {
+    this.selectedReports.clear();
+    await this.loadOptions();
+    this.applyFilters();
+    this.allSelected = false
+  }
+
+  async bulkPause() {
+    const uuids = Array.from(this.selectedReports);
+    await this.schedulesService.bulkPauseSchedules(uuids);
+    await this.refreshDate()
+  }
+
+  async bulkActivate() {
+    const uuids = Array.from(this.selectedReports);
+    await this.schedulesService.bulkActivateSchedule(uuids);
+    await this.refreshDate()
+  }
+
+  async bulkDelete() {
+    const uuids = Array.from(this.selectedReports);
+    await this.schedulesService.bulkDeleteSchedules(uuids);
+    await this.refreshDate()
   }
 
   onSearchChange() {
     const term = this.searchTerm.trim().toLowerCase();
+    this.filteredReports = term
+      ? this.schedules.filter(report =>
+        report.reportName?.toLowerCase().includes(term) || report.client.name.toLowerCase().includes(term)
+      )
+      : [...this.schedules];
 
-    if (!term) {
-      this.filteredReports = [...this.schedules];
-    } else {
-      this.filteredReports = this.schedules.filter(report =>
-        report.reportName?.toLowerCase().includes(term) ||
-        report.client.name.toLowerCase().includes(term)
-      );
-    }
     this.currentPage = 1;
     this.updatePagedReports();
   }
@@ -78,41 +105,11 @@ export class ReportsPageComponent implements OnInit {
     this.filterVisible = !this.filterVisible;
   }
 
-  setActiveFilter(value: string) {
-    this.filterActive = value;
-    this.applyFilters();
-  }
-
   togglePlatform(platform: string) {
-    if (this.filterPlatforms.has(platform)) {
-      this.filterPlatforms.delete(platform);
-    } else {
-      this.filterPlatforms.add(platform);
-    }
+    this.filterPlatforms.has(platform)
+      ? this.filterPlatforms.delete(platform)
+      : this.filterPlatforms.add(platform);
     this.applyFilters();
-  }
-
-  formatRelativeDate(dateString: string | Date): string {
-    if (!dateString) return '-';
-
-    const date = new Date(dateString);
-    const now = new Date();
-
-    const diffTime = now.getTime() - date.getTime();
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    const isToday = date.toDateString() === now.toDateString();
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-    const isYesterday = date.toDateString() === yesterday.toDateString();
-
-    if (isToday) {
-      return 'Today';
-    } else if (isYesterday) {
-      return 'Yesterday';
-    } else {
-      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); // e.g. May 30
-    }
   }
 
   applyFilters() {
@@ -120,27 +117,38 @@ export class ReportsPageComponent implements OnInit {
 
     if (this.filterActive !== 'all') {
       const isActive = this.filterActive === 'active';
-      filtered = filtered.filter((r) => r.isActive === isActive);
+      filtered = filtered.filter(r => r.isActive === isActive);
     }
 
     if (this.filterPlatforms.size > 0) {
-      filtered = filtered.filter((r) =>
-        this.filterPlatforms.has(r.platform.toLowerCase())
+      filtered = filtered.filter(r =>
+        this.filterPlatforms.has(r.platform?.toLowerCase())
       );
     }
 
     if (this.searchTerm.trim()) {
       const term = this.searchTerm.trim().toLowerCase();
       filtered = filtered.filter(
-        (r) =>
-          r.client.name.toLowerCase().includes(term) ||
-          r.reportName.toLowerCase().includes(term)
+        r => r.client.name.toLowerCase().includes(term) || r.reportName.toLowerCase().includes(term)
       );
     }
 
     this.filteredReports = filtered;
     this.currentPage = 1;
     this.updatePagedReports();
+  }
+
+  formatRelativeDate(date: string | Date): string {
+    if (!date) return '-';
+    const d = new Date(date);
+    const today = new Date();
+    const isToday = d.toDateString() === today.toDateString();
+    const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+
+    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    if (isToday) return 'Today';
+
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
   updatePagedReports() {
@@ -150,12 +158,14 @@ export class ReportsPageComponent implements OnInit {
   }
 
   goToPage(page: number) {
-    if (page < 1 || page > Math.ceil(this.filteredReports.length / this.reportsPerPage)) {
-      return;
-    }
+    const totalPages = Math.ceil(this.filteredReports.length / this.reportsPerPage);
+    if (page < 1 || page > totalPages) return;
     this.currentPage = page;
     this.updatePagedReports();
   }
 
   protected readonly Math = Math;
+  protected readonly faPause = faPause;
+  protected readonly faPlay = faPlay;
+  protected readonly faTrashCan = faTrashCan;
 }

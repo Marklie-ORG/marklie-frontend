@@ -6,6 +6,13 @@
   padding: 0 1rem;
 }
 
+.landing-full-width {
+  width: 100%;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  width: calc(100% + 2rem);
+}
+
 .heading-point-section {
   margin: 4.25rem 0;
 

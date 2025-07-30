@@ -10,6 +10,7 @@ import { FeaturesTableSectionComponent } from "../../components/landing-sections
 import { FreeDemoSectionComponent } from "../../components/landing-sections/free-demo-section/free-demo-section.component";
 import { FeaturesSectionComponent } from "../../components/landing-sections/features-section/features-section.component";
 import { AgencyGrowSectionComponent } from "../../components/landing-sections/agency-grow-section/agency-grow-section.component";
+import { LandingFooterComponent } from "src/app/components/landing-sections/landing-footer/landing-footer.component";
 
 @Component({
   selector: "app-landing-new",
@@ -27,7 +28,8 @@ import { AgencyGrowSectionComponent } from "../../components/landing-sections/ag
     FeaturesTableSectionComponent,
     FreeDemoSectionComponent,
     FeaturesSectionComponent,
-    AgencyGrowSectionComponent
+    AgencyGrowSectionComponent,
+    LandingFooterComponent
   ]
 })
 export class LandingNewComponent {}

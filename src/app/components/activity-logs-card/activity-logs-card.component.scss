@@ -10,13 +10,23 @@
     margin: 0;
   }
 
-  &__button {
+  &__link {
+    font-size: 0.875rem;
+    color: #40536B;
+    opacity: 70%;
     font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
 .activity {
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%; // ensure it grows
 
   &__header {
     display: flex;
@@ -110,6 +120,7 @@
   &__activity {
     color: #333;
     text-align: left;
+    white-space: nowrap;
   }
 
   .activity__link {
@@ -130,6 +141,32 @@
   &:hover {
     background-color: #f8f9fa;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+}
+.activity__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #f0f0f0;
+    }
   }
 }
 

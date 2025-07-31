@@ -13,7 +13,7 @@
 style="height: 85%;"
 >
 
-  <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
+  <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">
     <div
     class="block"
     style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
@@ -67,13 +67,8 @@ style="height: 85%;"
     </div>
 
     <div
-    class="block"
-    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-
-      <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-        <h3>Activity</h3>
-      </div>
-
+      class="block"
+      style="background: var(--block-color); border-radius: 20px;">
       <app-activity-log-item
       [logs]="logs"
       [level]="'organization'"

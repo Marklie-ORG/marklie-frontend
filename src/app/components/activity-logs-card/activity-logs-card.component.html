@@ -42,12 +42,12 @@
             @switch (log.action) {
               @case ('report_sent') {
                 {{ log.metadata.reportName || 'Report' }}
-                has been sent.
+                has been sent
               }
 
               @case ('report_generated') {
                 {{ log.metadata.reportName || 'Report' }}
-                has been generated.
+                has been generated
               }
 
               @case ('created_schedule') {
@@ -68,7 +68,7 @@
 
               @case ('client_created') {
                 @if (level === 'organization') {
-                  Client <strong>{{ log.metadata.name || 'Unknown client' }}</strong> added to the platform
+                  Client added to the platform
                 }
               }
 

@@ -1,16 +1,17 @@
-
+.section-title {
+  font-weight: 600;
+  font-size: 24px;
+  color: #000000;
+}
 .graph-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-    gap: 24px;
-    // padding: 0 8px;
-  }
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
 .graph-card {
     background: #ffffff;
     padding: 16px;
     border-radius: 10px;
-    // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    // border: 0.8px solid #CADEF7;
     box-shadow: var(--box-shadow);
     border: var(--block-border);
   }
@@ -20,8 +21,7 @@
     transform: scale(1.05);
     z-index: 1000;
   }
-  
-  /* the placeholder where the item would go */
+
   .sortable-ghost {
     opacity: 0.3;
     background-color: #ccc;

@@ -58,7 +58,7 @@ export class ChartsComponent {
       }
     });
   }
-  
+
 
   initializeGraphs() {
     setTimeout(() => {
@@ -77,7 +77,7 @@ export class ChartsComponent {
         }
       }
       this.displayedGraphs.sort((a, b) => a.order - b.order);
-      
+
       setTimeout(() => this.renderCharts(), 0);
     }, 100);
   }
@@ -117,16 +117,23 @@ export class ChartsComponent {
 
     for (const config of this.displayedGraphs) {
       const canvases = document.querySelectorAll(`#${config.metric}Chart`);
-      
       if (!canvases.length) continue;
 
-      let currentCanvas = canvases[canvases.length - 1];
-      let canvasId = `${config.metric}Chart-${canvases.length}`
+      const currentCanvas = canvases[canvases.length - 1];
+      const canvasId = `${config.metric}Chart-${canvases.length}`;
       currentCanvas.id = canvasId;
 
       const data = this.graphs().map(g => parseFloat(g[config.metric]) || 0);
+      const minValue = Math.min(...data);
+      const maxValue = Math.max(...data);
+      const range = maxValue - minValue;
+      const padding = range * 0.2;
 
-      this.chartRefs[canvasId]?.destroy();
+      const labels = this.graphs().map(g =>
+        new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      );
+
+
 
       this.chartRefs[canvasId] = new Chart(currentCanvas as HTMLCanvasElement, {
         type: 'line',
@@ -135,17 +142,12 @@ export class ChartsComponent {
           datasets: [{
             label: config.label,
             data,
-            borderColor: config.color,
-            pointBackgroundColor: config.color,
+            borderColor: '#77B6FB',
+            pointBackgroundColor: "#5293D9",
             pointRadius: 2,
-            tension: 0.3,
+            tension: 0.4,
             fill: false,
-            pointStyle: 'circle',
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 2,
-            pointHoverBorderColor: config.color,
-            pointHoverBackgroundColor: config.color,
-            borderWidth: 2,
+            borderWidth: 2
           }]
         },
         options: {
@@ -154,45 +156,60 @@ export class ChartsComponent {
             title: {
               display: true,
               text: config.label,
-              font: { size: 16, family: 'Inter Variable, sans-serif', weight: 'normal' },
+              font: { size: 18, weight: 'bold' },
               color: '#000000',
-              padding: {
-                top: 0,
-                bottom: 25
-              }
+              align: 'center',
+              padding: {bottom: 30 }
+            },
+            legend: {
+              display: false
             },
             tooltip: {
               callbacks: {
                 label: ctx => config.format(ctx.parsed.y.toFixed(2))
               }
             },
-            datalabels: { display: false },
-            legend: {
-              display: false
-            }
+            datalabels: {
+              display: true,
+              align: 'top',
+              anchor: 'end',
+              color: config.color,
+              clip: false,
+              font: {
+                size: 11,
+                weight: 'bold',
+                family: 'Inter Variable, sans-serif'
+              },
+              offset: 6,
+            },
+
           },
           scales: {
+            x: {
+              grid: {
+                display: true
+              },
+              ticks: {
+                font: { family: 'Inter Variable, sans-serif' }
+              }
+            },
             y: {
               beginAtZero: false,
               ticks: {
-                callback: value => config.format(Number(value).toFixed(0)),
-                font: { family: 'Inter Variable, sans-serif' }
+                stepSize: 0.01,
+                maxTicksLimit: 5,
+                font: { family: 'Inter Variable, sans-serif' },
+                padding: 18
               },
-              grid: { color: 'rgba(0,0,0,0.05)' }
-            },
-            x: {
-              ticks: { font: { family: 'Inter Variable, sans-serif' } },
-              grid: { color: 'rgba(0,0,0,0.05)' }
+              grid: {
+                color: 'rgba(0,0,0,0.05)',
+                drawTicks: false
+              },
+              border: {
+                display: false
+              }
             }
           },
-          layout: {
-            padding: {
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0
-            }
-          }
         },
         plugins: [ChartDataLabels]
       });
@@ -200,19 +217,19 @@ export class ChartsComponent {
   }
 
   reorderItems(event: Sortable.SortableEvent) {
-    
+
     const movedItem = this.displayedGraphs.splice(event.oldIndex!, 1)[0];
     this.displayedGraphs.splice(event.newIndex!, 0, movedItem);
     this.displayedGraphs.forEach((m, index) => m.order = index);
 
     for (let [index, metric] of this.metrics().entries()) {
-      
+
       const order = this.displayedGraphs.findIndex(g => g.name === metric.name);
       if (order !== -1) {
         metric.order = order;
       }
       else {
-        metric.order = this.displayedGraphs.length + index; 
+        metric.order = this.displayedGraphs.length + index;
       }
     }
 

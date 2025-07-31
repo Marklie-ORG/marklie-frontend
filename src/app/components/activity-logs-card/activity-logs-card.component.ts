@@ -146,8 +146,8 @@ export class LogsCardComponent implements OnInit, OnChanges {
       case 'updated_schedule':
       case 'paused_schedule':
         return ['/edit-report', log.targetUuid];
-      case 'client_added':
-        return ['/client', log.clientUuid];
+      case 'client_created':
+        return ['/client', log.client.uuid];
       default:
         return null;
     }

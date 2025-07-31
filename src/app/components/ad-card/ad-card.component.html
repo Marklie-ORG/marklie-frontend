@@ -1,7 +1,7 @@
+<div class="section-title mb-3">
+  Best creatives
+</div>
 <div class="ad-grid" >
-  <div class="section-title mb-3">
-    Best creatives
-  </div>
   <div class="ad-card" *ngFor="let ad of ads; let i = index">
     <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
       <img class="ad-media" [src]="ad.thumbnailUrl"/>

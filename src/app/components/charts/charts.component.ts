@@ -84,20 +84,19 @@ export class ChartsComponent {
 
   getGraphConfigs() {
     return [
-      { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${v}` },
-      { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${v}x` },
-      { metric: 'conversion_value', label: 'Conversion Value', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
+      { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${parseFloat(v).toFixed(1)}` },
+      { metric: 'conversion_value', label: 'Conversion Value', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
       { metric: 'purchases', label: 'Purchases', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'addToCart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
-      { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },
+      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
+      { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${parseFloat(v).toFixed(2)}` },
       { metric: 'cpc', label: 'CPC', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'cpp', label: 'CPP', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'reach', label: 'Reach', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
       { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'add_to_cart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'initiated_checkouts', label: 'Initiated Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
@@ -132,8 +131,6 @@ export class ChartsComponent {
       const labels = this.graphs().map(g =>
         new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       );
-
-
 
       this.chartRefs[canvasId] = new Chart(currentCanvas as HTMLCanvasElement, {
         type: 'line',
@@ -171,18 +168,30 @@ export class ChartsComponent {
             },
             datalabels: {
               display: true,
-              align: 'top',
-              anchor: 'end',
-              color: config.color,
               clip: false,
+              color: config.color,
               font: {
                 size: 11,
                 weight: 'bold',
                 family: 'Inter Variable, sans-serif'
               },
-              offset: 6,
-            },
+              align: (ctx) => {
+                const data = ctx.chart.data.datasets[0].data as number[];
+                const index = ctx.dataIndex;
+                const current = data[index];
+                const prev = data[index - 1] ?? current;
+                const next = data[index + 1] ?? current;
 
+                if (current > prev && current > next) return 'top';
+                if (current < prev && current < next) return 'bottom';
+                if (Math.abs(current - prev) < 10 && Math.abs(current - next) < 10) return 'bottom';
+
+                return 'top';
+              },
+              anchor: 'end',
+              offset: 6,
+              formatter: (value: any) => config.format(value)
+            }
           },
           scales: {
             x: {
@@ -190,7 +199,9 @@ export class ChartsComponent {
                 display: true
               },
               ticks: {
-                font: { family: 'Inter Variable, sans-serif' }
+                font: { family: 'Inter Variable, sans-serif' },
+                padding: 14, // default is ~3–5; reduce to ~10 if needed
+
               }
             },
             y: {
@@ -199,7 +210,9 @@ export class ChartsComponent {
                 stepSize: 0.01,
                 maxTicksLimit: 5,
                 font: { family: 'Inter Variable, sans-serif' },
-                padding: 18
+
+                  padding: 22, // default is ~3–5; reduce to ~10 if needed
+
               },
               grid: {
                 color: 'rgba(0,0,0,0.05)',
@@ -208,6 +221,14 @@ export class ChartsComponent {
               border: {
                 display: false
               }
+            }
+          },
+          layout: {
+            padding: {
+              left: 6,    // ensures labels don't touch y-ticks
+              right: 26,
+              top: 6,
+              bottom: 0
             }
           },
         },

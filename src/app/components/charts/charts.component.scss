@@ -2,6 +2,7 @@
   font-weight: 600;
   font-size: 24px;
   color: #000000;
+  margin-bottom: 16px;
 }
 .graph-grid {
   display: grid;
@@ -9,12 +10,17 @@
   gap: 24px;
 }
 .graph-card {
-    background: #ffffff;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: var(--box-shadow);
-    border: var(--block-border);
-  }
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+  border: var(--block-border);
+  overflow: hidden; // 👈 prevent overflow
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
   .sortable-drag {
     opacity: 0.8;
@@ -33,3 +39,8 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     cursor: grabbing;
   }
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+}

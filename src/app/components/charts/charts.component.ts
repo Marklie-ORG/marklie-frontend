@@ -208,7 +208,7 @@ export class ChartsComponent {
               beginAtZero: false,
               ticks: {
                 stepSize: 0.01,
-                maxTicksLimit: 5,
+                maxTicksLimit: 4,
                 font: { family: 'Inter Variable, sans-serif' },
 
                   padding: 22, // default is ~3–5; reduce to ~10 if needed

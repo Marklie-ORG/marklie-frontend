@@ -1,11 +1,9 @@
- 
+<app-header-new *ngIf="showLandingHeader"></app-header-new>
 
 <app-header *ngIf="showHeader"></app-header>
 
 <app-dashboard-header *ngIf="showDashboardHeader"></app-dashboard-header>
 
 <!-- <div style="min-height: calc(100vh - 85px); margin-top: 85px;"> -->
-    <router-outlet>
-    </router-outlet>
+<router-outlet> </router-outlet>
 <!-- </div> -->
-

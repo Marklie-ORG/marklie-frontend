@@ -12,6 +12,7 @@ export class AppComponent {
 
   showHeader = true;
   showDashboardHeader = false;
+  showLandingHeader = true;
 
   constructor(private router: Router) {
     // Listen to route changes
@@ -33,6 +34,9 @@ export class AppComponent {
           // url.startsWith('/schedule-report/') ||
           // url.startsWith('/review-report/') ||
           url.startsWith('/reports');
+
+        this.showLandingHeader =
+          url === '/'
       }
     });
   }

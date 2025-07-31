@@ -1,0 +1,39 @@
+@use "breakpoints" as *;
+
+.heading {
+  .content {
+    display: flex;
+    flex-direction: column;
+    max-width: 50rem;
+    margin: 0 auto;
+
+    &__title {
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+      font-size: 2rem;
+
+      @include from-tablet {
+        font-size: 2.75rem;
+      }
+    }
+
+    &__description {
+      font-size: 1.125rem;
+      color: var(--color-primary);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+
+      @include tablet {
+        font-size: 1.125rem;
+      }
+    }
+
+    &__button {
+      width: 16.25rem;
+      margin-top: 1.5rem;
+    }
+  }
+}

@@ -23,6 +23,7 @@
     "@angular/router": "^17.0.0",
     "@fontsource-variable/inter": "^5.2.5",
     "@fontsource/inter": "^5.2.5",
+    "@fontsource/shantell-sans": "^5.2.6",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -57,5 +58,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "~5.2.2"
-  }
+  },
+  "packageManager": "pnpm@8.15.9+sha512.499434c9d8fdd1a2794ebf4552b3b25c0a633abcee5bb15e7b5de90f32f47b513aca98cd5cfd001c31f0db454bc3804edccd578501e4ca293a6816166bbd9f81"
 }

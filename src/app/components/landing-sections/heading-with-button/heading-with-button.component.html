@@ -1,0 +1,22 @@
+<div class="heading">
+  <div class="content">
+    <h1 class="content__title" *ngIf="title()" [innerHTML]="titleHTML"></h1>
+    <p
+      class="content__description"
+      *ngIf="description()"
+      [innerHTML]="descriptionHTML"
+    ></p>
+
+    <div class="content__button">
+      <app-button
+        link="/"
+        variant="primary"
+        [fullWidth]="true"
+        size="large"
+        *ngIf="buttonText() && buttonLink()"
+      >
+        {{ buttonText() }}
+      </app-button>
+    </div>
+  </div>
+</div>

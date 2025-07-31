@@ -1,0 +1,121 @@
+@use "breakpoints" as *;
+
+.agency-grow-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12.5rem;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--blue-card-background);
+    padding: 3.4375rem 3.3125rem;
+    border-radius: 1.25rem;
+    z-index: 2;
+    position: relative;
+    width: 73.9375rem;
+
+    @include less-than-tablet {
+      max-width: 100%;
+      height: 45rem;
+      padding: 1.5rem 1.75rem;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--blue-card-logo-background);
+    width: fit-content;
+    padding: 1rem 0.9375rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.625rem;
+    img {
+      width: 4.0625rem;
+      height: 4.0625rem;
+    }
+    h2 {
+      font-size: 3rem !important;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    @include less-than-tablet {
+      img {
+        width: 2.3125rem;
+        height: 2.3125rem;
+      }
+      padding: 0.5rem 0.5625rem;
+
+      h2 {
+        font-size: 2.25rem !important;
+      }
+    }
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--text-white);
+    h2 {
+      font-size: 2.25rem !important;
+      font-weight: 700;
+    }
+    p {
+      font-size: 1.25rem !important;
+      font-weight: 400;
+    }
+
+    @include less-than-tablet {
+      h2 {
+        font-size: 2.25rem !important;
+      }
+      p {
+        font-size: 1.125rem !important;
+      }
+    }
+  }
+
+  &__button {
+    margin-top: 7.5rem;
+
+    @include less-than-tablet {
+      margin-top: 3.75rem;
+    }
+  }
+
+  &__image {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 32.125rem;
+    width: 36.875rem;
+    z-index: 1;
+    border-top-left-radius: 2.75rem;
+    box-shadow: -3.125rem -0.625rem 5.8125rem 1.625rem rgba(255, 255, 255, 0.27);
+
+    @media (max-width: 60rem) and (min-width: 36rem) {
+      display: none;
+    }
+
+    @include tablet {
+      height: 21.875rem;
+      width: 25rem;
+    }
+
+    @include less-than-tablet {
+      height: 18.75rem;
+      width: 21.875rem;
+      border-top-left-radius: 1.5rem;
+      display: block;
+    }
+
+    @include less-than-mobile {
+      width: 17.1875rem;
+      height: 14.0625rem;
+    }
+  }
+}

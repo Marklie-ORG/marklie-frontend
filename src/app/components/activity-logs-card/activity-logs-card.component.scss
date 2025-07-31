@@ -116,11 +116,14 @@
     }
   }
 
-  &__date,
-  &__activity {
+  &__date {
     color: #333;
     text-align: left;
     white-space: nowrap;
+  }
+  &__activity {
+    color: #333;
+    text-align: left;
   }
 
   .activity__link {

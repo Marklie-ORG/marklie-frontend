@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-      @for (log of paginatedLogs; track log.createdAt) {
+      @for (log of groupedLogs; track log.createdAt) {
         @if (!(log.action === 'client_created' && level !== 'organization')) {
           <tr
             class="activity__row"
@@ -34,7 +34,7 @@
 
           @if (level === 'organization') {
             <td class="activity__client">
-              {{ log.client?.name || '-' }}
+              {{ log.client?.name || log.metadata.name || '-' }}
             </td>
           }
 
@@ -68,7 +68,7 @@
 
               @case ('client_created') {
                 @if (level === 'organization') {
-                  Client <strong>{{ log.client?.name || 'Unknown client' }}</strong> added to the platform
+                  Client <strong>{{ log.metadata.name || 'Unknown client' }}</strong> added to the platform
                 }
               }
 

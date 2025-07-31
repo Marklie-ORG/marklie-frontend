@@ -14,23 +14,6 @@ export class LogsCardComponent implements OnInit, OnChanges {
 
   seenLogIds = new Set<string>();
   groupedLogs: any[] = [];
-  logsPerPage = 15;
-  currentPage = 1;
-
-  get totalPages(): number {
-    return Math.ceil(this.groupedLogs.length / this.logsPerPage);
-  }
-
-  get paginatedLogs(): any[] {
-    const start = (this.currentPage - 1) * this.logsPerPage;
-    return this.groupedLogs.slice(start, start + this.logsPerPage);
-  }
-
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
-  }
 
   ngOnInit(): void {
     const seen = localStorage.getItem('seenLogs');
@@ -147,7 +130,7 @@ export class LogsCardComponent implements OnInit, OnChanges {
       case 'paused_schedule':
         return ['/edit-report', log.targetUuid];
       case 'client_created':
-        return ['/client', log.client.uuid];
+        return ['/client', log.client?.uuid];
       default:
         return null;
     }

@@ -149,6 +149,7 @@ export class ChartsComponent {
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
@@ -200,7 +201,7 @@ export class ChartsComponent {
               },
               ticks: {
                 font: { family: 'Inter Variable, sans-serif' },
-                padding: 14, // default is ~3–5; reduce to ~10 if needed
+                padding: 14,
 
               }
             },
@@ -210,8 +211,7 @@ export class ChartsComponent {
                 stepSize: 0.01,
                 maxTicksLimit: 4,
                 font: { family: 'Inter Variable, sans-serif' },
-
-                  padding: 22, // default is ~3–5; reduce to ~10 if needed
+                padding: 22,
 
               },
               grid: {
@@ -221,14 +221,6 @@ export class ChartsComponent {
               border: {
                 display: false
               }
-            }
-          },
-          layout: {
-            padding: {
-              left: 6,    // ensures labels don't touch y-ticks
-              right: 26,
-              top: 6,
-              bottom: 0
             }
           },
         },

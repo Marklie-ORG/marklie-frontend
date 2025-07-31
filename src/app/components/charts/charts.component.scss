@@ -6,9 +6,10 @@
 }
 .graph-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(3, minmax(300px, 1fr));
+  gap: 16px;
 }
+
 .graph-card {
   background: #ffffff;
   padding: 8px;
@@ -40,7 +41,22 @@
     cursor: grabbing;
   }
 
-canvas {
+.graph-card canvas {
   width: 100% !important;
   height: auto !important;
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .graph-card {
+    padding: 8px;
+  }
+
+  .graph-grid {
+    gap: 12px;
+  }
 }

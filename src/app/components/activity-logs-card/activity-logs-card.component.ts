@@ -20,7 +20,7 @@ export class LogsCardComponent implements OnInit, OnChanges {
 
 
   // constructor(private clientService: ClientService) {}
-  
+
 
   ngOnInit(): void {
     const seen = localStorage.getItem('seenLogs');
@@ -38,6 +38,7 @@ export class LogsCardComponent implements OnInit, OnChanges {
     this.groupedLogs = [];
 
     for (const log of this.logs) {
+      console.log(log)
       if (log.action === 'report_sent' && log.targetUuid) {
         const clientId = log.client?.uuid;
         if (!clientId) continue;
@@ -45,19 +46,6 @@ export class LogsCardComponent implements OnInit, OnChanges {
         const hasSlackConversationId = !!log.metadata?.slackConversationId;
 
         let conversations: Conversations = { channels: [], ims: [] };
-
-        if (hasSlackConversationId) {
-          if (this.conversationCache.has(clientId)) {
-            conversations = this.conversationCache.get(clientId)!;
-          } else {
-            try {
-              conversations = await this.clientService.getSlackAvailableConversations(clientId);
-              this.conversationCache.set(clientId, conversations);
-            } catch (err) {
-              console.error(`Failed to fetch conversations for client ${clientId}`, err);
-            }
-          }
-        }
 
         const key = `report_sent-${log.targetUuid}`;
         if (!groupedMap.has(key)) {
@@ -68,9 +56,8 @@ export class LogsCardComponent implements OnInit, OnChanges {
         const recipient =
           log.metadata?.phoneNumber ||
           log.metadata?.email ||
-          this.resolveSlackConversationName(log.metadata?.slackConversationId, conversations) ||
+          (hasSlackConversationId ? 'Slack' : this.resolveSlackConversationName(log.metadata?.slackConversationId, conversations)) ||
           'Unknown';
-
         grouped.recipients.push(recipient);
         grouped.createdAt = log.createdAt;
       } else {

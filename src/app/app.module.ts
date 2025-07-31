@@ -61,6 +61,7 @@ import { WhatsappMessagePreviewComponent } from "./components/whatsapp-message-p
 import { ImagesManagerComponent } from "./components/images-manager/images-manager.component";
 import { ReportHeaderComponent } from "./components/report-header/report-header.component";
 import { LandingNewComponent } from "./pages/landing-new/landing-new.component";
+import {HeaderComponent} from "./components/header/header.component.js";
 
 register();
 
@@ -112,7 +113,8 @@ register();
     ItemComponent,
     WhatsappMessagePreviewComponent,
     ImagesManagerComponent,
-    ReportHeaderComponent
+    ReportHeaderComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

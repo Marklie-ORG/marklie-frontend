@@ -57,7 +57,6 @@ import { WhatsappMessagePreviewComponent } from './components/whatsapp-message-p
 import { CustomInputComponent } from './components/custom-input/custom-input.component';
 import { ImagesManagerComponent } from './components/images-manager/images-manager.component';
 import { ReportHeaderComponent } from './components/report-header/report-header.component';
-import {CapitalizePipe} from "./pipes/CapitalizePipe.js";
 
 register();
 
@@ -113,8 +112,6 @@ register();
     CustomInputComponent,
     ImagesManagerComponent,
     ReportHeaderComponent,
-
-    CapitalizePipe
 
   ],
   imports: [

@@ -15,14 +15,11 @@ export class AppComponent {
   showLandingHeader = true;
 
   constructor(private router: Router) {
-    console.log("ASDASDASDASD");
-
     router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const url = event.url.split('?')[0];
         const hasToken = !!localStorage.getItem('accessToken');
 
-        console.log(hasToken);
         this.showLandingHeader = !hasToken && url === '/';
         this.showHeader = hasToken;
 

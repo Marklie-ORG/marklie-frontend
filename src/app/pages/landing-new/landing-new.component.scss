@@ -1,0 +1,29 @@
+@use "breakpoints" as *;
+
+.landing {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
+.landing-full-width {
+  width: 100%;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  width: calc(100% + 2rem);
+}
+
+.heading-point-section {
+  margin: 4.25rem 0;
+
+  @include from-desktop {
+    margin: 9.375rem 0;
+  }
+}
+
+.delivery-sections {
+  display: flex;
+  flex-direction: column;
+  max-width: 79.25rem;
+  margin: 0 auto;
+}

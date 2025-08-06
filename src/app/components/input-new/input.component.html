@@ -1,0 +1,21 @@
+<div [class]="inputClasses()">
+  <label *ngIf="label()" for="input-field" class="input__label">
+    {{ label() }}
+    <span *ngIf="required()" class="input__required">*</span>
+  </label>
+  <input
+    id="input-field"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [required]="required()"
+    [value]="value()"
+    (input)="onInputChange($event)"
+    class="input__field"
+    [class.input__field--error]="error()"
+    [class.input__field--disabled]="disabled()"
+  />
+  <div *ngIf="error()" class="input__error">
+    {{ error() }}
+  </div>
+</div>

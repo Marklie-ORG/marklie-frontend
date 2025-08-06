@@ -1,0 +1,237 @@
+@use "variables" as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  color: var(--text-color);
+
+  &:focus {
+    outline: 1px solid var(--blue-primary);
+  }
+
+  // Sizes
+  &--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 2rem;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+
+    &.btn--link {
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &--medium {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-height: 2.5rem;
+    border-radius: 0.75rem;
+    box-sizing: border-box;
+
+    &.btn--link {
+      height: 2.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &--large {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    min-height: 3rem;
+    border-radius: 1rem;
+    box-sizing: border-box;
+
+    &.btn--link {
+      height: 3rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  // Variants
+  &--primary {
+    background-color: var(--blue-primary);
+    color: var(--white);
+
+    &:hover:not(:disabled) {
+      background-color: var(--btn-primary-hover);
+    }
+
+    &:disabled {
+      background-color: var(--btn-disabled-bg);
+      color: var(--btn-disabled-text);
+      cursor: not-allowed;
+    }
+
+    // Default icon color for primary buttons (only if no custom iconColor is provided)
+    .btn__icon {
+      color: var(--white);
+    }
+  }
+
+  &--secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--btn-secondary-border);
+
+    &:hover:not(:disabled) {
+      background-color: var(--btn-secondary-hover-bg);
+      border-color: var(--btn-secondary-hover-border);
+    }
+
+    &:disabled {
+      background-color: var(--btn-secondary-disabled-bg);
+      color: var(--btn-secondary-disabled-text);
+      border-color: var(--btn-secondary-disabled-border);
+      cursor: not-allowed;
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
+    color: var(--blue-primary);
+    border: 2px solid var(--blue-primary);
+
+    &:hover:not(:disabled) {
+      background-color: var(--blue-primary);
+      color: var(--white);
+    }
+
+    &:disabled {
+      color: var(--btn-outline-disabled-text);
+      border-color: var(--btn-outline-disabled-border);
+      cursor: not-allowed;
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+    box-shadow: none;
+
+    &:hover:not(:disabled) {
+      background-color: var(--btn-ghost-hover-bg);
+    }
+
+    &:disabled {
+      color: var(--btn-ghost-disabled-text);
+      cursor: not-allowed;
+    }
+  }
+
+  &--danger {
+    background-color: var(--btn-danger-bg);
+    color: var(--white);
+
+    &:hover:not(:disabled) {
+      background-color: var(--btn-danger-hover);
+    }
+
+    &:disabled {
+      background-color: var(--btn-danger-disabled-bg);
+      color: var(--btn-danger-disabled-text);
+      cursor: not-allowed;
+    }
+  }
+
+  // Full width
+  &--full-width {
+    width: 100%;
+  }
+
+  // Loading state
+  &--loading {
+    cursor: wait;
+
+    .btn__text {
+      opacity: 0.7;
+    }
+  }
+
+  &__spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--left {
+      margin-right: 0.5rem;
+    }
+
+    &--right {
+      margin-left: 0.5rem;
+    }
+
+    &--dark {
+      color: var(--text-color) !important;
+
+      fa-icon,
+      fa-icon svg,
+      fa-icon path {
+        color: var(--text-color);
+      }
+    }
+
+    &--light {
+      color: var(--white) !important;
+
+      fa-icon,
+      fa-icon svg,
+      fa-icon path {
+        color: var(--white);
+      }
+    }
+  }
+
+  // Icon positioning classes
+  &--with-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  &--icon-left {
+    flex-direction: row;
+  }
+
+  .spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -80,7 +80,7 @@ export class ChartsComponent {
       
    
   }
-  
+
 
   initializeGraphs() {
     setTimeout(() => {
@@ -126,27 +126,25 @@ export class ChartsComponent {
         }
         this.adAccountsGraphs.update(prev => prev.sort((a: any, b: any) => a.order - b.order));
       }
-      
       setTimeout(() => this.renderCharts(), 0);
     }, 100);
   }
 
   getGraphConfigs() {
     return [
-      { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${v}` },
-      { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${v}x` },
-      { metric: 'conversion_value', label: 'Conversion Value', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
+      { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${parseFloat(v).toFixed(1)}` },
+      { metric: 'conversion_value', label: 'Conversion Value', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
       { metric: 'purchases', label: 'Purchases', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'addToCart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
-      { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },
+      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
+      { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${parseFloat(v).toFixed(2)}` },
       { metric: 'cpc', label: 'CPC', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'cpp', label: 'CPP', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'reach', label: 'Reach', color: '#77B6FB', format: (v: any) => `${v}` },
-      { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${v}` },
+      { metric: 'costPerPurchase', label: 'Cost Per Purchase', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
       { metric: 'costPerCart', label: 'Cost Per Add to Cart', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'add_to_cart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'initiated_checkouts', label: 'Initiated Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
@@ -163,6 +161,7 @@ export class ChartsComponent {
     const labels = this.graphs().map(g =>
       new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     );
+
 
     for (const adAccount of this.adAccountsGraphs()) {
       for (const config of adAccount.graphs) {
@@ -249,9 +248,11 @@ export class ChartsComponent {
           plugins: [ChartDataLabels]
         });
       }
+
     }
     
   }
+
 
   // getChartConfiguration(config: GraphConfig, labels: string[], data: number[]) {
   //   return 

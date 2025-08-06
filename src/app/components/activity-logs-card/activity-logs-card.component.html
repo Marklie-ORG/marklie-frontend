@@ -1,79 +1,85 @@
-<!-- <div class="activity-container">
-  <h2 class="activity-title">Activity</h2>
-
-  <table class="activity-table">
+<div class="block-header">
+  <h3 class="block-header__title">Activity</h3>
+  <a class="block-header__link" [routerLink]="['/activity']">See all activity ↗</a>
+</div>
+  <table class="activity__table">
     <thead>
     <tr>
-      <th style="width: 5%;"></th>
-      <th style="width: 20%;">Date</th>
-      <th *ngIf="level === 'organization'" style="width: 25%;">Client name</th>
+      <th class="activity__dot-cell"></th>
+      <th>Date</th>
+      @if (level === 'organization') {
+        <th class="activity__client">Client name</th>
+      }
       <th>Activity</th>
     </tr>
     </thead>
     <tbody>
-    <tr
-      *ngFor="let log of groupedLogs"
-      class="activity-log-entry"
-    >
+      @for (log of groupedLogs; track log.createdAt) {
+        @if (!(log.action === 'client_created' && level !== 'organization')) {
+          <tr
+            class="activity__row"
+            (click)="navigateToLog(log)"
+            [class.activity__row--clickable]="!!getRoute(log)"
+          >
+            <td class="activity__dot-cell">
+            <span
+              [class.activity__dot--visible]="isNew(log)"
+              class="activity__dot"
+            ></span>
+          </td>
 
-      <td class="dot-cell">
-        <span [class.visible]="isNew(log)" class="blue-dot"></span>
-      </td>
+          <td class="activity__date">
+            {{ formatTimeOrDate(log.createdAt) }}
+          </td>
 
+          @if (level === 'organization') {
+            <td class="activity__client">
+              {{ log.client?.name || log.metadata.name || '-' }}
+            </td>
+          }
 
+          <td class="activity__activity">
+            @switch (log.action) {
+              @case ('report_sent') {
+                {{ log.metadata.reportName || 'Report' }}
+                has been sent
+              }
 
-      <td class="text-muted">
-        {{ formatTimeOrDate(log.createdAt) }}
-      </td>
+              @case ('report_generated') {
+                {{ log.metadata.reportName || 'Report' }}
+                has been generated
+              }
 
-      <td *ngIf="level === 'organization'">
-        {{ log.client?.name || '-' }}
-      </td>
+              @case ('created_schedule') {
+                Schedule created
+              }
 
-      <td>
-        <ng-container [ngSwitch]="log.action">
-          <ng-container *ngSwitchCase="'report_sent'">
-            <a [routerLink]="['/view-report', log.targetUuid]" class="text-primary">Report</a>
-            has been sent
-            <ng-container *ngIf="level === 'organization' && log.recipients?.length">
-              to
-              <ng-container *ngFor="let recipient of log.recipients; let i = index; let last = last">
-                <strong>{{ recipient }}</strong><span *ngIf="!last">, </span>
-              </ng-container>
-            </ng-container>
-          </ng-container>
+              @case ('updated_schedule') {
+                Schedule updated
+              }
 
-          <ng-container *ngSwitchCase="'report_generated'">
-            <a [routerLink]="['/view-report', log.targetUuid]" class="text-primary">Report</a>
-            has been generated
-          </ng-container>
+              @case ('paused_schedule') {
+                Schedule paused
+              }
 
-          <ng-container *ngSwitchCase="'created_schedule'">
-            <a [routerLink]="['/edit-report', log.targetUuid]" class="text-primary">Schedule</a> created
-          </ng-container>
+              @case ('added_collaborator') {
+                Collaborator added
+              }
 
-          <ng-container *ngSwitchCase="'updated_schedule'">
-            <a [routerLink]="['/edit-report', log.targetUuid]" class="text-primary">Schedule</a> updated
-          </ng-container>
+              @case ('client_created') {
+                @if (level === 'organization') {
+                  Client added to the platform
+                }
+              }
 
-          <ng-container *ngSwitchCase="'paused_schedule'">
-            <a [routerLink]="['/edit-report', log.targetUuid]" class="text-primary">Schedule</a> paused
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'added_collaborator'">
-            Collaborator added
-          </ng-container>
-
-          <ng-container *ngSwitchCase="'client_added'">
-            Client added to the platform
-          </ng-container>
-
-          <ng-container *ngSwitchDefault>
-            {{ log.message || 'Activity logged' }}
-          </ng-container>
-        </ng-container>
-      </td>
-    </tr>
+              @default {
+                {{ log.message || 'Activity logged' }}
+              }
+            }
+          </td>
+        </tr>
+      }
+      }
     </tbody>
   </table>
 </div> -->

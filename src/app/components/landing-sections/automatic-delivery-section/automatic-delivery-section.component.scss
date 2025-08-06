@@ -1,0 +1,42 @@
+@use "variables" as *;
+@use "breakpoints" as *;
+
+.automatic-delivery-section {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  flex-direction: column;
+
+  @include from-desktop {
+    flex-direction: row;
+  }
+
+  &__image {
+    width: 100%;
+    max-width: 28.125rem;
+    max-height: 23.125rem;
+
+    @include from-tablet {
+      width: 30.6875rem;
+      height: 26.5rem;
+    }
+
+    @include from-desktop {
+      width: 30.6875rem;
+      height: 26.5rem;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &__tags {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}

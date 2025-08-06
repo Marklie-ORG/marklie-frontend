@@ -1,0 +1,108 @@
+// Small Mobile
+$breakpoint-small-mobile-max: 575px; // Small mobile devices
+// Mobile
+$breakpoint-mobile-max: 743px; // Mobile devices
+// Tablet
+$breakpoint-tablet-min: 744px; // Tablet starts
+$breakpoint-tablet-max: 1279px; // Tablet ends
+// Desktop
+$breakpoint-desktop-min: 1280px; // Desktop starts
+$breakpoint-desktop-large-min: 1921px; // Large desktop starts
+
+// Small Mobile Devices: Target screens up to 575px
+@mixin small-mobile {
+  @media (max-width: #{$breakpoint-small-mobile-max}) {
+    @content;
+  }
+}
+
+// Mobile Devices: Target screens up to 743px (includes small mobile)
+@mixin mobile {
+  @media (max-width: #{$breakpoint-mobile-max}) {
+    @content;
+  }
+}
+
+// Tablet Devices: Target screens from 744px up to 1279px
+@mixin tablet {
+  @media (min-width: #{$breakpoint-tablet-min}) and (max-width: #{$breakpoint-tablet-max}) {
+    @content;
+  }
+}
+
+// Desktop Devices: Target screens from 1280px up to 1920px
+@mixin desktop {
+  @media (min-width: #{$breakpoint-desktop-min}) and (max-width: #{$breakpoint-desktop-large-min - 1}) {
+    @content;
+  }
+}
+
+// Large Desktop Devices: Target screens 1921px and up
+@mixin desktop-large {
+  @media (min-width: #{$breakpoint-desktop-large-min}) {
+    @content;
+  }
+}
+
+// From small mobile and up (0px and up)
+@mixin from-small-mobile {
+  @media (min-width: 0px) {
+    @content;
+  }
+}
+
+// From mobile and up (576px and up)
+@mixin from-mobile {
+  @media (min-width: #{$breakpoint-small-mobile-max + 1}) {
+    @content;
+  }
+}
+
+// From tablet and up (744px and up)
+@mixin from-tablet {
+  @media (min-width: #{$breakpoint-tablet-min}) {
+    @content;
+  }
+}
+
+// From desktop and up (1280px and up)
+@mixin from-desktop {
+  @media (min-width: #{$breakpoint-desktop-min}) {
+    @content;
+  }
+}
+
+// From large desktop and up (1921px and up)
+@mixin from-desktop-large {
+  @media (min-width: #{$breakpoint-desktop-large-min}) {
+    @content;
+  }
+}
+
+// Less than tablet (<744px)
+@mixin less-than-tablet {
+  @media (max-width: #{$breakpoint-tablet-min - 1}) {
+    @content;
+  }
+}
+
+// Less than mobile (<576px)
+@mixin less-than-mobile {
+  @media (max-width: #{$breakpoint-small-mobile-max}) {
+    @content;
+  }
+}
+
+// Less than desktop (<1280px)
+@mixin less-than-desktop {
+  @media (max-width: #{$breakpoint-desktop-min - 1}) {
+    @content;
+  }
+}
+
+// Less than large desktop (<1921px)
+@mixin less-than-desktop-large {
+  @media (max-width: #{$breakpoint-desktop-large-min - 1}) {
+    @content;
+  }
+}

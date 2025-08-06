@@ -1,4 +1,6 @@
+
 .kpi-grid-container {
+
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
@@ -12,13 +14,13 @@
     border: var(--block-border);
     transition: 0.2s ease-in-out;
   }
-  
+
   .kpi-label {
     font-size: 16px;
     color: #000000;
     margin-bottom: 6px;
   }
-  
+
   .kpi-value {
     font-size: 24px;
     font-weight: 600;

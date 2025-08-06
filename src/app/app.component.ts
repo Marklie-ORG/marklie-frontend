@@ -21,7 +21,7 @@ export class AppComponent {
         const hasToken = !!localStorage.getItem('accessToken');
 
         this.showLandingHeader = !hasToken && url === '/';
-        this.showHeader = hasToken;
+        this.showHeader = hasToken && url === '/';
 
         this.showDashboardHeader =
           url === '/dashboard' ||

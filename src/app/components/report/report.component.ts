@@ -56,7 +56,7 @@ export class ReportComponent {
 
   schedulesService = inject(SchedulesService);
 
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
 
   constructor() {
     effect(() => {

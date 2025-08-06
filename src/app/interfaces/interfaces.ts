@@ -24,17 +24,27 @@ export interface Metric {
     id?: string
 }
 
-export interface GetAvailableMetricsResponse {
-    [key: string]: AvailableMetricsAdAccount
-  }
+export type GetAvailableMetricsResponse  = GetAvailableMetricsAdAccount[]
 
-export interface AvailableMetricsAdAccount {
-  ads: string[]
-  campaigns: string[]
-  graphs: string[]
-  kpis: string[]
-  customMetrics: AvailableMetricsAdAccountCustomMetric[]
+export interface GetAvailableMetricsAdAccount {
+  adAccountId: string;
+  adAccountName: string;
+  adAccountMetrics: {
+    kpis: string[];
+    graphs: string[];
+    ads: string[];
+    campaigns: string[];
+    customMetrics: { id: string; name: string }[];
+  }
 }
+
+// export interface AvailableMetricsAdAccount {
+//   ads: string[]
+//   campaigns: string[]
+//   graphs: string[]
+//   kpis: string[]
+//   customMetrics: AvailableMetricsAdAccountCustomMetric[]
+// }
 
 export interface AvailableMetricsAdAccountCustomMetric {
   name: string

@@ -7,7 +7,7 @@ import { ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
-import { CreateScheduleRequest, GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
+import { CreateScheduleRequest, ReportSection } from 'src/app/interfaces/interfaces.js';
 
 export interface Data {
   KPIs: Record<string, any>;
@@ -50,8 +50,6 @@ export class ScheduleReportComponent implements OnInit {
   }
 
   reportSections = model<ReportSection[]>([]);
-
-  availableMetrics: GetAvailableMetricsResponse = {};
 
   reportTitle: string = 'Report Title';
 

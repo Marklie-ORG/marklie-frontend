@@ -23,7 +23,7 @@ export class ReviewReportComponent implements OnInit {
 
   reportUuid: string = '';
   clientUuid: string = '';
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
   private schedulesService = inject(SchedulesService);
 

@@ -2,7 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/services/api/report.service';
 import { Data } from '../schedule-report/schedule-report.component';
-import { CreateScheduleRequest, GetAvailableMetricsResponse, Metrics, ReportSection, Schedule } from 'src/app/interfaces/interfaces';
+import { CreateScheduleRequest, Metrics, ReportSection, Schedule } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
@@ -89,8 +89,6 @@ export class EditReportComponent {
   schedulingOptionId: string | null = null;
 
   schedulingOption: SchedulingOption | null = null;
-
-  availableMetrics: GetAvailableMetricsResponse = {};
 
   reportSections: ReportSection[] = []
 

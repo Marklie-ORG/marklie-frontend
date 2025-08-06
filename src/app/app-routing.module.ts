@@ -75,8 +75,6 @@ const routes: Routes = [
     component: PasswordRecoveryComponent,
   },
   {
-    path: 'pdf-report/:uuid',
-    component: PdfReportComponent,
     path: 'reports',
     component: ReportsPageComponent,
     canActivate: [authGuard]

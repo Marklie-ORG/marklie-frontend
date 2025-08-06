@@ -28,6 +28,7 @@ export class DashboardHeaderComponent implements OnInit {
 
   ngOnInit(): void {
     const userInfo = this.authService.getDecodedAccessTokenInfo()
+    console.log(userInfo)
     this.email = userInfo.email;
     this.userName = userInfo.firstName + ' ' + userInfo.lastName;
   }

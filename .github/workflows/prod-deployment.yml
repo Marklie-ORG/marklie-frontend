@@ -1,4 +1,4 @@
-name: Deploy Marklie
+name: Deploy Prod - Marklie
 
 on:
   push:

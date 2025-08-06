@@ -7,9 +7,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { GetAvailableMetricsResponse, ReportService } from '../../services/api/report.service.js';
+import { ReportService } from '../../services/api/report.service.js';
 import { ReportsDataService } from '../../services/reports-data.service.js';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component.js';
+import { Data } from '../schedule-report/schedule-report.component.js';
+import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
 import { SchedulesService } from 'src/app/services/api/schedules.service.js';
 
@@ -76,8 +77,7 @@ export class ViewReportComponent implements OnInit {
       this.agencyImageUrl.set(res.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
-
-      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
+      
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
 
       this.processSelectedAccount();

@@ -6,9 +6,10 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GetAvailableMetricsResponse, ReportService } from 'src/app/services/api/report.service';
+import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component';
+import { Data } from '../schedule-report/schedule-report.component';
+import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
 
@@ -25,7 +26,8 @@ export class PdfReportComponent implements OnInit {
     graphs: []
   }
 
-  reportId: string | null = null;
+  reportUuid: string = '';
+  clientUuid: string = '';
   availableMetrics: GetAvailableMetricsResponse = {};
   reportSections: ReportSection[] = []
 
@@ -55,15 +57,16 @@ export class PdfReportComponent implements OnInit {
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.reportId = params['id'];
+      this.reportUuid = params['reportUuid'];
+      this.clientUuid = params['clientUuid'];
       await this.loadReport();
     });
   }
 
   private async loadReport() {
-    if (!this.reportId) return;
+    if (!this.reportUuid) return;
     try {
-      const res = await this.reportService.getReport(this.reportId);
+      const res = await this.reportService.getReport(this.reportUuid);
       this.reportData = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
@@ -74,7 +77,7 @@ export class PdfReportComponent implements OnInit {
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
-      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
+      
       this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
 
     } catch (error) {

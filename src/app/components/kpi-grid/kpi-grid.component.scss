@@ -1,9 +1,6 @@
-.section-title {
-  font-weight: 600;
-  font-size: 24px;
-  color: #000000;
-}
-.kpi-grid {
+
+.kpi-grid-container {
+
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;

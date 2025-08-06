@@ -1,7 +1,8 @@
 import {Component, inject, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CreateScheduleRequest, GetAvailableMetricsResponse, Metrics, ReportService, Schedule } from 'src/app/services/api/report.service';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component';
+import { ReportService } from 'src/app/services/api/report.service';
+import { Data } from '../schedule-report/schedule-report.component';
+import { CreateScheduleRequest, GetAvailableMetricsResponse, Metrics, ReportSection, Schedule } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
@@ -118,8 +119,7 @@ export class EditReportComponent {
   ngOnInit() {
     this.route.params.subscribe(async params => {
       this.schedulingOptionId = params['schedulingOptionId'];
-
-      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
+      this.clientUuid = params['clientUuid'];
 
       await this.loadReport();
 
@@ -139,7 +139,7 @@ export class EditReportComponent {
     this.clientImageGsUri.set(this.schedulingOption?.jobData.images?.clientLogo || '');
     this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.organizationLogo || '');
 
-    this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics, this.schedulingOption);
+    this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.clientUuid, this.schedulingOption);
     this.convertOptionIntoTemplate(this.schedulingOption);
     this.mockData = this.mockReportService.generateMockData();
   }
@@ -157,12 +157,12 @@ export class EditReportComponent {
       reviewNeeded: schedulingOption.reviewNeeded,
     };
 
-    this.reportSections.forEach(section => {
-      section.enabled = schedulingOption.jobData.metrics[section.key].metrics.length > 0;
-      section.metrics.forEach(metric => {
-        metric.enabled = schedulingOption.jobData.metrics[section.key].metrics.some(m => m.name === metric.name);
-      });
-    });
+    // this.reportSections.forEach(section => {
+    //   section.enabled = schedulingOption.jobData.metrics[section.key].metrics.length > 0;
+    //   section.metrics.forEach(metric => {
+    //     metric.enabled = schedulingOption.jobData.metrics[section.key].metrics.some(m => m.name === metric.name);
+    //   });
+    // });
 
   }
 

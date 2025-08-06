@@ -1,35 +1,40 @@
-<div class="section-title mb-3">
-  Best campaigns
-</div>
-<div class="table-container">
-  <table class="campaign-table">
-    <thead>
-      <tr #campaignsHeaderContainer>
-        <th class="non-sortable">#</th>
-        <th class="non-sortable">Campaign Name</th>
-        <ng-container *ngFor="let metric of metrics()">
-          @if (metric.enabled) {
-            <th class="draggable-metric-header">
-              {{metric.name}}
-            </th>
-          }
-        </ng-container>
-      </tr>
-    </thead>
-    <tbody>
-        @for (campaign of campaigns; track campaign.campaign_id; let k = $index) {
-          <tr>
-            <td>{{ k + 1 }}</td>
-            <td>{{ campaign.campaign_name }}</td>
-            @for (metric of metrics(); track metric.name) {
-              @if (metric.enabled) {
-                <td>
-                  {{campaign[metric.name]}}
-                </td>
-              }
+
+@for (adAccount of adAccounts(); track adAccount.id) {
+  @if (adAccount.enabled) {
+    <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+  <div class="table-container">
+    <table class="campaign-table">
+      <thead>
+        <tr #campaignsHeaderContainer>
+          <th class="non-sortable">#</th>
+          <th class="non-sortable">Campaign Name</th>
+          <ng-container *ngFor="let metric of adAccount.metrics">
+            @if (metric.enabled) {
+              <th class="draggable-metric-header">
+                {{metric.name}}
+              </th>
             }
-          </tr>
-        }
-    </tbody>
-  </table>
-</div>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+          @for (campaign of campaigns; track campaign.campaign_id; let k = $index) {
+            <tr>
+              <td>{{ k + 1 }}</td>
+              <td>{{ campaign.campaign_name }}</td>
+              @for (metric of adAccount.metrics; track metric.name) {
+                @if (metric.enabled) {
+                  <td>
+                    {{campaign[metric.name]}}
+                  </td>
+                }
+              }
+            </tr>
+          }
+      </tbody>
+    </table>
+  </div>
+  }
+  
+}

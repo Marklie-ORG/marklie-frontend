@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
-import {GetAvailableMetricsResponse, Metrics, ReportService} from './api/report.service';
-import {MetricSectionKey, ReportSection} from '../pages/schedule-report/schedule-report.component';
+import {ReportService} from './api/report.service';
 import {SchedulingOption} from '../pages/edit-report/edit-report.component';
+import {GetAvailableMetricsResponse, Metrics, ReportSection, MetricSectionKey, AvailableMetricsAdAccountCustomMetric, Metric} from '../interfaces/interfaces';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {SchedulesService} from "./api/schedules.service.js";
@@ -54,68 +54,157 @@ export class ReportsDataService {
   getChartConfigs() {
     return this.chartConfigs;
   }
+  
+
 
   async getInitiatedReportsSections(
-    availableMetrics?: GetAvailableMetricsResponse,
+    clientUuid: string,
     schedulingOption?: SchedulingOption
   ): Promise<ReportSection[]> {
 
-    if (!availableMetrics) {
-      availableMetrics = await this.schedulesService.getAvailableMetrics();
-    }
-
-    const initMetric = (key: string) => {
-      if (!availableMetrics) return [];
-
-      const metrics = availableMetrics[key] || [];
-
-      if (!schedulingOption) {
-        return metrics.map((m, i) => ({ name: m, order: i, enabled: false }));
-      }
-
-      return metrics.map((metric, i) => {
-        const metricIndex = schedulingOption.jobData.metrics[key].metrics.findIndex(m => m.name === metric);
-        let order = metricIndex === -1 ? i : metricIndex;
-        return { name: metric, order: order, enabled: false }
-      })
-
-    }
-
-    // section.metrics.forEach(metric => {
-      //   const metricIndex = schedulingOption.jobData.metrics[section.key].metrics.findIndex(m => m.name === metric.name);
-      //   metric.order = metricIndex;
-      // });
-
-    return [
+    let reportSections: ReportSection[] = [
       {
         key: 'kpis',
         title: 'Main KPIs',
         enabled: true,
-        metrics: initMetric('kpis'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.kpis.order : 1
+        adAccounts: [],
+        order: 0
       },
       {
         key: 'graphs',
         title: 'Graphs',
         enabled: true,
-        metrics: initMetric('graphs'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.graphs.order : 2
+        adAccounts: [],
+        order: 1
       },
       {
         key: 'ads',
         title: 'Best creatives',
         enabled: true,
-        metrics: initMetric('ads'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.ads.order : 3
+        adAccounts: [],
+        order: 2
       },
       {
         key: 'campaigns',
         title: 'Best campaigns',
         enabled: true,
-        metrics: initMetric('campaigns'),
-        order: schedulingOption ? schedulingOption.jobData.metrics.campaigns.order : 4
+        adAccounts: [],
+        order: 3
       }
-    ];
+    ]
+    
+    const availableMetrics = await this.schedulesService.getAvailableMetrics(clientUuid);
+
+    for (let section of reportSections) {
+      const sectionKey = section.key;
+
+      for (let adAccountKey in availableMetrics) {
+        const availableMetricsAdAccount = availableMetrics[adAccountKey];
+        const metrics = availableMetricsAdAccount[sectionKey];
+        const customMetrics = availableMetricsAdAccount.customMetrics;
+
+        section.adAccounts.push({
+          id: adAccountKey,
+          name: adAccountKey,
+          metrics: this.getMetrics(metrics, customMetrics),
+          order: 0,
+          enabled: true
+        })
+      }
+
+    }
+
+    return reportSections
+
+    // const initMetric = (key: string) => {
+    //   if (!availableMetrics) return [];
+
+    //   const metrics = availableMetrics[key] || [];
+
+    //   if (!schedulingOption) {
+    //     return metrics.map((m, i) => ({ name: m, order: i, enabled: false }));
+    //   }
+
+    //   return metrics.map((metric, i) => {
+    //     const metricIndex = schedulingOption.jobData.metrics[key].metrics.findIndex(m => m.name === metric);
+    //     let order = metricIndex === -1 ? i : metricIndex;
+    //     return { name: metric, order: order, enabled: false }
+    //   })
+
+    // }
+
+    // // section.metrics.forEach(metric => {
+    //   //   const metricIndex = schedulingOption.jobData.metrics[section.key].metrics.findIndex(m => m.name === metric.name);
+    //   //   metric.order = metricIndex;
+    //   // });
+
+    // return [
+    //   {
+    //     key: 'kpis',
+    //     title: 'Main KPIs',
+    //     enabled: true,
+    //     metrics: initMetric('kpis'),
+    //     order: schedulingOption ? schedulingOption.jobData.metrics.kpis.order : 1
+    //   },
+    //   {
+    //     key: 'graphs',
+    //     title: 'Graphs',
+    //     enabled: true,
+    //     metrics: initMetric('graphs'),
+    //     order: schedulingOption ? schedulingOption.jobData.metrics.graphs.order : 2
+    //   },
+    //   {
+    //     key: 'ads',
+    //     title: 'Best creatives',
+    //     enabled: true,
+    //     metrics: initMetric('ads'),
+    //     order: schedulingOption ? schedulingOption.jobData.metrics.ads.order : 3
+    //   },
+    //   {
+    //     key: 'campaigns',
+    //     title: 'Best campaigns',
+    //     enabled: true,
+    //     metrics: initMetric('campaigns'),
+    //     order: schedulingOption ? schedulingOption.jobData.metrics.campaigns.order : 4
+    //   }
+    // ];
+  }
+
+  getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[]): Metric[] {
+
+    const metricsToReturn = [
+      ...metrics.map((metric, index) => ({
+        name: metric,
+        order: index,
+        enabled: false,
+        isCustom: false,
+        id: ''
+      })).sort((a, b) => a.name.localeCompare(b.name)),
+      ...customMetrics.map((metric, index) => ({
+        name: metric.name,
+        order: index,
+        enabled: false,
+        isCustom: true,
+        id: metric.id
+      })).sort((a, b) => a.name.localeCompare(b.name))
+    ]
+
+    // metricsToReturn.sort((a, b) => a.order - b.order);
+
+  // Enable first 3 usual metrics
+  metricsToReturn
+    .filter(m => !m.isCustom)
+    .slice(0, 1)
+    .forEach(m => m.enabled = true);
+
+  // Enable first 3 custom metrics
+  metricsToReturn
+    .filter(m => m.isCustom)
+    .slice(0, 1)
+    .forEach(m => m.enabled = true);
+
+  return metricsToReturn;
+    
   }
 
   MetricsSelectionsToReportSections(
@@ -123,71 +212,73 @@ export class ReportsDataService {
     availableMetrics: GetAvailableMetricsResponse,
     includeDisabledMetrics: boolean = true
   ): ReportSection[] {
-    const transformedOutput: ReportSection[] = [];
+    // const transformedOutput: ReportSection[] = [];
 
-    // Get the keys (category names) from the metricsSelections input to process them.
-    for (const categoryKey in metricsSelections) {
-        if (Object.prototype.hasOwnProperty.call(metricsSelections, categoryKey)) {
-            let allMetricsForCategory: any[] = [];
-            const sourceCategory = metricsSelections[categoryKey];
-            const referenceMetricNames = availableMetrics[categoryKey] || []; // Get reference metrics for this category
+    // // Get the keys (category names) from the metricsSelections input to process them.
+    // for (const categoryKey in metricsSelections) {
+    //     if (Object.prototype.hasOwnProperty.call(metricsSelections, categoryKey)) {
+    //         let allMetricsForCategory: any[] = [];
+    //         const sourceCategory = metricsSelections[categoryKey];
+    //         const referenceMetricNames = availableMetrics[categoryKey] || []; // Get reference metrics for this category
 
-            // Create a Set for quick lookup of metrics already present in the source.
-            const sourceMetricNames = new Set(sourceCategory.metrics.map((m: any) => m.name));
+    //         // Create a Set for quick lookup of metrics already present in the source.
+    //         const sourceMetricNames = new Set(sourceCategory.metrics.map((m: any) => m.name));
 
-            // 1. Process enabled metrics from the source object
-            // These retain their relative order (adjusted to 0-indexed)
-            const enabledMetricsFromSource: any[] = sourceCategory.metrics.map((metric: any) => ({
-                name: metric.name,
-                order: metric.order - 1, // Adjust to 0-indexed order
-                enabled: true
-            }));
+    //         // 1. Process enabled metrics from the source object
+    //         // These retain their relative order (adjusted to 0-indexed)
+    //         const enabledMetricsFromSource: any[] = sourceCategory.metrics.map((metric: any) => ({
+    //             name: metric.name,
+    //             order: metric.order - 1, // Adjust to 0-indexed order
+    //             enabled: true
+    //         }));
 
-            // Sort the enabled metrics by their adjusted order to ensure correct sequence
-            enabledMetricsFromSource.sort((a, b) => a.order - b.order);
+    //         // Sort the enabled metrics by their adjusted order to ensure correct sequence
+    //         enabledMetricsFromSource.sort((a, b) => a.order - b.order);
 
-            if (includeDisabledMetrics) {
-              // 2. Process disabled metrics from the reference that are not in the source
-              // These will be appended after the enabled ones
-              const disabledMetricsFromReference: any[] = [];
-              referenceMetricNames.forEach(refMetricName => {
-                if (!sourceMetricNames.has(refMetricName)) {
-                    disabledMetricsFromReference.push({
-                        name: refMetricName,
-                        order: -1, // Placeholder, will be reassigned sequentially
-                        enabled: false
-                    });
-                  }
-              });
+    //         if (includeDisabledMetrics) {
+    //           // 2. Process disabled metrics from the reference that are not in the source
+    //           // These will be appended after the enabled ones
+    //           const disabledMetricsFromReference: any[] = [];
+    //           referenceMetricNames.forEach(refMetricName => {
+    //             if (!sourceMetricNames.has(refMetricName)) {
+    //                 disabledMetricsFromReference.push({
+    //                     name: refMetricName,
+    //                     order: -1, // Placeholder, will be reassigned sequentially
+    //                     enabled: false
+    //                 });
+    //               }
+    //           });
 
-              // Combine enabled and disabled metrics
-              allMetricsForCategory = enabledMetricsFromSource.concat(disabledMetricsFromReference);
-            } else {
-              allMetricsForCategory = enabledMetricsFromSource;
-            }
+    //           // Combine enabled and disabled metrics
+    //           allMetricsForCategory = enabledMetricsFromSource.concat(disabledMetricsFromReference);
+    //         } else {
+    //           allMetricsForCategory = enabledMetricsFromSource;
+    //         }
 
 
 
-            // Re-assign sequential 0-indexed order for all metrics in the combined list
-            allMetricsForCategory.forEach((metric, index) => {
-                metric.order = index;
-            });
+    //         // Re-assign sequential 0-indexed order for all metrics in the combined list
+    //         allMetricsForCategory.forEach((metric, index) => {
+    //             metric.order = index;
+    //         });
 
-            // Construct the transformed category object
-            transformedOutput.push({
-                key: categoryKey as MetricSectionKey,
-                title: categoryKey,
-                enabled: true, // Categories present in metricsSelections are always enabled
-                metrics: allMetricsForCategory,
-                order: sourceCategory.order // Use the order from the source category
-            });
-        }
-    }
+    //         // Construct the transformed category object
+    //         transformedOutput.push({
+    //             key: categoryKey as MetricSectionKey,
+    //             title: categoryKey,
+    //             enabled: true, // Categories present in metricsSelections are always enabled
+    //             metrics: allMetricsForCategory,
+    //             order: sourceCategory.order // Use the order from the source category
+    //         });
+    //     }
+    // }
 
-    // Sort the top-level categories by their 'order' property
-    transformedOutput.sort((a, b) => a.order - b.order);
+    // // Sort the top-level categories by their 'order' property
+    // transformedOutput.sort((a, b) => a.order - b.order);
 
-    return transformedOutput;
+    // return transformedOutput;
+    
+    return []
   }
 
   reportSectionsToMetricsSelections(reportSections: ReportSection[]): Metrics {
@@ -210,21 +301,21 @@ export class ReportsDataService {
       }
     };
 
-    const reportSectionsCopy = JSON.parse(JSON.stringify(reportSections)) as ReportSection[];
-    reportSectionsCopy.forEach(section => {
-      if (section.enabled) {
-        // selections[section.key].metrics = this.getSelected(this.metricSelections[section.key]);
-        selections[section.key].order = section.order;
+    // const reportSectionsCopy = JSON.parse(JSON.stringify(reportSections)) as ReportSection[];
+    // reportSectionsCopy.forEach(section => {
+    //   if (section.enabled) {
+    //     // selections[section.key].metrics = this.getSelected(this.metricSelections[section.key]);
+    //     selections[section.key].order = section.order;
 
-        selections[section.key].metrics = section.metrics.filter(m => m.enabled);
-        selections[section.key].metrics.sort((a: any, b: any) => a.order - b.order);
-        selections[section.key].metrics.forEach((m: any, index: number) => {
-          m.order = index + 1;
-          delete m.enabled;
-        });
+    //     selections[section.key].metrics = section.metrics.filter(m => m.enabled);
+    //     selections[section.key].metrics.sort((a: any, b: any) => a.order - b.order);
+    //     selections[section.key].metrics.forEach((m: any, index: number) => {
+    //       m.order = index + 1;
+    //       delete m.enabled;
+    //     });
 
-      }
-    });
+    //   }
+    // });
 
     return selections;
   }

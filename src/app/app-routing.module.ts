@@ -62,19 +62,6 @@ const routes: Routes = [
     component: TermsOfServiceComponent,
   },
   {
-    path: 'schedule-report/:clientUuid',
-    component: ScheduleReportComponent,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'view-report/:id',
-    component: ViewReportComponent,
-  },
-  {
-    path: 'pdf-report/:id',
-    component: PdfReportComponent,
-  },
-  {
     path: 'profile',
     component: ProfileComponent,
     canActivate: [authGuard],
@@ -90,22 +77,33 @@ const routes: Routes = [
   {
     path: 'pdf-report/:uuid',
     component: PdfReportComponent,
+    path: 'reports',
+    component: ReportsPageComponent,
+    canActivate: [authGuard]
   },
   {
-    path: 'edit-report/:schedulingOptionId',
+    path: 'pdf-report/:clientUuid/:reportUuid',
+    component: PdfReportComponent
+  },
+  {
+    path: 'edit-report/:clientUuid/:schedulingOptionId',
     component: EditReportComponent,
     canActivate: [authGuard],
   },
   {
-    path: 'review-report/:id',
+    path: 'review-report/:clientUuid/:reportUuid',
     component: ReviewReportComponent,
     canActivate: [authGuard],
   },
   {
-    path: 'reports',
-    component: ReportsPageComponent,
-    canActivate: [authGuard],
+    path: 'schedule-report/:clientUuid',
+    component: ScheduleReportComponent,
+    canActivate: [authGuard]
   },
+  {
+    path: 'view-report/:clientUuid/:reportUuid',
+    component: ViewReportComponent
+  }
 ];
 
 @NgModule({

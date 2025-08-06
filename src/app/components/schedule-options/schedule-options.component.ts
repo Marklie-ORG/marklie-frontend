@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { Schedule } from 'src/app/services/api/report.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
+import { ReportSection, Schedule } from 'src/app/interfaces/interfaces.js';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 interface ScheduleOptionsMatDialogData {

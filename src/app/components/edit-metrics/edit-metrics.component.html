@@ -1,37 +1,3 @@
-<!-- <div class="d-flex flex-column gap-3">
-  <div *ngFor="let section of reportSections; let i = index" class="accordion-item">
-    
-    <div class="accordion-header" >
-      <div class="section-toggle" [class.expanded]="isSectionExpanded(i)">
-        <label>{{ section.title }}</label>
-        <div class="header-controls">
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="section.enabled" (click)="$event.stopPropagation()"/>
-            <span class="slider round"></span>
-          </label>
-          <div class="accordion-arrow" [class.expanded]="isSectionExpanded(i)" (click)="toggleSection(i)">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="accordion-content" [class.expanded]="isSectionExpanded(i)">
-      <div class="metric-group p-2" >
-        <div *ngFor="let metric of section.metrics; let j = index">
-          <label class="prevent-select">
-            <input [disabled]="!section.enabled" type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-            {{metric.name}}
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-
 <div class="side-panel d-flex flex-column p-3">
   <div class="d-flex flex-column gap-3" *ngIf="toggles.main">
 
@@ -43,27 +9,11 @@
   
     <div #sectionsContainer class="d-flex flex-column gap-3">
       <item
-      *ngFor="let section of reportSections; let i = index"
+      *ngFor="let section of reportSections(); let i = index"
       [title]="section.title"
       (click)="togglePage(section.key)"
       ></item>
     </div>
-    
-  
-    <!-- <item
-      [title]="'Graphs'"
-      (click)="togglePage('graphs')"
-    ></item>
-  
-    <item
-      [title]="'Best creatives'"
-      (click)="togglePage('bestCreatives')"
-    ></item>
-  
-    <item
-      [title]="'Best campaigns'"
-      (click)="togglePage('bestCampaigns')"
-    ></item> -->
     
   </div>
   
@@ -91,7 +41,7 @@
     
   </div>
   
-  <div *ngIf="toggles.kpis && mainKPIs">
+  <div *ngIf="toggles.kpis && mainKPIs" >
   
     <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
       <div class="d-flex align-items-center gap-2">
@@ -100,24 +50,46 @@
         src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
         <p class="ml-2">Main KPIs</p>
       </div>
-      
       <div>
         <label class="switch">
           <input type="checkbox" [(ngModel)]="mainKPIs.enabled" (click)="$event.stopPropagation()"/>
           <span class="slider round"></span>
         </label>
       </div>
-      
     </div>
-  
-    
-  
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of mainKPIs.metrics; let j = index">
-        <input  type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
+
+    <div class="metrics-container">
+      @if (!selectedAdAccountId) {
+        @for (adAccount of mainKPIs.adAccounts; track adAccount.id) {
+          <item
+          [title]="adAccount.id"
+          (click)="toggleSelectedAdAccount(adAccount.id)"
+          ></item>
+        }
+      }
+      
+      @for (adAccount of mainKPIs.adAccounts; track adAccount.id) {
+        @if (selectedAdAccountId === adAccount.id) {
+          <div>
+            <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="adAccount.enabled" (click)="$event.stopPropagation()"/>
+              <span class="slider round"></span>
+            </label>
+            
+            <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+              @for (metric of adAccount.metrics; track metric.name) {
+                <label class="prevent-select">
+                  <input  type="checkbox" [(ngModel)]="metric.enabled" />
+                  <span class="checkmark"></span>
+                  {{metric.name}}
+                </label>
+              }
+            </div>
+          </div>
+        }
+      }
     </div>
   </div>
   
@@ -139,13 +111,40 @@
       </div>
     </div>
   
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of graphs.metrics; let j = index">
-        <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
+    <div class="metrics-container">
+      @if (!selectedAdAccountId) {
+        @for (adAccount of graphs.adAccounts; track adAccount.id) {
+          <item
+          [title]="adAccount.id"
+          (click)="toggleSelectedAdAccount(adAccount.id)"
+          ></item>
+        }
+      }
+      
+      @for (adAccount of graphs.adAccounts; track adAccount.id) {
+        @if (selectedAdAccountId === adAccount.id) {
+          <div>
+            <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="adAccount.enabled" (click)="$event.stopPropagation()"/>
+              <span class="slider round"></span>
+            </label>
+
+            <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+              @for (metric of adAccount.metrics; track metric.name) {
+                <label class="prevent-select">
+                  <input  type="checkbox" [(ngModel)]="metric.enabled"/>
+                  <span class="checkmark"></span>
+                  {{metric.name}}
+                </label>
+              }
+            </div>
+          </div>
+        }
+      }
     </div>
+    
   </div>
   
   <div *ngIf="toggles.ads && bestCreatives">
@@ -166,13 +165,40 @@
       </div>
     </div>
   
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of bestCreatives.metrics; let j = index">
-        <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
+    <div class="metrics-container">
+      @if (!selectedAdAccountId) {
+        @for (adAccount of bestCreatives.adAccounts; track adAccount.id) {
+          <item
+          [title]="adAccount.id"
+          (click)="toggleSelectedAdAccount(adAccount.id)"
+          ></item>
+        }
+      }
+      
+      @for (adAccount of bestCreatives.adAccounts; track adAccount.id) {
+        @if (selectedAdAccountId === adAccount.id) {
+          <div>
+            <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="adAccount.enabled" (click)="$event.stopPropagation()"/>
+              <span class="slider round"></span>
+            </label>
+
+            <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+              @for (metric of adAccount.metrics; track metric.name) {
+                <label class="prevent-select">
+                  <input  type="checkbox" [(ngModel)]="metric.enabled" />
+                  <span class="checkmark"></span>
+                  {{metric.name}}
+                </label>
+              }
+            </div>
+          </div>
+        }
+      }
     </div>
+    
   </div>
   
   <div *ngIf="toggles.campaigns && bestCampaigns">
@@ -193,17 +219,39 @@
       </div>
     </div>
   
-    
-  
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of bestCampaigns.metrics; let j = index">
-        <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
+    <div class="metrics-container">
+      @if (!selectedAdAccountId) {
+        @for (adAccount of bestCampaigns.adAccounts; track adAccount.id) {
+          <item
+          [title]="adAccount.id"
+          (click)="toggleSelectedAdAccount(adAccount.id)"
+          ></item>
+        }
+      }
+
+      @for (adAccount of bestCampaigns.adAccounts; track adAccount.id) {
+        @if (selectedAdAccountId === adAccount.id) {
+          <div>
+            <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="adAccount.enabled" (click)="$event.stopPropagation()"/>
+              <span class="slider round"></span>
+            </label>
+
+            <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
+              @for (metric of adAccount.metrics; track metric.name) {
+                <label class="prevent-select">
+                  <input  type="checkbox" [(ngModel)]="metric.enabled" />
+                  <span class="checkmark"></span>
+                  {{metric.name}}
+                </label>
+              }
+            </div>
+          </div>
+        }
+      }
     </div>
+    
   </div>
 </div>
-
-
-

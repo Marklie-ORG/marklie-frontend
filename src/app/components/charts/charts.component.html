@@ -1,10 +1,17 @@
-<div class="section-title mb-3">
-  Graphs
-</div>
-<div class="graph-grid" #chartsGridContainer>
-    @for (graph of displayedGraphs; track graph.metric) {
-        <div class="graph-card d-flex justify-center align-center" >
-            <canvas [id]="graph.metric + 'Chart'" ></canvas>
+
+@for (adAccount of adAccountsGraphs(); track adAccount.id) {
+
+    @if (adAccount.enabled) {
+        <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+
+        <div class="graph-grid" #chartsGridContainer>
+            @for (graph of adAccount.graphs; track graph.metric) {
+                <div class="graph-card d-flex justify-center align-center" >
+                    <canvas [id]="'Chart' + graph.metric" ></canvas>
+                </div>
+            }
         </div>
     }
-</div>
+    
+}
+

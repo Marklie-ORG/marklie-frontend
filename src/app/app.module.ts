@@ -54,7 +54,7 @@ import { KpiGridComponent } from "./components/kpi-grid/kpi-grid.component";
 import { AdCardComponent } from "./components/ad-card/ad-card.component";
 import { CampaignTableComponent } from "./components/campaign-table/campaign-table.component";
 import { ChartsComponent } from "./components/charts/charts.component";
-import { LogsCardComponent } from "./components/activity-logs-card/activity-logs-card.component";
+import { ActivityTableComponent } from "./components/activity-logs-card/activity-table.component";
 import { ReportsPageComponent } from "./pages/reports/reports-page.component.js";
 import { ItemComponent } from "./components/edit-metrics/components/item/item.component";
 import { WhatsappMessagePreviewComponent } from "./components/whatsapp-message-preview/whatsapp-message-preview.component";
@@ -108,7 +108,7 @@ register();
     CampaignTableComponent,
     ChartsComponent,
 
-    LogsCardComponent,
+    ActivityTableComponent,
     ReportsPageComponent,
     ItemComponent,
     WhatsappMessagePreviewComponent,

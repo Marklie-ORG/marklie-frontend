@@ -10,6 +10,20 @@ import { Client } from 'src/app/services/api/client.service.js';
 import { User, UserService } from 'src/app/services/api/user.service.js';
 import {OrganizationService} from "../../services/api/organization.service.js";
 
+interface ActivityLog {
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  action: string;
+  targetType: string;
+  targetUuid: string;
+  metadata: any;
+  actor: string;
+  organization: string;
+  user: string;
+  client: any;
+}
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -19,7 +33,7 @@ import {OrganizationService} from "../../services/api/organization.service.js";
 export class DashboardComponent implements OnInit, OnDestroy {
   isFacebookConnected: boolean | undefined = undefined;
   randomNumber = this.getRandomNumber(1, 3);
-  logs: any[] = [];
+  activityLogs: ActivityLog[] = [];
 
   clients: Client[] = [];
 
@@ -48,7 +62,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     await this.getClients();
-    this.logs = await this.organizationService.getLogs(user.activeOrganization)
+    this.activityLogs = await this.organizationService.getLogs(user.activeOrganization)
 
     const onboardingSteps = await this.onboardingService.getOnboardingSteps();
 

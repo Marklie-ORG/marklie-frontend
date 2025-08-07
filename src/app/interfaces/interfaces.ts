@@ -60,27 +60,8 @@ export interface AvailableMetricsAdAccountCustomMetric {
     reviewNeeded:	boolean
   }
   
-  export interface CreateScheduleRequest extends Schedule {
-    metrics: Metrics
-    datePreset: string
-    clientUuid: string
-    reportName: string
-    timeZone: string
-    messages: {
-      whatsapp: string,
-      slack: string,
-      email: {
-        title: string,
-        body: string,
-      }
-    };
-    images: {
-      clientLogo: string,
-      organizationLogo: string
-    }
-  }
-  
-  export interface Schedule {
+  export interface ScheduleReportRequest {
+
     frequency: string
     reportName: string
     time: string
@@ -88,10 +69,82 @@ export interface AvailableMetricsAdAccountCustomMetric {
     dayOfMonth: number
     intervalDays: number
     cronExpression: string
-    reviewNeeded: boolean
+    reviewRequired: boolean
+    timeZone: string
+
+    clientUuid: string
+    organizationUuid: string
+    datePreset: FACEBOOK_DATE_PRESETS
+
+    messages: Messages
+    images: Images
+
+    providers: Provider[]
+    
   }
-  
-  
+
+  export interface Provider {
+    provider: 'facebook' | 'tiktok' | 'google';
+    sections: SectionScheduleReportRequest[];
+  }
+
+  export interface SectionScheduleReportRequest {
+    name: MetricSectionKey;
+    order: number;
+    adAccounts: AdAccountScheduleReportRequest[];
+  }
+
+  export interface AdAccountScheduleReportRequest {
+    adAccountId: string;
+    order: number;
+    metrics: MetricScheduleReportRequest[];
+    customMetrics: CustomMetricScheduleReportRequest[];
+  }
+
+  export interface MetricScheduleReportRequest {
+    name: string;
+    order: number;
+  }
+
+  export interface CustomMetricScheduleReportRequest {
+    name: string;
+    order: number;
+    id: string;
+  }
+
+  export interface Messages {
+    whatsapp: string,
+    slack: string,
+    email: {
+      title: string,
+      body: string,
+    }
+  }
+
+  export interface Images {
+    clientLogo: string,
+    organizationLogo: string
+  }
+
+  export type Frequency = 'weekly' | 'biweekly' | 'monthly' | 'custom' | 'cron';
+
+  export enum FACEBOOK_DATE_PRESETS {
+    TODAY = "today",
+    YESTERDAY = "yesterday",
+    THIS_MONTH = "this_month",
+    LAST_MONTH = "last_month",
+    THIS_QUARTER = "this_quarter",
+    LAST_QUARTER = "last_quarter",
+    THIS_YEAR = "this_year",
+    LAST_YEAR = "last_year",
+    LAST_3D = "last_3d",
+    LAST_7D = "last_7d",
+    LAST_14D = "last_14d",
+    LAST_28D = "last_28d",
+    LAST_30D = "last_30d",
+    LAST_90D = "last_90d",
+    MAXIMUM = "maximum"
+}
   
   export interface Metrics {
     [key: string]: {

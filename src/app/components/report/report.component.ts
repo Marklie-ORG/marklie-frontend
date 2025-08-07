@@ -1,8 +1,9 @@
-import { Component, effect, ElementRef, inject, input, Input, model, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, ElementRef, inject, input, Input, model, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
 import Sortable from 'sortablejs';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
+import { AdAccount } from 'src/app/interfaces/interfaces.js';
 
 export interface MetricSelections {
   kpis: Record<string, boolean>;
@@ -58,10 +59,51 @@ export class ReportComponent {
 
   availableMetrics: GetAvailableMetricsResponse = [];
 
+  kpisSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'kpis') || {} as ReportSection;
+  });
+
+  graphsSectionAdAccounts: AdAccount[] = [];
+
+  graphsSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'graphs') || {} as ReportSection;
+  });
+
+  adsSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'ads') || {} as ReportSection;
+  });
+
+  campaignsSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'campaigns') || {} as ReportSection;
+  });
+
+  cdr = inject(ChangeDetectorRef);
+
   constructor() {
+
     effect(() => {
-      console.log(this.reportSections())
-    })
+
+      this.checkIfAllAdAccountsDisabled();
+      
+      // console.log("Report sections changed:", this.reportSections());
+      this.graphsSectionAdAccounts = [...this.reportSections().find(section => section.key === 'graphs')?.adAccounts || []];
+      // console.log("Graphs section ad accounts:", this.graphsSectionAdAccounts);
+      // this.cdr.detectChanges();
+      
+    });
+  }
+
+  checkIfAllAdAccountsDisabled() {
+    for (let section of this.reportSections()) {
+      let allAdAccounts = section.adAccounts;
+      if (allAdAccounts.length > 0 && allAdAccounts.every(adAccount => !adAccount.enabled)) {
+        section.enabled = false;
+      }
+    }
   }
 
   reorderSections(event: Sortable.SortableEvent) {

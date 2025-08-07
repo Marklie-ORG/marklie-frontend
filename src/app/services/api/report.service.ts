@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
-import { CreateScheduleRequest, GetReportResponse, ReportImages } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, GetReportResponse, ReportImages } from 'src/app/interfaces/interfaces';
 
 
 @Injectable({
@@ -18,7 +18,7 @@ export class ReportService {
 
   constructor(private http: HttpClient) { }
 
-  async createSchedule(data: CreateScheduleRequest) {
+  async scheduleReport(data: ScheduleReportRequest) {
       return firstValueFrom(this.http.post(`${this.apiUrl}/scheduling-options/schedule`, data));
   }
 

@@ -1,23 +1,20 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ReportSection, Schedule } from 'src/app/interfaces/interfaces.js';
+import { Frequency, Messages } from 'src/app/interfaces/interfaces.js';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 
 interface ScheduleOptionsMatDialogData {
-  reportSections: ReportSection[];
-  clientUuid: string;
-  schedule: any;
   isEditMode: boolean;
   datePreset: string;
   schedulingOptionId: string;
-  messages: {
-    whatsapp: string,
-    slack: string,
-    email: {
-      title: string,
-      body: string,
-    }
-  }
+  messages: Messages
+  frequency: Frequency;
+  time: string;
+  dayOfWeek: string;
+  dayOfMonth: number;
+  intervalDays: number;
+  cronExpression: string;
+  reviewRequired: boolean;
 }
 
 @Component({
@@ -26,18 +23,10 @@ interface ScheduleOptionsMatDialogData {
   styleUrl: './schedule-options.component.scss'
 })
 export class ScheduleOptionsComponent {
-
-  @Input() schedule: Schedule | undefined = undefined;
+  
   @Input() isEditMode: boolean = false;
   @Input() clientUuid: string = "";
-  @Input() messages: {
-    whatsapp: string,
-    slack: string,
-    email: {
-      title: string,
-      body: string,
-    }
-  } = {
+  @Input() messages: Messages = {
     whatsapp: '',
     slack: '',
     email: {
@@ -45,11 +34,6 @@ export class ScheduleOptionsComponent {
       body: ''
     }
   }
-
-  // @Output() scheduleOptionUpdated = new EventEmitter<void>();
-
-  selectedDatePreset: string | undefined = undefined;
-  // @Output() selectedDatePresetChange = new EventEmitter<string>();
 
   messagesWindowOpen: boolean = false;
 
@@ -64,18 +48,17 @@ export class ScheduleOptionsComponent {
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ScheduleOptionsMatDialogData
   ) {
-    this.schedule = data.schedule;
-    this.selectedDatePreset = data.datePreset ? data.datePreset : this.reportsDataService.DATE_PRESETS[6].value;
     this.messages = data.messages;
-    this.clientUuid = data.clientUuid;
   }
 
 
   save() {
     this.dialogRef.close({
-      schedule: this.schedule,
-      clientUuid: this.clientUuid,
-      datePreset: this.selectedDatePreset,
+      frequency: this.data.frequency,
+      time: this.data.time,
+      dayOfWeek: this.data.dayOfWeek,
+      dayOfMonth: this.data.dayOfMonth,
+      intervalDays: this.data.intervalDays,
       messages: this.messages
     });
   }

@@ -17,15 +17,14 @@
     </div>
   </div>
 
-  <div class="tabs d-flex gap-3 mb-3">
+  <!-- <div class="tabs d-flex gap-3 mb-3">
     <div class="pb-1" [class.selected]="activeTab === 'comm_channels'" (click)="activeTab = 'comm_channels'">Communication channels</div>
     <div class="pb-1" [class.selected]="activeTab === 'ad_platform'" (click)="activeTab = 'ad_platform'">Advertisement platform</div>
     
-  </div>
+  </div> -->
 
   <div>
-    <ng-container *ngIf="activeTab === 'ad_platform'">
-      <!-- Advertisement platform content -->
+    <!-- <ng-container *ngIf="activeTab === 'ad_platform'">
       <h3>Facebook ad account</h3>
       <ul>
         <li>Marklie ad account 1</li>
@@ -39,7 +38,7 @@
         <li>Marklie ad account 2</li>
         <li><a href="#">+ Add TikTok account</a></li>
       </ul>
-    </ng-container>
+    </ng-container> -->
   
     <ng-container *ngIf="activeTab === 'comm_channels'">
 

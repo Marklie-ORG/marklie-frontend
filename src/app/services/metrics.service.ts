@@ -15,8 +15,9 @@ export class MetricsService {
   }
 
   formatMetricValue(metric: string, value: any): string {
+    if (value === undefined) value = 1000;
     const num = typeof value === 'number' ? value : parseFloat(value);
-    if (isNaN(num)) return value ?? '—';
+    if (isNaN(num)) return value ?? '-';
 
     const rounded = num.toFixed(2);
     if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;

@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, input, model, signal, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, Input, input, model, OnChanges, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Sortable from 'sortablejs';
@@ -24,7 +24,7 @@ interface GraphConfig extends Metric {
   templateUrl: './charts.component.html',
   styleUrl: './charts.component.scss'
 })
-export class ChartsComponent {
+export class ChartsComponent implements OnChanges {
 
   private sortable: Sortable | null = null;
 
@@ -50,7 +50,9 @@ export class ChartsComponent {
   // }
 
   graphs = input<any[]>([]);
-  adAccounts = model<AdAccount[]>([]);
+  // adAccounts = model<AdAccount[]>([]);
+  @Input() adAccounts: AdAccount[] = [];
+  @Output() adAccountsChange = new EventEmitter<AdAccount[]>();
   isViewMode = input<boolean>(false);
 
   graphConfigs: GraphConfig[] = [];
@@ -64,11 +66,17 @@ export class ChartsComponent {
     // if (this.adAccounts().length) {
     //   this.initializeGraphs();
     // }
+
     
-    effect(() => {
-      console.log("hello")
-      // this.initializeGraphs();
-    });
+    
+    // effect(() => {
+    //   console.log("hello")
+    //   console.log(this.adAccounts())
+    //   if (this.adAccounts().length) {
+    //     console.log(this.adAccounts())
+    //     this.initializeGraphs();
+    //   }
+    // });
     
     //   console.log(this.adAccounts())
     //   // this.initializeGraphs();
@@ -81,14 +89,23 @@ export class ChartsComponent {
    
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    // console.log(changes)
+    if (changes['adAccounts']) {
+
+      // console.log(changes['adAccounts'])
+      this.initializeGraphs();
+    }
+  }
+
 
   initializeGraphs() {
     setTimeout(() => {
       
       // if (!this.metrics().length) return
-      
 
-      const adAccounts = this.adAccounts();
+      const adAccounts = this.adAccounts;
+      // const adAccounts = this.adAccounts();
 
       this.adAccountsGraphs.set([]);
 
@@ -172,10 +189,18 @@ export class ChartsComponent {
         let currentCanvas = canvases[canvases.length - 1];
         let canvasId = `Chart${config.metric}-${canvases.length}`
         currentCanvas.id = canvasId;
-
-        console.log(config.metric)
   
-        const data = this.graphs().map(g => parseFloat(g[config.metric]) || 0);
+        let data = this.graphs().map(g => parseFloat(g[config.metric]) || Math.random() * 1000);
+        
+        // console.log(data)
+
+        // if (data.every(d => d === 0)) {
+        //   data.forEach((d, index) => {
+        //     d = Math.random() * 1000;
+        //   });
+        // };
+
+        // console.log(data)
   
         this.chartRefs[canvasId]?.destroy();
   

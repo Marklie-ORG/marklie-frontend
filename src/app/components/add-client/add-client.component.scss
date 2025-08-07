@@ -74,7 +74,8 @@
   .ad-accounts-container {
     display: flex;
     gap: 1rem;
-    max-height: 400px;
+    min-height: 300px;
+    max-height: 300px;
     border: 1px solid #ddd;
     border-radius: 4px;
     overflow: hidden;

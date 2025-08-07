@@ -29,7 +29,7 @@ export class ViewReportComponent implements OnInit {
   }
 
   reportId: string | null = null;
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
 
   isPreviewMode: boolean = false;

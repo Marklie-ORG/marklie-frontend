@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import {ScheduledReport} from "../../pages/client/client.component.js";
-import {CreateScheduleRequest, GetAvailableMetricsResponse} from "../../interfaces/interfaces.js";
+import {ScheduleReportRequest, GetAvailableMetricsResponse} from "../../interfaces/interfaces.js";
 
 
 @Injectable({
@@ -19,7 +19,7 @@ export class SchedulesService {
   constructor(private http: HttpClient) { }
 
 
-  updateSchedulingOption(scheduleUuid: string, data: CreateScheduleRequest): Promise<any> {
+  updateSchedulingOption(scheduleUuid: string, data: ScheduleReportRequest): Promise<any> {
     return firstValueFrom(this.http.put(`${this.apiUrl}/${scheduleUuid}`, data));
   }
 

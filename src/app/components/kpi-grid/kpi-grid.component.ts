@@ -41,7 +41,9 @@ export class KpiGridComponent {
   constructor(
     public metricsService: MetricsService
   ) {
-    
+    // effect(() => {
+    //   console.log(this.adAccounts())
+    // });
   }
 
   // reorderItems(event: Sortable.SortableEvent) {

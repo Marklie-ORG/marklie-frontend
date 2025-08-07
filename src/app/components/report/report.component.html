@@ -11,9 +11,9 @@
   [isViewMode]="isViewMode()"
   ></report-header>
 
-  <div #sectionsGridContainer>
+  <div #sectionsGridContainer class="d-flex flex-column gap-5">
 
-    @for (section of reportSections(); track section.key; let i = $index) {
+    <!-- @for (section of reportSections(); track section.key; let i = $index) {
       <div class="report-section mb-4">
         @if (section.enabled && data) {
           <ng-container [ngSwitch]="section.key">
@@ -49,7 +49,50 @@
           </ng-container>
         }
       </div>
+    } -->
+  
+    @if (data) {
+      @if (kpisSection().enabled) {
+        <hr>
+
+        <kpi-grid
+        [kpis]="data.KPIs"
+        [(adAccounts)]="kpisSection().adAccounts"
+        [isViewMode]="isViewMode()"
+        ></kpi-grid>
+      }
+
+      @if (graphsSection().enabled) {
+        <hr>
+      <charts
+      [graphs]="data.graphs"
+      [(adAccounts)]="graphsSectionAdAccounts"
+      [isViewMode]="isViewMode()"
+      ></charts>
+      }
+
+      @if (adsSection().enabled) {
+        <hr>
+      <ad-card
+      [ads]="data.ads"
+      [(adAccounts)]="adsSection().adAccounts"
+      [isViewMode]="isViewMode()"
+      ></ad-card>
+      }
+
+      @if (campaignsSection().enabled) {
+        <hr>
+      <campaign-table
+      [campaigns]="data.campaigns"
+      [(adAccounts)]="campaignsSection().adAccounts"
+      [isViewMode]="isViewMode()"
+        ></campaign-table>
+      }
+
     }
+      
+    
+
   </div>
 
 

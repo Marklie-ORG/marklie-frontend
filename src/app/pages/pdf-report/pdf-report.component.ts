@@ -28,7 +28,7 @@ export class PdfReportComponent implements OnInit {
 
   reportUuid: string = '';
   clientUuid: string = '';
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
 
   isPreviewMode: boolean = false;

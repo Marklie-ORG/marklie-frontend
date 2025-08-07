@@ -3,11 +3,11 @@ import { ClientService, Conversations } from '../../services/api/client.service.
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-activity-log-item',
-  templateUrl: './activity-logs-card.component.html',
-  styleUrls: ['./activity-logs-card.component.scss']
+  selector: 'activity-table',
+  templateUrl: './activity-table.component.html',
+  styleUrls: ['./activity-table.component.scss']
 })
-export class LogsCardComponent implements OnInit, OnChanges {
+export class ActivityTableComponent implements OnInit, OnChanges {
   @Input() logs: any[] = [];
   @Input() level?: string;
   private router = inject(Router)

@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {ReportService} from './api/report.service';
 import {SchedulingOption} from '../pages/edit-report/edit-report.component';
-import {GetAvailableMetricsResponse, Metrics, ReportSection, MetricSectionKey, AvailableMetricsAdAccountCustomMetric, Metric} from '../interfaces/interfaces';
+import {GetAvailableMetricsResponse, Metrics, ReportSection, MetricSectionKey, Metric, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, AdAccount} from '../interfaces/interfaces';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {SchedulesService} from "./api/schedules.service.js";
@@ -26,7 +26,7 @@ export class ReportsDataService {
     { key: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
   ];
 
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
 
   readonly DATE_PRESETS = [
     { value: 'today', text: 'Today' },
@@ -55,11 +55,101 @@ export class ReportsDataService {
     return this.chartConfigs;
   }
   
+  async getReportsSectionsBasedOnSchedulingOption(schedulingOption: SchedulingOption): Promise<ReportSection[]> {
+
+    let reportSections: ReportSection[] = [];
+
+    const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid);
+
+    const providers = schedulingOption.jobData.providers;
+    const facebookProvider = providers.find(p => p.provider === 'facebook');
+
+    console.log(facebookProvider!.sections)
+
+    console.log(availableMetrics)
+
+    for (let section of facebookProvider?.sections || []) {
+
+      let adAccounts: AdAccount[] = [];
+
+      for (let adAccount of section.adAccounts) {
+
+        const adAccountId = adAccount.adAccountId;
+
+        const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
+        const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
+        const customAdAccountAvailableMetrics = adAccountAvailableMetrics.customMetrics;
+
+        let metrics: Metric[] = [];
+
+        for (let metric of adAccount.metrics) {
+          metrics.push({
+            name: metric.name,
+            order: metric.order,
+            enabled: true,
+            isCustom: false
+          })
+        }
+
+        for (let metric of adAccount.customMetrics) {
+          metrics.push({
+            name: metric.name,
+            order: metric.order,
+            enabled: true,
+            isCustom: true,
+            id: metric.id
+          })
+        }
+
+        for (let metric of sectionAdAccountAvailableMetrics) {
+          if (!metrics.find(m => m.name === metric)) {
+            metrics.push({
+              name: metric,
+              order: -1,
+              enabled: false,
+              isCustom: false
+            })
+          }
+        }
+
+        for (let metric of customAdAccountAvailableMetrics) {
+          if (!metrics.find(m => m.name === metric.name)) {
+            metrics.push({
+              name: metric.name,
+              order: -1,
+              enabled: false,
+              isCustom: true,
+              id: metric.id
+            })
+          }
+        }
+
+        adAccounts.push({
+          id: adAccount.adAccountId,
+          name: adAccount.adAccountId,
+          metrics: metrics,
+          order: adAccount.order,
+          enabled: true
+        })
+
+      }
+
+      reportSections.push({
+        key: section.name,
+        title: section.name,
+        enabled: true,
+        adAccounts: adAccounts,
+        order: section.order
+      })
+
+    }
+
+    return reportSections
+  }
 
 
-  async getInitiatedReportsSections(
-    clientUuid: string,
-    schedulingOption?: SchedulingOption
+  async getDefaultReportsSections(
+    clientUuid: string
   ): Promise<ReportSection[]> {
 
     let reportSections: ReportSection[] = [
@@ -98,15 +188,15 @@ export class ReportsDataService {
     for (let section of reportSections) {
       const sectionKey = section.key;
 
-      for (let adAccountKey in availableMetrics) {
-        const availableMetricsAdAccount = availableMetrics[adAccountKey];
-        const metrics = availableMetricsAdAccount[sectionKey];
+      for (let adAccount of availableMetrics) {
+        const availableMetricsAdAccount = adAccount.adAccountMetrics;
+        const sectionMetrics = availableMetricsAdAccount[sectionKey];
         const customMetrics = availableMetricsAdAccount.customMetrics;
 
         section.adAccounts.push({
-          id: adAccountKey,
-          name: adAccountKey,
-          metrics: this.getMetrics(metrics, customMetrics),
+          id: adAccount.adAccountId,
+          name: adAccount.adAccountName,
+          metrics: this.getMetrics(sectionMetrics, customMetrics),
           order: 0,
           enabled: true
         })
@@ -115,59 +205,6 @@ export class ReportsDataService {
     }
 
     return reportSections
-
-    // const initMetric = (key: string) => {
-    //   if (!availableMetrics) return [];
-
-    //   const metrics = availableMetrics[key] || [];
-
-    //   if (!schedulingOption) {
-    //     return metrics.map((m, i) => ({ name: m, order: i, enabled: false }));
-    //   }
-
-    //   return metrics.map((metric, i) => {
-    //     const metricIndex = schedulingOption.jobData.metrics[key].metrics.findIndex(m => m.name === metric);
-    //     let order = metricIndex === -1 ? i : metricIndex;
-    //     return { name: metric, order: order, enabled: false }
-    //   })
-
-    // }
-
-    // // section.metrics.forEach(metric => {
-    //   //   const metricIndex = schedulingOption.jobData.metrics[section.key].metrics.findIndex(m => m.name === metric.name);
-    //   //   metric.order = metricIndex;
-    //   // });
-
-    // return [
-    //   {
-    //     key: 'kpis',
-    //     title: 'Main KPIs',
-    //     enabled: true,
-    //     metrics: initMetric('kpis'),
-    //     order: schedulingOption ? schedulingOption.jobData.metrics.kpis.order : 1
-    //   },
-    //   {
-    //     key: 'graphs',
-    //     title: 'Graphs',
-    //     enabled: true,
-    //     metrics: initMetric('graphs'),
-    //     order: schedulingOption ? schedulingOption.jobData.metrics.graphs.order : 2
-    //   },
-    //   {
-    //     key: 'ads',
-    //     title: 'Best creatives',
-    //     enabled: true,
-    //     metrics: initMetric('ads'),
-    //     order: schedulingOption ? schedulingOption.jobData.metrics.ads.order : 3
-    //   },
-    //   {
-    //     key: 'campaigns',
-    //     title: 'Best campaigns',
-    //     enabled: true,
-    //     metrics: initMetric('campaigns'),
-    //     order: schedulingOption ? schedulingOption.jobData.metrics.campaigns.order : 4
-    //   }
-    // ];
   }
 
   getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[]): Metric[] {
@@ -281,43 +318,55 @@ export class ReportsDataService {
     return []
   }
 
-  reportSectionsToMetricsSelections(reportSections: ReportSection[]): Metrics {
-    const selections: Metrics = {
-      kpis: {
-        metrics: [],
-        order: 1
-      },
-      graphs: {
-        metrics: [],
-        order: 2
-      },
-      ads: {
-        metrics: [],
-        order: 3
-      },
-      campaigns: {
-        metrics: [],
-        order: 4
+  getProviders(reportSections: ReportSection[]): Provider[] {
+    const providers: Provider[] = [];
+
+    const facebookProvider: Provider = {
+      provider: 'facebook',
+      sections: []
+    }
+
+    for (const [sectionIndex, section] of reportSections.entries()) {
+      if (!section.enabled) continue;
+
+      facebookProvider.sections.push({
+        name: section.key,
+        order: section.order,
+        adAccounts: []
+      })
+
+      for (const [adAccountIndex, adAccount] of section.adAccounts.entries()) {
+        if (!adAccount.enabled) continue;
+
+        facebookProvider.sections[sectionIndex].adAccounts.push({
+          adAccountId: adAccount.id,
+          order: adAccount.order,
+          metrics: [],
+          customMetrics: []
+        })
+
+        for (const metric of adAccount.metrics) {
+          if (!metric.enabled) continue;
+          
+          if (metric.isCustom) {
+            facebookProvider.sections[sectionIndex].adAccounts[adAccountIndex].customMetrics.push({
+              name: metric.name,
+              order: metric.order,
+              id: metric.id!
+            })
+          } else {
+            facebookProvider.sections[sectionIndex].adAccounts[adAccountIndex].metrics.push({
+              name: metric.name,
+              order: metric.order
+            })
+          }
+        }
       }
-    };
+    }
 
-    // const reportSectionsCopy = JSON.parse(JSON.stringify(reportSections)) as ReportSection[];
-    // reportSectionsCopy.forEach(section => {
-    //   if (section.enabled) {
-    //     // selections[section.key].metrics = this.getSelected(this.metricSelections[section.key]);
-    //     selections[section.key].order = section.order;
+    providers.push(facebookProvider);
 
-    //     selections[section.key].metrics = section.metrics.filter(m => m.enabled);
-    //     selections[section.key].metrics.sort((a: any, b: any) => a.order - b.order);
-    //     selections[section.key].metrics.forEach((m: any, index: number) => {
-    //       m.order = index + 1;
-    //       delete m.enabled;
-    //     });
-
-    //   }
-    // });
-
-    return selections;
+    return providers;
   }
 
   getDateRangeLabel(graphs: any[]): string {

@@ -35,7 +35,7 @@ export interface ScheduledReport {
 export class ClientComponent implements OnInit {
   clientUuid: string | null = null;
   client: Client | null = null;
-  logs: any[] = [];
+  activityLogs: any[] = [];
   scheduleOptions: ScheduledReport[] = [];
 
   scheduleOptionsLoading = true;
@@ -76,7 +76,7 @@ export class ClientComponent implements OnInit {
   private async loadClientDetails() {
     if (!this.clientUuid) return;
     this.client = await this.clientService.getClient(this.clientUuid);
-    this.logs = await this.clientService.getClientsLogs(this.clientUuid);
+    this.activityLogs = await this.clientService.getClientsLogs(this.clientUuid);
     this.scheduleOptions = await this.schedulesService.getSchedulingOptions(this.clientUuid)
     this.scheduleOptionsLoading = false;
   }

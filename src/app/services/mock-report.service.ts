@@ -26,6 +26,7 @@ export class MockReportService {
 
   private mockKPIs() {
     return {
+      add_to_cart: 1000,
       spend: 1234.56,
       impressions: 145000,
       clicks: 3123,
@@ -66,7 +67,7 @@ export class MockReportService {
   }
 
   private mockCampaigns() {
-    return Array.from({ length: 5 }).map((_, i) => {
+    return Array.from({ length: 3 }).map((_, i) => {
       const base = {
         campaign_id: `camp-${i + 1}`,
         campaign_name: `Campaign ${i + 1}`

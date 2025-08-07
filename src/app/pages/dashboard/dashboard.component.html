@@ -13,11 +13,11 @@
 style="height: 85%;"
 >
 
-  <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%;" class="mt-4">
+  <div class="dashboard-container mt-4">
     <div
     class="block"
-    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
-      <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
+    >
+      <div class="title d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
         <button class="blue" (click)="showAddClientModal()" *ngIf="clients.length > 0">
           Add client
@@ -43,7 +43,6 @@ style="height: 85%;"
             <div style="width: 20%;">
               <div class="d-flex align-center gap-2 justify-center">
                 <img src="../../../assets/img/meta_icon.png" alt="Meta Platform">
-                <!-- <img src="../../../assets/img/tt_icon.png" alt="TikTok Platform" *ngIf="randomNumber === 1"> -->
               </div>
             </div>
             <div style="width: 20%;">
@@ -66,14 +65,10 @@ style="height: 85%;"
       </div>
     </div>
 
-    <div
-      class="block"
-      style="background: var(--block-color); border-radius: 20px;">
-      <app-activity-log-item
-      [logs]="logs"
-      [level]="'organization'"
-      ></app-activity-log-item>
-
-    </div>
+    
+    <activity-table
+    [logs]="activityLogs"
+    [level]="'organization'"
+    ></activity-table>
 </div>
 </div>

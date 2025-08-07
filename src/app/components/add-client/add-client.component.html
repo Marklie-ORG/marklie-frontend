@@ -1,5 +1,5 @@
 <modal-base>
-    <h3>Add client</h3>
+    <!-- <h3>Add client</h3> -->
 
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
         <div class="form-group mt-3">
@@ -26,12 +26,13 @@
           </div>
   
           <div class="ad-accounts-container">
-            <div *ngIf="isLoading" class="loading-spinner">
-              <div class="spinner"></div>
-              <p>Loading ad accounts...</p>
-            </div>
-            
-            <ng-container *ngIf="!isLoading">
+
+            @if (isLoading) {
+              <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading ad accounts...</p>
+              </div>
+            } @else {
               <div class="businesses-list">
                 <div 
                   *ngFor="let business of businesses" 
@@ -63,7 +64,11 @@
                   </div>
                 </div>
               </div>
-            </ng-container>
+              
+            }
+
+              
+              
           </div>
         </div>
   

@@ -1,8 +1,9 @@
+<h1>Graphs</h1>
 
 @for (adAccount of adAccountsGraphs(); track adAccount.id) {
 
     @if (adAccount.enabled) {
-        <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+        <h4 class="mb-2 mt-4">{{ adAccount.name }}</h4>
 
         <div class="graph-grid" #chartsGridContainer>
             @for (graph of adAccount.graphs; track graph.metric) {

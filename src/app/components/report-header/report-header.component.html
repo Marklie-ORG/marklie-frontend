@@ -8,10 +8,14 @@
         [src]="clientImageUrl()" alt="Client Logo">
       }
       @else {
-        <div class="d-flex justify-center align-center" style="width: 100px; height: 100px;">
-          <button (click)="getImage('client')">
-            <i class="fa-solid fa-plus"></i>
-          </button>
+        <div 
+        class="d-flex flex-column justify-center align-center cursor-pointer gap-3" (click)="getImage('client')">
+          <p>Add client's logo</p>
+          <div class="d-flex justify-center align-center">
+            <button>
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
         </div>
       }
     </div>
@@ -32,10 +36,14 @@
         [src]="agencyImageUrl()" alt="Agency Logo">
       }
       @else {
-        <div class="d-flex justify-center align-center" style="width: 100px; height: 100px;">
-          <button (click)="getImage('agency')">
-            <i class="fa-solid fa-plus"></i>
-          </button>
+        <div 
+        class="d-flex flex-column justify-center align-center cursor-pointer gap-3" (click)="getImage('agency')">
+          <p>Add your organization's logo</p>
+          <div class="d-flex justify-center align-center">
+            <button>
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
         </div>
       }
     </div>

@@ -23,7 +23,7 @@ export class ReviewReportComponent implements OnInit {
 
   reportUuid: string = '';
   clientUuid: string = '';
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
   private schedulesService = inject(SchedulesService);
 
@@ -90,12 +90,12 @@ export class ReviewReportComponent implements OnInit {
   async save() {
     if (!this.reportUuid) return;
     try {
-      const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
-      await this.reportService.updateReportMetricsSelections(this.reportUuid, metricsSelections);
-      await this.reportService.updateReportImages(this.reportUuid, {
-        clientLogo: this.clientImageGsUri(),
-        organizationLogo: this.agencyImageGsUri()
-      });
+      // const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
+      // await this.reportService.updateReportMetricsSelections(this.reportUuid, metricsSelections);
+      // await this.reportService.updateReportImages(this.reportUuid, {
+      //   clientLogo: this.clientImageGsUri(),
+      //   organizationLogo: this.agencyImageGsUri()
+      // });
       console.log('Report saved successfully!');
       // Optionally, show a success message
     } catch (error) {

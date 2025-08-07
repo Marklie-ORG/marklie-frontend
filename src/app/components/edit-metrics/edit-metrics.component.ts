@@ -55,7 +55,7 @@ export class EditMetricsComponent {
     public metricsService: MetricsService
   ) {
     effect(() => {
-      console.log(this.reportSections())
+      // console.log(this.reportSections())
       this.mainKPIs = this.reportSections().find(section => section.key === 'kpis');
       this.graphs = this.reportSections().find(section => section.key === 'graphs');
       this.bestCreatives = this.reportSections().find(section => section.key === 'ads');
@@ -83,6 +83,33 @@ export class EditMetricsComponent {
 
   toggleSelectedAdAccount(adAccountId: string): void {
     this.selectedAdAccountId = adAccountId;
+  }
+
+  onMetricsChange(data: ReportSection, sectionKey: string): void {
+    // console.log(data)
+    // console.log(1)
+    // let reportSectionsCopy = JSON.parse(JSON.stringify(this.reportSections())) as ReportSection[];
+    // console.log(reportSectionsCopy)
+    // let section = reportSectionsCopy.find((section: ReportSection) => section.key === sectionKey);
+
+    // section = data;
+    // console.log(reportSectionsCopy)
+    // this.reportSections.set(reportSectionsCopy as ReportSection[]);
+    // console.log(this.reportSections())
+
+
+    this.reportSections.set([...this.reportSections()] as ReportSection[]);
+
+
+    // update(sections => {
+    //   let section = sections
+    //   if (section) {
+    //     console.log(section)
+    //     section = data;
+    //   }
+    //   // sections.find(section => section.key === sectionKey) = data;
+    //   return sections;
+    // });
   }
 
   // ngOnChanges(): void {

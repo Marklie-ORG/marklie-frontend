@@ -7,7 +7,8 @@ import { ReportService } from 'src/app/services/api/report.service';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
-import { ScheduleReportRequest, ReportSection, Frequency, Messages, FACEBOOK_DATE_PRESETS } from 'src/app/interfaces/interfaces.js';
+import { ScheduleReportRequest, Frequency, Messages, FACEBOOK_DATE_PRESETS } from 'src/app/interfaces/interfaces.js';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 
 export interface Data {
   KPIs: Record<string, any>;

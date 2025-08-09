@@ -14,16 +14,8 @@
         </div>
   
         <div class="form-group">
-          <label>Selected Ad Accounts</label>
-          <div class="selected-accounts" >
-            <div class="selected-accounts-list">
-              <ng-container *ngFor="let adAccount of uniqueAdAccounts">
-                <div *ngIf="isAdAccountSelected(adAccount.id)" class="selected-account-item">
-                  {{adAccount.name}}
-                </div>
-              </ng-container>
-            </div>
-          </div>
+          <label for="name">Ad Accounts</label>
+          
   
           <div class="ad-accounts-container">
 
@@ -46,7 +38,7 @@
               
               <div class="accounts-list" *ngIf="selectedBusiness">
                 <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
-                  <h4>Ad Accounts</h4>
+                  <!-- <h4>Ad Accounts</h4> -->
                   <div 
                   *ngFor="let account of selectedBusiness.ad_accounts" 
                   class="account-option"
@@ -71,10 +63,18 @@
               
           </div>
         </div>
+
+        <label for="name">Communications Settings</label>
+        <communications-settings
+        [slackConversationId]="''"
+        [clientUuid]="''"
+        [(clientEmails)]="emails"
+        [(clientPhoneNumbers)]="phoneNumbers"
+        ></communications-settings>
   
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="dialogRef.close()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="!clientForm.valid">Add Client</button>
+          <button type="button" (click)="dialogRef.close()">Cancel</button>
+          <button type="submit" [disabled]="!clientForm.valid">Add Client</button>
         </div>
       </form>
 </modal-base>

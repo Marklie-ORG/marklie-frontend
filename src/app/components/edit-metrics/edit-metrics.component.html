@@ -11,6 +11,7 @@
       <div #sectionsContainer class="d-flex flex-column gap-3">
         @for (section of reportSections(); track section.key) {
           <item
+            [style.opacity]="section.enabled ? 1 : 0.5"
             [title]="section.title"
             (click)="togglePage(section.key)"
           ></item>
@@ -118,6 +119,7 @@
       @if (!selectedAdAccountId) {
         @for (adAccount of data.adAccounts; track adAccount.id) {
           <item
+            [style.opacity]="adAccount.enabled ? 1 : 0.5"
             [title]="adAccount.name"
             (click)="toggleSelectedAdAccount(adAccount.id)"
           ></item>

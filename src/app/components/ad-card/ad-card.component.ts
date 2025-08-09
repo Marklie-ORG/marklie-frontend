@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnDestroy, QueryList, ViewChildren, input, model } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { AdAccount, Metric } from 'src/app/interfaces/interfaces.js';
+import { AdAccount } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
 
 @Component({

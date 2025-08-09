@@ -8,6 +8,7 @@ export class MetricsService {
   constructor() { }
 
   formatMetricLabel(metric: string): string {
+    if (!metric) return '';
     return metric
       .replace(/_/g, ' ')
       .replace(/([A-Z])/g, ' $1')

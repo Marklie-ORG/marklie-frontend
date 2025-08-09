@@ -1,12 +1,13 @@
 import {Component, inject, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Data } from '../schedule-report/schedule-report.component';
-import { ScheduleReportRequest, Metrics, ReportSection, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
-import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component';
+import { ScheduleOptionsComponent, ScheduleOptionsMatDialogData } from 'src/app/components/schedule-options/schedule-options.component';
 import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 
 export interface SchedulingOption {
   uuid: string
@@ -169,21 +170,24 @@ export class EditReportComponent {
   }
 
   editScheduleConfiguration() {
+
+    const data: ScheduleOptionsMatDialogData = {
+      frequency: this.frequency,
+      time: this.time,
+      dayOfWeek: this.dayOfWeek,
+      dayOfMonth: this.dayOfMonth,
+      intervalDays: this.intervalDays,
+      cronExpression: this.cronExpression,
+      reviewRequired: this.reviewRequired,
+      messages: this.messages
+    }
+
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
-      data: {
-        frequency: this.frequency,
-        time: this.time,
-        dayOfWeek: this.dayOfWeek,
-        dayOfMonth: this.dayOfMonth,
-        intervalDays: this.intervalDays,
-        cronExpression: this.cronExpression,
-        reviewNeeded: this.reviewRequired,
-        messages: this.messages
-      }
+      data: data
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: ScheduleOptionsMatDialogData) => {
       if (!result) return;
       this.frequency = result.frequency;
       this.time = result.time;

@@ -9,9 +9,12 @@ import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import { Data } from '../schedule-report/schedule-report.component';
-import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces';
+import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
+// import { SchedulingOption } from '../edit-report/edit-report.component';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 
 @Component({
   selector: 'app-pdf-report',
@@ -45,8 +48,10 @@ export class PdfReportComponent implements OnInit {
   selectedDatePresetText = signal<string>('');
 
   //
-  reportData: any[] = [];
+  reportData: ReportData = [];
   //
+
+  // schedulingOption: SchedulingOption | null = null;
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
@@ -72,13 +77,14 @@ export class PdfReportComponent implements OnInit {
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
-      this.clientImageUrl.set(res.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.images?.organizationLogo || '');
+      // this.schedulingOption = await this.schedulesService.getSchedulingOption(res.schedulingOption) as SchedulingOption;
+      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
+      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
       
-      this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.reportData);
 
     } catch (error) {
       console.error('Error loading report:', error);

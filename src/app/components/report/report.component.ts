@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, computed, effect, ElementRef, inject, inp
 import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
 import Sortable from 'sortablejs';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
-import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
-import { AdAccount } from 'src/app/interfaces/interfaces.js';
+import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
+import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 
 export interface MetricSelections {
   kpis: Record<string, boolean>;
@@ -86,6 +86,8 @@ export class ReportComponent {
   constructor() {
 
     effect(() => {
+
+      console.log("Report sections changed:", this.reportSections());
 
       this.checkIfAllAdAccountsDisabled();
       

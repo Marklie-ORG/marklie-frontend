@@ -1,6 +1,6 @@
 import { Component, effect, ElementRef, EventEmitter, Input, model, Output, ViewChild } from '@angular/core';
 import Sortable from 'sortablejs';
-import { AdAccount, ReportSection } from 'src/app/interfaces/interfaces.js';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 
 @Component({

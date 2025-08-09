@@ -1,10 +1,12 @@
 import {inject, Injectable} from '@angular/core';
-import {ReportService} from './api/report.service';
-import {SchedulingOption} from '../pages/edit-report/edit-report.component';
-import {GetAvailableMetricsResponse, Metrics, ReportSection, MetricSectionKey, Metric, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, AdAccount} from '../interfaces/interfaces';
+import { SchedulingOption } from '../pages/edit-report/edit-report.component';
+import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest} from '../interfaces/interfaces';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import {SchedulesService} from "./api/schedules.service.js";
+import { SchedulesService } from "./api/schedules.service.js";
+import { ReportData } from '../interfaces/get-report.interfaces';
+import { ReportSection, AdAccount, Metric } from '../interfaces/report-sections.interfaces';
+
 
 @Injectable({
   providedIn: 'root'
@@ -126,7 +128,98 @@ export class ReportsDataService {
 
         adAccounts.push({
           id: adAccount.adAccountId,
-          name: adAccount.adAccountId,
+          name: adAccount.adAccountName,
+          metrics: metrics,
+          order: adAccount.order,
+          enabled: adAccount.enabled
+        })
+
+      }
+
+      reportSections.push({
+        key: section.name,
+        title: section.name,
+        enabled: section.enabled,
+        adAccounts: adAccounts,
+        order: section.order
+      })
+
+    }
+
+    return reportSections
+  }
+
+  async getReportsSectionsBasedOnReportData(providers: ReportData): Promise<ReportSection[]> {
+
+    let reportSections: ReportSection[] = [];
+
+    // const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid);
+    
+    const facebookProvider = providers.find(p => p.name === 'facebook');
+
+    console.log(facebookProvider!.sections)
+
+    // console.log(availableMetrics)
+
+    for (let section of facebookProvider?.sections || []) {
+
+      let adAccounts: AdAccount[] = [];
+
+      for (let adAccount of section.adAccounts) {
+
+        const adAccountId = adAccount.adAccountId;
+
+        // const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
+        // const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
+        // const customAdAccountAvailableMetrics = adAccountAvailableMetrics.customMetrics;
+
+        let metrics: Metric[] = [];
+
+        for (let metric of adAccount.metrics) {
+          metrics.push({
+            name: metric.name,
+            order: metric.order,
+            enabled: true,
+            // isCustom: false
+          })
+        }
+
+        // for (let metric of adAccount.customMetrics) {
+        //   metrics.push({
+        //     name: metric.name,
+        //     order: metric.order,
+        //     enabled: true,
+        //     isCustom: true,
+        //     id: metric.id
+        //   })
+        // }
+
+        // for (let metric of sectionAdAccountAvailableMetrics) {
+        //   if (!metrics.find(m => m.name === metric)) {
+        //     metrics.push({
+        //       name: metric,
+        //       order: -1,
+        //       enabled: false,
+        //       isCustom: false
+        //     })
+        //   }
+        // }
+
+        // for (let metric of customAdAccountAvailableMetrics) {
+        //   if (!metrics.find(m => m.name === metric.name)) {
+        //     metrics.push({
+        //       name: metric.name,
+        //       order: -1,
+        //       enabled: false,
+        //       isCustom: true,
+        //       id: metric.id
+        //     })
+        //   }
+        // }
+
+        adAccounts.push({
+          id: adAccount.adAccountId,
+          name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
           enabled: true
@@ -326,43 +419,55 @@ export class ReportsDataService {
       sections: []
     }
 
-    for (const [sectionIndex, section] of reportSections.entries()) {
-      if (!section.enabled) continue;
+    let sections: SectionScheduleReportRequest[] = [];
 
-      facebookProvider.sections.push({
-        name: section.key,
-        order: section.order,
-        adAccounts: []
-      })
+    for (const [sectionIndex, section] of reportSections.entries()) {
+
+      let adAccounts: AdAccountScheduleReportRequest[] = [];
 
       for (const [adAccountIndex, adAccount] of section.adAccounts.entries()) {
-        if (!adAccount.enabled) continue;
 
-        facebookProvider.sections[sectionIndex].adAccounts.push({
-          adAccountId: adAccount.id,
-          order: adAccount.order,
-          metrics: [],
-          customMetrics: []
-        })
+        let metrics: MetricScheduleReportRequest[] = [];
+        let customMetrics: CustomMetricScheduleReportRequest[] = [];
 
         for (const metric of adAccount.metrics) {
           if (!metric.enabled) continue;
           
           if (metric.isCustom) {
-            facebookProvider.sections[sectionIndex].adAccounts[adAccountIndex].customMetrics.push({
+            customMetrics.push({
               name: metric.name,
               order: metric.order,
               id: metric.id!
             })
           } else {
-            facebookProvider.sections[sectionIndex].adAccounts[adAccountIndex].metrics.push({
+            metrics.push({
               name: metric.name,
               order: metric.order
             })
           }
         }
+
+        adAccounts.push({
+          adAccountId: adAccount.id,
+          adAccountName: adAccount.name,
+          order: adAccount.order,
+          enabled: adAccount.enabled,
+          metrics: metrics,
+          customMetrics: customMetrics
+        })
+        
       }
+
+      sections.push({
+        name: section.key,
+        order: section.order,
+        enabled: section.enabled,
+        adAccounts: adAccounts
+      })
+
     }
+
+    facebookProvider.sections = sections;
 
     providers.push(facebookProvider);
 

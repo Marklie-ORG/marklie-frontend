@@ -6,13 +6,14 @@ import {
   inject,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportService } from '../../services/api/report.service.js';
 import { ReportsDataService } from '../../services/reports-data.service.js';
 import { Data } from '../schedule-report/schedule-report.component.js';
-import { GetAvailableMetricsResponse, ReportSection } from 'src/app/interfaces/interfaces.js';
+import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
 import { SchedulesService } from 'src/app/services/api/schedules.service.js';
+
 
 @Component({
   selector: 'app-view-report',

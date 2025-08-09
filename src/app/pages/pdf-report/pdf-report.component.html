@@ -1,20 +1,18 @@
 <div class="report-container d-flex flex-column align-center pt-3 pl-5 pr-5">
 
   <div style="width: 90%;">
-   
-    @for (report of reportData; track report.adAccountId) {
-      <report
-      [reportSections]="reportSections"
-      [data]="report"
-      [selectedDatePresetText]="selectedDatePresetText()"
-      [reportTitle]="reportTitle()"
-      [(clientImageUrl)]="clientImageUrl"
-      [(agencyImageUrl)]="agencyImageUrl"
-      [(clientImageGsUri)]="clientImageGsUri"
-      [(agencyImageGsUri)]="agencyImageGsUri"
-      [isViewMode]="true"
-      ></report>
-    }
+    
+    <report
+    [reportSections]="reportSections"
+    [data]="data"
+    [selectedDatePresetText]="selectedDatePresetText()"
+    [reportTitle]="reportTitle()"
+    [(clientImageUrl)]="clientImageUrl"
+    [(agencyImageUrl)]="agencyImageUrl"
+    [(clientImageGsUri)]="clientImageGsUri"
+    [(agencyImageGsUri)]="agencyImageGsUri"
+    [isViewMode]="true"
+    ></report>
 
   </div>
   

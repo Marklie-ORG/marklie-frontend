@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
-import { ScheduleReportRequest, GetReportResponse, ReportImages } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, ReportImages } from 'src/app/interfaces/interfaces';
+import { GetReportResponse } from 'src/app/interfaces/get-report.interfaces';
 
 
 @Injectable({

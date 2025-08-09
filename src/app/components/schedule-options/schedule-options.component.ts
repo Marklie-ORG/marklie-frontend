@@ -3,10 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Frequency, Messages } from 'src/app/interfaces/interfaces.js';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 
-interface ScheduleOptionsMatDialogData {
-  isEditMode: boolean;
-  datePreset: string;
-  schedulingOptionId: string;
+export interface ScheduleOptionsMatDialogData {
   messages: Messages
   frequency: Frequency;
   time: string;
@@ -24,16 +21,7 @@ interface ScheduleOptionsMatDialogData {
 })
 export class ScheduleOptionsComponent {
   
-  @Input() isEditMode: boolean = false;
   @Input() clientUuid: string = "";
-  @Input() messages: Messages = {
-    whatsapp: '',
-    slack: '',
-    email: {
-      title: '',
-      body: ''
-    }
-  }
 
   messagesWindowOpen: boolean = false;
 
@@ -47,20 +35,23 @@ export class ScheduleOptionsComponent {
     public reportsDataService: ReportsDataService,
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ScheduleOptionsMatDialogData
-  ) {
-    this.messages = data.messages;
-  }
+  ) {}
 
 
   save() {
-    this.dialogRef.close({
+
+    const payload: ScheduleOptionsMatDialogData = {
       frequency: this.data.frequency,
       time: this.data.time,
       dayOfWeek: this.data.dayOfWeek,
       dayOfMonth: this.data.dayOfMonth,
       intervalDays: this.data.intervalDays,
-      messages: this.messages
-    });
+      messages: this.data.messages,
+      reviewRequired: this.data.reviewRequired,
+      cronExpression: this.data.cronExpression
+    }
+
+    this.dialogRef.close(payload);
   }
 
 

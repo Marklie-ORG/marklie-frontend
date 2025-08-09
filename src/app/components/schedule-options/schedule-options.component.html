@@ -78,10 +78,10 @@
               </div>
               <div class="accordion-content" [class.show]="accordion.whatsapp">
                 <label for="whatsapp">Message</label>
-                <input type="text" class="text" [(ngModel)]="messages.whatsapp" id="whatsapp" />
+                <input type="text" class="text" [(ngModel)]="data.messages.whatsapp" id="whatsapp" />
                 <p>Preview</p>
                 <whatsapp-message-preview
-                [message]="messages.whatsapp"
+                [message]="data.messages.whatsapp"
                 ></whatsapp-message-preview>
               </div>
           </div>
@@ -94,7 +94,7 @@
             </div>
             <div class="accordion-content" [class.show]="accordion.slack">
               <label for="slack">Slack:</label>
-              <input type="text" class="text" [(ngModel)]="messages.slack" id="slack" />
+              <input type="text" class="text" [(ngModel)]="data.messages.slack" id="slack" />
             </div>
           </div>
 
@@ -106,9 +106,9 @@
             </div>
             <div class="accordion-content" [class.show]="accordion.email">
               <label for="title">Title</label>
-              <input type="text" class="text" [(ngModel)]="messages.email.title" id="title" />
+              <input type="text" class="text" [(ngModel)]="data.messages.email.title" id="title" />
               <label for="body">Body</label>
-              <input type="text" class="text" [(ngModel)]="messages.email.body" id="body" />
+              <input type="text" class="text" [(ngModel)]="data.messages.email.body" id="body" />
             </div>
           </div>
 

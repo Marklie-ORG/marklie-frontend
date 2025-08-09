@@ -2,7 +2,7 @@ import { Component, effect, ElementRef, EventEmitter, Input, input, model, OnCha
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Sortable from 'sortablejs';
-import { AdAccount, Metric } from 'src/app/interfaces/interfaces.js';
+import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 
 interface GraphsAdAccount {
   id: string

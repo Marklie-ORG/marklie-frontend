@@ -1,6 +1,6 @@
 import { MatDialogRef } from '@angular/material/dialog';
 import { ClientService } from 'src/app/services/api/client.service';
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, signal, effect } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {AdAccount, AdAccountsService, Root2} from "../../services/api/ad-accounts.service.js";
 
@@ -23,6 +23,9 @@ export class AddClientComponent {
 
   selectedBusinessId: string | null = null;
 
+  emails = signal<string[]>([]);
+  phoneNumbers = signal<string[]>([]);
+
   constructor(
     private fb: FormBuilder,
     private adAccountsService: AdAccountsService,
@@ -35,6 +38,12 @@ export class AddClientComponent {
       facebookAdAccounts: [[], Validators.required],
       // tiktokAdAccounts: [[], Validators.required]
     });
+
+    effect(() => {
+      console.log(this.emails())
+      console.log(this.phoneNumbers())
+    })
+    
   }
 
   async ngOnInit() {
@@ -54,7 +63,7 @@ export class AddClientComponent {
   async onSubmit() {
     if (this.clientForm.valid) {
       console.log(this.clientForm.value);
-      await this.clientService.createClient(this.clientForm.value);
+      await this.clientService.createClient({...this.clientForm.value, emails: this.emails(), phoneNumbers: this.phoneNumbers()});
       this.dialogRef.close();
     }
   }

@@ -7,10 +7,12 @@
       @if (adAccount.enabled) {
         <h4 class="mb-2 mt-4">{{ adAccount.name }}</h4>
 
-        <div class="kpi-grid-container" #kpiGridContainer>
+        <div class="kpi-grid-container" #kpiGridContainer [attr.data-adaccount-id]="adAccount.id">
           @for (metric of adAccount.metrics; track metric.name) {
 
             <div class="kpi-card"
+            [attr.data-metric-name]="metric.name"
+            [class.disabled]="!metric.enabled"
             [style.display]="metric.enabled ? 'block' : 'none'"
             [style.cursor]="isViewMode() ? 'auto' : 'grab'"
             >

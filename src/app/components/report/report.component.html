@@ -57,7 +57,8 @@
 
         <kpi-grid
         [kpis]="data.KPIs"
-        [(adAccounts)]="kpisSection().adAccounts"
+        [adAccounts]="kpisSection().adAccounts"
+        (adAccountsChange)="onKpiAdAccountsChange($event)"
         [isViewMode]="isViewMode()"
         ></kpi-grid>
       }

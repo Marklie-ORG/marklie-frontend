@@ -126,6 +126,8 @@ export class ReportsDataService {
           }
         }
 
+        metrics.sort((a, b) => a.order - b.order);
+
         adAccounts.push({
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,

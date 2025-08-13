@@ -1,0 +1,23 @@
+.feature-suggestion {
+	max-width: 820px;
+	margin: 24px auto;
+	padding: 0 16px;
+
+	.topbar { margin-bottom: 8px; }
+	.back { background: transparent; border: none; color: #0a74da; cursor: pointer; padding: 0; }
+
+	.header { display: flex; align-items: center; gap: 12px; }
+	.header h2 { margin: 0; flex: 1; }
+	.vote { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 8px 10px; background: #fff; cursor: pointer; }
+	.vote.active { background: #f8fafc; }
+
+	.desc { margin: 12px 0 20px; }
+
+	.comments h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; }
+	.comments .list { display: flex; flex-direction: column; gap: 10px; }
+	.comments .comment { border: 1px dashed #e5e7eb; border-radius: 8px; padding: 10px; }
+	.comments .head { display: flex; justify-content: space-between; color: #6b7280; font-size: 12px; margin-bottom: 4px; }
+	.comments .add { display: flex; gap: 8px; margin-top: 12px; }
+	.comments .add input { flex: 1; border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px 10px; }
+	.comments .add button { border: 1px solid #e5e7eb; border-radius: 10px; padding: 8px 12px; background: #fff; cursor: pointer; }
+} 

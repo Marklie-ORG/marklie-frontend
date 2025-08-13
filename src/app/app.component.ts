@@ -28,7 +28,8 @@ export class AppComponent {
           url.startsWith('/client/') ||
           url === '/profile' ||
           url.startsWith('/view-report/') ||
-          url.startsWith('/reports');
+          url.startsWith('/reports') ||
+          url.startsWith('/suggested-features');
       }
     });
   }

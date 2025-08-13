@@ -16,8 +16,8 @@ export class CommunicationsSettingsComponent {
   clientEmails = model<string[]>([]);
   clientPhoneNumbers = model<string[]>([]);
 
-  emails: {email: string, isEditMode: boolean}[] = [];
-  phoneNumbers: {phoneNumber: string, isEditMode: boolean}[] = [];
+  // emails: {email: string}[] = [];
+  // phoneNumbers: {phoneNumber: string}[] = [];
 
   selectedConversationId: string | null = null;
   workspaces: Workspace[] | null = null;
@@ -59,15 +59,14 @@ export class CommunicationsSettingsComponent {
         this.loadIsSlackWorkspaceConnected();
       }
 
-      this.emails = this.clientEmails() ?
-        this.clientEmails().map(email => ({email: email, isEditMode: false})) : [];
-      this.phoneNumbers = this.clientPhoneNumbers() ?
-        this.clientPhoneNumbers().map(phoneNumber => ({phoneNumber: phoneNumber, isEditMode: false})) : [];
-
-      console.log(this.emails)
-      console.log(this.phoneNumbers)
-
     })
+
+    // effect(async () => {
+    //   this.emails = this.clientEmails() ?
+    //     this.clientEmails().map(email => ({email: email})) : [];
+    //   this.phoneNumbers = this.clientPhoneNumbers() ?
+    //     this.clientPhoneNumbers().map(phoneNumber => ({phoneNumber: phoneNumber})) : [];
+    // })
   }
 
   async ngOnInit() {}
@@ -116,59 +115,50 @@ export class CommunicationsSettingsComponent {
   }
 
   addEmail(email: string = '') {
-    this.emails.push({email: email, isEditMode: true});
-    this.focusInput('email' + (this.emails.length - 1));
+    this.clientEmails.set([...this.clientEmails(), email]);
 
-    this.propagateChanges();
-    // console.log(this.emails)
+    console.log(this.clientEmails)
+
+    // this.propagateChanges();  
   }
 
-  propagateChanges() {
-    this.clientEmails.set(this.emails.map(email => email.email));
-    this.clientPhoneNumbers.set(this.phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber));
-  }
+  // propagateChanges() {
+  //   this.clientEmails.set(this.emails.map(email => email.email));
+  //   this.clientPhoneNumbers.set(this.phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber));
+  // }
 
   removeEmail(index: number) {
-    this.emails.splice(index, 1);
+    this.clientEmails.set(this.clientEmails().filter((_, i) => i !== index));
 
-    this.propagateChanges();
-  }
-
-  onEmailBlur(index: number) {
-    this.emails[index].isEditMode = false;
-    if (this.emails[index].email.trim() === '') {
-      this.removeEmail(index);
-    }
-    this.propagateChanges();
+    // this.propagateChanges();
   }
 
   addPhoneNumber(phoneNumber: string = '') {
-    this.phoneNumbers.push({phoneNumber: phoneNumber, isEditMode: true});
-    this.focusInput('phoneNumber' + (this.phoneNumbers.length - 1));
+    this.clientPhoneNumbers.set([...this.clientPhoneNumbers(), phoneNumber]);
 
-    this.propagateChanges();
+    // this.propagateChanges();
   }
 
   removePhoneNumber(index: number) {
-    this.phoneNumbers.splice(index, 1);
+    this.clientPhoneNumbers.set(this.clientPhoneNumbers().filter((_, i) => i !== index));
 
-    this.propagateChanges();
+    // this.propagateChanges();
   }
 
-  onPhoneNumberBlur(index: number) {
-    this.phoneNumbers[index].isEditMode = false;
-    if (this.phoneNumbers[index].phoneNumber.trim() === '') {
-      this.removePhoneNumber(index);
-    }
-
-    this.propagateChanges();
+  onEmailChange(index: number, value: string) {
+    const next = [...this.clientEmails()];
+    next[index] = value;
+    this.clientEmails.set(next);
   }
 
-  focusInput(inputId: string) {
-    setTimeout(() => {
-      const input = this.renderer.selectRootElement(`#${inputId}`, true);
-      input.focus();
-    }, 50);
+  onPhoneNumberChange(index: number, value: string) {
+    const next = [...this.clientPhoneNumbers()];
+    next[index] = value;
+    this.clientPhoneNumbers.set(next);
+  }
+
+  trackByIndex(index: number) {
+    return index;
   }
 
 }

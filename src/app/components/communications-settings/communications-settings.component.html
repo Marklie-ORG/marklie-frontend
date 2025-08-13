@@ -7,19 +7,18 @@
     </div>
     <div>
       <div
-      *ngFor="let email of emails; let i = index"
+      *ngFor="let email of clientEmails(); let i = index; trackBy: trackByIndex"
       class="email-row d-flex gap-2 pt-2 pb-2 ">
         <input
           id="email{{i}}"
-          *ngIf="email.isEditMode"
           type="email"
           placeholder="Enter email address"
-          [value]="email.email"
-          [(ngModel)]="email.email"
+          [ngModel]="email"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onEmailChange(i, $event)"
           class="text"
-          (blur)="onEmailBlur(i)"
           >
-        <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p>
+        <!-- <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p> -->
         <!-- <button 
         *ngIf="email.isEditMode"
           type="button" 
@@ -52,19 +51,18 @@
 
     <div>
       <div
-      *ngFor="let phoneNumber of phoneNumbers; let i = index"
+      *ngFor="let phoneNumber of clientPhoneNumbers(); let i = index; trackBy: trackByIndex"
       class="email-row d-flex gap-2 pt-2 pb-2 ">
         <input
           id="phoneNumber{{i}}"
-          *ngIf="phoneNumber.isEditMode"
           type="phoneNumber"
           placeholder="Enter phone number"
-          [value]="phoneNumber.phoneNumber"
-          [(ngModel)]="phoneNumber.phoneNumber"
+          [ngModel]="phoneNumber"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onPhoneNumberChange(i, $event)"
           class="text"
-          (blur)="onPhoneNumberBlur(i)"
           >
-        <p *ngIf="!phoneNumber.isEditMode" (click)="phoneNumber.isEditMode = true; focusInput('phoneNumber' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{phoneNumber.phoneNumber}}</p>
+        <!-- <p *ngIf="!phoneNumber.isEditMode" (click)="phoneNumber.isEditMode = true; focusInput('phoneNumber' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{phoneNumber.phoneNumber}}</p> -->
         <!-- <button 
         *ngIf="email.isEditMode"
           type="button" 

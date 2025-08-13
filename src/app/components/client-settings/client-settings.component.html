@@ -17,42 +17,31 @@
     </div>
   </div>
 
-  <!-- <div class="tabs d-flex gap-3 mb-3">
-    <div class="pb-1" [class.selected]="activeTab === 'comm_channels'" (click)="activeTab = 'comm_channels'">Communication channels</div>
-    <div class="pb-1" [class.selected]="activeTab === 'ad_platform'" (click)="activeTab = 'ad_platform'">Advertisement platform</div>
-    
-  </div> -->
+  <div class="tabs d-flex gap-3 mb-3">
+    <div class="pb-1" [class.selected]="activeTab === 'comm_channels'" (click)="selectTab('comm_channels')">Communication settings</div>
+    <div class="pb-1" [class.selected]="activeTab === 'ad_platform'" (click)="selectTab('ad_platform')">Ad accounts</div>
+  </div>
 
   <div>
-    <!-- <ng-container *ngIf="activeTab === 'ad_platform'">
-      <h3>Facebook ad account</h3>
-      <ul>
-        <li>Marklie ad account 1</li>
-        <li>Marklie ad account 2</li>
-        <li><a href="#">+ Add Facebook account</a></li>
-      </ul>
-  
-      <h3>TikTok ad account</h3>
-      <ul>
-        <li>Marklie ad account 1</li>
-        <li>Marklie ad account 2</li>
-        <li><a href="#">+ Add TikTok account</a></li>
-      </ul>
-    </ng-container> -->
-  
-    <ng-container *ngIf="activeTab === 'comm_channels'">
+    <!-- Instantiate comm settings immediately (default tab), and keep it mounted -->
+    <ng-container *ngIf="isCommTabLoaded">
+      <div [hidden]="activeTab !== 'comm_channels'">
+        <communications-settings
+          [slackConversationId]="data.client.slackConversationId!"
+          [clientUuid]="data.client.uuid"
+          [(clientEmails)]="emails"
+          [(clientPhoneNumbers)]="phoneNumbers"
+        ></communications-settings>
+      </div>
+    </ng-container>
 
-      <ad-accounts-settings
-      [(facebookAdAccounts)]="data.client.adAccounts!"
-      ></ad-accounts-settings>
-
-      <communications-settings
-      [slackConversationId]="data.client.slackConversationId!"
-      [clientUuid]="data.client.uuid"
-      [(clientEmails)]="emails"
-      [(clientPhoneNumbers)]="phoneNumbers"
-      ></communications-settings>
-
+    <!-- Instantiate ad accounts only once when first opened, then keep it mounted -->
+    <ng-container *ngIf="isAdTabLoaded">
+      <div [hidden]="activeTab !== 'ad_platform'">
+        <ad-accounts-settings
+          [(facebookAdAccounts)]="facebookAdAccounts"
+        ></ad-accounts-settings>
+      </div>
     </ng-container>
   </div>
 

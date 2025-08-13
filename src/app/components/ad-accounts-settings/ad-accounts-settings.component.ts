@@ -1,5 +1,5 @@
 import { Component, effect, inject, input, model, signal } from '@angular/core';
-import { AdAccountsService, Business } from 'src/app/services/api/ad-accounts.service';
+import { AdAccountsService, Business, AdAccount } from 'src/app/services/api/ad-accounts.service';
 
 export interface FacebookAdAccount {
   adAccountId: string;
@@ -22,16 +22,19 @@ export class AdAccountsSettingsComponent {
     
   adAccountsService = inject(AdAccountsService);
 
-  facebookAdAccounts = model<string[]>([]);
+  facebookAdAccounts = model<FacebookAdAccount[]>([]);
   // FacebookAdAccount
 
   constructor() {
     effect(() => {
-      this.selectedAdAccounts = this.facebookAdAccounts().reduce((acc, account) => {
-        acc[account] = true;
+      const accounts = this.facebookAdAccounts();
+      this.selectedAdAccounts = accounts.reduce((acc, account) => {
+        acc[account.adAccountId] = true;
         return acc;
       }, {} as { [key: string]: boolean });
-      console.log(this.facebookAdAccounts())
+
+      // Keep selected business in sync with current accounts
+      this.selectedBusinessId = accounts.length > 0 ? accounts[0].businessId : null;
     })
   }
 
@@ -66,18 +69,23 @@ export class AdAccountsSettingsComponent {
     return this.selectedAdAccounts[accountId] || false;
   }
 
-  toggleAdAccount(event: Event, accountId: string, accountBusinessId: string) {
+  toggleAdAccount(event: Event, account: AdAccount) {
     const checkbox = event.target as HTMLInputElement;
-    this.selectedAdAccounts[accountId] = checkbox.checked;
-    this.selectedBusinessId = accountBusinessId;
+    this.selectedAdAccounts[account.id] = checkbox.checked;
+    this.selectedBusinessId = account.business.id;
 
     let currentAccounts = this.getCurrentFacebookAdAccounts();
 
     if (checkbox.checked) {
-      this.facebookAdAccounts.set([...currentAccounts, accountId]);
+      const newAccount: FacebookAdAccount = {
+        adAccountId: account.id,
+        adAccountName: account.name,
+        businessId: account.business.id
+      };
+      this.facebookAdAccounts.set([...currentAccounts, newAccount]);
     } else {
       this.facebookAdAccounts.set(
-        currentAccounts.filter(id => id !== accountId)
+        currentAccounts.filter(a => a.adAccountId !== account.id)
       );
     }
 

@@ -31,7 +31,7 @@
               type="checkbox" 
               [id]="account.id"
               [checked]="isAdAccountSelected(account.id)"
-              (change)="toggleAdAccount($event, account.id, account.business.id)"
+              (change)="toggleAdAccount($event, account)"
               >
             <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
           </div>

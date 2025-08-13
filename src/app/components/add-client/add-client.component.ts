@@ -15,7 +15,7 @@ export class AddClientComponent {
 
   emails = signal<string[]>([]);
   phoneNumbers = signal<string[]>([]);
-  facebookAdAccounts = signal<string[]>([]);
+  facebookAdAccounts = signal<FacebookAdAccount[]>([]);
 
   // FacebookAdAccount
 

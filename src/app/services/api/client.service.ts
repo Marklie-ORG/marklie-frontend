@@ -123,6 +123,7 @@ export interface Client {
     slack: string;
     schedulingOption: any[];
     adAccounts: string[];
+    facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
 }
 
 export interface CreateClientRequest {

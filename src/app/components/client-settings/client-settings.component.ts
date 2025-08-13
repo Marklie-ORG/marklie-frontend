@@ -17,6 +17,10 @@ export class ClientSettingsComponent implements OnInit {
 
   activeTab: "comm_channels" | "ad_platform" = "comm_channels";
 
+  // Ensure each tab's network requests happen only once, when the tab is first opened
+  isCommTabLoaded = true;
+  isAdTabLoaded = false;
+
   clientName: string = "";
   
   emails = signal<string[]>([]);
@@ -33,10 +37,20 @@ export class ClientSettingsComponent implements OnInit {
     this.clientName = this.data.client.name;
     this.emails.set(this.data.client.emails);
     this.phoneNumbers.set(this.data.client.phoneNumbers);
-    // this.facebookAdAccounts.set(this.data.client.facebookAdAccounts || []);
+    // Initialize facebookAdAccounts if present on client
+    if (this.data.client.facebookAdAccounts && this.data.client.facebookAdAccounts.length > 0) {
+      this.facebookAdAccounts.set(this.data.client.facebookAdAccounts);
+    }
   }
 
   async ngOnInit() { }
+
+  selectTab(tab: "comm_channels" | "ad_platform") {
+    this.activeTab = tab;
+    if (tab === 'ad_platform' && !this.isAdTabLoaded) {
+      this.isAdTabLoaded = true;
+    }
+  }
 
   onInputBlur() {
     this.updateClient(this.clientName)
@@ -46,7 +60,8 @@ export class ClientSettingsComponent implements OnInit {
     const client: UpdateClientRequest = {
       ...(name && { name }),
       ...(emails && { emails }),
-      ...(phoneNumbers && { phoneNumbers })
+      ...(phoneNumbers && { phoneNumbers }),
+      facebookAdAccounts: this.facebookAdAccounts()
     }
     try {
       const response = await this.clientService.updateClient(this.data.client.uuid!, client);

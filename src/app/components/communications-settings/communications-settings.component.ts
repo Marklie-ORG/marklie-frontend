@@ -38,7 +38,9 @@ export class CommunicationsSettingsComponent {
 
       this.selectedConversationId = this.slackConversationId();
 
-      await this.getWorkspaces();
+      if (this.clientUuid()) {
+        await this.getWorkspaces();
+      }
 
       this.subscriptions.push(
         this.isSlackWorkspaceConnectedSubject.subscribe(async (status) => {

@@ -63,6 +63,7 @@ import { ReportHeaderComponent } from "./components/report-header/report-header.
 import { LandingNewComponent } from "./pages/landing-new/landing-new.component";
 import {HeaderComponent} from "./components/header/header.component.js";
 import { CommunicationsSettingsComponent } from './components/communications-settings/communications-settings.component';
+import { AdAccountsSettingsComponent } from './components/ad-accounts-settings/ad-accounts-settings.component';
 
 register();
 
@@ -116,7 +117,8 @@ register();
     ImagesManagerComponent,
     ReportHeaderComponent,
     HeaderComponent,
-    CommunicationsSettingsComponent
+    CommunicationsSettingsComponent,
+    AdAccountsSettingsComponent
   ],
   imports: [
     BrowserModule,

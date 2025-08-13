@@ -9,26 +9,71 @@
   </div>
 
   <div class="d-flex flex-row align-center gap-3">
-    <button>
-      <fa-icon [icon]="faComment"></fa-icon>
-      Give Feedback
-    </button>
+    <div class="feedback-container" [class.open]="isFeedbackOpen">
+      <button type="button" class="feedback-toggle" (click)="toggleFeedback()">
+        <fa-icon [icon]="faComment"></fa-icon>
+        Give Feedback
+      </button>
 
-    <button class="icon-only">
-      <fa-icon [icon]="faBell"></fa-icon>
-    </button>
-
-    <div class="user-dropdown" (click)="toggleDropdown()" tabindex="0" (blur)="closeDropdown()">
-      <span>{{ userName }}</span>
-      <fa-icon [icon]="faChevronDown"></fa-icon>
-
-      <div class="dropdown-menu" *ngIf="isDropdownOpen">
-        <a routerLink="/profile"><fa-icon [icon]="faUser"></fa-icon> Profile</a>
-        <a routerLink="/billing"><fa-icon [icon]="faCreditCard"></fa-icon> Billing</a>
-        <a routerLink="/support"><fa-icon [icon]="faCommentDots"></fa-icon> Support</a>
-        <a (click)="signOut()"><fa-icon [icon]="faArrowRightFromBracket"></fa-icon> Logout</a>
+      <div class="feedback-popover" *ngIf="isFeedbackOpen">
+        <textarea
+          class="feedback-input"
+          rows="3"
+          maxlength="1000"
+          placeholder="Share your thoughts..."
+          [(ngModel)]="feedbackMessage"
+          (keydown)="onFeedbackKeydown($event)"
+        ></textarea>
+        <div class="feedback-actions">
+          <span class="hint">Press Enter with Cmd/Ctrl to send</span>
+          <button type="button" class="send-btn" [disabled]="sending || !feedbackMessage.trim()" (click)="sendFeedback()">
+            {{ sending ? 'Sending…' : 'Send' }}
+          </button>
+        </div>
+        <div class="feedback-status" *ngIf="feedbackSent">Thanks for your feedback!</div>
       </div>
-      
+    </div>
+
+    <!-- <button class="icon-only">
+      <fa-icon [icon]="faBell"></fa-icon>
+    </button> -->
+
+    <div class="user-dropdown-container">
+      <button
+        class="user-dropdown"
+        type="button"
+        (click)="toggleDropdown()"
+        (keydown)="onTriggerKeydown($event)"
+        [attr.aria-haspopup]="'menu'"
+        [attr.aria-expanded]="isDropdownOpen"
+        [attr.aria-controls]="'user-menu'"
+        #triggerButton
+      >
+        <span class="user-name">{{ userName }}</span>
+        <fa-icon [icon]="faChevronDown"></fa-icon>
+      </button>
+
+      <div
+        class="dropdown-menu"
+        *ngIf="isDropdownOpen"
+        role="menu"
+        id="user-menu"
+        (keydown)="onMenuKeydown($event)"
+        #menu
+      >
+        <a routerLink="/profile" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
+          <fa-icon [icon]="faUser"></fa-icon> Profile
+        </a>
+        <a routerLink="/billing" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
+          <fa-icon [icon]="faCreditCard"></fa-icon> Billing
+        </a>
+        <a routerLink="/support" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
+          <fa-icon [icon]="faCommentDots"></fa-icon> Support
+        </a>
+        <a routerLink="/support" role="menuitem" tabindex="-1" #menuItem (click)="signOut()">
+          <fa-icon [icon]="faArrowRightFromBracket"></fa-icon> Logout
+        </a>
+      </div>
     </div>
   </div>
 </div>

@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 
-export type Root = Root2[]
+export type Root = Business[]
 
-export interface Root2 {
+export interface Business {
   id: string
   name: string
   ad_accounts: AdAccount[]

@@ -42,6 +42,10 @@
   
     <ng-container *ngIf="activeTab === 'comm_channels'">
 
+      <ad-accounts-settings
+      [(facebookAdAccounts)]="data.client.adAccounts!"
+      ></ad-accounts-settings>
+
       <communications-settings
       [slackConversationId]="data.client.slackConversationId!"
       [clientUuid]="data.client.uuid"

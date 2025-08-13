@@ -1,21 +1,18 @@
-import { Component, Input, SimpleChanges, OnInit, OnChanges, Inject, Renderer2, signal, effect } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { Component, OnInit, Inject, signal, effect } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
-import { Subscription } from 'rxjs';
-import { Root2 } from 'src/app/services/api/ad-accounts.service';
+import { Business } from 'src/app/services/api/ad-accounts.service';
 import { AdAccount } from 'src/app/services/api/ad-accounts.service';
-import { AdAccountsService } from 'src/app/services/api/ad-accounts.service';
-import { Client, ClientService, Conversations, UpdateClientRequest, Workspace } from 'src/app/services/api/client.service';
+import { Client, ClientService, UpdateClientRequest } from 'src/app/services/api/client.service';
 import { NotificationService } from 'src/app/services/notification.service';
-import { SlackLoginService } from 'src/app/services/slack-login.service';
+import { FacebookAdAccount } from '../ad-accounts-settings/ad-accounts-settings.component';
+
 @Component({
   selector: 'app-client-settings',
   templateUrl: './client-settings.component.html',
   styleUrl: './client-settings.component.scss'
 })
 export class ClientSettingsComponent implements OnInit {
-  businesses: Root2[] = [];
+  businesses: Business[] = [];
   uniqueAdAccounts: AdAccount[] = [];
 
   activeTab: "comm_channels" | "ad_platform" = "comm_channels";
@@ -24,6 +21,7 @@ export class ClientSettingsComponent implements OnInit {
   
   emails = signal<string[]>([]);
   phoneNumbers = signal<string[]>([]);
+  facebookAdAccounts = signal<FacebookAdAccount[]>([]);
 
   constructor(
     public dialogRef: MatDialogRef<ClientSettingsComponent>,
@@ -31,26 +29,12 @@ export class ClientSettingsComponent implements OnInit {
     private clientService: ClientService,
     private notificationService: NotificationService,
   ) {
-    
+    console.log(this.data)
     this.clientName = this.data.client.name;
     this.emails.set(this.data.client.emails);
     this.phoneNumbers.set(this.data.client.phoneNumbers);
-    
-    effect(() => {
-      console.log(this.emails())
-      console.log(this.phoneNumbers())
-    })
-
+    // this.facebookAdAccounts.set(this.data.client.facebookAdAccounts || []);
   }
-
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['emails']) {
-  //     console.log(this.emails)  
-  //   }
-  //   if (changes['phoneNumbers']) {
-  //     console.log(this.phoneNumbers)
-  //   }
-  // }
 
   async ngOnInit() { }
 

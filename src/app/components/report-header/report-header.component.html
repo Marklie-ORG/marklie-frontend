@@ -8,11 +8,13 @@
         [src]="clientImageUrl()" alt="Client Logo">
       }
       @else {
-        <div (click)="getImage('client')" 
-        class="cursor-pointer"
-        style="width: 100px; height: 100px; background-color: transparent; border: 2px dashed rgba(240, 244, 249, 1); border-radius: 10px; display: flex; justify-content: center; align-items: center;">
-          <h4>Logo</h4>
-        </div>
+        @if (!isViewMode()) {
+          <div (click)="getImage('client')" 
+          class="cursor-pointer"
+          style="width: 100px; height: 100px; background-color: transparent; border: 2px dashed rgba(240, 244, 249, 1); border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+            <h4>Logo</h4>
+          </div>
+        }
       }
     </div>
     <div class="d-flex flex-column">
@@ -32,12 +34,13 @@
         [src]="agencyImageUrl()" alt="Agency Logo">
       }
       @else {
-
-        <div (click)="getImage('agency')" 
-        class="cursor-pointer"
-        style="width: 100px; height: 100px; background-color: transparent; border: 2px dashed rgba(240, 244, 249, 1); border-radius: 10px; display: flex; justify-content: center; align-items: center;">
-          <h4>Logo</h4>
-        </div>
+        @if (!isViewMode()) {
+          <div (click)="getImage('agency')" 
+          class="cursor-pointer"
+          style="width: 100px; height: 100px; background-color: transparent; border: 2px dashed rgba(240, 244, 249, 1); border-radius: 10px; display: flex; justify-content: center; align-items: center;">
+            <h4>Logo</h4>
+          </div>
+        }
       }
     </div>
 </div>

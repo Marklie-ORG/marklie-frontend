@@ -63,7 +63,7 @@ export class PdfReportComponent implements OnInit {
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       this.reportUuid = params['reportUuid'];
-      this.clientUuid = params['clientUuid'];
+      // this.clientUuid = params['clientUuid'];
       await this.loadReport();
     });
   }

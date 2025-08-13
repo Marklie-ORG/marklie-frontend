@@ -80,7 +80,7 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'pdf-report/:clientUuid/:reportUuid',
+    path: 'pdf-report/:reportUuid',
     component: PdfReportComponent
   },
   {

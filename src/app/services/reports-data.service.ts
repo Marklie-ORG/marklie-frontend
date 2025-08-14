@@ -103,6 +103,8 @@ export class ReportsDataService {
           })
         }
 
+        metrics.sort((a, b) => a.order - b.order);
+
         for (let metric of sectionAdAccountAvailableMetrics) {
           if (!metrics.find(m => m.name === metric)) {
             metrics.push({
@@ -126,7 +128,7 @@ export class ReportsDataService {
           }
         }
 
-        metrics.sort((a, b) => a.order - b.order);
+        
 
         adAccounts.push({
           id: adAccount.adAccountId,

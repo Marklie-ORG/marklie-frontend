@@ -7,7 +7,7 @@
         <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
             <h4 class="mb-2 mt-4">{{ adAccount.name }}</h4>
 
-            <div class="graph-grid" #chartsGridContainer [attr.data-adaccount-id]="adAccount.id">
+            <div class="graph-grid" #chartsGridContainer [attr.data-adaccount-id]="adAccount.id" [style.display]="isReorderingAdAccounts() ? 'none' : 'grid'">
                 @for (graph of adAccount.graphs; track graph.metric) {
                     <div class="graph-card d-flex justify-center align-center"
                          [attr.data-graph-metric]="graph.metric"

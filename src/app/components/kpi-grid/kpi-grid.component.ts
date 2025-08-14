@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, input, Input, model, ViewChildren, QueryList, OnDestroy, AfterViewInit, computed, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, input, Input, model, ViewChildren, QueryList, OnDestroy, AfterViewInit, computed, ViewChild, signal } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
@@ -22,6 +22,8 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
 
   kpis = input<any>({});
   isViewMode = input<boolean>(false);
+
+  isReorderingAdAccounts = signal<boolean>(false);
 
   constructor(
     public metricsService: MetricsService
@@ -76,7 +78,8 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
       draggable: '.ad-account-item',
       handle: 'h4',
       disabled: disableDragging,
-      onEnd: (event) => this.ngZone.run(() => this.onAdAccountsReorderEnd(event)),
+      onStart: () => this.ngZone.run(() => this.isReorderingAdAccounts.set(true)),
+      onEnd: (event) => this.ngZone.run(() => { this.isReorderingAdAccounts.set(false); this.onAdAccountsReorderEnd(event); }),
     }));
   }
 

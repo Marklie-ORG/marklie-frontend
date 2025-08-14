@@ -42,6 +42,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
   private chartRefs: Record<string, Chart> = {};
 
   adAccountsGraphs = signal<GraphsAdAccount[]>([]);
+  isReorderingAdAccounts = signal<boolean>(false);
 
   private ngZone = inject(NgZone);
 
@@ -111,7 +112,8 @@ export class ChartsComponent implements OnChanges, OnDestroy {
         draggable: '.ad-account-item',
         handle: 'h4',
         disabled: disableDragging,
-        onEnd: () => this.ngZone.run(() => this.onAdAccountsReorderEnd()),
+        onStart: () => this.ngZone.run(() => this.isReorderingAdAccounts.set(true)),
+        onEnd: () => this.ngZone.run(() => { this.isReorderingAdAccounts.set(false); this.onAdAccountsReorderEnd(); }),
       }));
     }
   }

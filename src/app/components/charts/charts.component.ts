@@ -27,8 +27,10 @@ interface GraphConfig extends Metric {
 export class ChartsComponent implements OnChanges, OnDestroy {
 
   private sortablesByAdAccountId: Map<string, Sortable> = new Map();
+  private adAccountsSortable: Sortable | null = null;
 
   @ViewChildren('chartsGridContainer') chartsGridContainers!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
 
   graphs = input<any[]>([]);
   @Input() adAccounts: AdAccount[] = [];
@@ -54,6 +56,10 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyAllSortables();
+    if (this.adAccountsSortable) {
+      this.adAccountsSortable.destroy();
+      this.adAccountsSortable = null;
+    }
     // Destroy all charts on destroy
     Object.values(this.chartRefs).forEach((c) => c.destroy());
     this.chartRefs = {};
@@ -62,6 +68,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
   private initSortables(): void {
     const disableDragging = this.isViewMode();
 
+    // Sortable for per-account graph cards
     this.chartsGridContainers?.forEach((containerRef: ElementRef<HTMLElement>) => {
       const containerEl = containerRef.nativeElement;
       const adAccountId = containerEl.getAttribute('data-adaccount-id') || '';
@@ -86,6 +93,27 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
       this.sortablesByAdAccountId.set(adAccountId, sortable);
     });
+
+    // Sortable for ad accounts list
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (containerEl) {
+      if (this.adAccountsSortable) {
+        this.adAccountsSortable.destroy();
+        this.adAccountsSortable = null;
+      }
+
+      this.adAccountsSortable = this.ngZone.runOutsideAngular(() => Sortable.create(containerEl, {
+        animation: 150,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        group: { name: 'graphs-ad-accounts', pull: false, put: false },
+        draggable: '.ad-account-item',
+        handle: 'h4',
+        disabled: disableDragging,
+        onEnd: () => this.ngZone.run(() => this.onAdAccountsReorderEnd()),
+      }));
+    }
   }
 
   private destroyAllSortables(): void {
@@ -267,6 +295,48 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
     }
     
+  }
+
+  private onAdAccountsReorderEnd(): void {
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (!containerEl) return;
+
+    const current = [...this.adAccounts];
+
+    // Build new enabled order from DOM
+    const enabledOrderIds = Array.from(containerEl.querySelectorAll('.ad-account-item'))
+      .map(el => (el as HTMLElement).dataset['adaccountId']!)
+      .filter(Boolean);
+
+    // Map enabled ad accounts by id and collect their original positions
+    const enabledById = new Map<string, AdAccount>();
+    const enabledPositions: number[] = [];
+    for (let i = 0; i < current.length; i++) {
+      const a = current[i];
+      if (a.enabled) {
+        enabledById.set(String(a.id), a);
+        enabledPositions.push(i);
+      }
+    }
+
+    // Reorder enabled according to DOM
+    const reorderedEnabled: AdAccount[] = [];
+    for (const id of enabledOrderIds) {
+      const acc = enabledById.get(String(id));
+      if (acc) reorderedEnabled.push({ ...acc });
+    }
+
+    // Rebuild full list, keeping disabled at their original positions
+    const result: AdAccount[] = current.map(a => ({ ...a }));
+    for (let i = 0; i < enabledPositions.length; i++) {
+      const pos = enabledPositions[i];
+      result[pos] = { ...reorderedEnabled[i] };
+    }
+
+    // Update order field sequentially across all accounts
+    result.forEach((a, idx) => a.order = idx);
+
+    this.adAccountsChange.emit(result);
   }
 
   private onReorderEnd(event: Sortable.SortableEvent, adAccountId: string): void {

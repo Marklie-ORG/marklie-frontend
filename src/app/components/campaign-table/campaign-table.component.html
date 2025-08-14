@@ -7,12 +7,12 @@
   <div class="table-container">
     <table class="campaign-table">
       <thead>
-        <tr #campaignsHeaderContainer>
+        <tr #campaignsHeaderContainer [attr.data-ad-account-id]="adAccount.id">
           <th class="non-sortable">#</th>
           <th class="non-sortable">Campaign</th>
           <ng-container *ngFor="let metric of adAccount.metrics">
             @if (metric.enabled) {
-              <th class="draggable-metric-header">
+              <th class="draggable-metric-header" [attr.data-metric-name]="metric.name">
                 {{metricsService.formatMetricLabel(metric.name)}}
               </th>
             }

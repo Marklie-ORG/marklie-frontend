@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, input, Input, model, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, input, Input, model, OnDestroy, AfterViewInit, QueryList, ViewChildren } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
@@ -8,32 +8,11 @@ import Sortable from 'sortablejs';
   templateUrl: './campaign-table.component.html',
   styleUrl: './campaign-table.component.scss'
 })
-export class CampaignTableComponent {
+export class CampaignTableComponent implements AfterViewInit, OnDestroy {
   
-  // private sortable: Sortable | null = null;
+  private sortables: Sortable[] = [];
 
-  // @ViewChild('campaignsHeaderContainer', { static: false }) set gridContainer(el: ElementRef | undefined) {
-  //   if (this.sortable) {
-  //     this.sortable.destroy();
-  //     this.sortable = null;
-  //   }
-
-  //   if (el) {
-  //     this.sortable = Sortable.create(el.nativeElement, {
-  //       animation: 200,
-  //       easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-  //       ghostClass: 'sortable-ghost',
-  //       dragClass: 'sortable-drag',
-  //       draggable: '.draggable-metric-header',
-  //       filter: '.non-sortable',
-  //       onEnd: (event) => this.reorderItems(event),
-  //     });
-  //   }
-
-  //   if (this.isViewMode()) {
-  //     this.sortable?.option('disabled', true);
-  //   }
-  // }
+  @ViewChildren('campaignsHeaderContainer') headerContainers!: QueryList<ElementRef>;
 
   @Input() campaigns: any[] = [];
   adAccounts = model<AdAccount[]>([]);
@@ -43,24 +22,84 @@ export class CampaignTableComponent {
 
   public metricsService = inject(MetricsService);
 
-  // reorderItems(event: Sortable.SortableEvent) {
-  //   const oldIndex = event.oldIndex! - 2; // because there are 2 non-sortable columns in container (two first <th>)
-  //   const newIndex = event.newIndex! - 2;
-  //   const enabledMetrics = this.metrics().filter(m => m.enabled);
-  //   const movedItem = enabledMetrics.splice(oldIndex, 1)[0];
-  //   enabledMetrics.splice(newIndex, 0, movedItem);
-  //   enabledMetrics?.forEach((m, index) => m.order = index);
+  ngAfterViewInit(): void {
+    this.initSortables();
+    this.headerContainers.changes.subscribe(() => {
+      this.initSortables();
+    });
+  }
 
-  //   const disabledMetrics = this.metrics().filter(m => !m.enabled);
-  //   disabledMetrics.forEach((m, index) => m.order = index + enabledMetrics.length);
+  ngOnDestroy(): void {
+    this.destroySortables();
+  }
 
-  //   this.metrics.set([...enabledMetrics, ...disabledMetrics]);
-  // }
-  
-  // ngOnDestroy(): void {
-  //   if (this.sortable) {
-  //     this.sortable.destroy();
-  //   }
-  // }
-  
+  private initSortables(): void {
+    this.destroySortables();
+    this.headerContainers.forEach(headerRef => {
+      const headerEl = headerRef.nativeElement as HTMLElement;
+      const adAccountId = headerEl.dataset['adAccountId'] ?? 'default';
+      const sortable = Sortable.create(headerEl, {
+        group: { name: `campaign-metrics-${adAccountId}`, pull: false, put: false },
+        animation: 200,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        draggable: '.draggable-metric-header',
+        filter: '.non-sortable',
+        onEnd: (event) => this.reorderItems(event),
+      });
+      this.sortables.push(sortable);
+    });
+
+    if (this.isViewMode()) {
+      this.sortables.forEach(s => s.option('disabled', true));
+    }
+  }
+
+  private destroySortables(): void {
+    this.sortables.forEach(s => s.destroy());
+    this.sortables = [];
+  }
+
+  private reorderItems(event: Sortable.SortableEvent) {
+    const headerEl = event.from as HTMLElement;
+    const adAccountId = headerEl.dataset['adAccountId'];
+    if (!adAccountId) return;
+
+    const accounts = this.adAccounts();
+    const account = accounts.find(a => a.id === adAccountId);
+    if (!account) return;
+
+    const enabledOrderFromDom: string[] = Array.from(headerEl.querySelectorAll('.draggable-metric-header'))
+      .map(el => (el as HTMLElement).dataset['metricName']!)
+      .filter(Boolean);
+
+    if (enabledOrderFromDom.length === 0) return;
+
+    const enabledByName = new Map<string, Metric>();
+    for (const m of account.metrics) {
+      if (m.enabled) enabledByName.set(m.name, m);
+    }
+
+    const enabledMetricsReordered: Metric[] = [];
+    for (const name of enabledOrderFromDom) {
+      const m = enabledByName.get(name);
+      if (m) enabledMetricsReordered.push({ ...m });
+    }
+
+    const reordered: Metric[] = [];
+    let enabledPtr = 0;
+    for (const metric of account.metrics) {
+      if (metric.enabled) {
+        reordered.push({ ...enabledMetricsReordered[enabledPtr++] });
+      } else {
+        reordered.push({ ...metric });
+      }
+    }
+
+    reordered.forEach((m, idx) => m.order = idx);
+
+    const updatedAccounts = accounts.map(a => a.id === adAccountId ? ({ ...a, metrics: reordered }) : a);
+    this.adAccounts.set(updatedAccounts);
+  }
 }

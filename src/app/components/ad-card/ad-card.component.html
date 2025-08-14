@@ -10,13 +10,13 @@
         <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
           <img class="ad-media" [src]="ad.thumbnailUrl"/>
         </div>
-        <div class="metrics" #adsGridContainer>
-          <ng-container *ngFor="let metric of adAccount.metrics">
-            <div class="metric" [style.display]="metric.enabled ? 'flex' : 'none'">
+        <div class="metrics" #adsGridContainer [attr.data-ad-account-id]="adAccount.id">
+          @for (metric of adAccount.metrics; track metric.name) {
+            <div class="metric" [class.enabled]="metric.enabled" [attr.data-metric-name]="metric.name" [style.display]="metric.enabled ? 'flex' : 'none'">
               <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
               <div class="metric-value">{{ad[metric.name] || '1,000'}}</div>
             </div>
-          </ng-container>
+          }
         </div>
       </div>
     

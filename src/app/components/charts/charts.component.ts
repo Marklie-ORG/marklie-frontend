@@ -54,6 +54,9 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyAllSortables();
+    // Destroy all charts on destroy
+    Object.values(this.chartRefs).forEach((c) => c.destroy());
+    this.chartRefs = {};
   }
 
   private initSortables(): void {
@@ -88,6 +91,10 @@ export class ChartsComponent implements OnChanges, OnDestroy {
   private destroyAllSortables(): void {
     this.sortablesByAdAccountId.forEach((s) => s.destroy());
     this.sortablesByAdAccountId.clear();
+  }
+
+  private getCanvasId(adAccountId: string, metric: string): string {
+    return `Chart-${adAccountId}-${metric}`;
   }
 
   initializeGraphs() {
@@ -179,19 +186,16 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
     for (const adAccount of this.adAccountsGraphs()) {
       for (const config of adAccount.graphs) {
-        const canvases = document.querySelectorAll(`#Chart${config.metric}`);
-        
-        if (!canvases.length) continue;
-  
-        let currentCanvas = canvases[canvases.length - 1];
-        let canvasId = `Chart${config.metric}-${canvases.length}`
-        currentCanvas.id = canvasId;
-  
-        let data = this.graphs().map(g => parseFloat(g[config.metric]) || Math.random() * 1000);
-        
+        const canvasId = this.getCanvasId(adAccount.id, config.metric);
+        const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
+        if (!canvas) continue;
+
+        const data = this.graphs().map(g => parseFloat(g[config.metric]) || Math.random() * 1000);
+
+        // Destroy any existing chart for this canvas
         this.chartRefs[canvasId]?.destroy();
-  
-        this.chartRefs[canvasId] = new Chart(currentCanvas as HTMLCanvasElement, {
+
+        this.chartRefs[canvasId] = new Chart(canvas, {
           type: 'line',
           data: {
             labels,

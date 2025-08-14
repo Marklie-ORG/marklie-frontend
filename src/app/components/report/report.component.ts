@@ -91,10 +91,7 @@ export class ReportComponent {
 
       this.checkIfAllAdAccountsDisabled();
       
-      // console.log("Report sections changed:", this.reportSections());
       this.graphsSectionAdAccounts = [...this.reportSections().find(section => section.key === 'graphs')?.adAccounts || []];
-      // console.log("Graphs section ad accounts:", this.graphsSectionAdAccounts);
-      // this.cdr.detectChanges();
       
     });
   }
@@ -127,14 +124,15 @@ export class ReportComponent {
     this.reportSections.set(updatedSections);
   }
 
+  onGraphsAdAccountsChange(updatedAdAccounts: AdAccount[]) {
+    const updatedSections = this.reportSections().map(section => {
+      if (section.key !== 'graphs') return section;
+      return { ...section, adAccounts: [...updatedAdAccounts] } as ReportSection;
+    });
+    this.reportSections.set(updatedSections);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    // if (changes['reportSections']) console.log(this.reportSections)
-    // if (changes['reportSections'] && this.reportSections) {
-    //   this.reportSections.sort((a, b) => a.order - b.order);
-    //   this.reportSections.forEach(section => {
-    //       section.metrics.sort(((a: any, b: any) => a.order - b.order));
-    //   });
-    // }
   }
 
   ngOnDestroy() {

@@ -67,7 +67,8 @@
         <hr>
       <charts
       [graphs]="data.graphs"
-      [(adAccounts)]="graphsSectionAdAccounts"
+      [adAccounts]="graphsSectionAdAccounts"
+      (adAccountsChange)="onGraphsAdAccountsChange($event)"
       [isViewMode]="isViewMode()"
       ></charts>
       }

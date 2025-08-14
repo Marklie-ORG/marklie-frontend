@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, input, Input, model, ViewChildren, QueryList, OnDestroy, AfterViewInit, computed } from '@angular/core';
+import { Component, effect, ElementRef, input, Input, model, ViewChildren, QueryList, OnDestroy, AfterViewInit, computed, ViewChild } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
@@ -13,8 +13,10 @@ import { NgZone, inject } from '@angular/core';
 export class KpiGridComponent implements AfterViewInit, OnDestroy {
 
   private sortablesByAdAccountId: Map<string, Sortable> = new Map();
+  private adAccountsSortable: Sortable | null = null;
 
   @ViewChildren('kpiGridContainer') kpiGridContainers!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
   
   adAccounts = model<AdAccount[]>([]);
 
@@ -28,6 +30,7 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
     effect(() => {
       const disabled = this.isViewMode();
       queueMicrotask(() => {
+        if (this.adAccountsSortable) this.adAccountsSortable.option('disabled', disabled);
         this.sortablesByAdAccountId.forEach((s) => s.option('disabled', disabled));
       });
     });
@@ -36,6 +39,7 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
   private ngZone = inject(NgZone);
 
   ngAfterViewInit(): void {
+    this.initializeAdAccountsSortable();
     this.initializeSortables();
 
     // Re-initialize when the containers list changes (e.g., ad accounts updated)
@@ -47,6 +51,33 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyAllSortables();
+    if (this.adAccountsSortable) {
+      this.adAccountsSortable.destroy();
+      this.adAccountsSortable = null;
+    }
+  }
+
+  private initializeAdAccountsSortable(): void {
+    const disableDragging = this.isViewMode();
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (!containerEl) return;
+
+    if (this.adAccountsSortable) {
+      this.adAccountsSortable.destroy();
+      this.adAccountsSortable = null;
+    }
+
+    this.adAccountsSortable = this.ngZone.runOutsideAngular(() => Sortable.create(containerEl, {
+      animation: 150,
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      group: { name: 'kpi-ad-accounts', pull: false, put: false },
+      draggable: '.ad-account-item',
+      handle: 'h4',
+      disabled: disableDragging,
+      onEnd: (event) => this.ngZone.run(() => this.onAdAccountsReorderEnd(event)),
+    }));
   }
 
   private initializeSortables(): void {
@@ -83,6 +114,48 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
   private destroyAllSortables(): void {
     this.sortablesByAdAccountId.forEach((s) => s.destroy());
     this.sortablesByAdAccountId.clear();
+  }
+
+  private onAdAccountsReorderEnd(event: Sortable.SortableEvent): void {
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (!containerEl) return;
+
+    const current = [...this.adAccounts()];
+
+    // Build new enabled order from DOM
+    const enabledOrderIds = Array.from(containerEl.querySelectorAll('.ad-account-item'))
+      .map(el => (el as HTMLElement).dataset['adaccountId']!)
+      .filter(Boolean);
+
+    // Map enabled ad accounts by id and collect their original positions
+    const enabledById = new Map<string, AdAccount>();
+    const enabledPositions: number[] = [];
+    for (let i = 0; i < current.length; i++) {
+      const a = current[i];
+      if (a.enabled) {
+        enabledById.set(String(a.id), a);
+        enabledPositions.push(i);
+      }
+    }
+
+    // Reorder enabled according to DOM
+    const reorderedEnabled: AdAccount[] = [];
+    for (const id of enabledOrderIds) {
+      const acc = enabledById.get(String(id));
+      if (acc) reorderedEnabled.push({ ...acc });
+    }
+
+    // Rebuild full list, keeping disabled at their original positions
+    const result: AdAccount[] = current.map(a => ({ ...a }));
+    for (let i = 0; i < enabledPositions.length; i++) {
+      const pos = enabledPositions[i];
+      result[pos] = { ...reorderedEnabled[i] };
+    }
+
+    // Update order field sequentially across all accounts
+    result.forEach((a, idx) => a.order = idx);
+
+    this.adAccounts.set(result);
   }
 
   private onReorderEnd(event: Sortable.SortableEvent, adAccountId: string): void {

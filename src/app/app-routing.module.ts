@@ -20,6 +20,7 @@ import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
 import { ReportsPageComponent } from './pages/reports/reports-page.component.js';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { BillingComponent } from './pages/billing/billing.component';
 const routes: Routes = [
   {
     path: '',
@@ -107,6 +108,11 @@ const routes: Routes = [
   {
     path: 'view-report/:clientUuid/:reportUuid',
     component: ViewReportComponent
+  },
+  {
+    path: 'billing',
+    component: BillingComponent,
+    canActivate: [authGuard]
   }
 ];
 

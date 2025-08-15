@@ -31,6 +31,7 @@ export class DashboardHeaderComponent implements OnInit {
 
   @ViewChild('triggerButton') triggerButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('menu') menu?: ElementRef<HTMLElement>;
+  @ViewChild('feedbackContainer') feedbackContainer?: ElementRef<HTMLElement>;
   @ViewChildren('menuItem') menuItems?: QueryList<ElementRef<HTMLElement>>;
 
   constructor(
@@ -175,12 +176,22 @@ export class DashboardHeaderComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    if (!this.isDropdownOpen) return;
     const target = event.target as Node;
-    const clickInsideTrigger = this.triggerButton?.nativeElement.contains(target);
-    const clickInsideMenu = this.menu?.nativeElement.contains(target);
-    if (!clickInsideTrigger && !clickInsideMenu) {
-      this.closeDropdown();
+
+    if (this.isDropdownOpen) {
+      const clickInsideTrigger = this.triggerButton?.nativeElement.contains(target);
+      const clickInsideMenu = this.menu?.nativeElement.contains(target);
+      if (!clickInsideTrigger && !clickInsideMenu) {
+        this.closeDropdown();
+      }
+    }
+
+    if (this.isFeedbackOpen) {
+      const clickInsideFeedback = this.feedbackContainer?.nativeElement.contains(target);
+      if (!clickInsideFeedback) {
+        this.isFeedbackOpen = false;
+        this.feedbackSent = false;
+      }
     }
   }
 

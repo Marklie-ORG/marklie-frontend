@@ -1,3 +1,4 @@
+import { CampaignData } from "./get-report.interfaces";
 import { SectionKey } from "./interfaces";
 
 export interface ReportSection {
@@ -14,6 +15,7 @@ export interface ReportSection {
     enabled: boolean
     name: string
     metrics: Metric[]
+    campaignsData?: CampaignData[]
   }
   
   export interface Metric {

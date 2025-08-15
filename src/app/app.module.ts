@@ -67,6 +67,7 @@ import { AdAccountsSettingsComponent } from './components/ad-accounts-settings/a
 import { PhoneInputComponent } from './components/phone-input/phone-input.component';
 import { DatabaseTableComponent } from './components/database-table/database-table.component';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { BillingComponent } from './pages/billing/billing.component';
 
 register();
 
@@ -124,7 +125,8 @@ register();
     AdAccountsSettingsComponent,
     PhoneInputComponent,
   DatabaseTableComponent,
-  ReportsDatabasePageComponent
+  ReportsDatabasePageComponent,
+  BillingComponent
   ],
   imports: [
     BrowserModule,

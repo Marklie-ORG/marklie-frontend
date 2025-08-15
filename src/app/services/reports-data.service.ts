@@ -166,6 +166,7 @@ export class ReportsDataService {
       for (let adAccount of section.adAccounts) {
 
         let metrics: Metric[] = [];
+        let campaignsDataVar: TableAdAccountData | undefined;
 
         if (section.name === 'kpis') {
           const kpiData = adAccount.data as KpiAdAccountData;
@@ -225,27 +226,32 @@ export class ReportsDataService {
             .map(([name, order]) => ({ name, order, enabled: true }))
             .sort((a, b) => a.order - b.order);
         } else if (section.name === 'campaigns') {
-          const tableData = adAccount.data as TableAdAccountData;
-          const metricMap = new Map<string, number>();
-          for (const row of tableData) {
-            for (const point of row.data) {
-              if (!metricMap.has(point.name)) {
-                metricMap.set(point.name, point.order);
-              }
-            }
-          }
-          metrics = Array.from(metricMap.entries())
-            .map(([name, order]) => ({ name, order, enabled: true }))
-            .sort((a, b) => a.order - b.order);
+           const tableData = adAccount.data as TableAdAccountData;
+           const metricMap = new Map<string, number>();
+           for (const campaign of tableData) {
+             for (const point of campaign.data) {
+               if (!metricMap.has(point.name)) {
+                 metricMap.set(point.name, point.order);
+               }
+             }
+           }
+           metrics = Array.from(metricMap.entries())
+             .map(([name, order]) => ({ name, order, enabled: true }))
+             .sort((a, b) => a.order - b.order);
+           campaignsDataVar = tableData;
         }
 
-        adAccounts.push({
+        const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
           enabled: true
-        })
+        };
+        if (campaignsDataVar) {
+          adAccountObj.campaignsData = campaignsDataVar;
+        }
+        adAccounts.push(adAccountObj)
 
       }
 

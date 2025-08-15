@@ -63,7 +63,7 @@ export class ReportComponent {
 
     effect(() => {
 
-      console.log("Report sections changed:", this.reportSections());
+      // console.log("Report sections changed:", this.reportSections());
 
       this.checkIfAllAdAccountsDisabled();
       

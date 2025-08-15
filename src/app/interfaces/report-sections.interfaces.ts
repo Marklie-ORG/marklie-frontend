@@ -17,9 +17,16 @@ export interface ReportSection {
   }
   
   export interface Metric {
-      name: string
-      order: number
-      enabled?: boolean
-      isCustom?: boolean
-      id?: string
+    name: string
+    order: number
+    enabled?: boolean
+    isCustom?: boolean
+    id?: string
+    value?: number
+    dataPoints?: MetricDataPoint[]
+  }
+
+  export interface MetricDataPoint {
+    value: number
+    date: string
   }

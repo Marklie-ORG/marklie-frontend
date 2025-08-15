@@ -20,7 +20,8 @@
                 >
                   <div class="kpi-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
                   <div class="kpi-value">
-                    {{ metricsService.formatMetricValue(metric.name, kpis()[metric.name]) }}
+                    <!-- {{ metricsService.formatMetricValue(metric.name, kpis()[metric.name]) }} -->
+                    {{ metric.value }}
                   </div>
                 </div>
           

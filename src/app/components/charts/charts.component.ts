@@ -50,7 +50,6 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['adAccounts']) {
-      console.log("adAccounts changed", changes['adAccounts'])
       this.initializeGraphs();
     }
   }
@@ -64,6 +63,66 @@ export class ChartsComponent implements OnChanges, OnDestroy {
     // Destroy all charts on destroy
     Object.values(this.chartRefs).forEach((c) => c.destroy());
     this.chartRefs = {};
+  }
+
+  initializeGraphs() {
+    setTimeout(() => {
+      const adAccounts = this.adAccounts;
+
+      this.adAccountsGraphs.set([]);
+
+      for (let adAccount of adAccounts) {
+        const metrics = (adAccount.metrics || []).filter(m => m.enabled).sort((a, b) => a.order - b.order);
+        const graphConfigs = this.getGraphConfigs();
+
+        this.adAccountsGraphs.update(prev => [...prev, {
+          id: adAccount.id,
+          name: adAccount.name,
+          graphs: [],
+          enabled: adAccount.enabled,
+          order: adAccount.order
+        }]);
+
+        let graphs: GraphConfig[] = [];
+
+        for (const metric of metrics) {
+          let config = graphConfigs.find(c => c.metric === metric.name);
+
+          if (!config) {
+            config = {
+              metric: metric.name.replaceAll(' ', '_'), 
+              label: metric.name, 
+              color: '#77B6FB', format: (v: any) => `${v}` 
+            }
+          }
+
+          let graph = {
+            ...config,
+            ...metric,
+          }
+
+          graphs.push(graph)
+
+          this.adAccountsGraphs.update(prev => {
+            const lastIndex = prev.length - 1;
+            prev[lastIndex].graphs = graphs;
+            return prev;
+          });
+        }
+        this.adAccountsGraphs.update(prev => prev.sort((a: any, b: any) => a.order - b.order));
+      }
+
+      // Render and wire up drag after DOM updates
+      setTimeout(() => {
+        this.renderCharts();
+        this.destroyAllSortables();
+        this.initSortables();
+        this.chartsGridContainers?.changes?.subscribe(() => {
+          this.destroyAllSortables();
+          this.initSortables();
+        });
+      }, 0);
+    }, 50);
   }
 
   private initSortables(): void {
@@ -124,62 +183,10 @@ export class ChartsComponent implements OnChanges, OnDestroy {
   }
 
   private getCanvasId(adAccountId: string, metric: string): string {
-    return `Chart-${adAccountId}-${metric}`;
+    return `Chart-${adAccountId}-${metric.replaceAll(' ', '_')}`;
   }
 
-  initializeGraphs() {
-    setTimeout(() => {
-      const adAccounts = this.adAccounts;
-
-      this.adAccountsGraphs.set([]);
-
-      for (let adAccount of adAccounts) {
-        const metrics = (adAccount.metrics || []).filter(m => m.enabled).sort((a, b) => a.order - b.order);
-        const graphConfigs = this.getGraphConfigs();
-
-        this.adAccountsGraphs.update(prev => [...prev, {
-          id: adAccount.id,
-          name: adAccount.name,
-          graphs: [],
-          enabled: adAccount.enabled,
-          order: adAccount.order
-        }]);
-
-        let graphs: GraphConfig[] = [];
-
-        for (const metric of metrics) {
-          let config = graphConfigs.find(c => c.metric === metric.name);
-
-          if (!config) {
-            config = { metric: metric.id || '', label: metric.name, color: '#77B6FB', format: (v: any) => `${v}` }
-          }
-
-          graphs.push({
-            ...config,
-            ...metric,
-          })
-
-          this.adAccountsGraphs.update(prev => {
-            const lastIndex = prev.length - 1;
-            prev[lastIndex].graphs = graphs;
-            return prev;
-          });
-        }
-        this.adAccountsGraphs.update(prev => prev.sort((a: any, b: any) => a.order - b.order));
-      }
-
-      // Render and wire up drag after DOM updates
-      setTimeout(() => {
-        this.renderCharts();
-        this.destroyAllSortables();
-        this.initSortables();
-        this.chartsGridContainers?.changes?.subscribe(() => {
-          this.destroyAllSortables();
-          this.initSortables();
-        });
-      }, 0);
-    }, 50);
-  }
+  
 
   getGraphConfigs() {
     return [
@@ -190,7 +197,8 @@ export class ChartsComponent implements OnChanges, OnDestroy {
       { metric: 'addToCart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },
-      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
+      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },      
+      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
       { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${parseFloat(v).toFixed(2)}` },
       { metric: 'cpc', label: 'CPC', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'cpp', label: 'CPP', color: '#77B6FB', format: (v: any) => `$${v}` },
@@ -207,20 +215,21 @@ export class ChartsComponent implements OnChanges, OnDestroy {
   }
 
   private renderCharts(): void {
-    if (!this.graphs()?.length) return;
-
-    const labels = this.graphs().map(g =>
-      new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
-
 
     for (const adAccount of this.adAccountsGraphs()) {
       for (const config of adAccount.graphs) {
         const canvasId = this.getCanvasId(adAccount.id, config.metric);
         const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
+        
         if (!canvas) continue;
 
-        const data = this.graphs().map(g => parseFloat(g[config.metric]) || Math.random() * 1000);
+        const points = config.dataPoints || [];
+        const data = points.map(d => d.value);
+        const labels = points.map(d => {
+          // Convert 'YYYY-MM-DD' to a more human readable format, e.g. 'Aug 10, 2025'
+          const dateObj = new Date(d.date);
+          return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        });
 
         // Destroy any existing chart for this canvas
         this.chartRefs[canvasId]?.destroy();

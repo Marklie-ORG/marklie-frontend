@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 export interface DatabaseReportItem {
@@ -12,25 +12,28 @@ export interface DatabaseReportItem {
   templateUrl: './database-table.component.html',
   styleUrls: ['./database-table.component.scss']
 })
-export class DatabaseTableComponent implements OnInit {
+export class DatabaseTableComponent implements OnInit, OnChanges {
   @Input() reports: DatabaseReportItem[] = [];
   private router = inject(Router);
 
   reportsToRender: DatabaseReportItem[] = [];
 
   ngOnInit(): void {
-    // If no data passed in, use mock data
-    if (!this.reports || this.reports.length === 0) {
-      this.reportsToRender = [];
-    } else {
-      this.reportsToRender = this.reports;
+    this.updateRenderList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['reports']) {
+      this.updateRenderList();
     }
+  }
 
-    console.log(this.reportsToRender);
-
-    // Sort newest first
-    this.reportsToRender = [...this.reportsToRender].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    this.reportsToRender = this.reportsToRender.slice(0, 4);
+  private updateRenderList(): void {
+    this.reportsToRender = Array.isArray(this.reports) ? [...this.reports] : [];
+    // Sort newest first and limit to 4
+    this.reportsToRender = this.reportsToRender
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 4);
   }
 
   formatTimeOrDate(timestamp: string | Date): string {

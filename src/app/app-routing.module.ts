@@ -19,6 +19,7 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
 import { ReportsPageComponent } from './pages/reports/reports-page.component.js';
+import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
 const routes: Routes = [
   {
     path: '',
@@ -77,6 +78,11 @@ const routes: Routes = [
   {
     path: 'reports',
     component: ReportsPageComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'reports-database',
+    component: ReportsDatabasePageComponent,
     canActivate: [authGuard]
   },
   {

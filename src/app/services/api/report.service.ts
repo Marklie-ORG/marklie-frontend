@@ -35,8 +35,8 @@ export class ReportService {
     return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/reports/`, {headers: this.headers}));
   }
 
-  async getClientReports(clientUuid: string): Promise<Report[]> {
-    return firstValueFrom(this.http.get<Report[]>(`${this.apiUrl}/reports/client/${clientUuid}`, {headers: this.headers}));
+  async getClientReports(clientUuid: string): Promise<any[]> {
+    return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/reports/client/${clientUuid}`, {headers: this.headers}));
   }
 
   async getSchedulingOption(uuid: string): Promise<any> {

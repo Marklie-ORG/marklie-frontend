@@ -38,12 +38,7 @@ export class ClientComponent implements OnInit {
   client: Client | null = null;
   activityLogs: any[] = [];
   scheduleOptions: ScheduledReport[] = [];
-  generatedReports: { uuid: string; reportName: string; createdAt: Date | string; }[] = [
-    { uuid: 'rpt-101', reportName: 'Weekly Performance Overview', createdAt: new Date() },
-    { uuid: 'rpt-102', reportName: 'Monthly Marketing Summary', createdAt: new Date(Date.now() - 86400000) },
-    { uuid: 'rpt-103', reportName: 'Quarterly Ad Spend Report', createdAt: new Date(Date.now() - 3 * 86400000) },
-    { uuid: 'rpt-103', reportName: 'Quarterly Ad Spend Report', createdAt: new Date(Date.now() - 3 * 86400000) }
-  ];
+  generatedReports: { uuid: string; reportName: string; createdAt: Date | string; }[] = [];
 
   scheduleOptionsLoading = true;
   private schedulesService = inject(SchedulesService);
@@ -86,6 +81,13 @@ export class ClientComponent implements OnInit {
     this.activityLogs = await this.clientService.getClientsLogs(this.clientUuid);
     this.scheduleOptions = await this.schedulesService.getSchedulingOptions(this.clientUuid)
     this.scheduleOptionsLoading = false;
+
+    const reports: any[] = await this.reportService.getClientReports(this.clientUuid);
+    this.generatedReports = (reports || []).map((r: any): DatabaseReportItem => ({
+      uuid: r.uuid,
+      reportName: r?.schedulingOption?.reportName || r?.reportType || 'Report',
+      createdAt: r.createdAt
+    }));
   }
 
 

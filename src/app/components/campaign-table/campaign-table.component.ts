@@ -1,7 +1,8 @@
-import { Component, ElementRef, inject, input, Input, model, OnDestroy, AfterViewInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, ElementRef, inject, input, Input, model, OnDestroy, AfterViewInit, QueryList, ViewChildren, ViewChild } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'campaign-table',
@@ -11,8 +12,10 @@ import Sortable from 'sortablejs';
 export class CampaignTableComponent implements AfterViewInit, OnDestroy {
   
   private sortables: Sortable[] = [];
+  private adAccountsSortable: Sortable | null = null;
 
   @ViewChildren('campaignsHeaderContainer') headerContainers!: QueryList<ElementRef>;
+  @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
 
   @Input() campaigns: any[] = [];
   adAccounts = model<AdAccount[]>([]);
@@ -21,8 +24,10 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
   enabledMetrics: Metric[] = [];
 
   public metricsService = inject(MetricsService);
+  private ngZone = inject(NgZone);
 
   ngAfterViewInit(): void {
+    this.initAdAccountsSortable();
     this.initSortables();
     this.headerContainers.changes.subscribe(() => {
       this.initSortables();
@@ -31,6 +36,43 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroySortables();
+    if (this.adAccountsSortable) {
+      this.adAccountsSortable.destroy();
+      this.adAccountsSortable = null;
+    }
+  }
+
+  private initAdAccountsSortable(): void {
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (!containerEl) return;
+
+    if (this.adAccountsSortable) {
+      this.adAccountsSortable.destroy();
+      this.adAccountsSortable = null;
+    }
+
+    this.adAccountsSortable = this.ngZone.runOutsideAngular(() => Sortable.create(containerEl, {
+      group: { name: 'campaign-table-ad-accounts', pull: false, put: false },
+      animation: 200,
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+      ghostClass: 'sortable-ghost',
+      dragClass: 'sortable-drag',
+      draggable: '.ad-account-item',
+      handle: 'h4',
+      onStart: () => this.ngZone.run(() => {
+        containerEl.setAttribute('data-reordering', 'true');
+        this.sortables.forEach(s => s.option('disabled', true));
+      }),
+      onEnd: () => this.ngZone.run(() => {
+        containerEl.removeAttribute('data-reordering');
+        this.sortables.forEach(s => s.option('disabled', this.isViewMode()));
+        this.onAdAccountsReorderEnd();
+      })
+    }));
+
+    if (this.isViewMode()) {
+      this.adAccountsSortable.option('disabled', true);
+    }
   }
 
   private initSortables(): void {
@@ -59,6 +101,43 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
   private destroySortables(): void {
     this.sortables.forEach(s => s.destroy());
     this.sortables = [];
+  }
+
+  private onAdAccountsReorderEnd(): void {
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (!containerEl) return;
+
+    const current = [...this.adAccounts()];
+
+    const enabledOrderIds = Array.from(containerEl.querySelectorAll('.ad-account-item'))
+      .map(el => (el as HTMLElement).dataset['adaccountId']!)
+      .filter(Boolean);
+
+    const enabledById = new Map<string, AdAccount>();
+    const enabledPositions: number[] = [];
+    for (let i = 0; i < current.length; i++) {
+      const a = current[i];
+      if (a.enabled) {
+        enabledById.set(String(a.id), a);
+        enabledPositions.push(i);
+      }
+    }
+
+    const reorderedEnabled: AdAccount[] = [];
+    for (const id of enabledOrderIds) {
+      const acc = enabledById.get(String(id));
+      if (acc) reorderedEnabled.push({ ...acc });
+    }
+
+    const result: AdAccount[] = current.map(a => ({ ...a }));
+    for (let i = 0; i < enabledPositions.length; i++) {
+      const pos = enabledPositions[i];
+      result[pos] = { ...reorderedEnabled[i] };
+    }
+
+    result.forEach((a, idx) => a.order = idx);
+
+    this.adAccounts.set(result);
   }
 
   private reorderItems(event: Sortable.SortableEvent) {

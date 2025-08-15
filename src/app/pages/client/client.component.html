@@ -1,4 +1,4 @@
-<div class="container" style="height: 85%;">
+<div class="container">
 
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
@@ -58,6 +58,8 @@
         <activity-table 
         [logs]="activityLogs"
         ></activity-table>
+
+        <database-table [reports]="generatedReports"></database-table>
       </div>
     </div>
 </div>

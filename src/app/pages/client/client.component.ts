@@ -7,6 +7,7 @@ import { Client, ClientService } from 'src/app/services/api/client.service.js';
 import { ReportService } from 'src/app/services/api/report.service.js';
 import { AuthService } from 'src/app/services/api/auth.service.js';
 import {SchedulesService} from "../../services/api/schedules.service.js";
+import { DatabaseReportItem } from '../../components/database-table/database-table.component';
 
 interface Activity {
   status: 'new' | 'old',
@@ -37,6 +38,12 @@ export class ClientComponent implements OnInit {
   client: Client | null = null;
   activityLogs: any[] = [];
   scheduleOptions: ScheduledReport[] = [];
+  generatedReports: { uuid: string; reportName: string; createdAt: Date | string; }[] = [
+    { uuid: 'rpt-101', reportName: 'Weekly Performance Overview', createdAt: new Date() },
+    { uuid: 'rpt-102', reportName: 'Monthly Marketing Summary', createdAt: new Date(Date.now() - 86400000) },
+    { uuid: 'rpt-103', reportName: 'Quarterly Ad Spend Report', createdAt: new Date(Date.now() - 3 * 86400000) },
+    { uuid: 'rpt-103', reportName: 'Quarterly Ad Spend Report', createdAt: new Date(Date.now() - 3 * 86400000) }
+  ];
 
   scheduleOptionsLoading = true;
   private schedulesService = inject(SchedulesService);

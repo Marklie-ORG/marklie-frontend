@@ -70,6 +70,33 @@ export class ReportsDataService {
 
     console.log(availableMetrics)
 
+    // helpers to generate lightweight preview data (keep scoped to this method)
+    const generateDateSeries = (days: number = 10) => {
+      const today = new Date();
+      const dates: string[] = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString());
+      }
+      return dates;
+    };
+
+    const randomFor = (metricName: string): number => {
+      const name = (metricName || '').toLowerCase();
+      if (name.includes('roas')) return +(Math.random() * 4 + 0.5).toFixed(2);
+      if (name.includes('ctr') || name.includes('rate')) return +(Math.random() * 5).toFixed(2);
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return +(Math.random() * 3 + 0.2).toFixed(2) as unknown as number;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return +(Math.random() * 1500).toFixed(2) as unknown as number;
+      if (name.includes('impressions') || name.includes('reach')) return Math.floor(Math.random() * 50000 + 1000);
+      if (name.includes('click')) return Math.floor(Math.random() * 2000 + 50);
+      if (name.includes('purchase') || name.includes('purchases')) return Math.floor(Math.random() * 120);
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return Math.floor(Math.random() * 200);
+      if (name.includes('checkout')) return Math.floor(Math.random() * 150);
+      if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
+      return +(Math.random() * 100).toFixed(2) as unknown as number;
+    };
+
     for (let section of facebookProvider?.sections || []) {
 
       let adAccounts: AdAccount[] = [];
@@ -128,15 +155,47 @@ export class ReportsDataService {
           }
         }
 
-        
-
-        adAccounts.push({
+        // Build ad account object and attach preview data per section
+        const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
           enabled: adAccount.enabled
-        })
+        };
+
+        if (section.name === 'kpis') {
+          adAccountObj.metrics = adAccountObj.metrics.map(m => ({ ...m, value: randomFor(m.name) }));
+        } else if (section.name === 'graphs') {
+          const dates = generateDateSeries(10);
+          adAccountObj.metrics = adAccountObj.metrics.map(m => ({
+            ...m,
+            dataPoints: dates.map(date => ({ date, value: randomFor(m.name) }))
+          }));
+        } else if (section.name === 'ads') {
+          const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
+          const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
+
+          adAccountObj.creativesData = Array.from({ length: 3 }).map((_, i) => ({
+            adId: `${adAccount.adAccountId}-ad-${i + 1}`,
+            ad_name: `Ad ${i + 1}`,
+            adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
+            sourceUrl: `https://facebook.com/ads/${i + 1}`,
+            thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
+            data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+          })) as any;
+        } else if (section.name === 'campaigns') {
+          const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
+          const metricsForRow = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
+
+          adAccountObj.campaignsData = Array.from({ length: 3 }).map((_, i) => ({
+            index: i,
+            campaign_name: `Campaign ${i + 1}`,
+            data: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+          })) as any;
+        }
+
+        adAccounts.push(adAccountObj)
 
       }
 

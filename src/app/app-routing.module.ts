@@ -19,8 +19,11 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { EditReportComponent } from './pages/edit-report/edit-report.component';
 import { ReviewReportComponent } from './pages/review-report/review-report.component';
 import { ReportsPageComponent } from './pages/reports/reports-page.component.js';
+import { SuggestedFeaturesComponent } from './pages/suggested-features/suggested-features.component';
+import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-suggestion.component';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
 import { BillingComponent } from './pages/billing/billing.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -110,6 +113,15 @@ const routes: Routes = [
     component: ViewReportComponent
   },
   {
+    path: 'suggested-features',
+    component: SuggestedFeaturesComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'suggested-features/:uuid',
+    component: FeatureSuggestionComponent,
+    canActivate: [authGuard]
+  },
     path: 'billing',
     component: BillingComponent,
     canActivate: [authGuard]

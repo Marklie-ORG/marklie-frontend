@@ -216,20 +216,6 @@ export class ReportsDataService {
         } else if (section.name === 'ads') {
 
           creativesDataVar = adAccount.data as AdsAdAccountData;
-          
-          // for (let adAccount of section.adAccounts) {
-          //   for (let creative of adAccount.data as AdsAdAccountData) {
-          //     for (let metric of creative.data) {
-          //       // if (!metrics.find(m => m.name === metric.name)) {
-          //       //   metrics.push({
-          //       //     name: metric.name,
-          //       //     order: metric.order,
-          //       //     enabled: true
-          //       //   })
-          //       // }
-          //     }
-          //   }
-          // }
 
         } else if (section.name === 'campaigns') {
            const tableData = adAccount.data as TableAdAccountData;
@@ -315,21 +301,91 @@ export class ReportsDataService {
     
     const availableMetrics = await this.schedulesService.getAvailableMetrics(clientUuid);
 
+    // helpers to generate lightweight preview data
+    const generateDateSeries = (days: number = 10) => {
+      const today = new Date();
+      const dates: string[] = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString());
+      }
+      return dates;
+    };
+
+    const randomFor = (metricName: string): number => {
+      const name = (metricName || '').toLowerCase();
+      if (name.includes('roas')) return +(Math.random() * 4 + 0.5).toFixed(2);
+      if (name.includes('ctr') || name.includes('rate')) return +(Math.random() * 5).toFixed(2);
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return +(Math.random() * 3 + 0.2).toFixed(2) as unknown as number;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return +(Math.random() * 1500).toFixed(2) as unknown as number;
+      if (name.includes('impressions') || name.includes('reach')) return Math.floor(Math.random() * 50000 + 1000);
+      if (name.includes('click')) return Math.floor(Math.random() * 2000 + 50);
+      if (name.includes('purchase') || name.includes('purchases')) return Math.floor(Math.random() * 120);
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return Math.floor(Math.random() * 200);
+      if (name.includes('checkout')) return Math.floor(Math.random() * 150);
+      if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
+      return +(Math.random() * 100).toFixed(2) as unknown as number;
+    };
+
     for (let section of reportSections) {
       const sectionKey = section.key;
 
-      for (let adAccount of availableMetrics) {
+      for (let [idx, adAccount] of availableMetrics.entries()) {
         const availableMetricsAdAccount = adAccount.adAccountMetrics;
         const sectionMetrics = availableMetricsAdAccount[sectionKey];
         const customMetrics = availableMetricsAdAccount.customMetrics;
 
-        section.adAccounts.push({
+        // base metrics for this ad account and section
+        const metrics = this.getMetrics(sectionMetrics, customMetrics);
+        // normalize order
+        metrics.forEach((m, i) => (m.order = i));
+
+        const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,
-          metrics: this.getMetrics(sectionMetrics, customMetrics),
-          order: 0,
+          metrics: metrics,
+          order: idx,
           enabled: true
-        })
+        };
+
+        // attach lightweight preview data per section so UI can render something meaningful
+        if (sectionKey === 'kpis') {
+          adAccountObj.metrics = adAccountObj.metrics.map(m => ({ ...m, value: randomFor(m.name) }));
+        } else if (sectionKey === 'graphs') {
+          const dates = generateDateSeries(10);
+          adAccountObj.metrics = adAccountObj.metrics.map(m => ({
+            ...m,
+            dataPoints: dates.map(date => ({ date, value: randomFor(m.name) }))
+          }));
+        } else if (sectionKey === 'ads') {
+          const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
+          const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
+
+          const creatives = Array.from({ length: 3 }).map((_, i) => ({
+            adId: `${adAccount.adAccountId}-ad-${i + 1}`,
+            ad_name: `Ad ${i + 1}`,
+            adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
+            sourceUrl: `https://facebook.com/ads/${i + 1}`,
+            thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
+            data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+          }));
+
+          adAccountObj.creativesData = creatives as any;
+        } else if (sectionKey === 'campaigns') {
+          const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
+          const metricsForRow = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
+
+          const campaigns = Array.from({ length: 3 }).map((_, i) => ({
+            index: i,
+            campaign_name: `Campaign ${i + 1}`,
+            data: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+          }));
+
+          adAccountObj.campaignsData = campaigns as any;
+        }
+
+        section.adAccounts.push(adAccountObj);
       }
 
     }
@@ -361,13 +417,13 @@ export class ReportsDataService {
   // Enable first 3 usual metrics
   metricsToReturn
     .filter(m => !m.isCustom)
-    .slice(0, 1)
+    .slice(0, 3)
     .forEach(m => m.enabled = true);
 
   // Enable first 3 custom metrics
   metricsToReturn
     .filter(m => m.isCustom)
-    .slice(0, 1)
+    .slice(0, 3)
     .forEach(m => m.enabled = true);
 
   return metricsToReturn;

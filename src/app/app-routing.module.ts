@@ -80,7 +80,7 @@ const routes: Routes = [
     component: PasswordRecoveryComponent,
   },
   {
-    path: 'reports',
+    path: 'scheduled-reports',
     component: ReportsPageComponent,
     canActivate: [authGuard]
   },

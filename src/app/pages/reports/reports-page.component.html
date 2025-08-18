@@ -1,27 +1,22 @@
-<div class="reports-page-container">
+<div class="container">
+  <div class="block mt-4" style="height: 100%;">
+    <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3" style="gap: 12px;">
+      <h3>Scheduled Reports</h3>
 
-  <div class="reports-card">
+      <div class="d-flex align-center" style="gap: 8px; flex: 1; max-width: 720px; margin-left: auto; position: relative;">
+        <div class="d-flex align-center" style="flex: 1; border: 1px solid #E6E6E6; border-radius: 8px; padding: 8px 12px;">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            placeholder="Search"
+            style="border: none; outline: none; width: 100%; background: transparent;"
+          />
+        </div>
 
-    <div class="reports-container">
-      <div class="actions-container flex-row align-center gap-10" style="position: relative;">
-        <h1 class="page-title">Scheduled Reports</h1>
+        <!-- <button class="blue" (click)="toggleFilter()" #filterBtn>Filter</button> -->
 
-        <input
-          type="text"
-          placeholder="Search reports..."
-          [(ngModel)]="searchTerm"
-          (input)="onSearchChange()"
-          class="input-search"
-        />
-
-        <button class="btn-filter" (click)="toggleFilter()" #filterBtn>
-          Filter
-          <fa-icon [icon]="faFilter" class="icon-filter"></fa-icon>
-        </button>
-
-        <button class="btn-new-report" [routerLink]="['/schedule']">New report</button>
-
-        <div *ngIf="filterVisible" class="filter-panel">
+        <div *ngIf="filterVisible" class="filter-panel" style="position: absolute; top: 64px; right: 0;">
           <div class="filter-section">
             <label>Status:</label>
             <select [(ngModel)]="filterActive" (change)="setActiveFilter(filterActive)">
@@ -45,96 +40,84 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <table class="reports-table">
-        <thead>
-        <tr>
-          <th><input type="checkbox" /></th>
-          <th>Client</th>
-          <th>Report name</th>
-          <th>Frequency</th>
-          <th>Platforms</th>
-          <th>Channels</th>
-          <th>Status</th>
-          <th>Review Needed</th>
-          <th>Last activity</th>
-          <th>Next activity</th>
-          <th>Time Zone</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let report of pagedReports; let i = index">
-          <td>
-            <input
-              type="checkbox"
-              [checked]="selectedReports.has(i)"
-              (change)="toggleReportSelection(i)"
-            />
-          </td>
-          <td>{{ report.client.name }}</td>
-          <td>{{ report.reportName }}</td>
-          <td>{{ capitalizeFirstLetter(report.jobData.frequency) }}</td>
-          <td>
-            <ng-container *ngIf="report.platform">
-              <fa-icon [icon]="faMeta" class="icon-channel"></fa-icon>
-            </ng-container>
-          </td>
-          <td>
-            <div class="icons-container">
-              <ng-container *ngIf="report.client.emails && report.client.emails.length > 0">
-                <fa-icon [icon]="faEnvelope" class="icon-channel"></fa-icon>
-              </ng-container>
+    <div class="table">
+      <div class="header d-flex align-center d-flex pb-3 pl-4 pr-4">
+        <div style="width: 4%;"><input type="checkbox" /></div>
+        <div style="width: 14%;">Client</div>
+        <div style="width: 16%;">Report name</div>
+        <div style="width: 8%;">Frequency</div>
+        <div style="width: 8%;">Platforms</div>
+        <div style="width: 10%;">Channels</div>
+        <div style="width: 8%;">Status</div>
+        <div style="width: 8%;">Review Needed</div>
+        <div style="width: 8%;">Last activity</div>
+        <div style="width: 8%;">Next activity</div>
+        <div style="width: 8%;">Time Zone</div>
+      </div>
 
-              <ng-container *ngIf="report.client.slackConversationId">
-                <fa-icon [icon]="faSlack" class="icon-channel"></fa-icon>
-              </ng-container>
-
-              <ng-container *ngIf="report.client.phoneNumbers && report.client.phoneNumbers.length > 0">
-                <fa-icon [icon]="faPhone" class="icon-channel"></fa-icon>
-              </ng-container>
+      <div class="list">
+        @for (report of pagedReports; let i = $index; track i) {
+          <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4">
+            <div style="width: 4%;">
+              <input
+                type="checkbox"
+                [checked]="selectedReports.has(i)"
+                (change)="toggleReportSelection(i)"
+              />
             </div>
-          </td>
-
-          <td>
-              <span
-                [class]="
-                  report.isActive ? 'status-active' : 'status-paused'
-                "
-              >
+            <div style="width: 14%;">{{ report.client.name }}</div>
+            <div style="width: 16%;">{{ report.reportName }}</div>
+            <div style="width: 8%;">{{ capitalizeFirstLetter(report.jobData.frequency) }}</div>
+            <div style="width: 8%;">
+              @if (report.platform) {
+                <fa-icon [icon]="faMeta" class="icon-channel"></fa-icon>
+              }
+            </div>
+            <div style="width: 10%;">
+              <div class="icons-container d-flex align-center" style="gap: 6px;">
+                @if (report.client.emails && report.client.emails.length > 0) {
+                  <fa-icon [icon]="faEnvelope" class="icon-channel"></fa-icon>
+                }
+                @if (report.client.slackConversationId) {
+                  <fa-icon [icon]="faSlack" class="icon-channel"></fa-icon>
+                }
+                @if (report.client.phoneNumbers && report.client.phoneNumbers.length > 0) {
+                  <fa-icon [icon]="faPhone" class="icon-channel"></fa-icon>
+                }
+              </div>
+            </div>
+            <div style="width: 8%;">
+              <span [class]="report.isActive ? 'status-active' : 'status-paused'">
                 {{ report.isActive ? 'Active' : 'Paused' }}
               </span>
-          </td>
+            </div>
+            <div style="width: 8%;">
+              @if (report.reviewNeeded) {
+                <span class="review-needed-flag">Yes</span>
+              } @else {
+                <span>No</span>
+              }
+            </div>
+            <div style="width: 8%;">{{ formatRelativeDate(report.lastRun) }}</div>
+            <div style="width: 8%;">{{ formatRelativeDate(report.nextRun) }}</div>
+            <div style="width: 8%;">{{ report.timezone }}</div>
+          </div>
+        }
+      </div>
 
-          <td>
-              <span *ngIf="report.reviewNeeded; else noReview" class="review-needed-flag">
-                Yes
-              </span>
-            <ng-template #noReview>No</ng-template>
-          </td>
-          <td>{{ formatRelativeDate(report.lastRun) }}</td>
-          <td>{{ formatRelativeDate(report.nextRun) }}</td>
-          <td>{{ report.timezone }}</td>
-        </tr>
-        </tbody>
-      </table>
-
-      <div class="pagination-and-total flex-row justify-between align-center">
-        <div class="total-reports">
-          Total reports: {{ filteredReports.length }}
+      <div class="d-flex align-center justify-between pl-4 pr-4 pt-3 pb-3">
+        <div style="color: #666; font-size: 13px;">
+          Showing {{ filteredReports.length > 0 ? ((currentPage - 1) * reportsPerPage + 1) : 0 }}–{{ (currentPage * reportsPerPage) < filteredReports.length ? (currentPage * reportsPerPage) : filteredReports.length }} of {{ filteredReports.length }}
         </div>
-
-        <div class="pagination pagination-centered">
-          <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
-            &lt;
-          </button>
-          <button
-            (click)="goToPage(currentPage + 1)"
-            [disabled]="
-              currentPage === Math.ceil(filteredReports.length / reportsPerPage)
-            "
-          >
-            &gt;
-          </button>
+        <div class="d-flex align-center" style="gap: 8px;">
+          @if (currentPage > 1) {
+            <button class="blue" (click)="goToPage(currentPage - 1)">Previous</button>
+          }
+          @if (currentPage < Math.ceil(filteredReports.length / reportsPerPage)) {
+            <button class="blue" (click)="goToPage(currentPage + 1)">Next</button>
+          }
         </div>
       </div>
     </div>

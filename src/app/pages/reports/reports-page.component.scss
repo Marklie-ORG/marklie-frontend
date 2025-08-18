@@ -250,3 +250,57 @@
 .icon-channel {
   font-size: 18px;
 }
+
+/* Database-like header and row styles */
+.title {
+  height: 40px;
+}
+
+.table {
+  .header {
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+    color: #333333cb !important;
+
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .row {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+    font-size: 14px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+/* Ensure status badges apply outside the old .reports-table scope */
+.status-active {
+  background-color: #dbeafe;
+  color: #3b82f6;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.status-paused {
+  background-color: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  user-select: none;
+  white-space: nowrap;
+  display: inline-block;
+}

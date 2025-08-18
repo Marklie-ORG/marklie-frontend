@@ -64,8 +64,15 @@ import { LandingNewComponent } from "./pages/landing-new/landing-new.component";
 import {HeaderComponent} from "./components/header/header.component.js";
 import { CommunicationsSettingsComponent } from './components/communications-settings/communications-settings.component';
 import { AdAccountsSettingsComponent } from './components/ad-accounts-settings/ad-accounts-settings.component';
+
 import { SuggestedFeaturesComponent } from './pages/suggested-features/suggested-features.component';
 import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-suggestion.component';
+
+import { PhoneInputComponent } from './components/phone-input/phone-input.component';
+import { DatabaseTableComponent } from './components/database-table/database-table.component';
+import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { BillingComponent } from './pages/billing/billing.component';
+
 
 register();
 
@@ -123,6 +130,12 @@ register();
     AdAccountsSettingsComponent,
     SuggestedFeaturesComponent,
     FeatureSuggestionComponent
+
+    PhoneInputComponent,
+  DatabaseTableComponent,
+  ReportsDatabasePageComponent,
+  BillingComponent
+
   ],
   imports: [
     BrowserModule,

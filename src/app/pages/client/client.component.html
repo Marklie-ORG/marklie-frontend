@@ -1,4 +1,4 @@
-<div class="container" style="height: 85%;">
+<div class="container">
 
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
@@ -8,7 +8,7 @@
           <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
               <h3>Reports</h3>
               <button class="blue" (click)="scheduleReport()" >
-                  Add report
+                  New report
               </button>
           </div>
 
@@ -58,6 +58,8 @@
         <activity-table 
         [logs]="activityLogs"
         ></activity-table>
+
+        <database-table [reports]="generatedReports"></database-table>
       </div>
     </div>
 </div>

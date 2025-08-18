@@ -48,7 +48,7 @@ export class PdfReportComponent implements OnInit {
   selectedDatePresetText = signal<string>('');
 
   //
-  reportData: ReportData = [];
+  providers: ReportData = [];
   //
 
   // schedulingOption: SchedulingOption | null = null;
@@ -72,7 +72,7 @@ export class PdfReportComponent implements OnInit {
     if (!this.reportUuid) return;
     try {
       const res = await this.reportService.getReport(this.reportUuid);
-      this.reportData = res.data;
+      this.providers = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
@@ -84,7 +84,8 @@ export class PdfReportComponent implements OnInit {
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
       
-      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.reportData);
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
+      console.log(this.reportSections)
 
     } catch (error) {
       console.error('Error loading report:', error);

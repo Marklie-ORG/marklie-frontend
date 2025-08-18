@@ -21,6 +21,9 @@ import { ReviewReportComponent } from './pages/review-report/review-report.compo
 import { ReportsPageComponent } from './pages/reports/reports-page.component.js';
 import { SuggestedFeaturesComponent } from './pages/suggested-features/suggested-features.component';
 import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-suggestion.component';
+import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { BillingComponent } from './pages/billing/billing.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -82,6 +85,11 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'reports-database',
+    component: ReportsDatabasePageComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'pdf-report/:reportUuid',
     component: PdfReportComponent
   },
@@ -112,6 +120,10 @@ const routes: Routes = [
   {
     path: 'suggested-features/:uuid',
     component: FeatureSuggestionComponent,
+    canActivate: [authGuard]
+  },
+    path: 'billing',
+    component: BillingComponent,
     canActivate: [authGuard]
   }
 ];

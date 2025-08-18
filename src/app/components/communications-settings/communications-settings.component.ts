@@ -135,14 +135,10 @@ export class CommunicationsSettingsComponent {
 
   addPhoneNumber(phoneNumber: string = '') {
     this.clientPhoneNumbers.set([...this.clientPhoneNumbers(), phoneNumber]);
-
-    // this.propagateChanges();
   }
 
   removePhoneNumber(index: number) {
     this.clientPhoneNumbers.set(this.clientPhoneNumbers().filter((_, i) => i !== index));
-
-    // this.propagateChanges();
   }
 
   onEmailChange(index: number, value: string) {

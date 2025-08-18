@@ -569,7 +569,7 @@ hr {
 }
 
 button {
-  border: none;
+  border: 1px solid #f1f1f1;
   color: #333;
   padding: 10px 22px;
   font-size: 14px;
@@ -603,8 +603,8 @@ button {
     color: #fff;
   }
   &.blue:hover {
-    background: #1f8ded;
-    box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
+    background: #1b79cb;
+    // box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
   }
 
   &.subtle {
@@ -648,6 +648,8 @@ button {
 
 input,
 textarea {
+  box-sizing: border-box;
+  
   &.text {
     font-size: 1rem;
     padding: 7px 26px 7px 10px;

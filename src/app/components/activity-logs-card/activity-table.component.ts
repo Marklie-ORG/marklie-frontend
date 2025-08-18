@@ -59,6 +59,7 @@ export class ActivityTableComponent implements OnInit, OnChanges {
 
     this.groupedLogs.push(...Array.from(groupedMap.values()));
     this.groupedLogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    this.groupedLogs = this.groupedLogs.slice(0, 4);
 
     setTimeout(() => {
       this.groupedLogs?.forEach(log => this.markAsSeen(log));

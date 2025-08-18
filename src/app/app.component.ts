@@ -30,6 +30,7 @@ export class AppComponent {
           url.startsWith('/view-report/') ||
           url.startsWith('/reports') ||
           url.startsWith('/suggested-features');
+          url.startsWith('/billing');
       }
     });
   }

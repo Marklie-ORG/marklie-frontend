@@ -4,8 +4,8 @@ import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Pro
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { SchedulesService } from "./api/schedules.service.js";
-import { ReportData } from '../interfaces/get-report.interfaces';
-import { ReportSection, AdAccount, Metric } from '../interfaces/report-sections.interfaces';
+import { ReportData, KpiAdAccountData, GraphsAdAccountData, AdsAdAccountData, TableAdAccountData } from '../interfaces/get-report.interfaces';
+import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces/report-sections.interfaces';
 
 
 @Injectable({
@@ -103,6 +103,8 @@ export class ReportsDataService {
           })
         }
 
+        metrics.sort((a, b) => a.order - b.order);
+
         for (let metric of sectionAdAccountAvailableMetrics) {
           if (!metrics.find(m => m.name === metric)) {
             metrics.push({
@@ -125,6 +127,8 @@ export class ReportsDataService {
             })
           }
         }
+
+        
 
         adAccounts.push({
           id: adAccount.adAccountId,
@@ -152,14 +156,8 @@ export class ReportsDataService {
   async getReportsSectionsBasedOnReportData(providers: ReportData): Promise<ReportSection[]> {
 
     let reportSections: ReportSection[] = [];
-
-    // const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid);
     
-    const facebookProvider = providers.find(p => p.name === 'facebook');
-
-    console.log(facebookProvider!.sections)
-
-    // console.log(availableMetrics)
+    const facebookProvider = providers.find(p => p.provider === 'facebook');
 
     for (let section of facebookProvider?.sections || []) {
 
@@ -167,63 +165,93 @@ export class ReportsDataService {
 
       for (let adAccount of section.adAccounts) {
 
-        const adAccountId = adAccount.adAccountId;
-
-        // const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
-        // const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
-        // const customAdAccountAvailableMetrics = adAccountAvailableMetrics.customMetrics;
-
         let metrics: Metric[] = [];
+        let campaignsDataVar: TableAdAccountData | undefined;
 
-        for (let metric of adAccount.metrics) {
-          metrics.push({
-            name: metric.name,
-            order: metric.order,
+        if (section.name === 'kpis') {
+          const kpiData = adAccount.data as KpiAdAccountData;
+          metrics = kpiData.map(m => ({
+            name: m.name,
+            order: m.order,
             enabled: true,
-            // isCustom: false
-          })
+            value: m.value
+          }));
+        } else if (section.name === 'graphs') {
+          let metricsList: {name: string, order: number}[] = []
+
+          for (let point of adAccount.data as GraphsAdAccountData) {
+            for (let dataPoint of point.data) {
+              if (!metricsList.find(m => m.name === dataPoint.name)) {
+                metricsList.push({
+                  name: dataPoint.name,
+                  order: dataPoint.order
+                });
+              }
+            }
+          }
+
+          for (let metric of metricsList) {
+            let dataPoints: MetricDataPoint[] = [];
+
+            for (let point of adAccount.data as GraphsAdAccountData) {
+              for (let dataPoint of point.data) {
+                if (dataPoint.name === metric.name) {
+                  dataPoints.push({
+                    value: dataPoint.value,
+                    date: point.date_start
+                  })
+                }
+              }
+            }
+
+            metrics.push({
+              name: metric.name,
+              order: metric.order,
+              enabled: true,
+              dataPoints: dataPoints
+            })
+          }
+
+        } else if (section.name === 'ads') {
+          const adsData = adAccount.data as AdsAdAccountData;
+          const metricMap = new Map<string, number>();
+          for (const creative of adsData) {
+            for (const point of creative.data) {
+              if (!metricMap.has(point.name)) {
+                metricMap.set(point.name, point.order);
+              }
+            }
+          }
+          metrics = Array.from(metricMap.entries())
+            .map(([name, order]) => ({ name, order, enabled: true }))
+            .sort((a, b) => a.order - b.order);
+        } else if (section.name === 'campaigns') {
+           const tableData = adAccount.data as TableAdAccountData;
+           const metricMap = new Map<string, number>();
+           for (const campaign of tableData) {
+             for (const point of campaign.data) {
+               if (!metricMap.has(point.name)) {
+                 metricMap.set(point.name, point.order);
+               }
+             }
+           }
+           metrics = Array.from(metricMap.entries())
+             .map(([name, order]) => ({ name, order, enabled: true }))
+             .sort((a, b) => a.order - b.order);
+           campaignsDataVar = tableData;
         }
 
-        // for (let metric of adAccount.customMetrics) {
-        //   metrics.push({
-        //     name: metric.name,
-        //     order: metric.order,
-        //     enabled: true,
-        //     isCustom: true,
-        //     id: metric.id
-        //   })
-        // }
-
-        // for (let metric of sectionAdAccountAvailableMetrics) {
-        //   if (!metrics.find(m => m.name === metric)) {
-        //     metrics.push({
-        //       name: metric,
-        //       order: -1,
-        //       enabled: false,
-        //       isCustom: false
-        //     })
-        //   }
-        // }
-
-        // for (let metric of customAdAccountAvailableMetrics) {
-        //   if (!metrics.find(m => m.name === metric.name)) {
-        //     metrics.push({
-        //       name: metric.name,
-        //       order: -1,
-        //       enabled: false,
-        //       isCustom: true,
-        //       id: metric.id
-        //     })
-        //   }
-        // }
-
-        adAccounts.push({
+        const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
           enabled: true
-        })
+        };
+        if (campaignsDataVar) {
+          adAccountObj.campaignsData = campaignsDataVar;
+        }
+        adAccounts.push(adAccountObj)
 
       }
 

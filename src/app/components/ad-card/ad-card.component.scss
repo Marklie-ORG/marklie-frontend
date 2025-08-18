@@ -108,3 +108,14 @@ button {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   cursor: grabbing;
 }
+
+.ad-account-item {
+	.ad-grid {
+		.ad-card { display: block; }
+	}
+}
+
+/* Hide entire ad cards while reordering ad accounts to improve performance */
+:host ::ng-deep [data-reordering="true"] .ad-account-item .ad-grid .ad-card {
+	display: none !important;
+}

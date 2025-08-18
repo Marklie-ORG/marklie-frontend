@@ -4,7 +4,7 @@ import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Pro
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { SchedulesService } from "./api/schedules.service.js";
-import { ReportData, KpiAdAccountData, GraphsAdAccountData, AdsAdAccountData, TableAdAccountData } from '../interfaces/get-report.interfaces';
+import { ReportData, KpiAdAccountData, GraphsAdAccountData, AdsAdAccountData, TableAdAccountData, AdsAdAccountDataCreative } from '../interfaces/get-report.interfaces';
 import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces/report-sections.interfaces';
 
 
@@ -167,6 +167,7 @@ export class ReportsDataService {
 
         let metrics: Metric[] = [];
         let campaignsDataVar: TableAdAccountData | undefined;
+        let creativesDataVar: AdsAdAccountDataCreative[] | undefined;
 
         if (section.name === 'kpis') {
           const kpiData = adAccount.data as KpiAdAccountData;
@@ -213,18 +214,23 @@ export class ReportsDataService {
           }
 
         } else if (section.name === 'ads') {
-          const adsData = adAccount.data as AdsAdAccountData;
-          const metricMap = new Map<string, number>();
-          for (const creative of adsData) {
-            for (const point of creative.data) {
-              if (!metricMap.has(point.name)) {
-                metricMap.set(point.name, point.order);
-              }
-            }
-          }
-          metrics = Array.from(metricMap.entries())
-            .map(([name, order]) => ({ name, order, enabled: true }))
-            .sort((a, b) => a.order - b.order);
+
+          creativesDataVar = adAccount.data as AdsAdAccountData;
+          
+          // for (let adAccount of section.adAccounts) {
+          //   for (let creative of adAccount.data as AdsAdAccountData) {
+          //     for (let metric of creative.data) {
+          //       // if (!metrics.find(m => m.name === metric.name)) {
+          //       //   metrics.push({
+          //       //     name: metric.name,
+          //       //     order: metric.order,
+          //       //     enabled: true
+          //       //   })
+          //       // }
+          //     }
+          //   }
+          // }
+
         } else if (section.name === 'campaigns') {
            const tableData = adAccount.data as TableAdAccountData;
            const metricMap = new Map<string, number>();
@@ -250,6 +256,9 @@ export class ReportsDataService {
         };
         if (campaignsDataVar) {
           adAccountObj.campaignsData = campaignsDataVar;
+        }
+        if (creativesDataVar) {
+          adAccountObj.creativesData = creativesDataVar;
         }
         adAccounts.push(adAccountObj)
 

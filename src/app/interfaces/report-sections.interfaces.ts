@@ -1,4 +1,4 @@
-import { CampaignData } from "./get-report.interfaces";
+import { AdsAdAccountDataCreative, CampaignData } from "./get-report.interfaces";
 import { SectionKey } from "./interfaces";
 
 export interface ReportSection {
@@ -16,6 +16,7 @@ export interface ReportSection {
     name: string
     metrics: Metric[]
     campaignsData?: CampaignData[]
+    creativesData?: AdsAdAccountDataCreative[]
   }
   
   export interface Metric {

@@ -8,15 +8,19 @@
 
       <div class="ad-grid" >
         
-        <div class="ad-card" *ngFor="let ad of ads; let i = index">
-          <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
-            <img class="ad-media" [src]="ad.thumbnailUrl"/>
+        <div class="ad-card" *ngFor="let creative of (adAccount.creativesData || []); let i = index">
+          <div class="ad-image-container cursor-pointer " (click)="openAd(creative.sourceUrl)">
+            <img class="ad-media" [src]="creative.thumbnailUrl"/>
           </div>
           <div class="metrics" #adsGridContainer [attr.data-ad-account-id]="adAccount.id">
-            @for (metric of adAccount.metrics; track metric.name) {
-              <div class="metric" [class.enabled]="metric.enabled" [attr.data-metric-name]="metric.name" [style.display]="metric.enabled ? 'flex' : 'none'">
-                <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
-                <div class="metric-value">{{ad[metric.name] || '1,000'}}</div>
+            <!-- <div class="metric">
+              <div class="metric-label">{{ metricsService.formatMetricLabel('ad_name') }}</div>
+              <div class="metric-value">{{ creative.ad_name }}</div>
+            </div> -->
+            @for (point of (creative.data || []); track point.name) {
+              <div class="metric" [attr.data-metric-name]="point.name">
+                <div class="metric-label">{{ metricsService.formatMetricLabel(point.name) }}</div>
+                <div class="metric-value">{{ metricsService.formatMetricValue(point.name, point.value) }}</div>
               </div>
             }
           </div>

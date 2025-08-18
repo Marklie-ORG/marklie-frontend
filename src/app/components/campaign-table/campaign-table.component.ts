@@ -3,6 +3,7 @@ import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
 import { NgZone } from '@angular/core';
+import { CampaignData } from 'src/app/interfaces/get-report.interfaces';
 
 @Component({
   selector: 'campaign-table',
@@ -180,5 +181,10 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
 
     const updatedAccounts = accounts.map(a => a.id === adAccountId ? ({ ...a, metrics: reordered }) : a);
     this.adAccounts.set(updatedAccounts);
+  }
+
+  getCampaignMetricValue(campaign: CampaignData, metricName: string): string {
+    const point = campaign?.data?.find(d => d.name === metricName);
+    return this.metricsService.formatMetricValue(metricName, point?.value);
   }
 }

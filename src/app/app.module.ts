@@ -129,7 +129,7 @@ register();
     CommunicationsSettingsComponent,
     AdAccountsSettingsComponent,
     SuggestedFeaturesComponent,
-    FeatureSuggestionComponent
+    FeatureSuggestionComponent,
 
     PhoneInputComponent,
   DatabaseTableComponent,

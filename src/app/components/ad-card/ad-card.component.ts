@@ -3,6 +3,7 @@ import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
 import { NgZone, inject } from '@angular/core';
+import { AdsAdAccountDataCreative } from 'src/app/interfaces/get-report.interfaces';
 
 @Component({
   selector: 'ad-card',
@@ -103,6 +104,11 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
 
   openAd(url: string): void {
     window.open(url, '_blank');
+  }
+
+  getCreativeMetricValue(creative: AdsAdAccountDataCreative, metricName: string): number | undefined {
+    const point = creative?.data?.find(p => p.name === metricName);
+    return point?.value;
   }
 
   private onAdAccountsReorderEnd(): void {

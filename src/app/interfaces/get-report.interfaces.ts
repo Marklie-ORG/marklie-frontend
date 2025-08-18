@@ -72,6 +72,7 @@ export interface GetReportResponse {
     ad_name: string
     sourceUrl: string
     adCreativeId: string
+    thumbnailUrl?: string
   }
 
   export interface AdsAdAccountDataPoint {
@@ -84,9 +85,9 @@ export interface GetReportResponse {
   export type TableAdAccountData = CampaignData[]
 
   export interface CampaignData {
-    campaign_name: string
-    index: number
     data: CampaignDataPoint[]
+    index: number
+    campaign_name: string
   }
 
   export interface CampaignDataPoint {

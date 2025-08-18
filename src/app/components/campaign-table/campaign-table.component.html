@@ -22,14 +22,14 @@
         </tr>
       </thead>
       <tbody>
-          @for (campaign of campaigns; track campaign.campaign_id; let k = $index) {
+          @for (campaign of adAccount.campaignsData ?? []; track campaign.index; let k = $index) {
             <tr>
               <td>{{ k + 1 }}</td>
               <td>{{ campaign.campaign_name }}</td>
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (metric.enabled) {
                   <td>
-                    {{campaign[metric.name] || '1,000'}}
+                    {{ getCampaignMetricValue(campaign, metric.name) }}
                   </td>
                 }
               }

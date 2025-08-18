@@ -122,6 +122,7 @@ const routes: Routes = [
     component: FeatureSuggestionComponent,
     canActivate: [authGuard]
   },
+  {
     path: 'billing',
     component: BillingComponent,
     canActivate: [authGuard]

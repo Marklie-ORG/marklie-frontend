@@ -29,7 +29,7 @@ export class ReportHeaderComponent {
     if (image) {
       urlModel.set(image.imageUrl);
       gsUriModel.set(image.gsUri);
-    } else {
+    } else if (image === null) {
       urlModel.set('');
       gsUriModel.set('');
     }

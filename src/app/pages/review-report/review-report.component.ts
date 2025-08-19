@@ -7,6 +7,9 @@ import {MetricsService} from 'src/app/services/metrics.service';
 import {ReportsDataService} from 'src/app/services/reports-data.service';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { ReportData } from 'src/app/interfaces/get-report.interfaces';
+import { NotificationService } from '@services/notification.service';
+import { SendAfterReviewRequest, SendAfterReviewResponse } from 'src/app/interfaces/interfaces';
 
 @Component({
   selector: 'app-review-report',
@@ -32,6 +35,8 @@ export class ReviewReportComponent implements OnInit {
 
   changesMade = false;
 
+  providers: ReportData = [];
+
   clientImageUrl = signal<string>('');
   agencyImageUrl = signal<string>('');
 
@@ -46,42 +51,36 @@ export class ReviewReportComponent implements OnInit {
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
+  private notificationService = inject(NotificationService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       this.reportUuid = params['reportUuid'];
-      this.clientUuid = params['clientUuid'];
       await this.loadReport();
     });
   }
 
   private async loadReport() {
     if (!this.reportUuid) return;
-    // try {
-    //   const res = await this.reportService.getReport(this.reportUuid);
-    //   const data = res.data[0];
+    try {
+      const res = await this.reportService.getReport(this.reportUuid);
+      this.providers = res.data;
 
-    //   this.reportTitle.set(res.metadata.reportName);
-    //   this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
+      this.reportTitle.set(res.metadata.reportName);
+      this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
-    //   this.clientImageUrl.set(res.images?.clientLogo || '');
-    //   this.agencyImageUrl.set(res.images?.organizationLogo || '');
-    //   this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
-    //   this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
+      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
+      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
+      this.clientImageGsUri.set(res.schedulingOption.jobData.images?.clientLogo || '');
+      this.agencyImageGsUri.set(res.schedulingOption.jobData.images?.organizationLogo || '');
+
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
-    //   this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
+      // this.processSelectedAccount();
 
-    //   this.data = {
-    //     KPIs: data.KPIs,
-    //     ads: data.ads,
-    //     campaigns: data.campaigns,
-    //     graphs: data.graphs
-    //   }
-
-    // } catch (error) {
-    //   console.error('Error loading report:', error);
-    //   // Handle error, e.g., show a message to the user
-    // }
+    } catch (error) {
+      console.error('Error loading report:', error);
+    }
   }
 
   openAd(url: string): void {
@@ -91,16 +90,37 @@ export class ReviewReportComponent implements OnInit {
   async save() {
     if (!this.reportUuid) return;
     try {
+      console.log(this.reportSections)
+
+      const providers = this.reportsDataService.getProviders(this.reportSections);
+
+      console.log(providers)
+
+      // console.log(this.clientImageGsUri())
+      // console.log(this.agencyImageGsUri())
+
       // const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
-      // await this.reportService.updateReportMetricsSelections(this.reportUuid, metricsSelections);
+      await this.reportService.updateReportData(this.reportUuid, providers);
       // await this.reportService.updateReportImages(this.reportUuid, {
       //   clientLogo: this.clientImageGsUri(),
       //   organizationLogo: this.agencyImageGsUri()
       // });
-      console.log('Report saved successfully!');
-      // Optionally, show a success message
+      
+      this.notificationService.info('Report updated successfully!');
+      await this.loadReport();
     } catch (error) {
       console.error('Error saving report:', error);
+    }
+  }
+
+  async sendAfterReview() {
+    if (!this.reportUuid) return;
+    try {
+      const payload: SendAfterReviewRequest = { reportUuid: this.reportUuid };
+      const res: SendAfterReviewResponse = await this.reportService.sendAfterReview(payload);
+      this.notificationService.info(res.message || 'Report was saved and sent to the client');
+    } catch (error) {
+      console.error('Error sending report after review:', error);
     }
   }
 

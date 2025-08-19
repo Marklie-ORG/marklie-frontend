@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="block mt-4" style="height: 100%;">
+    <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3" style="gap: 12px;">
+      <h3>Scheduled Reports</h3>
+
+      <div class="d-flex align-center" style="gap: 8px; flex: 1; max-width: 720px; margin-left: auto; position: relative;">
+        <div class="d-flex align-center" style="flex: 1; border: 1px solid #E6E6E6; border-radius: 8px; padding: 8px 12px;">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            placeholder="Search"
+            style="border: none; outline: none; width: 100%; background: transparent;"
+          />
+        </div>
+
+        <!-- <button class="blue" (click)="toggleFilter()" #filterBtn>Filter</button> -->
+
+        <div *ngIf="filterVisible" class="filter-panel" style="position: absolute; top: 64px; right: 0;">
+          <div class="filter-section">
+            <label>Status:</label>
+            <select [(ngModel)]="filterActive" (change)="setActiveFilter(filterActive)">
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <label>Platforms:</label>
+            <div *ngFor="let platform of availablePlatforms">
+              <input
+                type="checkbox"
+                [checked]="filterPlatforms.has(platform)"
+                (change)="togglePlatform(platform)"
+                id="platform-{{ platform }}"
+              />
+              <label for="platform-{{ platform }}">{{ platform | titlecase }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table">
+      <div class="header d-flex align-center d-flex pb-3 pl-4 pr-4">
+        <div style="width: 4%;"><input type="checkbox" /></div>
+        <div style="width: 14%;">Client</div>
+        <div style="width: 16%;">Report name</div>
+        <div style="width: 8%;">Frequency</div>
+        <div style="width: 8%;">Platforms</div>
+        <div style="width: 10%;">Channels</div>
+        <div style="width: 8%;">Status</div>
+        <div style="width: 8%;">Review Needed</div>
+        <div style="width: 8%;">Last activity</div>
+        <div style="width: 8%;">Next activity</div>
+        <div style="width: 8%;">Time Zone</div>
+      </div>
+
+      <div class="list">
+        @for (report of pagedReports; let i = $index; track i) {
+          <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4 cursor-pointer" (click)="openScheduledReport(report.client.uuid, report.uuid)">
+            <div style="width: 4%;">
+              <input
+                type="checkbox"
+                [checked]="selectedReports.has(i)"
+                (change)="toggleReportSelection(i)"
+              />
+            </div>
+            <div style="width: 14%;">{{ report.client.name }}</div>
+            <div style="width: 16%;">{{ report.reportName }}</div>
+            <div style="width: 8%;">{{ capitalizeFirstLetter(report.jobData.frequency) }}</div>
+            <div style="width: 8%;">
+              @if (report.platform) {
+                <fa-icon [icon]="faMeta" class="icon-channel"></fa-icon>
+              }
+            </div>
+            <div style="width: 10%;">
+              <div class="icons-container d-flex align-center" style="gap: 6px;">
+                @if (report.client.emails && report.client.emails.length > 0) {
+                  <fa-icon [icon]="faEnvelope" class="icon-channel"></fa-icon>
+                }
+                @if (report.client.slackConversationId) {
+                  <fa-icon [icon]="faSlack" class="icon-channel"></fa-icon>
+                }
+                @if (report.client.phoneNumbers && report.client.phoneNumbers.length > 0) {
+                  <fa-icon [icon]="faPhone" class="icon-channel"></fa-icon>
+                }
+              </div>
+            </div>
+            <div style="width: 8%;">
+              <span [class]="report.isActive ? 'status-active' : 'status-paused'">
+                {{ report.isActive ? 'Active' : 'Paused' }}
+              </span>
+            </div>
+            <div style="width: 8%;">
+              @if (report.reviewNeeded) {
+                <span class="review-needed-flag">Yes</span>
+              } @else {
+                <span>No</span>
+              }
+            </div>
+            <div style="width: 8%;">{{ formatRelativeDate(report.lastRun) }}</div>
+            <div style="width: 8%;">{{ formatRelativeDate(report.nextRun) }}</div>
+            <div style="width: 8%;">{{ report.timezone }}</div>
+          </div>
+        }
+      </div>
+
+      <div class="d-flex align-center justify-between pl-4 pr-4 pt-3 pb-3">
+        <div style="color: #666; font-size: 13px;">
+          Showing {{ filteredReports.length > 0 ? ((currentPage - 1) * reportsPerPage + 1) : 0 }}–{{ (currentPage * reportsPerPage) < filteredReports.length ? (currentPage * reportsPerPage) : filteredReports.length }} of {{ filteredReports.length }}
+        </div>
+        <div class="d-flex align-center" style="gap: 8px;">
+          @if (currentPage > 1) {
+            <button class="blue" (click)="goToPage(currentPage - 1)">Previous</button>
+          }
+          @if (currentPage < Math.ceil(filteredReports.length / reportsPerPage)) {
+            <button class="blue" (click)="goToPage(currentPage + 1)">Next</button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

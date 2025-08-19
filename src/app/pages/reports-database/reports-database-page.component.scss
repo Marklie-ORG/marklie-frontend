@@ -1,0 +1,27 @@
+/* Adopt styles similar to database-table */
+.title {
+  height: 40px;
+}
+.table {
+  .header {
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+    color: #333333cb !important;
+
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .row {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+    font-size: 14px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+} 

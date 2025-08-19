@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/services/api/auth.service';
 import {FormsModule} from '@angular/forms'
 import { UserService } from 'src/app/services/api/user.service';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { OrganizationService } from 'src/app/services/api/organization.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,6 +17,12 @@ export class ProfileComponent {
   newPassword: string = ''
   newPasswordRepeated: string = ''
   changePasswordPassword: string = ''
+  isOwner: boolean = false;
+
+  inviteCodes: OrganizationInvite[] = [];
+  loadingInviteCodes: boolean = false;
+  generatingInviteCode: boolean = false;
+  latestGeneratedCode: string | null = null;
   
   // Password visibility toggles
   showChangeEmailPassword = false;
@@ -29,16 +36,74 @@ export class ProfileComponent {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private organizationService: OrganizationService
   ) {}
 
   ngOnInit(): void {
     this.getEmail();
+    this.checkOwnershipAndLoadInvites();
   }
 
   async getEmail() {
     await this.authService.refreshAndReplaceToken();
     this.email = this.authService.getDecodedAccessTokenInfo().email || '';
+  }
+
+  async checkOwnershipAndLoadInvites() {
+    try {
+      // Determine if the user is OWNER for the active organization
+      const user = await this.userService.me();
+      const tokenInfo = this.authService.getDecodedAccessTokenInfo();
+      const roles = (tokenInfo?.roles || []) as { role: string; organizationUuid: string }[];
+      const activeOrgUuid = user?.activeOrganization?.uuid || user?.activeOrganization;
+      this.isOwner = !!roles.find(r => r.organizationUuid === activeOrgUuid && r.role === 'owner');
+
+      if (this.isOwner) {
+        await this.loadInviteCodes();
+      }
+    } catch (err) {
+      console.error('Failed to check ownership or load invites', err);
+    }
+  }
+
+  async loadInviteCodes() {
+    this.loadingInviteCodes = true;
+    try {
+      const response = await this.organizationService.listInviteCodes();
+      if ((response as any)?.status === 200) {
+        this.inviteCodes = (response as any).body || [];
+      } else if (Array.isArray(response)) {
+        this.inviteCodes = response;
+      }
+    } finally {
+      this.loadingInviteCodes = false;
+    }
+  }
+
+  async generateInviteCode() {
+    if (this.generatingInviteCode) return;
+    this.generatingInviteCode = true;
+    try {
+      const response = await this.organizationService.generateInviteCode();
+      const code = (response as any)?.body?.inviteCode || (response as any)?.inviteCode;
+      if (code) {
+        this.latestGeneratedCode = code;
+        await this.loadInviteCodes();
+      }
+    } catch (err) {
+      console.error('Failed to generate invite code', err);
+      alert('Failed to generate invite code');
+    } finally {
+      this.generatingInviteCode = false;
+    }
+  }
+
+  getInviteStatus(invite: OrganizationInvite): string {
+    if (invite.usedAt) return 'Used';
+    const now = new Date();
+    const expires = new Date(invite.expiresAt);
+    return expires < now ? 'Expired' : 'Active';
   }
 
   async changeEmail() {
@@ -92,3 +157,14 @@ export class ProfileComponent {
   }
 
 }
+
+interface OrganizationInvite {
+  uuid: string;
+  code: string;
+  expiresAt: string;
+  usedAt?: string;
+  usedBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+

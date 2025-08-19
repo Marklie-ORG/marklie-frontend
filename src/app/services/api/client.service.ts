@@ -122,17 +122,21 @@ export interface Client {
     phoneNumbers: string[];
     slack: string;
     schedulingOption: any[];
+    adAccounts: string[];
+    facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
 }
 
 export interface CreateClientRequest {
   name: string;
-  facebookAdAccounts: string[];
-  tiktokAdAccounts: string[];
+  facebookAdAccounts: {adAccountId: string, adAccountName: string, businessId: string}[];
+  emails: string[];
+  phoneNumbers: string[];
 }
 
 
 export interface UpdateClientRequest {
   name?: string;
+  facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
   emails?: string[];
   phoneNumbers?: string[];
 }

@@ -144,11 +144,14 @@
 
             <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2">
               @for (metric of adAccount.metrics; track metric.name) {
-                <label class="prevent-select">
+                <label class="prevent-select" 
+                  [ngClass]="{ 'obligatory-metric': sectionKey === 'ads' && metric.name === 'impressions' }"
+                  (click)="onObligatoryMetricClick($event, sectionKey, metric)">
                   <input 
                   type="checkbox" 
                   [(ngModel)]="metric.enabled" 
                   (change)="onMetricsChange(data, sectionKey)"
+                  [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
                   />
                   <span class="checkmark"></span>
                   {{ metric.name }}

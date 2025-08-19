@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private facebookLoginService: FacebookLoginService,
     private userService: UserService
   ) {
-    this.showAddClientModal()
+    // this.showAddClientModal()
   }
 
   async ngOnInit() {

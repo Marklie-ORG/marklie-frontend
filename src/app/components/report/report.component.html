@@ -11,53 +11,15 @@
   [isViewMode]="isViewMode()"
   ></report-header>
 
-  <div #sectionsGridContainer class="d-flex flex-column gap-5">
+  <div class="d-flex flex-column gap-5">
 
-    <!-- @for (section of reportSections(); track section.key; let i = $index) {
-      <div class="report-section mb-4">
-        @if (section.enabled && data) {
-          <ng-container [ngSwitch]="section.key">
-
-            <kpi-grid
-            *ngSwitchCase="'kpis'"
-            [kpis]="data.KPIs"
-            [(adAccounts)]="section.adAccounts"
-            [isViewMode]="isViewMode()"
-            ></kpi-grid>
-
-            <charts
-            *ngSwitchCase="'graphs'"
-            [graphs]="data.graphs"
-            [(adAccounts)]="section.adAccounts"
-            [isViewMode]="isViewMode()"
-            ></charts>
-
-            <ad-card
-            *ngSwitchCase="'ads'"
-            [ads]="data.ads"
-            [(adAccounts)]="section.adAccounts"
-            [isViewMode]="isViewMode()"
-            ></ad-card>
-
-            <campaign-table
-            *ngSwitchCase="'campaigns'"
-            [campaigns]="data.campaigns"
-            [(adAccounts)]="section.adAccounts"
-            [isViewMode]="isViewMode()"
-            ></campaign-table>
-
-          </ng-container>
-        }
-      </div>
-    } -->
-  
     @if (data) {
       @if (kpisSection().enabled) {
         <hr>
-
         <kpi-grid
         [kpis]="data.KPIs"
-        [(adAccounts)]="kpisSection().adAccounts"
+        [adAccounts]="kpisSection().adAccounts"
+        (adAccountsChange)="onKpiAdAccountsChange($event)"
         [isViewMode]="isViewMode()"
         ></kpi-grid>
       }
@@ -66,7 +28,8 @@
         <hr>
       <charts
       [graphs]="data.graphs"
-      [(adAccounts)]="graphsSectionAdAccounts"
+      [adAccounts]="graphsSectionAdAccounts"
+      (adAccountsChange)="onGraphsAdAccountsChange($event)"
       [isViewMode]="isViewMode()"
       ></charts>
       }

@@ -1,0 +1,19 @@
+# reports-frontend (Angular) Rules
+
+- Purpose: Angular UI for Marklie. Uses services under `src/app/services` and typed interfaces under `src/app/interfaces`.
+- Commands:
+  - Install: `npm i --legacy-peer-deps`
+  - Dev: `npm start`
+  - Build: `npm run build`
+- Conventions:
+  - Keep HTTP logic in `src/app/services/**`. Components should remain lean and typed.
+  - Reuse interfaces; extend `markly-ts-core` types when applicable.
+  - Avoid broad refactors; keep edits focused. Match existing style and naming.
+  - On API contract changes, update corresponding Angular interfaces/services and any forms/validators.
+  - Use `fa-icon` for icons.
+  - Use latest Angular features like `@if` and `@for` instead of `*ngIf` and `*ngFor`.
+  - Use signals, effects, models where appropriate.
+  - Use input() and output() methods instead of @Input and @Output decorators.
+- Cross-service:
+  - If backend routes/payloads change, reflect them here immediately; keep the app compiling.
+  - When new types are shared across services, prefer adding to `markly-ts-core`. 

@@ -43,11 +43,30 @@
 }
 
 .metric {
-  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: var(--block-border);
 }
 
 .metric-label {
+  font-size: 11px;
+  line-height: 1.2;
+  color: #6b7280; /* gray-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
 
+.metric-value {
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111827; /* gray-900 */
 }
 
 
@@ -107,4 +126,15 @@ button {
 .sortable-drag {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   cursor: grabbing;
+}
+
+.ad-account-item {
+	.ad-grid {
+		.ad-card { display: block; }
+	}
+}
+
+/* Hide entire ad cards while reordering ad accounts to improve performance */
+:host ::ng-deep [data-reordering="true"] .ad-account-item .ad-grid .ad-card {
+	display: none !important;
 }

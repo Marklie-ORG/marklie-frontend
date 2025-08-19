@@ -1,4 +1,4 @@
-<div class="container" style="height: 85%;">
+<div class="container">
 
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
@@ -6,9 +6,9 @@
         class="block"
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
           <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-              <h3>Reports</h3>
+              <h3>Scheduled Reports</h3>
               <button class="blue" (click)="scheduleReport()" >
-                  Add report
+                  New report
               </button>
           </div>
 
@@ -47,7 +47,11 @@
       <div class="d-flex flex-column gap-4">
         <div class="block">
           <div class="block-header">
-            <h3 *ngIf="client" class="block-header__title">{{ client.name }}</h3>
+            <h3 class="block-header__title">
+              @if (client) {
+                {{ client.name }}
+              }
+            </h3>
 
             <button class="block-header__button blue" (click)="onEditClient()">
               Client Settings
@@ -58,6 +62,8 @@
         <activity-table 
         [logs]="activityLogs"
         ></activity-table>
+
+        <database-table [reports]="generatedReports"></database-table>
       </div>
     </div>
 </div>

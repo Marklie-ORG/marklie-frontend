@@ -1,0 +1,84 @@
+<div class="billing-page container mt-4">
+	<h3>Plans & Billing</h3>
+	<!-- <p class="subtitle">Manage your plans and billing history here.</p> -->
+
+	<div class="toggle-row mt-4">
+		<div class="period-toggle" role="tablist" aria-label="Billing period">
+			<div class="segmented" aria-hidden="false">
+				<button [class.active]="period()==='yearly'" (click)="setPeriod('yearly')">Pay yearly</button>
+				<button [class.active]="period()==='monthly'" (click)="setPeriod('monthly')">Pay monthly</button>
+			</div>
+			<a class="save-hint" href="javascript:void(0)">Save up to 20% with yearly</a>
+		</div>
+	</div>
+
+	<div class="plans-grid">
+		@for (plan of plans(); track plan.id) {
+			<div class="plan-card" [class.current]="plan.id===currentPlanId()" [class.popular]="plan.isMostPopular">
+				<div class="plan-header">
+					<div class="title">{{ plan.title }}</div>
+					<!-- <div class="badge" *ngIf="plan.isMostPopular">Most popular</div> -->
+				</div>
+				@if (plan.priceMonthly !== undefined) {
+					<div class="price">
+						<span class="value">{{ (period()==='monthly' ? plan.priceMonthly : plan.priceYearly) || plan.priceMonthly }}$</span>
+						<span class="per">/mo</span>
+					</div>
+				} @else {
+					<div class="price">
+						<span class="value">Custom</span>
+					</div>
+				}
+
+				@if (plan.id===currentPlanId()) {
+					<div class="cta">
+						<div class="current">
+							<div class="label">Current Plan</div>
+							<div class="renew">{{ renewalDateLabel() }}</div>
+						</div>
+					</div>
+				} @else if (plan.id!=='business') {
+					<div class="cta">
+						<button class="primary">{{ plan.id==='start' ? 'Downgrade' : 'Upgrade' }}</button>
+						<div class="trial" *ngIf="plan.id!=='start'">Start Free 7-Days Trial</div>
+					</div>
+				} @else {
+					<div class="cta">
+						<button class="secondary">Contact Sales</button>
+						<div class="trial">Start Free 7-Days Trial</div>
+					</div>
+				}
+
+				<ul class="features">
+					@for (f of plan.features; track f.text) {
+						<li>
+							<fa-icon [icon]="faCheck"></fa-icon>
+							{{ f.text }}
+						</li>
+					}
+				</ul>
+			</div>
+		}
+	</div>
+
+	<div class="invoices">
+		<div class="invoices-header">
+			<h3>Previous invoices</h3>
+		</div>
+		@for (inv of invoices(); track inv.id) {
+			<div class="invoice-row">
+				<div class="name">{{ inv.name }}</div>
+				<div class="date">{{ inv.date }}</div>
+				<div class="plan">{{ inv.plan }}</div>
+				<div class="amount">{{ inv.amount }}</div>
+				@if (inv.canDownload) {
+					<div class="actions">
+						<button class="icon">
+							<fa-icon [icon]="faDownload"></fa-icon>
+						</button>
+					</div>
+				}
+			</div>
+		}
+	</div>
+</div> 

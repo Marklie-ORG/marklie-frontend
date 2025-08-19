@@ -58,52 +58,52 @@ body {
   font-family: "Inter Variable", sans-serif !important;
 }
 
-h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 2.5rem;
-}
-h2 {
-  font-size: 1.8rem;
-}
-h3 {
-  font-size: 1.6rem !important;
-  font-weight: 500 !important;
-}
-h4 {
-  font-size: 1.3rem !important;
-  font-weight: 500;
-}
-p {
-  font-size: 1.1rem;
-  line-height: 1.6rem;
-}
+// h1 {
+//   font-size: 2rem;
+//   font-weight: 600;
+//   line-height: 2.5rem;
+// }
+// h2 {
+//   font-size: 1.8rem;
+// }
+// h3 {
+//   font-size: 1.6rem !important;
+//   font-weight: 500 !important;
+// }
+// h4 {
+//   font-size: 1.3rem !important;
+//   font-weight: 500;
+// }
+// p {
+//   font-size: 1.1rem;
+//   line-height: 1.6rem;
+// }
 a {
   text-decoration: none !important;
-  font-size: 1rem;
+  // font-size: 1rem;
 }
 hr {
   opacity: 0.3;
   border-radius: 20px;
 }
 
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 2rem;
-  }
-  h2 {
-    font-size: 1.3rem !important;
-  }
-  h3 {
-    font-size: 1.1rem !important;
-  }
-  p {
-    font-size: 1rem !important;
-    line-height: 1.4rem;
-  }
-}
+// @media (max-width: 768px) {
+//   h1 {
+//     font-size: 1.5rem;
+//     font-weight: 600;
+//     line-height: 2rem;
+//   }
+//   h2 {
+//     font-size: 1.3rem !important;
+//   }
+//   h3 {
+//     font-size: 1.1rem !important;
+//   }
+//   p {
+//     font-size: 1rem !important;
+//     line-height: 1.4rem;
+//   }
+// }
 
 .prevent-select {
   -webkit-user-select: none; /* Safari */
@@ -568,14 +568,14 @@ hr {
   }
 }
 
-button {
-  border: none;
+button, select {
+  border: 1px solid #f1f1f1;
   color: #333;
   padding: 10px 22px;
   font-size: 14px;
   border-radius: 8px;
   font-weight: 400;
-  box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
+  // box-shadow: rgba(13, 16, 23, 0.54) 0px 0.5px 2.7px 0px;
   letter-spacing: 0.03rem;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -603,8 +603,8 @@ button {
     color: #fff;
   }
   &.blue:hover {
-    background: #1f8ded;
-    box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
+    background: #1b79cb;
+    // box-shadow: rgb(13 16 23 / 70%) 0px 1.3px 1px 0px;
   }
 
   &.subtle {
@@ -648,6 +648,8 @@ button {
 
 input,
 textarea {
+  box-sizing: border-box;
+  
   &.text {
     font-size: 1rem;
     padding: 7px 26px 7px 10px;

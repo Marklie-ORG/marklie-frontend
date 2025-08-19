@@ -12,94 +12,37 @@
         class="mt-3" 
         placeholder="Enter client name"
         class="text"
-        
         >
     </div>
   </div>
 
-  <!-- <div class="tabs d-flex gap-3 mb-3">
-    <div class="pb-1" [class.selected]="activeTab === 'comm_channels'" (click)="activeTab = 'comm_channels'">Communication channels</div>
-    <div class="pb-1" [class.selected]="activeTab === 'ad_platform'" (click)="activeTab = 'ad_platform'">Advertisement platform</div>
-    
-  </div> -->
-
-  <div>
-    <!-- <ng-container *ngIf="activeTab === 'ad_platform'">
-      <h3>Facebook ad account</h3>
-      <ul>
-        <li>Marklie ad account 1</li>
-        <li>Marklie ad account 2</li>
-        <li><a href="#">+ Add Facebook account</a></li>
-      </ul>
-  
-      <h3>TikTok ad account</h3>
-      <ul>
-        <li>Marklie ad account 1</li>
-        <li>Marklie ad account 2</li>
-        <li><a href="#">+ Add TikTok account</a></li>
-      </ul>
-    </ng-container> -->
-  
-    <ng-container *ngIf="activeTab === 'comm_channels'">
-
-      <communications-settings
-      [slackConversationId]="data.client.slackConversationId!"
-      [clientUuid]="data.client.uuid"
-      [(clientEmails)]="emails"
-      [(clientPhoneNumbers)]="phoneNumbers"
-      ></communications-settings>
-
-    </ng-container>
+  <div class="tabs d-flex gap-3 mb-3">
+    <div class="pb-1" [class.selected]="activeTab === 'comm_channels'" (click)="selectTab('comm_channels')">Communication settings</div>
+    <div class="pb-1" [class.selected]="activeTab === 'ad_platform'" (click)="selectTab('ad_platform')">Ad accounts</div>
   </div>
 
-    <!-- <div class="form-group">
-      <label>Selected Ad Accounts</label>
-      <div class="selected-accounts" >
-        <div class="selected-accounts-list">
-          <ng-container *ngFor="let adAccount of uniqueAdAccounts">
-            <div *ngIf="isAdAccountSelected(adAccount.id)" class="selected-account-item">
-              {{adAccount.name}}
-            </div>
-          </ng-container>
-        </div>
+  <div>
+    <!-- Instantiate comm settings immediately (default tab), and keep it mounted -->
+    <ng-container *ngIf="isCommTabLoaded">
+      <div [hidden]="activeTab !== 'comm_channels'">
+        <communications-settings
+          [slackConversationId]="data.client.slackConversationId!"
+          [clientUuid]="data.client.uuid"
+          [(clientEmails)]="emails"
+          [(clientPhoneNumbers)]="phoneNumbers"
+        ></communications-settings>
       </div>
+    </ng-container>
 
-      <div class="ad-accounts-container">
-        <div class="businesses-list">
-          <div 
-            *ngFor="let business of businesses" 
-            class="business-item"
-            [class.selected]="selectedBusiness?.id === business.id"
-            [class.disabled-business]="isBusinessDisabled(business.id)"
-            (click)="selectBusiness(business)">
-            {{business.name}}
-          </div>
-        </div>
-        
-        <div class="accounts-list" *ngIf="selectedBusiness">
-          <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
-            <h4>Ad Accounts</h4>
-            <div 
-            *ngFor="let account of selectedBusiness.ad_accounts" 
-            class="account-option"
-            (click)="disabledAdAccountAlert(account.business.id)"
-            >
-              <input 
-                *ngIf="account.business"
-                [disabled]="isAdAccountDisabled(account.business.id)"
-                type="checkbox" 
-                [id]="account.id"
-                [checked]="isAdAccountSelected(account.id)"
-                (change)="toggleAdAccount($event, account.id, account.business.id)"
-                >
-              <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
-            </div>
-          </div>
-          
-        </div>
+    <!-- Instantiate ad accounts only once when first opened, then keep it mounted -->
+    <ng-container *ngIf="isAdTabLoaded">
+      <div [hidden]="activeTab !== 'ad_platform'">
+        <ad-accounts-settings
+          [(facebookAdAccounts)]="facebookAdAccounts"
+        ></ad-accounts-settings>
       </div>
-    </div> -->
-    
+    </ng-container>
+  </div>
 
     <div class="modal-actions mt-4 d-flex flex-row justify-between">
       <button (click)="dialogRef.close()">Cancel</button>

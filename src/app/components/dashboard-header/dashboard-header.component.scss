@@ -18,6 +18,205 @@ a {
   color: inherit;
 }
 
+.feedback-container {
+  position: relative;
+}
+
+.feedback-toggle {
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3d475c;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.feedback-toggle:hover,
+.feedback-toggle:focus-visible {
+  background: #f9fafb;
+  border-color: #d7dee8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.feedback-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 300px;
+  max-width: 80vw;
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+  padding: 12px;
+  z-index: 1000;
+  animation: dropdown-fade-in 120ms ease-out;
+}
+
+.feedback-input {
+  // width: 100%;
+  resize: vertical;
+  min-height: 72px;
+  max-height: 240px;
+  border: 1px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  font-size: 14px;
+  color: #1f2937;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.feedback-input:focus {
+  border-color: #c7d2e0;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.feedback-actions {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedback-actions .hint {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.send-btn {
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.send-btn:hover {
+  background: #2563eb;
+}
+
+.send-btn:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.feedback-status {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #16a34a;
+}
+
+.user-dropdown-container {
+  position: relative;
+}
+
+.user-dropdown {
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3d475c;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.user-dropdown:hover,
+.user-dropdown:focus-visible {
+  background: #f9fafb;
+  border-color: #d7dee8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.user-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+  padding: 6px 0;
+  z-index: 1000;
+  animation: dropdown-fade-in 120ms ease-out;
+  overflow: hidden;
+}
+
+.dropdown-menu a,
+.dropdown-menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #3d475c;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu a:focus-visible,
+.dropdown-menu button:hover,
+.dropdown-menu button:focus-visible {
+  background: #f5f7fa;
+  color: #1f2937;
+}
+
+.dropdown-menu fa-icon {
+  font-size: 16px;
+}
+
+.icon-only {
+  background: #ffffff;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  padding: 6px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #3d475c;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.icon-only:hover,
+.icon-only:focus-visible {
+  background: #f9fafb;
+  border-color: #d7dee8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+@keyframes dropdown-fade-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 // .gap-30 {
 //   gap: 30px;
 // }

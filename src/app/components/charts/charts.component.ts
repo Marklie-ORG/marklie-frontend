@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, EventEmitter, Input, input, model, OnChanges, Output, signal, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, Input, input, model, OnChanges, Output, signal, SimpleChanges, ViewChild, ViewChildren, QueryList, OnDestroy, NgZone, inject } from '@angular/core';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Sortable from 'sortablejs';
@@ -24,33 +24,15 @@ interface GraphConfig extends Metric {
   templateUrl: './charts.component.html',
   styleUrl: './charts.component.scss'
 })
-export class ChartsComponent implements OnChanges {
+export class ChartsComponent implements OnChanges, OnDestroy {
 
-  private sortable: Sortable | null = null;
+  private sortablesByAdAccountId: Map<string, Sortable> = new Map();
+  private adAccountsSortable: Sortable | null = null;
 
-  // @ViewChild('chartsGridContainer', { static: false }) set gridContainer(el: ElementRef | undefined) {
-  //   if (this.sortable) {
-  //     this.sortable.destroy();
-  //     this.sortable = null;
-  //   }
-
-  //   if (el) {
-  //     this.sortable = Sortable.create(el.nativeElement, {
-  //       animation: 200,
-  //       easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-  //       ghostClass: 'sortable-ghost',
-  //       dragClass: 'sortable-drag',
-  //       onEnd: (event) => this.reorderItems(event),
-  //     });
-  //   }
-
-  //   if (this.isViewMode()) {
-  //     this.sortable?.option('disabled', true);
-  //   }
-  // }
+  @ViewChildren('chartsGridContainer') chartsGridContainers!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
 
   graphs = input<any[]>([]);
-  // adAccounts = model<AdAccount[]>([]);
   @Input() adAccounts: AdAccount[] = [];
   @Output() adAccountsChange = new EventEmitter<AdAccount[]>();
   isViewMode = input<boolean>(false);
@@ -60,57 +42,37 @@ export class ChartsComponent implements OnChanges {
   private chartRefs: Record<string, Chart> = {};
 
   adAccountsGraphs = signal<GraphsAdAccount[]>([]);
+  isReorderingAdAccounts = signal<boolean>(false);
 
-  constructor() {
+  private ngZone = inject(NgZone);
 
-    // if (this.adAccounts().length) {
-    //   this.initializeGraphs();
-    // }
-
-    
-    
-    // effect(() => {
-    //   console.log("hello")
-    //   console.log(this.adAccounts())
-    //   if (this.adAccounts().length) {
-    //     console.log(this.adAccounts())
-    //     this.initializeGraphs();
-    //   }
-    // });
-    
-    //   console.log(this.adAccounts())
-    //   // this.initializeGraphs();
-    //   // for (let adAccount of this.adAccounts()) {
-    //   //   if (adAccount.metrics.length) {
-    //   //     this.initializeGraphs();
-    //   //   }
-    //   // }
-      
-   
-  }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    // console.log(changes)
     if (changes['adAccounts']) {
-
-      // console.log(changes['adAccounts'])
       this.initializeGraphs();
     }
   }
 
+  ngOnDestroy(): void {
+    this.destroyAllSortables();
+    if (this.adAccountsSortable) {
+      this.adAccountsSortable.destroy();
+      this.adAccountsSortable = null;
+    }
+    // Destroy all charts on destroy
+    Object.values(this.chartRefs).forEach((c) => c.destroy());
+    this.chartRefs = {};
+  }
 
   initializeGraphs() {
     setTimeout(() => {
-      
-      // if (!this.metrics().length) return
-
       const adAccounts = this.adAccounts;
-      // const adAccounts = this.adAccounts();
 
       this.adAccountsGraphs.set([]);
 
       for (let adAccount of adAccounts) {
-        const metrics = adAccount.metrics.filter(m => m.enabled) || [];
+        const metrics = (adAccount.metrics || []).filter(m => m.enabled).sort((a, b) => a.order - b.order);
         const graphConfigs = this.getGraphConfigs();
 
         this.adAccountsGraphs.update(prev => [...prev, {
@@ -127,13 +89,19 @@ export class ChartsComponent implements OnChanges {
           let config = graphConfigs.find(c => c.metric === metric.name);
 
           if (!config) {
-            config = { metric: metric.id || '', label: metric.name, color: '#77B6FB', format: (v: any) => `${v}` }
+            config = {
+              metric: metric.name.replaceAll(' ', '_'), 
+              label: metric.name, 
+              color: '#77B6FB', format: (v: any) => `${v}` 
+            }
           }
 
-          graphs.push({
+          let graph = {
             ...config,
             ...metric,
-          })
+          }
+
+          graphs.push(graph)
 
           this.adAccountsGraphs.update(prev => {
             const lastIndex = prev.length - 1;
@@ -143,9 +111,82 @@ export class ChartsComponent implements OnChanges {
         }
         this.adAccountsGraphs.update(prev => prev.sort((a: any, b: any) => a.order - b.order));
       }
-      setTimeout(() => this.renderCharts(), 0);
-    }, 100);
+
+      // Render and wire up drag after DOM updates
+      setTimeout(() => {
+        this.renderCharts();
+        this.destroyAllSortables();
+        this.initSortables();
+        this.chartsGridContainers?.changes?.subscribe(() => {
+          this.destroyAllSortables();
+          this.initSortables();
+        });
+      }, 0);
+    }, 50);
   }
+
+  private initSortables(): void {
+    const disableDragging = this.isViewMode();
+
+    // Sortable for per-account graph cards
+    this.chartsGridContainers?.forEach((containerRef: ElementRef<HTMLElement>) => {
+      const containerEl = containerRef.nativeElement;
+      const adAccountId = containerEl.getAttribute('data-adaccount-id') || '';
+
+      const existing = this.sortablesByAdAccountId.get(adAccountId);
+      if (existing) {
+        existing.destroy();
+        this.sortablesByAdAccountId.delete(adAccountId);
+      }
+
+      const sortable = this.ngZone.runOutsideAngular(() => Sortable.create(containerEl, {
+        animation: 150,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        group: { name: `graphs-${adAccountId}`, pull: false, put: false },
+        handle: '.graph-card',
+        draggable: '.graph-card',
+        disabled: disableDragging,
+        onEnd: (event) => this.ngZone.run(() => this.onReorderEnd(event, adAccountId)),
+      }));
+
+      this.sortablesByAdAccountId.set(adAccountId, sortable);
+    });
+
+    // Sortable for ad accounts list
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (containerEl) {
+      if (this.adAccountsSortable) {
+        this.adAccountsSortable.destroy();
+        this.adAccountsSortable = null;
+      }
+
+      this.adAccountsSortable = this.ngZone.runOutsideAngular(() => Sortable.create(containerEl, {
+        animation: 150,
+        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        group: { name: 'graphs-ad-accounts', pull: false, put: false },
+        draggable: '.ad-account-item',
+        handle: 'h4',
+        disabled: disableDragging,
+        onStart: () => this.ngZone.run(() => this.isReorderingAdAccounts.set(true)),
+        onEnd: () => this.ngZone.run(() => { this.isReorderingAdAccounts.set(false); this.onAdAccountsReorderEnd(); }),
+      }));
+    }
+  }
+
+  private destroyAllSortables(): void {
+    this.sortablesByAdAccountId.forEach((s) => s.destroy());
+    this.sortablesByAdAccountId.clear();
+  }
+
+  private getCanvasId(adAccountId: string, metric: string): string {
+    return `Chart-${adAccountId}-${metric.replaceAll(' ', '_')}`;
+  }
+
+  
 
   getGraphConfigs() {
     return [
@@ -156,7 +197,8 @@ export class ChartsComponent implements OnChanges {
       { metric: 'addToCart', label: 'Add to Cart', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'initiatedCheckouts', label: 'Checkouts', color: '#77B6FB', format: (v: any) => `${v}` },
       { metric: 'clicks', label: 'Clicks', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },
-      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
+      { metric: 'impressions', label: 'Impressions', color: '#77B6FB', format: (v: any) => `${Math.round(v).toLocaleString()}` },      
+      { metric: 'ctr', label: 'Click Through Rate', color: '#77B6FB', format: (v: any) => `${v}%` },
       { metric: 'cpm', label: 'Cost Per Mile', color: '#77B6FB', format: (v: any) => `$${parseFloat(v).toFixed(2)}` },
       { metric: 'cpc', label: 'CPC', color: '#77B6FB', format: (v: any) => `$${v}` },
       { metric: 'cpp', label: 'CPP', color: '#77B6FB', format: (v: any) => `$${v}` },
@@ -173,38 +215,26 @@ export class ChartsComponent implements OnChanges {
   }
 
   private renderCharts(): void {
-    if (!this.graphs()?.length) return;
-
-    const labels = this.graphs().map(g =>
-      new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
-
 
     for (const adAccount of this.adAccountsGraphs()) {
       for (const config of adAccount.graphs) {
-        const canvases = document.querySelectorAll(`#Chart${config.metric}`);
+        const canvasId = this.getCanvasId(adAccount.id, config.metric);
+        const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
         
-        if (!canvases.length) continue;
-  
-        let currentCanvas = canvases[canvases.length - 1];
-        let canvasId = `Chart${config.metric}-${canvases.length}`
-        currentCanvas.id = canvasId;
-  
-        let data = this.graphs().map(g => parseFloat(g[config.metric]) || Math.random() * 1000);
-        
-        // console.log(data)
+        if (!canvas) continue;
 
-        // if (data.every(d => d === 0)) {
-        //   data.forEach((d, index) => {
-        //     d = Math.random() * 1000;
-        //   });
-        // };
+        const points = config.dataPoints || [];
+        const data = points.map(d => d.value);
+        const labels = points.map(d => {
+          // Convert 'YYYY-MM-DD' to a more human readable format, e.g. 'Aug 10, 2025'
+          const dateObj = new Date(d.date);
+          return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        });
 
-        // console.log(data)
-  
+        // Destroy any existing chart for this canvas
         this.chartRefs[canvasId]?.destroy();
-  
-        this.chartRefs[canvasId] = new Chart(currentCanvas as HTMLCanvasElement, {
+
+        this.chartRefs[canvasId] = new Chart(canvas, {
           type: 'line',
           data: {
             labels,
@@ -278,29 +308,87 @@ export class ChartsComponent implements OnChanges {
     
   }
 
+  private onAdAccountsReorderEnd(): void {
+    const containerEl = this.adAccountsContainer?.nativeElement;
+    if (!containerEl) return;
 
-  // getChartConfiguration(config: GraphConfig, labels: string[], data: number[]) {
-  //   return 
-  // }
+    const current = [...this.adAccounts];
 
-  // reorderItems(event: Sortable.SortableEvent) {
-    
-  //   const movedItem = this.displayedGraphs.splice(event.oldIndex!, 1)[0];
-  //   this.displayedGraphs.splice(event.newIndex!, 0, movedItem);
-  //   this.displayedGraphs.forEach((m: any, index: number) => m.order = index);
+    // Build new enabled order from DOM
+    const enabledOrderIds = Array.from(containerEl.querySelectorAll('.ad-account-item'))
+      .map(el => (el as HTMLElement).dataset['adaccountId']!)
+      .filter(Boolean);
 
-  //   for (let [index, metric] of this.metrics().entries()) {
-      
-  //     const order = this.displayedGraphs.findIndex((g: any) => g.name === metric.name);
-  //     if (order !== -1) {
-  //       metric.order = order;
-  //     }
-  //     else {
-  //       metric.order = this.displayedGraphs.length + index; 
-  //     }
-  //   }
+    // Map enabled ad accounts by id and collect their original positions
+    const enabledById = new Map<string, AdAccount>();
+    const enabledPositions: number[] = [];
+    for (let i = 0; i < current.length; i++) {
+      const a = current[i];
+      if (a.enabled) {
+        enabledById.set(String(a.id), a);
+        enabledPositions.push(i);
+      }
+    }
 
-  //   this.metrics.set(this.metrics().sort((a, b) => a.order - b.order));
-  // }
+    // Reorder enabled according to DOM
+    const reorderedEnabled: AdAccount[] = [];
+    for (const id of enabledOrderIds) {
+      const acc = enabledById.get(String(id));
+      if (acc) reorderedEnabled.push({ ...acc });
+    }
 
+    // Rebuild full list, keeping disabled at their original positions
+    const result: AdAccount[] = current.map(a => ({ ...a }));
+    for (let i = 0; i < enabledPositions.length; i++) {
+      const pos = enabledPositions[i];
+      result[pos] = { ...reorderedEnabled[i] };
+    }
+
+    // Update order field sequentially across all accounts
+    result.forEach((a, idx) => a.order = idx);
+
+    this.adAccountsChange.emit(result);
+  }
+
+  private onReorderEnd(event: Sortable.SortableEvent, adAccountId: string): void {
+    // Update metric.order inside the bound adAccounts and emit changes
+    const updatedAdAccounts = this.adAccounts.map((acc) => {
+      if (String(acc.id) !== String(adAccountId)) return acc;
+
+      const allMetrics: Metric[] = [...acc.metrics];
+      const enabledPositions: number[] = [];
+      const enabledMetrics: Metric[] = [];
+      for (let i = 0; i < allMetrics.length; i++) {
+        if (allMetrics[i].enabled) {
+          enabledPositions.push(i);
+          enabledMetrics.push({ ...allMetrics[i] });
+        }
+      }
+
+      const oldIdx = (event as any).oldDraggableIndex ?? event.oldIndex ?? 0;
+      const newIdx = (event as any).newDraggableIndex ?? event.newIndex ?? 0;
+      if (oldIdx !== newIdx) {
+        const moved = enabledMetrics.splice(oldIdx, 1)[0];
+        enabledMetrics.splice(newIdx, 0, moved);
+      }
+
+      const resultMetrics: Metric[] = allMetrics.map(m => ({ ...m }));
+      for (let i = 0; i < enabledPositions.length; i++) {
+        const pos = enabledPositions[i];
+        resultMetrics[pos] = { ...enabledMetrics[i] };
+      }
+
+      for (let i = 0; i < resultMetrics.length; i++) {
+        resultMetrics[i].order = i;
+      }
+
+      return { ...acc, metrics: resultMetrics } as AdAccount;
+    });
+
+    this.adAccountsChange.emit(updatedAdAccounts);
+
+    // Re-render charts to reflect new ordering
+    this.adAccounts = updatedAdAccounts;
+    this.initializeGraphs();
+  }
 }

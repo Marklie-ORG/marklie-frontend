@@ -12,7 +12,6 @@ import { Data } from '../schedule-report/schedule-report.component';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
-// import { SchedulingOption } from '../edit-report/edit-report.component';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 
@@ -48,7 +47,7 @@ export class PdfReportComponent implements OnInit {
   selectedDatePresetText = signal<string>('');
 
   //
-  reportData: ReportData = [];
+  providers: ReportData = [];
   //
 
   // schedulingOption: SchedulingOption | null = null;
@@ -63,7 +62,7 @@ export class PdfReportComponent implements OnInit {
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       this.reportUuid = params['reportUuid'];
-      this.clientUuid = params['clientUuid'];
+      // this.clientUuid = params['clientUuid'];
       await this.loadReport();
     });
   }
@@ -72,7 +71,7 @@ export class PdfReportComponent implements OnInit {
     if (!this.reportUuid) return;
     try {
       const res = await this.reportService.getReport(this.reportUuid);
-      this.reportData = res.data;
+      this.providers = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
@@ -84,7 +83,8 @@ export class PdfReportComponent implements OnInit {
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
       
-      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.reportData);
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
+      console.log(this.reportSections)
 
     } catch (error) {
       console.error('Error loading report:', error);

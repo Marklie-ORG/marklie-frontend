@@ -1,5 +1,6 @@
 :host {
   min-height: 100vh;
+  overflow-y: hidden;
 }
 
 .connect-facebook {
@@ -34,6 +35,7 @@
 
   .row {
     cursor: pointer;
+    font-size: 14px;
   }
 }
 

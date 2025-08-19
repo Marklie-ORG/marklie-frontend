@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   faEnvelope,
   faPhone,
@@ -10,13 +10,14 @@ import {
   faSlack,
 } from '@fortawesome/free-brands-svg-icons';
 import { OrganizationService } from '../../services/api/organization.service.js';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-reports-page',
-  templateUrl: './reports-page.component.html',
-  styleUrls: ['./reports-page.component.scss'],
+  selector: 'app-scheduled-reports-page',
+  templateUrl: './scheduled-reports-page.component.html',
+  styleUrls: ['./scheduled-reports-page.component.scss'],
 })
-export class ReportsPageComponent implements OnInit {
+export class ScheduledReportsPageComponent implements OnInit {
   schedules: any[] = [];
   filteredReports: any[] = [];
   pagedReports: any[] = [];
@@ -38,10 +39,13 @@ export class ReportsPageComponent implements OnInit {
   faMeta = faMeta;
   faFilter = faFilter;
 
-  constructor(private organizationService: OrganizationService) {}
+  private router = inject(Router);
+  private organizationService = inject(OrganizationService);
 
   async ngOnInit() {
     this.schedules = await this.organizationService.getSchedulingOptions();
+    // Sort by updatedAt in descending order (most recent first)
+    this.schedules.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
     this.filteredReports = [...this.schedules];
     this.updatePagedReports();
   }
@@ -158,4 +162,8 @@ export class ReportsPageComponent implements OnInit {
   }
 
   protected readonly Math = Math;
+
+  openScheduledReport(clientUuid: string, reportUuid: string) {
+    this.router.navigate(['/edit-report', clientUuid, reportUuid]);
+  }
 }

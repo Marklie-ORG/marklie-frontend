@@ -4,3 +4,10 @@
 .toggle-password {
     top: 50%;
 }
+
+// Ensure the password input leaves space for the toggle icon and fills the wrapper
+.password-wrapper {
+    input.text {
+        padding-right: 36px;
+    }
+}

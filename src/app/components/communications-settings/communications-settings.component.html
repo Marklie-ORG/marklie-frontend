@@ -7,19 +7,18 @@
     </div>
     <div>
       <div
-      *ngFor="let email of emails; let i = index"
+      *ngFor="let email of clientEmails(); let i = index; trackBy: trackByIndex"
       class="email-row d-flex gap-2 pt-2 pb-2 ">
         <input
           id="email{{i}}"
-          *ngIf="email.isEditMode"
           type="email"
           placeholder="Enter email address"
-          [value]="email.email"
-          [(ngModel)]="email.email"
+          [ngModel]="email"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onEmailChange(i, $event)"
           class="text"
-          (blur)="onEmailBlur(i)"
           >
-        <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p>
+        <!-- <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p> -->
         <!-- <button 
         *ngIf="email.isEditMode"
           type="button" 
@@ -32,11 +31,10 @@
         Please enter a valid email address
       </div> -->
 
-      <div
-      class="add-email-button"
-        (click)="addEmail()">
+      <button (click)="addEmail()">
         Add recipient email
-      </div>
+      </button>
+
     </div>
   </div>
 
@@ -50,36 +48,23 @@
 
     <div>
       <div
-      *ngFor="let phoneNumber of phoneNumbers; let i = index"
+      *ngFor="let phoneNumber of clientPhoneNumbers(); let i = index; trackBy: trackByIndex"
       class="email-row d-flex gap-2 pt-2 pb-2 ">
-        <input
-          id="phoneNumber{{i}}"
-          *ngIf="phoneNumber.isEditMode"
-          type="phoneNumber"
-          placeholder="Enter phone number"
-          [value]="phoneNumber.phoneNumber"
-          [(ngModel)]="phoneNumber.phoneNumber"
-          class="text"
-          (blur)="onPhoneNumberBlur(i)"
-          >
-        <p *ngIf="!phoneNumber.isEditMode" (click)="phoneNumber.isEditMode = true; focusInput('phoneNumber' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{phoneNumber.phoneNumber}}</p>
-        <!-- <button 
-        *ngIf="email.isEditMode"
-          type="button" 
-          (click)="removeEmail(i)"
-          >
-          Remove
-        </button> -->
+        <app-phone-input
+          [inputId]="'phoneNumber'+i"
+          [placeholder]="'Enter phone number'"
+          [ngModel]="phoneNumber"
+          [ngModelOptions]="{standalone: true}"
+          (ngModelChange)="onPhoneNumberChange(i, $event)"
+        ></app-phone-input>
       </div>
       <!-- <div *ngIf="emails.at(0)?.get('email')?.invalid && emails.at(0)?.get('email')?.touched" class="invalid-feedback">
         Please enter a valid email address
       </div> -->
 
-      <div
-      class="add-email-button"
-        (click)="addPhoneNumber()">
+      <button (click)="addPhoneNumber()">
         Add recipient phone number
-      </div>
+      </button>
     </div>
     
   </div>
@@ -93,7 +78,7 @@
           <p>Slack</p>
         </div>
       </div>
-      <div class="d-flex flex-column gap-2 mt-5">
+      <div class="d-flex flex-column gap-2">
         <div *ngIf="currentWorkspace" class="d-flex flex-row gap-2 align-items-center">
           Current Selected Slack Workspace: <img src="{{currentWorkspace.image}}" width="20px" height="20px" style="border-radius: 4px"> {{currentWorkspace.name}}
         </div>

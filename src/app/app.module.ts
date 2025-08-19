@@ -55,7 +55,7 @@ import { AdCardComponent } from "./components/ad-card/ad-card.component";
 import { CampaignTableComponent } from "./components/campaign-table/campaign-table.component";
 import { ChartsComponent } from "./components/charts/charts.component";
 import { ActivityTableComponent } from "./components/activity-logs-card/activity-table.component";
-import { ReportsPageComponent } from "./pages/reports/reports-page.component.js";
+import { ScheduledReportsPageComponent } from "./pages/scheduled-reports/scheduled-reports-page.component.js";
 import { ItemComponent } from "./components/edit-metrics/components/item/item.component";
 import { WhatsappMessagePreviewComponent } from "./components/whatsapp-message-preview/whatsapp-message-preview.component";
 import { ImagesManagerComponent } from "./components/images-manager/images-manager.component";
@@ -63,6 +63,16 @@ import { ReportHeaderComponent } from "./components/report-header/report-header.
 import { LandingNewComponent } from "./pages/landing-new/landing-new.component";
 import {HeaderComponent} from "./components/header/header.component.js";
 import { CommunicationsSettingsComponent } from './components/communications-settings/communications-settings.component';
+import { AdAccountsSettingsComponent } from './components/ad-accounts-settings/ad-accounts-settings.component';
+
+import { SuggestedFeaturesComponent } from './pages/suggested-features/suggested-features.component';
+import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-suggestion.component';
+
+import { PhoneInputComponent } from './components/phone-input/phone-input.component';
+import { DatabaseTableComponent } from './components/database-table/database-table.component';
+import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { BillingComponent } from './pages/billing/billing.component';
+
 
 register();
 
@@ -110,13 +120,22 @@ register();
     ChartsComponent,
 
     ActivityTableComponent,
-    ReportsPageComponent,
+    ScheduledReportsPageComponent,
     ItemComponent,
     WhatsappMessagePreviewComponent,
     ImagesManagerComponent,
     ReportHeaderComponent,
     HeaderComponent,
-    CommunicationsSettingsComponent
+    CommunicationsSettingsComponent,
+    AdAccountsSettingsComponent,
+    SuggestedFeaturesComponent,
+    FeatureSuggestionComponent,
+
+    PhoneInputComponent,
+  DatabaseTableComponent,
+  ReportsDatabasePageComponent,
+  BillingComponent
+
   ],
   imports: [
     BrowserModule,

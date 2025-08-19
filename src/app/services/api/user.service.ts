@@ -92,4 +92,10 @@ export class UserService {
     );
   }
 
+  async sendFeedback(message: string) {
+    return firstValueFrom(
+      this.http.post<{ message: string }>(`${this.apiUrl}/feedback`, { message })
+    );
+  }
+
 }

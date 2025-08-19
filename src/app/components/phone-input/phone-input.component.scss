@@ -1,0 +1,82 @@
+.phone-input {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 8px;
+	align-items: start;
+}
+
+.country-select {
+	position: relative;
+}
+
+.country-toggle {
+	border: 1px solid #d0d7de;
+	background: #fff;
+    padding: 5.5px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.country-dropdown {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	z-index: 10;
+	width: 320px;
+	max-height: 150px;
+	background: #fff;
+	border: 1px solid #d0d7de;
+	border-radius: 8px;
+	box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+	padding: 8px;
+}
+
+.country-search {
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid #d0d7de;
+	border-radius: 6px;
+	margin-bottom: 8px;
+}
+
+.country-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	max-height: 110px;
+	overflow: auto;
+}
+
+.country-list li {
+	display: grid;
+	grid-template-columns: 24px 1fr auto;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.country-list li:hover,
+.country-list li:focus {
+	background: #f6f8fa;
+	outline: none;
+}
+
+.number-field {
+	position: relative;
+	width: 100%;
+}
+
+.number-field input.text.invalid {
+	border-color: #dc3545;
+}
+
+.invalid-feedback {
+	color: #dc3545;
+	font-size: 12px;
+	margin-top: 4px;
+} 

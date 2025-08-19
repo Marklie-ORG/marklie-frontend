@@ -59,7 +59,7 @@
 
       <div class="list">
         @for (report of pagedReports; let i = $index; track i) {
-          <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4">
+          <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4" (click)="openScheduledReport(report.client.uuid, report.uuid)">
             <div style="width: 4%;">
               <input
                 type="checkbox"

@@ -55,7 +55,7 @@ import { AdCardComponent } from "./components/ad-card/ad-card.component";
 import { CampaignTableComponent } from "./components/campaign-table/campaign-table.component";
 import { ChartsComponent } from "./components/charts/charts.component";
 import { ActivityTableComponent } from "./components/activity-logs-card/activity-table.component";
-import { ReportsPageComponent } from "./pages/reports/reports-page.component.js";
+import { ScheduledReportsPageComponent } from "./pages/scheduled-reports/scheduled-reports-page.component.js";
 import { ItemComponent } from "./components/edit-metrics/components/item/item.component";
 import { WhatsappMessagePreviewComponent } from "./components/whatsapp-message-preview/whatsapp-message-preview.component";
 import { ImagesManagerComponent } from "./components/images-manager/images-manager.component";
@@ -120,7 +120,7 @@ register();
     ChartsComponent,
 
     ActivityTableComponent,
-    ReportsPageComponent,
+    ScheduledReportsPageComponent,
     ItemComponent,
     WhatsappMessagePreviewComponent,
     ImagesManagerComponent,

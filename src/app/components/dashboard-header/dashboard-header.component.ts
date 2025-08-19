@@ -44,7 +44,7 @@ export class DashboardHeaderComponent implements OnInit {
     const userInfo = this.authService.getDecodedAccessTokenInfo()
     console.log(userInfo)
     this.email = userInfo.email;
-    this.userName = userInfo.firstName + ' ' + userInfo.lastName;
+    this.userName = userInfo.firstName;
   }
 
   toggleFeedback() {

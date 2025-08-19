@@ -1,11 +1,11 @@
 <div class="container">
 
     <div 
-    class="p-4 block mt-4"
-    style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
+    class="p-4  mt-4"
+    >
 
         <div>
-            <h4 class="mt-2">Change Email</h4>
+            <h3 class="mt-2">Change Email</h3>
             <div class="d-flex gap-4 mt-3">
                 <div class="d-flex flex-column gap-2" style="width: 280px;">
                     <label for="email">New Email</label>
@@ -28,7 +28,7 @@
         <hr class="mt-4 mb-4">
 
         <div>
-            <h4 class="">Change Password</h4>
+            <h3>Change Password</h3>
             <div class="d-flex gap-4 mt-3">
                 <div class="d-flex flex-column gap-2">  
                     <label for="currentPassword">Current Password</label>
@@ -65,5 +65,50 @@
             <button (click)="changePassword()" class="mt-3">Change Password</button>
         </div>
 
+        <hr class="mt-4 mb-4">
+
+        @if (isOwner) {
+            <div>
+                <h3>Organization Invite Codes</h3>
+                <div class="d-flex gap-3 mt-3 align-items-center">
+                    <button (click)="generateInviteCode()" [disabled]="generatingInviteCode">
+                        {{ generatingInviteCode ? 'Generating...' : 'Generate New Invite Code' }}
+                    </button>
+                    @if (latestGeneratedCode) {
+                        <div>
+                            <strong>Latest code:</strong> <code>{{ latestGeneratedCode }}</code>
+                        </div>
+                    }
+                </div>
+
+                <div class="mt-3">
+                    <h4>Previously generated codes</h4>
+                    @if (loadingInviteCodes) {
+                        <div>Loading...</div>
+                    } @else if (!loadingInviteCodes && inviteCodes.length === 0) {
+                        <div>No invite codes generated yet.</div>
+                    } @else {
+                        <div class="d-flex flex-column gap-2">
+                            @for (invite of inviteCodes; track invite.uuid) {
+                                <div class="d-flex justify-content-between align-items-center p-2" style="border: 1px solid var(--border-color); border-radius: 6px;">
+                                    <div class="d-flex flex-column">
+                                        <div>
+                                            <strong>Code:</strong> <code>{{ invite.code }}</code>
+                                        </div>
+                                        <div>
+                                            <strong>Expires:</strong> {{ invite.expiresAt | date: 'medium' }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span [ngClass]="{'text-success': getInviteStatus(invite) === 'Active', 'text-danger': getInviteStatus(invite) !== 'Active'}">{{ getInviteStatus(invite) }}</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+ 
     </div>
 </div>

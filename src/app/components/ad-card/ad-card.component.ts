@@ -190,4 +190,31 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     this.adAccounts.set(updatedAccounts);
   }
 
+  isMetricEnabled(adAccount: AdAccount, metricName: string): boolean {
+    if (!adAccount || !adAccount.metrics) return false;
+    for (const metric of adAccount.metrics) {
+      if (metric.name === metricName) {
+        return Boolean(metric.enabled);
+      }
+    }
+    return false;
+  }
+
+  getOrderedCreativePoints(adAccount: AdAccount, creative: AdsAdAccountDataCreative) {
+    const orderByName = new Map<string, number>();
+    for (const metric of adAccount.metrics ?? []) {
+      orderByName.set(metric.name, metric.order);
+    }
+    const points = [...(creative.data ?? [])];
+    points.sort((a, b) => {
+      const orderA = orderByName.get(a.name);
+      const orderB = orderByName.get(b.name);
+      if (orderA === undefined && orderB === undefined) return 0;
+      if (orderA === undefined) return 1;
+      if (orderB === undefined) return -1;
+      return orderA - orderB;
+    });
+    return points;
+  }
+
 }

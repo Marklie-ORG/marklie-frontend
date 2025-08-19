@@ -109,7 +109,7 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'view-report/:clientUuid/:reportUuid',
+    path: 'view-report/:reportUuid',
     component: ViewReportComponent
   },
   {

@@ -13,6 +13,7 @@ import { Data } from '../schedule-report/schedule-report.component.js';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
 import { SchedulesService } from 'src/app/services/api/schedules.service.js';
+import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
 
 
 @Component({
@@ -48,7 +49,7 @@ export class ViewReportComponent implements OnInit {
 
   //
   selectedAdAccountIndex = -1;
-  reportData: any[] = [];
+  providers: ReportData = [];
   //
 
   private route = inject(ActivatedRoute);
@@ -60,7 +61,7 @@ export class ViewReportComponent implements OnInit {
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.reportId = params['id'];
+      this.reportId = params['reportUuid'];
       await this.loadReport();
     });
   }
@@ -69,7 +70,7 @@ export class ViewReportComponent implements OnInit {
     if (!this.reportId) return;
     try {
       const res = await this.reportService.getReport(this.reportId);
-      this.reportData = res.data;
+      this.providers = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
@@ -78,8 +79,10 @@ export class ViewReportComponent implements OnInit {
       this.agencyImageUrl.set(res.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
+
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
-      this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
+      // this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
 
       this.processSelectedAccount();
 
@@ -95,8 +98,8 @@ export class ViewReportComponent implements OnInit {
   public processSelectedAccount(): void {
     const isAllAccounts = Number(this.selectedAdAccountIndex) === -1;
     const data = isAllAccounts
-      ? this.reportsDataService.aggregateReports(this.reportData)
-      : this.reportData[this.selectedAdAccountIndex];
+      ? this.reportsDataService.aggregateReports(this.providers)
+      : this.providers[this.selectedAdAccountIndex];
 
     this.data = {
       KPIs: data.KPIs,

@@ -225,6 +225,10 @@ input:checked + .slider::before {
   height: 100vh;
   overflow-y: auto;
   z-index: 2001;
+
+  img {
+    width: 10px;
+  }
 }
 
 .metrics-container {

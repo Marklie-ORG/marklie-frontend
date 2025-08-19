@@ -11,9 +11,15 @@
 
     <p *ngIf="changesMade">Unsaved changes made</p>
 
-    <div class=" d-flex  gap-5">
-      <div>Frequency: {{frequency | titlecase}} </div>
-      <div>Next sending<br>{{nextRun | date:'MMM d, yyyy h:mm'}}</div>
+    <div class="header-meta d-flex gap-5">
+      <div class="meta-item">
+        <div class="meta-label">Frequency</div>
+        <div class="meta-value">{{ frequency | titlecase }}</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Next sending</div>
+        <div class="meta-value">{{ nextRun | date:'MMM d, yyyy h:mm' }}</div>
+      </div>
     </div>
 
     <div class="d-flex align-center justify-end">

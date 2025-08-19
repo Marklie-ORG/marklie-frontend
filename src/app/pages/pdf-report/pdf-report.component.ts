@@ -12,7 +12,6 @@ import { Data } from '../schedule-report/schedule-report.component';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
-// import { SchedulingOption } from '../edit-report/edit-report.component';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 

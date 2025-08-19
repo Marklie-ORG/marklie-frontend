@@ -33,7 +33,7 @@ export class ReportsDatabasePageComponent implements OnInit {
       createdAt: r.createdAt
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    this.rows = [...this.rows, ...this.rows, ...this.rows, ...this.rows]
+    // this.rows = [...this.rows, ...this.rows, ...this.rows, ...this.rows]
     this.loading = false;
   }
 

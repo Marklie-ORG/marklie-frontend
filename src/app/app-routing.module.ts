@@ -99,7 +99,7 @@ const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'review-report/:clientUuid/:reportUuid',
+    path: 'review-report/:reportUuid',
     component: ReviewReportComponent,
     canActivate: [authGuard],
   },
@@ -126,6 +126,10 @@ const routes: Routes = [
     path: 'billing',
     component: BillingComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: '**',
+    redirectTo: '/dashboard'
   }
 ];
 

@@ -1,3 +1,4 @@
+import { SchedulingOption } from "../pages/edit-report/edit-report.component"
 import { Metadata, SectionKey } from "./interfaces"
 
 export interface GetReportResponse {
@@ -14,7 +15,7 @@ export interface GetReportResponse {
       clientLogo: string
       organizationLogo: string
     }
-    schedulingOption: string
+    schedulingOption: SchedulingOption
   }
 
   export type ReportData = ProviderReportResponse[]
@@ -95,18 +96,3 @@ export interface GetReportResponse {
     order: number
     value: number
   }
-
-  
-
-
-
-  // export interface GraphDataPoint {
-  //   date: string
-  //   value: number
-  // }
-
-  // export interface MetricReportResponse {
-  //   name: string
-  //   order: number
-  //   value: number
-  // }

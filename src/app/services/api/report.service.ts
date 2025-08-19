@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
-import { ScheduleReportRequest, ReportImages } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse } from 'src/app/interfaces/interfaces';
 import { GetReportResponse } from 'src/app/interfaces/get-report.interfaces';
 
 
@@ -43,12 +43,22 @@ export class ReportService {
     return firstValueFrom(this.http.get<any>(`${this.apiUrl}/reports/scheduling-option/${uuid}`, {headers: this.headers}));
   }
 
-  async updateReportMetricsSelections(uuid: string, metricsSelections: any): Promise<any> {
-    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-metrics-selections/${uuid}`, metricsSelections, {headers: this.headers}));
+  async updateReportData(uuid: string, data: Provider[]): Promise<any> {
+    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-data/${uuid}`, data, {headers: this.headers}));
   }
 
   async updateReportImages(uuid: string, images: ReportImages): Promise<any> {
     return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-images/${uuid}`, images, {headers: this.headers}));
+  }
+
+  async sendAfterReview(data: SendAfterReviewRequest): Promise<SendAfterReviewResponse> {
+    return firstValueFrom(
+      this.http.post<SendAfterReviewResponse>(
+        `${this.apiUrl}/reports/send-after-review`,
+        data,
+        { headers: this.headers }
+      )
+    );
   }
 }
 

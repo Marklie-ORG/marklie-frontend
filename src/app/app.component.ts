@@ -17,7 +17,7 @@ export class AppComponent {
   constructor(private router: Router) {
     router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        const url = event.url.split('?')[0];
+        const url = event.urlAfterRedirects.split('?')[0];
         const hasToken = !!localStorage.getItem('accessToken');
 
         this.showLandingHeader = !hasToken && url === '/';

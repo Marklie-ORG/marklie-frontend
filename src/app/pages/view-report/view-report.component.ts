@@ -75,8 +75,8 @@ export class ViewReportComponent implements OnInit {
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
-      this.clientImageUrl.set(res.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.images?.organizationLogo || '');
+      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
+      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 

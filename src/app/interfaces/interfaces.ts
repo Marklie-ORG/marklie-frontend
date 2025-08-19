@@ -203,3 +203,13 @@ export interface ReportImages {
   clientLogo: string
   organizationLogo: string
 }
+
+export interface SendAfterReviewRequest {
+  reportUuid: string;
+  sendAt?: string;
+}
+
+export interface SendAfterReviewResponse {
+  message: string;
+  uuid?: string;
+}

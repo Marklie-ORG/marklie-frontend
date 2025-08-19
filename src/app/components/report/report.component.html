@@ -38,7 +38,8 @@
         <hr>
       <ad-card
       [ads]="data.ads"
-      [(adAccounts)]="adsSection().adAccounts"
+      [adAccounts]="adsSection().adAccounts"
+      (adAccountsChange)="onAdsAdAccountsChange($event)"
       [isViewMode]="isViewMode()"
       ></ad-card>
       }

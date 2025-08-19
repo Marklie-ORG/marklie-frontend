@@ -97,6 +97,14 @@ export class ReportComponent {
     this.reportSections.set(updatedSections);
   }
 
+  onAdsAdAccountsChange(updatedAdAccounts: AdAccount[]) {
+    const updatedSections = this.reportSections().map(section => {
+      if (section.key !== 'ads') return section;
+      return { ...section, adAccounts: [...updatedAdAccounts] } as ReportSection;
+    });
+    this.reportSections.set(updatedSections);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
   }
 

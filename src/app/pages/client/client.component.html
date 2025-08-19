@@ -6,7 +6,7 @@
         class="block"
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
           <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-              <h3>Reports</h3>
+              <h3>Scheduled Reports</h3>
               <button class="blue" (click)="scheduleReport()" >
                   New report
               </button>
@@ -47,7 +47,11 @@
       <div class="d-flex flex-column gap-4">
         <div class="block">
           <div class="block-header">
-            <h3 *ngIf="client" class="block-header__title">{{ client.name }}</h3>
+            <h3 class="block-header__title">
+              @if (client) {
+                {{ client.name }}
+              }
+            </h3>
 
             <button class="block-header__button blue" (click)="onEditClient()">
               Client Settings

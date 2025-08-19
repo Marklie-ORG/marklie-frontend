@@ -216,6 +216,12 @@ input:checked + .slider::before {
   
 }
 
+// Visually indicate obligatory metric (impressions in ads) as non-toggleable
+.obligatory-metric {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 .side-panel {
   background-color: #fff;

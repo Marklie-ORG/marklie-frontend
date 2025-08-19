@@ -1,9 +1,9 @@
 <div class="block" style="height: 100%;">
   <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3">
-    <h3>Database</h3>
-    <a [routerLink]="['/reports-database']" class="d-flex align-center" style="gap: 6px; color: var(--blue-color); text-decoration: none;">
+    <h3>Generated Reports</h3>
+    <a [routerLink]="['/reports-database']" class="d-flex align-center" style="gap: 6px; color: var(--blue-color); text-decoration: none; font-size: 14px;">
       See reports database
-      <span style="display:inline-block; transform: rotate(-45deg);">↗</span>
+      <span style="display:inline-block;">↗</span>
     </a>
   </div>
 
@@ -15,17 +15,23 @@
     </div>
 
     <div class="list">
-      @for (item of reportsToRender; track item.uuid) {
-        <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4">
-          <div style="width: 30%;">{{ formatTimeOrDate(item.createdAt) }}</div>
-          <div style="width: 50%;">{{ item.reportName }}</div>
-          <div style="width: 20%;" class="d-flex align-center justify-center">
-            Open
-            <!-- <button (click)="openReport(item.uuid)">Open</button> -->
-            
-            <!-- <button class="blue" (click)="openReport(item.uuid)">Open</button> -->
-          </div>
+      @if (reportsToRender.length === 0) {
+        <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4" style="justify-content: center; color: #888;">
+          Your generated reports will appear here
         </div>
+      } @else {
+        @for (item of reportsToRender; track item.uuid) {
+          <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4">
+            <div style="width: 30%;">{{ formatTimeOrDate(item.createdAt) }}</div>
+            <div style="width: 50%;">{{ item.reportName }}</div>
+            <div style="width: 20%;" class="d-flex align-center justify-center cursor-pointer" (click)="openReport(item.uuid)">
+              Open
+              <!-- <button (click)="openReport(item.uuid)">Open</button> -->
+              
+              <!-- <button class="blue" (click)="openReport(item.uuid)">Open</button> -->
+            </div>
+          </div>
+        }
       }
     </div>
   </div>

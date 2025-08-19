@@ -2,6 +2,8 @@ import { Component, effect, ElementRef, EventEmitter, Input, model, Output, View
 import Sortable from 'sortablejs';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { Metric } from 'src/app/interfaces/report-sections.interfaces';
 
 @Component({
   selector: 'edit-metrics',
@@ -52,7 +54,8 @@ export class EditMetricsComponent {
   selectedAdAccountId: string = '';
 
   constructor(
-    public metricsService: MetricsService
+    public metricsService: MetricsService,
+    private notificationService: NotificationService
   ) {
     effect(() => {
       // console.log(this.reportSections())
@@ -110,6 +113,14 @@ export class EditMetricsComponent {
     //   // sections.find(section => section.key === sectionKey) = data;
     //   return sections;
     // });
+  }
+
+  onObligatoryMetricClick(event: MouseEvent, sectionKey: string, metric: Metric): void {
+    if (sectionKey === 'ads' && metric.name === 'impressions') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.notificationService.info('This metric is necessary for the report to get generated. You cannot remove it.');
+    }
   }
 
   // ngOnChanges(): void {

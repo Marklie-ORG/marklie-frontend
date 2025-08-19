@@ -155,6 +155,22 @@ export class ReportsDataService {
           }
         }
 
+        // Ensure 'impressions' is always present and enabled for the 'ads' section
+        if (section.name === 'ads') {
+          const impressions = metrics.find(m => m.name === 'impressions');
+          if (impressions) {
+            impressions.enabled = true;
+          } else {
+            metrics.push({
+              name: 'impressions',
+              order: metrics.length,
+              enabled: true,
+              isCustom: false,
+              id: ''
+            });
+          }
+        }
+
         // Build ad account object and attach preview data per section
         const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
@@ -275,6 +291,24 @@ export class ReportsDataService {
         } else if (section.name === 'ads') {
 
           creativesDataVar = adAccount.data as AdsAdAccountData;
+
+          // derive metrics list from creatives data if available
+          const metricNameSet = new Set<string>();
+          if (Array.isArray(creativesDataVar)) {
+            for (const creative of creativesDataVar) {
+              for (const point of creative.data) {
+                metricNameSet.add(point.name);
+              }
+            }
+          }
+          metrics = Array.from(metricNameSet).map((name, idx) => ({ name, order: idx, enabled: true }));
+          // Ensure 'impressions' is always included and enabled
+          const impressions = metrics.find(m => m.name === 'impressions');
+          if (impressions) {
+            impressions.enabled = true;
+          } else {
+            metrics.push({ name: 'impressions', order: metrics.length, enabled: true });
+          }
 
         } else if (section.name === 'campaigns') {
            const tableData = adAccount.data as TableAdAccountData;
@@ -399,6 +433,22 @@ export class ReportsDataService {
         const metrics = this.getMetrics(sectionMetrics, customMetrics);
         // normalize order
         metrics.forEach((m, i) => (m.order = i));
+
+        // Ensure 'impressions' is always present and enabled for the 'ads' section
+        if (sectionKey === 'ads') {
+          const impressions = metrics.find(m => m.name === 'impressions');
+          if (impressions) {
+            impressions.enabled = true;
+          } else {
+            metrics.push({
+              name: 'impressions',
+              order: metrics.length,
+              enabled: true,
+              isCustom: false,
+              id: ''
+            });
+          }
+        }
 
         const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,

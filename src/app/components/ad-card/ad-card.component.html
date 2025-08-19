@@ -10,13 +10,13 @@
         
         <div class="ad-card" *ngFor="let creative of (adAccount.creativesData || []); let i = index">
           <div class="ad-image-container cursor-pointer " (click)="openAd(creative.sourceUrl)">
-            <img class="ad-media" [src]="creative.thumbnailUrl"/>
+            <img class="ad-media" [src]="creative.thumbnailUrl || '../../../assets/img/2025-03-19%2013.02.21.jpg'"/>
           </div>
           <div class="metrics" #adsGridContainer [attr.data-ad-account-id]="adAccount.id">
-            <!-- <div class="metric">
+            <div class="metric">
               <div class="metric-label">{{ metricsService.formatMetricLabel('ad_name') }}</div>
               <div class="metric-value">{{ creative.ad_name }}</div>
-            </div> -->
+            </div>
             @for (point of (creative.data || []); track point.name) {
               <div class="metric" [attr.data-metric-name]="point.name">
                 <div class="metric-label">{{ metricsService.formatMetricLabel(point.name) }}</div>

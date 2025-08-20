@@ -366,7 +366,73 @@ export class ReportsDataService {
 
     }
 
+    reportSections = this.roundValues(reportSections);
+
     return reportSections
+  }
+
+  roundValues(reportSections: ReportSection[]): ReportSection[] {
+    const toNumber = (val: any): number | null => {
+      const n = typeof val === 'number' ? val : parseFloat(val);
+      return Number.isNaN(n) ? null : n;
+    };
+
+    const roundIfDecimal = (val: any): number => {
+      const n = toNumber(val);
+      if (n === null) return val as number;
+      return Number.isInteger(n) ? n : Math.round((n + Number.EPSILON) * 100) / 100;
+    };
+
+    const roundedSections = reportSections.map(section => ({
+      ...section,
+      adAccounts: section.adAccounts.map(adAccount => {
+        const roundedMetrics = adAccount.metrics.map(metric => {
+          const roundedMetric: Metric = { ...metric };
+
+          if (roundedMetric.value !== undefined) {
+            roundedMetric.value = roundIfDecimal(roundedMetric.value as number);
+          }
+
+          if (Array.isArray(roundedMetric.dataPoints)) {
+            roundedMetric.dataPoints = roundedMetric.dataPoints.map(dp => ({
+              ...dp,
+              value: roundIfDecimal(dp.value)
+            }));
+          }
+
+          return roundedMetric;
+        });
+
+        const roundedCampaigns = adAccount.campaignsData
+          ? adAccount.campaignsData.map(c => ({
+              ...c,
+              data: c.data.map(point => ({
+                ...point,
+                value: roundIfDecimal(point.value)
+              }))
+            }))
+          : undefined;
+
+        const roundedCreatives = adAccount.creativesData
+          ? adAccount.creativesData.map(creative => ({
+              ...creative,
+              data: creative.data.map(point => ({
+                ...point,
+                value: roundIfDecimal(point.value)
+              }))
+            }))
+          : undefined;
+
+        return {
+          ...adAccount,
+          metrics: roundedMetrics,
+          campaignsData: roundedCampaigns,
+          creativesData: roundedCreatives
+        };
+      })
+    }));
+
+    return roundedSections;
   }
 
 

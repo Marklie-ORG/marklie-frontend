@@ -7,6 +7,8 @@ interface DatabaseRow {
   reportName: string;
   clientName: string;
   createdAt: string | Date;
+  reviewRequired: boolean;
+  reviewedAt: string | Date;
 }
 
 @Component({
@@ -30,7 +32,9 @@ export class ReportsDatabasePageComponent implements OnInit {
       uuid: r.uuid,
       reportName: r?.metadata?.reportName || r?.reportType || 'Report',
       clientName: r?.client?.name || r?.client || '—',
-      createdAt: r.createdAt
+      createdAt: r.createdAt,
+      reviewRequired: r.reviewRequired,
+      reviewedAt: r.reviewedAt
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     // this.rows = [...this.rows, ...this.rows, ...this.rows, ...this.rows]
@@ -117,5 +121,9 @@ export class ReportsDatabasePageComponent implements OnInit {
 
   openReport(uuid: string): void {
     this.router.navigate(['/view-report', uuid]);
+  }
+
+  reviewReport(uuid: string): void {
+    this.router.navigate(['/review-report', uuid]);
   }
 } 

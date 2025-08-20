@@ -60,5 +60,15 @@ export class ReportService {
       )
     );
   }
+
+  async getPendingReviewCount(): Promise<number> {
+    const res = await firstValueFrom(
+      this.http.get<{ count: number }>(
+        `${this.apiUrl}/reports/pending-review/count`,
+        { headers: this.headers }
+      )
+    );
+    return res.count;
+  }
 }
 

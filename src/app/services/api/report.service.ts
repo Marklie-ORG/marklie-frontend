@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
-import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse, Messages } from 'src/app/interfaces/interfaces';
 import { GetReportResponse } from 'src/app/interfaces/get-report.interfaces';
 
 
@@ -49,6 +49,16 @@ export class ReportService {
 
   async updateReportImages(uuid: string, images: ReportImages): Promise<any> {
     return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-images/${uuid}`, images, {headers: this.headers}));
+  }
+
+  async updateReportMessages(uuid: string, messages: Messages): Promise<{ message: string }> {
+    return firstValueFrom(
+      this.http.put<{ message: string }>(
+        `${this.apiUrl}/reports/report-messages/${uuid}`,
+        messages,
+        { headers: this.headers }
+      )
+    );
   }
 
   async sendAfterReview(data: SendAfterReviewRequest): Promise<SendAfterReviewResponse> {

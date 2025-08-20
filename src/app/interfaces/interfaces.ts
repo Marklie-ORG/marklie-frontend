@@ -199,6 +199,7 @@ export interface Metadata {
     clientLogoGsUri: string
     organizationLogoGsUri: string
   }
+  messages?: Messages
 }
 
 export interface ReportImages {

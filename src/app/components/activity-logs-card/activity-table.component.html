@@ -107,71 +107,78 @@
     
   
     <div class="list">
-      <div
-      class="row d-flex align-center pt-3 pb-3 pl-4 pr-4" *ngFor="let log of groupedLogs">
+      @if (groupedLogs.length === 0) {
+        <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4" style="justify-content: center; color: #888;">
+          Your activity entries will appear here
+        </div>
+      } @else {
+        @for (log of groupedLogs; track log.createdAt) {
+          <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4">
 
-        <div style="width: 5%;">
-          <span [class.visible]="isNew(log)" class="blue-dot"></span>
-        </div>
-  
-        <div style="width: 25%;">
-          {{ formatTimeOrDate(log.createdAt) }}
-        </div>
-        
-        @if (level === 'organization') {
-          <div style="width: 25%;">
-            <div class="d-flex align-center gap-2 justify-center">
-              {{ log.client?.name || 'Marklie B.V.' }}
+            <div style="width: 5%;">
+              <span [class.visible]="isNew(log)" class="blue-dot"></span>
+            </div>
+
+            <div style="width: 25%;">
+              {{ formatTimeOrDate(log.createdAt) }}
+            </div>
+            
+            @if (level === 'organization') {
+              <div style="width: 25%;">
+                <div class="d-flex align-center gap-2 justify-center">
+                  {{ log.client?.name || 'Marklie B.V.' }}
+                </div>
+              </div>
+            }
+            
+            <div  
+            [style.width]="level === 'organization' ? '45%' : '70%'">
+              <div>
+                <td>
+                  @switch (log.action) {
+                    @case ('report_sent') {
+                      {{ log.metadata.reportName || 'Report' }}
+                      has been sent
+                    }
+    
+                    @case ('report_generated') {
+                      {{ log.metadata.reportName || 'Report' }}
+                      has been generated
+                    }
+    
+                    @case ('created_schedule') {
+                      Schedule created
+                    }
+    
+                    @case ('updated_schedule') {
+                      Schedule updated
+                    }
+    
+                    @case ('paused_schedule') {
+                      Schedule paused
+                    }
+    
+                    @case ('added_collaborator') {
+                      Collaborator added
+                    }
+    
+                    @case ('client_created') {
+                      @if (level === 'organization') {
+                        Client added to the platform
+                      }
+                    }
+    
+                    @default {
+                      {{ log.message || 'Activity logged' }}
+                    }
+                  }
+                </td>
+              </div>
+              
             </div>
           </div>
         }
-        
-        <div  
-        [style.width]="level === 'organization' ? '45%' : '70%'">
-          <div>
-            <td>
-              @switch (log.action) {
-                @case ('report_sent') {
-                  {{ log.metadata.reportName || 'Report' }}
-                  has been sent
-                }
-  
-                @case ('report_generated') {
-                  {{ log.metadata.reportName || 'Report' }}
-                  has been generated
-                }
-  
-                @case ('created_schedule') {
-                  Schedule created
-                }
-  
-                @case ('updated_schedule') {
-                  Schedule updated
-                }
-  
-                @case ('paused_schedule') {
-                  Schedule paused
-                }
-  
-                @case ('added_collaborator') {
-                  Collaborator added
-                }
-  
-                @case ('client_created') {
-                  @if (level === 'organization') {
-                    Client added to the platform
-                  }
-                }
-  
-                @default {
-                  {{ log.message || 'Activity logged' }}
-                }
-              }
-            </td>
-          </div>
-          
-        </div>
-      </div>
+      }
     </div>
   </div>
 </div>

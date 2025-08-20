@@ -7,7 +7,7 @@
 				<label class="lbl">Short, descriptive title</label>
 				<input type="text" placeholder="Funnels" [ngModel]="title()" (ngModelChange)="title.set($event)" />
 				<label class="lbl">Description</label>
-				<textarea rows="4" placeholder="I want to see a visual funnel to track..." [ngModel]="description()" (ngModelChange)="description.set($event)"></textarea>
+				<textarea rows="4" placeholder="I want to see a visual funnel to track..." [ngModel]="description()" (ngModelChange)="description.set($event)" style="resize: vertical; width: 100%; max-width: 100%; box-sizing: border-box;"></textarea>
 				<button type="button" class="cta" (click)="create()" [disabled]="!title().trim() || !description().trim()">Suggest feature</button>
 			</div>
 		</div>

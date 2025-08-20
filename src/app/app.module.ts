@@ -74,6 +74,7 @@ import { ReportsDatabasePageComponent } from './pages/reports-database/reports-d
 import { BillingComponent } from './pages/billing/billing.component';
 import { MessagesAccordionComponent } from "./components/messages-accordion/messages-accordion.component";
 import { ConfirmDialogComponent } from "./components/confirm-dialog/confirm-dialog.component";
+import { FinishReviewDialogComponent } from './components/finish-review-dialog/finish-review-dialog.component';
 
 
 register();
@@ -138,7 +139,8 @@ register();
   ReportsDatabasePageComponent,
   BillingComponent,
   MessagesAccordionComponent,
-  ConfirmDialogComponent
+  ConfirmDialogComponent,
+  FinishReviewDialogComponent
 
   ],
   imports: [

@@ -249,18 +249,19 @@ export class ReportsDataService {
           metrics = kpiData.map(m => ({
             name: m.name,
             order: m.order,
-            enabled: true,
+            enabled: m.enabled === undefined ? true : m.enabled,
             value: m.value
           }));
         } else if (section.name === 'graphs') {
-          let metricsList: {name: string, order: number}[] = []
+          let metricsList: {name: string, order: number, enabled: boolean}[] = []
 
           for (let point of adAccount.data as GraphsAdAccountData) {
             for (let dataPoint of point.data) {
               if (!metricsList.find(m => m.name === dataPoint.name)) {
                 metricsList.push({
                   name: dataPoint.name,
-                  order: dataPoint.order
+                  order: dataPoint.order,
+                  enabled: dataPoint.enabled === undefined ? true : dataPoint.enabled
                 });
               }
             }
@@ -283,7 +284,7 @@ export class ReportsDataService {
             metrics.push({
               name: metric.name,
               order: metric.order,
-              enabled: true,
+              enabled: metric.enabled,
               dataPoints: dataPoints
             })
           }
@@ -292,16 +293,24 @@ export class ReportsDataService {
 
           creativesDataVar = adAccount.data as AdsAdAccountData;
 
-          // derive metrics list from creatives data if available
-          const metricNameSet = new Set<string>();
+          // derive metrics map from creatives data points, capturing order and enabled state
+          const metricMap = new Map<string, { order: number; enabled: boolean }>();
           if (Array.isArray(creativesDataVar)) {
             for (const creative of creativesDataVar) {
               for (const point of creative.data) {
-                metricNameSet.add(point.name);
+                const current = metricMap.get(point.name);
+                const pointEnabled = point.enabled === undefined ? true : point.enabled;
+                if (!current) {
+                  metricMap.set(point.name, { order: point.order, enabled: pointEnabled });
+                } else {
+                  metricMap.set(point.name, { order: Math.min(current.order, point.order), enabled: current.enabled || pointEnabled });
+                }
               }
             }
           }
-          metrics = Array.from(metricNameSet).map((name, idx) => ({ name, order: idx, enabled: true }));
+          metrics = Array.from(metricMap.entries())
+            .map(([name, v]) => ({ name, order: v.order, enabled: v.enabled }))
+            .sort((a, b) => a.order - b.order);
           // Ensure 'impressions' is always included and enabled
           const impressions = metrics.find(m => m.name === 'impressions');
           if (impressions) {
@@ -312,16 +321,20 @@ export class ReportsDataService {
 
         } else if (section.name === 'campaigns') {
            const tableData = adAccount.data as TableAdAccountData;
-           const metricMap = new Map<string, number>();
+           const metricMap = new Map<string, { order: number; enabled: boolean }>();
            for (const campaign of tableData) {
              for (const point of campaign.data) {
-               if (!metricMap.has(point.name)) {
-                 metricMap.set(point.name, point.order);
+               const current = metricMap.get(point.name);
+               const pointEnabled = point.enabled === undefined ? true : point.enabled;
+               if (!current) {
+                 metricMap.set(point.name, { order: point.order, enabled: pointEnabled });
+               } else {
+                 metricMap.set(point.name, { order: Math.min(current.order, point.order), enabled: current.enabled || pointEnabled });
                }
              }
            }
            metrics = Array.from(metricMap.entries())
-             .map(([name, order]) => ({ name, order, enabled: true }))
+             .map(([name, v]) => ({ name, order: v.order, enabled: v.enabled }))
              .sort((a, b) => a.order - b.order);
            campaignsDataVar = tableData;
         }
@@ -331,7 +344,7 @@ export class ReportsDataService {
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
-          enabled: true
+          enabled: adAccount.enabled === undefined ? true : adAccount.enabled
         };
         if (campaignsDataVar) {
           adAccountObj.campaignsData = campaignsDataVar;
@@ -346,14 +359,80 @@ export class ReportsDataService {
       reportSections.push({
         key: section.name,
         title: section.name,
-        enabled: true,
+        enabled: section.enabled === undefined ? true : section.enabled,
         adAccounts: adAccounts,
         order: section.order
       })
 
     }
 
+    reportSections = this.roundValues(reportSections);
+
     return reportSections
+  }
+
+  roundValues(reportSections: ReportSection[]): ReportSection[] {
+    const toNumber = (val: any): number | null => {
+      const n = typeof val === 'number' ? val : parseFloat(val);
+      return Number.isNaN(n) ? null : n;
+    };
+
+    const roundIfDecimal = (val: any): number => {
+      const n = toNumber(val);
+      if (n === null) return val as number;
+      return Number.isInteger(n) ? n : Math.round((n + Number.EPSILON) * 100) / 100;
+    };
+
+    const roundedSections = reportSections.map(section => ({
+      ...section,
+      adAccounts: section.adAccounts.map(adAccount => {
+        const roundedMetrics = adAccount.metrics.map(metric => {
+          const roundedMetric: Metric = { ...metric };
+
+          if (roundedMetric.value !== undefined) {
+            roundedMetric.value = roundIfDecimal(roundedMetric.value as number);
+          }
+
+          if (Array.isArray(roundedMetric.dataPoints)) {
+            roundedMetric.dataPoints = roundedMetric.dataPoints.map(dp => ({
+              ...dp,
+              value: roundIfDecimal(dp.value)
+            }));
+          }
+
+          return roundedMetric;
+        });
+
+        const roundedCampaigns = adAccount.campaignsData
+          ? adAccount.campaignsData.map(c => ({
+              ...c,
+              data: c.data.map(point => ({
+                ...point,
+                value: roundIfDecimal(point.value)
+              }))
+            }))
+          : undefined;
+
+        const roundedCreatives = adAccount.creativesData
+          ? adAccount.creativesData.map(creative => ({
+              ...creative,
+              data: creative.data.map(point => ({
+                ...point,
+                value: roundIfDecimal(point.value)
+              }))
+            }))
+          : undefined;
+
+        return {
+          ...adAccount,
+          metrics: roundedMetrics,
+          campaignsData: roundedCampaigns,
+          creativesData: roundedCreatives
+        };
+      })
+    }));
+
+    return roundedSections;
   }
 
 
@@ -521,96 +600,20 @@ export class ReportsDataService {
       })).sort((a, b) => a.name.localeCompare(b.name))
     ]
 
-    // metricsToReturn.sort((a, b) => a.order - b.order);
+    // Enable first 3 usual metrics
+    metricsToReturn
+      .filter(m => !m.isCustom)
+      .slice(0, 3)
+      .forEach(m => m.enabled = true);
 
-  // Enable first 3 usual metrics
-  metricsToReturn
-    .filter(m => !m.isCustom)
-    .slice(0, 3)
-    .forEach(m => m.enabled = true);
+    // Enable first 3 custom metrics
+    metricsToReturn
+      .filter(m => m.isCustom)
+      .slice(0, 3)
+      .forEach(m => m.enabled = true);
 
-  // Enable first 3 custom metrics
-  metricsToReturn
-    .filter(m => m.isCustom)
-    .slice(0, 3)
-    .forEach(m => m.enabled = true);
-
-  return metricsToReturn;
+    return metricsToReturn;
     
-  }
-
-  MetricsSelectionsToReportSections(
-    metricsSelections: any,
-    availableMetrics: GetAvailableMetricsResponse,
-    includeDisabledMetrics: boolean = true
-  ): ReportSection[] {
-    // const transformedOutput: ReportSection[] = [];
-
-    // // Get the keys (category names) from the metricsSelections input to process them.
-    // for (const categoryKey in metricsSelections) {
-    //     if (Object.prototype.hasOwnProperty.call(metricsSelections, categoryKey)) {
-    //         let allMetricsForCategory: any[] = [];
-    //         const sourceCategory = metricsSelections[categoryKey];
-    //         const referenceMetricNames = availableMetrics[categoryKey] || []; // Get reference metrics for this category
-
-    //         // Create a Set for quick lookup of metrics already present in the source.
-    //         const sourceMetricNames = new Set(sourceCategory.metrics.map((m: any) => m.name));
-
-    //         // 1. Process enabled metrics from the source object
-    //         // These retain their relative order (adjusted to 0-indexed)
-    //         const enabledMetricsFromSource: any[] = sourceCategory.metrics.map((metric: any) => ({
-    //             name: metric.name,
-    //             order: metric.order - 1, // Adjust to 0-indexed order
-    //             enabled: true
-    //         }));
-
-    //         // Sort the enabled metrics by their adjusted order to ensure correct sequence
-    //         enabledMetricsFromSource.sort((a, b) => a.order - b.order);
-
-    //         if (includeDisabledMetrics) {
-    //           // 2. Process disabled metrics from the reference that are not in the source
-    //           // These will be appended after the enabled ones
-    //           const disabledMetricsFromReference: any[] = [];
-    //           referenceMetricNames.forEach(refMetricName => {
-    //             if (!sourceMetricNames.has(refMetricName)) {
-    //                 disabledMetricsFromReference.push({
-    //                     name: refMetricName,
-    //                     order: -1, // Placeholder, will be reassigned sequentially
-    //                     enabled: false
-    //                 });
-    //               }
-    //           });
-
-    //           // Combine enabled and disabled metrics
-    //           allMetricsForCategory = enabledMetricsFromSource.concat(disabledMetricsFromReference);
-    //         } else {
-    //           allMetricsForCategory = enabledMetricsFromSource;
-    //         }
-
-
-
-    //         // Re-assign sequential 0-indexed order for all metrics in the combined list
-    //         allMetricsForCategory.forEach((metric, index) => {
-    //             metric.order = index;
-    //         });
-
-    //         // Construct the transformed category object
-    //         transformedOutput.push({
-    //             key: categoryKey as MetricSectionKey,
-    //             title: categoryKey,
-    //             enabled: true, // Categories present in metricsSelections are always enabled
-    //             metrics: allMetricsForCategory,
-    //             order: sourceCategory.order // Use the order from the source category
-    //         });
-    //     }
-    // }
-
-    // // Sort the top-level categories by their 'order' property
-    // transformedOutput.sort((a, b) => a.order - b.order);
-
-    // return transformedOutput;
-    
-    return []
   }
 
   getProviders(reportSections: ReportSection[]): Provider[] {

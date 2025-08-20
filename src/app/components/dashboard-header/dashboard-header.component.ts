@@ -13,6 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ElementRef, HostListener, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { UserService } from '../../services/api/user.service.js';
+import { ReportService } from '../../services/api/report.service.js';
 @Component({
   selector: 'app-dashboard-header',
   templateUrl: './dashboard-header.component.html',
@@ -22,6 +23,8 @@ export class DashboardHeaderComponent implements OnInit {
   isDropdownOpen = false;
   userName: string = 'Oleksii Konts';
   email: string = '';
+
+  pendingReviewCount: number = 0;
 
   // Feedback UI state
   isFeedbackOpen = false;
@@ -38,6 +41,7 @@ export class DashboardHeaderComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private userService: UserService,
+    private reportService: ReportService,
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +49,15 @@ export class DashboardHeaderComponent implements OnInit {
     console.log(userInfo)
     this.email = userInfo.email;
     this.userName = userInfo.firstName;
+    this.loadPendingReviewCount();
+  }
+
+  private async loadPendingReviewCount() {
+    try {
+      this.pendingReviewCount = await this.reportService.getPendingReviewCount();
+    } catch (e) {
+      this.pendingReviewCount = 0;
+    }
   }
 
   toggleFeedback() {

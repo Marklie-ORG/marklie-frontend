@@ -196,7 +196,10 @@ export interface Metadata {
   images?: {
     clientLogo: string
     organizationLogo: string
+    clientLogoGsUri: string
+    organizationLogoGsUri: string
   }
+  messages?: Messages
 }
 
 export interface ReportImages {

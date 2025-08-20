@@ -5,7 +5,12 @@
     </div>
     <button type="button" routerLink="/dashboard" class="nav-btn">Dashboard</button>
     <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button>
-    <button type="button" routerLink="/reports-database" class="nav-btn">Generated Reports</button>
+    <button type="button" routerLink="/reports-database" class="nav-btn badge-container">
+      Generated Reports
+      @if (pendingReviewCount > 0) {
+        <span class="badge">{{ pendingReviewCount }}</span>
+      }
+    </button>
     <button type="button" routerLink="/suggested-features" class="nav-btn">Request Feature</button>
   </div>
 

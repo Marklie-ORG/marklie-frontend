@@ -9,7 +9,9 @@ import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 import { NotificationService } from '@services/notification.service';
-import { SendAfterReviewRequest, SendAfterReviewResponse } from 'src/app/interfaces/interfaces';
+import { SendAfterReviewRequest, SendAfterReviewResponse, Messages } from 'src/app/interfaces/interfaces';
+import { MatDialog } from '@angular/material/dialog';
+import { FinishReviewDialogComponent } from 'src/app/components/finish-review-dialog/finish-review-dialog.component';
 
 @Component({
   selector: 'app-review-report',
@@ -52,6 +54,9 @@ export class ReviewReportComponent implements OnInit {
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
   private notificationService = inject(NotificationService);
+  private dialog = inject(MatDialog);
+
+  private currentMessages: Messages = { whatsapp: '', slack: '', email: { title: '', body: '' } };
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -71,12 +76,12 @@ export class ReviewReportComponent implements OnInit {
 
       this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
       this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
-      this.clientImageGsUri.set(res.schedulingOption.jobData.images?.clientLogo || '');
-      this.agencyImageGsUri.set(res.schedulingOption.jobData.images?.organizationLogo || '');
+      this.clientImageGsUri.set(res.metadata.images?.clientLogoGsUri || '');
+      this.agencyImageGsUri.set(res.metadata.images?.organizationLogoGsUri || '');
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
-      // this.processSelectedAccount();
+      this.currentMessages = (res.metadata as any)?.messages || this.currentMessages;
 
     } catch (error) {
       console.error('Error loading report:', error);
@@ -90,22 +95,13 @@ export class ReviewReportComponent implements OnInit {
   async save() {
     if (!this.reportUuid) return;
     try {
-      console.log(this.reportSections)
-
       const providers = this.reportsDataService.getProviders(this.reportSections);
-
-      console.log(providers)
-
-      // console.log(this.clientImageGsUri())
-      // console.log(this.agencyImageGsUri())
-
-      // const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
       await this.reportService.updateReportData(this.reportUuid, providers);
-      // await this.reportService.updateReportImages(this.reportUuid, {
-      //   clientLogo: this.clientImageGsUri(),
-      //   organizationLogo: this.agencyImageGsUri()
-      // });
-      
+      await this.reportService.updateReportImages(this.reportUuid, {
+        clientLogo: this.clientImageGsUri(),
+        organizationLogo: this.agencyImageGsUri()
+      });
+      await this.reportService.updateReportTitle(this.reportUuid, this.reportTitle());
       this.notificationService.info('Report updated successfully!');
       await this.loadReport();
     } catch (error) {
@@ -113,7 +109,23 @@ export class ReviewReportComponent implements OnInit {
     }
   }
 
+  openFinishReviewDialog() {
+    if (!this.reportUuid) return;
+    this.dialog.open(FinishReviewDialogComponent, {
+      width: '720px',
+      data: {
+        reportUuid: this.reportUuid,
+        messages: this.currentMessages
+      }
+    }).afterClosed().subscribe((didSend: boolean) => {
+      if (didSend) {
+        this.loadReport();
+      }
+    });
+  }
+
   async sendAfterReview() {
+    // Kept for backward compatibility if used elsewhere, but prefer openFinishReviewDialog()
     if (!this.reportUuid) return;
     try {
       const payload: SendAfterReviewRequest = { reportUuid: this.reportUuid };

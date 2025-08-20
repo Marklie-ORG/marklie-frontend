@@ -29,6 +29,7 @@ export interface GetReportResponse {
     name: SectionKey
     order: number
     adAccounts: AdAccountReportResponse[]
+    enabled?: boolean
   }
 
   export interface AdAccountReportResponse {
@@ -36,6 +37,7 @@ export interface GetReportResponse {
     adAccountName: string
     data: AdAccountData
     order: number
+    enabled?: boolean
   }
 
   export type AdAccountData = KpiAdAccountData | GraphsAdAccountData | AdsAdAccountData | TableAdAccountData
@@ -47,6 +49,7 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }
 
   // graphs
@@ -62,6 +65,7 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }
 
   // ads
@@ -80,6 +84,7 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }
 
   // campaigns
@@ -95,4 +100,5 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }

@@ -19,7 +19,8 @@
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Frequency</div>
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Last activity</div>
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Next activity</div>
-              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
+              <div style="width: 15%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
+              <div style="width: 5%; color: #333333cb !important;" class="d-flex align-center justify-center"></div>
             </div>
 
             <div class="list">
@@ -31,7 +32,27 @@
                 <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
                 <div style="width: 20%;">{{scheduleOption.lastRun}}</div>
                 <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
-                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
+                <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
+                <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
+                  <button type="button" (click)="toggleActionsMenu(scheduleOption, $event)" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+                  </button>
+                  <div class="dropdown-menu actions-menu" *ngIf="openActionsForUuid === scheduleOption.uuid">
+                    @if (!scheduleOption.isActive) {
+                      <button type="button" (click)="activateSchedule(scheduleOption.uuid)">
+                        <fa-icon [icon]="faPlay"></fa-icon> Activate
+                      </button>
+                    }
+                    @if (scheduleOption.isActive) {
+                      <button type="button" (click)="pauseSchedule(scheduleOption.uuid)">
+                        <fa-icon [icon]="faPause"></fa-icon> Pause
+                      </button>
+                    }
+                    <button type="button" (click)="deleteSchedule(scheduleOption.uuid)">
+                      <fa-icon [icon]="faTrash"></fa-icon> Delete
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

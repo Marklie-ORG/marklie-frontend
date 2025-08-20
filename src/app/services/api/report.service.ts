@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
-import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse, Messages } from 'src/app/interfaces/interfaces';
 import { GetReportResponse } from 'src/app/interfaces/get-report.interfaces';
 
 
@@ -51,11 +51,71 @@ export class ReportService {
     return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-images/${uuid}`, images, {headers: this.headers}));
   }
 
+  async updateReportMessages(uuid: string, messages: Messages): Promise<{ message: string }> {
+    return firstValueFrom(
+      this.http.put<{ message: string }>(
+        `${this.apiUrl}/reports/report-messages/${uuid}`,
+        messages,
+        { headers: this.headers }
+      )
+    );
+  }
+
   async sendAfterReview(data: SendAfterReviewRequest): Promise<SendAfterReviewResponse> {
     return firstValueFrom(
       this.http.post<SendAfterReviewResponse>(
         `${this.apiUrl}/reports/send-after-review`,
         data,
+        { headers: this.headers }
+      )
+    );
+  }
+
+  async getPendingReviewCount(): Promise<number> {
+    const res = await firstValueFrom(
+      this.http.get<{ count: number }>(
+        `${this.apiUrl}/reports/pending-review/count`,
+        { headers: this.headers }
+      )
+    );
+    return res.count;
+  }
+
+  async updateReportTitle(uuid: string, reportName: string): Promise<any> {
+    return firstValueFrom(
+      this.http.put<any>(
+        `${this.apiUrl}/reports/report-title/${uuid}`,
+        { reportName },
+        { headers: this.headers }
+      )
+    );
+  }
+
+  async stopSchedulingOptions(uuids: string[]): Promise<{ message: string }> {
+    return firstValueFrom(
+      this.http.put<{ message: string }>(
+        `${this.apiUrl}/scheduling-options/stop`,
+        { uuids },
+        { headers: this.headers }
+      )
+    );
+  }
+
+  async deleteSchedulingOptions(uuids: string[]): Promise<{ message: string }> {
+    return firstValueFrom(
+      this.http.put<{ message: string }>(
+        `${this.apiUrl}/scheduling-options/delete`,
+        { uuids },
+        { headers: this.headers }
+      )
+    );
+  }
+
+  async activateSchedulingOptions(uuids: string[]): Promise<{ message: string }> {
+    return firstValueFrom(
+      this.http.put<{ message: string }>(
+        `${this.apiUrl}/scheduling-options/activate`,
+        { uuids },
         { headers: this.headers }
       )
     );

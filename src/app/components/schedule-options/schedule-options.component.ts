@@ -25,12 +25,6 @@ export class ScheduleOptionsComponent {
 
   messagesWindowOpen: boolean = false;
 
-  accordion: any = {
-    whatsapp: false,
-    slack: false,
-    email: false
-  }
-
   constructor(
     public reportsDataService: ReportsDataService,
     public dialogRef: MatDialogRef<ScheduleOptionsComponent>,

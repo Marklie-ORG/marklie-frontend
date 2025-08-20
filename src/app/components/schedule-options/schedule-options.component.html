@@ -47,8 +47,8 @@
       <div class="d-flex justify-between" *ngIf="['weekly', 'biweekly'].includes(data.frequency)">
         <label>Review needed</label>
         <select class="select-default form-control" [(ngModel)]="data.reviewRequired">
-          <option [value]="true">Yes</option>
-          <option [value]="false">No</option>
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
         </select>
       </div>
 

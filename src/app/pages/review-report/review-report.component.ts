@@ -90,22 +90,12 @@ export class ReviewReportComponent implements OnInit {
   async save() {
     if (!this.reportUuid) return;
     try {
-      console.log(this.reportSections)
-
       const providers = this.reportsDataService.getProviders(this.reportSections);
-
-      console.log(providers)
-
-      // console.log(this.clientImageGsUri())
-      // console.log(this.agencyImageGsUri())
-
-      // const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
       await this.reportService.updateReportData(this.reportUuid, providers);
       await this.reportService.updateReportImages(this.reportUuid, {
         clientLogo: this.clientImageGsUri(),
         organizationLogo: this.agencyImageGsUri()
       });
-      
       this.notificationService.info('Report updated successfully!');
       await this.loadReport();
     } catch (error) {

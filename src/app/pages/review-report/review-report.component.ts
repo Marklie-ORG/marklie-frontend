@@ -96,6 +96,7 @@ export class ReviewReportComponent implements OnInit {
         clientLogo: this.clientImageGsUri(),
         organizationLogo: this.agencyImageGsUri()
       });
+      await this.reportService.updateReportTitle(this.reportUuid, this.reportTitle());
       this.notificationService.info('Report updated successfully!');
       await this.loadReport();
     } catch (error) {

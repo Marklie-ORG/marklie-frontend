@@ -600,96 +600,20 @@ export class ReportsDataService {
       })).sort((a, b) => a.name.localeCompare(b.name))
     ]
 
-    // metricsToReturn.sort((a, b) => a.order - b.order);
+    // Enable first 3 usual metrics
+    metricsToReturn
+      .filter(m => !m.isCustom)
+      .slice(0, 3)
+      .forEach(m => m.enabled = true);
 
-  // Enable first 3 usual metrics
-  metricsToReturn
-    .filter(m => !m.isCustom)
-    .slice(0, 3)
-    .forEach(m => m.enabled = true);
+    // Enable first 3 custom metrics
+    metricsToReturn
+      .filter(m => m.isCustom)
+      .slice(0, 3)
+      .forEach(m => m.enabled = true);
 
-  // Enable first 3 custom metrics
-  metricsToReturn
-    .filter(m => m.isCustom)
-    .slice(0, 3)
-    .forEach(m => m.enabled = true);
-
-  return metricsToReturn;
+    return metricsToReturn;
     
-  }
-
-  MetricsSelectionsToReportSections(
-    metricsSelections: any,
-    availableMetrics: GetAvailableMetricsResponse,
-    includeDisabledMetrics: boolean = true
-  ): ReportSection[] {
-    // const transformedOutput: ReportSection[] = [];
-
-    // // Get the keys (category names) from the metricsSelections input to process them.
-    // for (const categoryKey in metricsSelections) {
-    //     if (Object.prototype.hasOwnProperty.call(metricsSelections, categoryKey)) {
-    //         let allMetricsForCategory: any[] = [];
-    //         const sourceCategory = metricsSelections[categoryKey];
-    //         const referenceMetricNames = availableMetrics[categoryKey] || []; // Get reference metrics for this category
-
-    //         // Create a Set for quick lookup of metrics already present in the source.
-    //         const sourceMetricNames = new Set(sourceCategory.metrics.map((m: any) => m.name));
-
-    //         // 1. Process enabled metrics from the source object
-    //         // These retain their relative order (adjusted to 0-indexed)
-    //         const enabledMetricsFromSource: any[] = sourceCategory.metrics.map((metric: any) => ({
-    //             name: metric.name,
-    //             order: metric.order - 1, // Adjust to 0-indexed order
-    //             enabled: true
-    //         }));
-
-    //         // Sort the enabled metrics by their adjusted order to ensure correct sequence
-    //         enabledMetricsFromSource.sort((a, b) => a.order - b.order);
-
-    //         if (includeDisabledMetrics) {
-    //           // 2. Process disabled metrics from the reference that are not in the source
-    //           // These will be appended after the enabled ones
-    //           const disabledMetricsFromReference: any[] = [];
-    //           referenceMetricNames.forEach(refMetricName => {
-    //             if (!sourceMetricNames.has(refMetricName)) {
-    //                 disabledMetricsFromReference.push({
-    //                     name: refMetricName,
-    //                     order: -1, // Placeholder, will be reassigned sequentially
-    //                     enabled: false
-    //                 });
-    //               }
-    //           });
-
-    //           // Combine enabled and disabled metrics
-    //           allMetricsForCategory = enabledMetricsFromSource.concat(disabledMetricsFromReference);
-    //         } else {
-    //           allMetricsForCategory = enabledMetricsFromSource;
-    //         }
-
-
-
-    //         // Re-assign sequential 0-indexed order for all metrics in the combined list
-    //         allMetricsForCategory.forEach((metric, index) => {
-    //             metric.order = index;
-    //         });
-
-    //         // Construct the transformed category object
-    //         transformedOutput.push({
-    //             key: categoryKey as MetricSectionKey,
-    //             title: categoryKey,
-    //             enabled: true, // Categories present in metricsSelections are always enabled
-    //             metrics: allMetricsForCategory,
-    //             order: sourceCategory.order // Use the order from the source category
-    //         });
-    //     }
-    // }
-
-    // // Sort the top-level categories by their 'order' property
-    // transformedOutput.sort((a, b) => a.order - b.order);
-
-    // return transformedOutput;
-    
-    return []
   }
 
   getProviders(reportSections: ReportSection[]): Provider[] {

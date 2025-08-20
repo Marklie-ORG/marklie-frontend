@@ -82,8 +82,6 @@ export class ViewReportComponent implements OnInit {
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
-      // this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
-
       this.processSelectedAccount();
 
     } catch (error) {

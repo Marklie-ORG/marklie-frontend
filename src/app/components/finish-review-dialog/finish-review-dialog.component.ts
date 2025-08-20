@@ -33,12 +33,25 @@ export class FinishReviewDialogComponent {
 		this.messages = { ...data.messages, email: { ...data.messages?.email } } as Messages;
 	}
 
+	private buildSendAtString(): string {
+		// Build a Temporal.PlainDateTime-compatible string (local time), e.g. 2025-08-20T14:30:00
+		const date = new Date(Date.now() + 60_000); // schedule 1 minute from now
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		const seconds = String(date.getSeconds()).padStart(2, '0');
+		return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+	}
+
 	async onSend(): Promise<void> {
 		if (this.isSubmitting) return;
 		this.isSubmitting = true;
 		try {
 			await this.reportService.updateReportMessages(this.data.reportUuid, this.messages);
-			const res = await this.reportService.sendAfterReview({ reportUuid: this.data.reportUuid });
+			const sendAt = this.buildSendAtString();
+			const res = await this.reportService.sendAfterReview({ reportUuid: this.data.reportUuid, sendAt });
 			this.notificationService.info(res.message || 'Report was saved and sent to the client');
 			this.dialogRef.close(true);
 		} catch (err) {

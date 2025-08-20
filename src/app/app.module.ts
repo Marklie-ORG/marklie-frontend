@@ -72,6 +72,7 @@ import { PhoneInputComponent } from './components/phone-input/phone-input.compon
 import { DatabaseTableComponent } from './components/database-table/database-table.component';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
 import { BillingComponent } from './pages/billing/billing.component';
+import { MessagesAccordionComponent } from "./components/messages-accordion/messages-accordion.component";
 
 
 register();
@@ -134,7 +135,8 @@ register();
     PhoneInputComponent,
   DatabaseTableComponent,
   ReportsDatabasePageComponent,
-  BillingComponent
+  BillingComponent,
+  MessagesAccordionComponent
 
   ],
   imports: [

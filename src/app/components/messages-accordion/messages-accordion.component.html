@@ -1,0 +1,40 @@
+<div class="d-flex flex-column gap-3 mt-4">
+	<div class="accordion-container d-flex flex-column gap-2">
+		<div class="block">
+			<div class="accordion-header p-3" [class.active]="accordion.whatsapp" (click)="accordion.whatsapp = !accordion.whatsapp">
+				<img src="../../../assets/img/icons/whatsapp_colorful.svg" alt="WhatsApp Icon" class="whatsapp-icon">
+				WhatsApp
+			</div>
+			<div class="accordion-content" [class.show]="accordion.whatsapp">
+				<label for="whatsapp">Message</label>
+				<input type="text" class="text" [ngModel]="messages.whatsapp" (ngModelChange)="onWhatsappChange($event)" id="whatsapp" />
+				<p>Preview</p>
+				<whatsapp-message-preview [message]="messages.whatsapp"></whatsapp-message-preview>
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="accordion-header p-3" [class.active]="accordion.slack" (click)="accordion.slack = !accordion.slack">
+				<img src="../../../assets/img/icons/slack_colorful.svg" alt="Slack Icon" class="whatsapp-icon">
+				Slack
+			</div>
+			<div class="accordion-content" [class.show]="accordion.slack">
+				<label for="slack">Slack:</label>
+				<input type="text" class="text" [ngModel]="messages.slack" (ngModelChange)="onSlackChange($event)" id="slack" />
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="accordion-header p-3" [class.active]="accordion.email" (click)="accordion.email = !accordion.email">
+				<img src="../../../assets/img/icons/gmail_colorful.svg" alt="WhatsApp Icon" class="whatsapp-icon">
+				Email
+			</div>
+			<div class="accordion-content" [class.show]="accordion.email">
+				<label for="title">Title</label>
+				<input type="text" class="text" [ngModel]="messages.email.title" (ngModelChange)="onEmailTitleChange($event)" id="title" />
+				<label for="body">Body</label>
+				<input type="text" class="text" [ngModel]="messages.email.body" (ngModelChange)="onEmailBodyChange($event)" id="body" />
+			</div>
+		</div>
+	</div>
+</div> 

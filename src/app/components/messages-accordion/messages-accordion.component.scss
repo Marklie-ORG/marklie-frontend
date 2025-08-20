@@ -1,0 +1,56 @@
+input {
+	width: calc(40% - 36px) !important;
+}
+
+.accordion-container {
+	width: 100%;
+	background-color: #fff;
+	overflow: hidden;
+}
+
+.accordion-header {
+	background-color: #fff;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	border-radius: 20px;
+}
+
+.whatsapp-icon {
+	width: 24px;
+	height: 24px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+.arrow-icon {
+	font-size: 0.8em;
+	transition: transform 0.3s ease;
+}
+
+.accordion-header.active .arrow-icon {
+	transform: rotate(180deg);
+}
+
+.accordion-content {
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+	padding: 0 20px;
+	border-radius: 20px;
+}
+
+.accordion-content.show {
+	max-height: 200px;
+	padding: 15px 20px;
+}
+
+.accordion-content p {
+	margin-bottom: 10px;
+	line-height: 1.6;
+	color: #555;
+}
+
+.accordion-content p:last-child {
+	margin-bottom: 0;
+} 

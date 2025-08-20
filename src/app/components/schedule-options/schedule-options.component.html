@@ -66,60 +66,7 @@
     </div>
 
     <div *ngIf="messagesWindowOpen">
-      <div class="d-flex flex-column gap-3 mt-4">
-
-        <div class="accordion-container d-flex flex-column gap-2">
-
-          <div class="block" >
-              <div class="accordion-header p-3" [class.active]="accordion.whatsapp" (click)="accordion.whatsapp = !accordion.whatsapp">
-                  <img src="../../../assets/img/icons/whatsapp_colorful.svg" alt="WhatsApp Icon" class="whatsapp-icon">
-                  WhatsApp
-                  <!-- <span class="arrow-icon">&#9660;</span>  -->
-              </div>
-              <div class="accordion-content" [class.show]="accordion.whatsapp">
-                <label for="whatsapp">Message</label>
-                <input type="text" class="text" [(ngModel)]="data.messages.whatsapp" id="whatsapp" />
-                <p>Preview</p>
-                <whatsapp-message-preview
-                [message]="data.messages.whatsapp"
-                ></whatsapp-message-preview>
-              </div>
-          </div>
-
-          <div class="block">
-            <div class="accordion-header p-3" [class.active]="accordion.slack" (click)="accordion.slack = !accordion.slack">
-                <img src="../../../assets/img/icons/slack_colorful.svg" alt="Slack Icon" class="whatsapp-icon">
-                Slack
-                <!-- <span class="arrow-icon">&#9660;</span>  -->
-            </div>
-            <div class="accordion-content" [class.show]="accordion.slack">
-              <label for="slack">Slack:</label>
-              <input type="text" class="text" [(ngModel)]="data.messages.slack" id="slack" />
-            </div>
-          </div>
-
-          <div class="block">
-            <div class="accordion-header p-3" [class.active]="accordion.email" (click)="accordion.email = !accordion.email">
-                <img src="../../../assets/img/icons/gmail_colorful.svg" alt="WhatsApp Icon" class="whatsapp-icon">
-                Email
-                <!-- <span class="arrow-icon">&#9660;</span>  -->
-            </div>
-            <div class="accordion-content" [class.show]="accordion.email">
-              <label for="title">Title</label>
-              <input type="text" class="text" [(ngModel)]="data.messages.email.title" id="title" />
-              <label for="body">Body</label>
-              <input type="text" class="text" [(ngModel)]="data.messages.email.body" id="body" />
-            </div>
-          </div>
-
-        </div>
-
-
-
-
-      </div>
-
-
+      <messages-accordion [(messages)]="data.messages"></messages-accordion> 
 
       <div class="d-flex justify-between gap-2 mt-5">
         <!-- <button class="" (click)="saveConfiguration()">Cancel</button> -->

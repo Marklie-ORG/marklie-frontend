@@ -38,6 +38,8 @@ input {
 	transition: max-height 0.3s ease-out, padding 0.3s ease-out;
 	padding: 0 20px;
 	border-radius: 20px;
+	display: flex;
+	flex-direction: column;
 }
 
 .accordion-content.show {

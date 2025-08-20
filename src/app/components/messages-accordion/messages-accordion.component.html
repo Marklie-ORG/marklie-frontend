@@ -7,8 +7,8 @@
 			</div>
 			<div class="accordion-content" [class.show]="accordion.whatsapp">
 				<label for="whatsapp">Message</label>
-				<input type="text" class="text" [ngModel]="messages.whatsapp" (ngModelChange)="onWhatsappChange($event)" id="whatsapp" />
-				<p>Preview</p>
+				<input type="text" class="text mb-2" [ngModel]="messages.whatsapp" (ngModelChange)="onWhatsappChange($event)" id="whatsapp" />
+				<!-- <p>Preview</p> -->
 				<whatsapp-message-preview [message]="messages.whatsapp"></whatsapp-message-preview>
 			</div>
 		</div>
@@ -19,7 +19,7 @@
 				Slack
 			</div>
 			<div class="accordion-content" [class.show]="accordion.slack">
-				<label for="slack">Slack:</label>
+				<label for="slack">Slack</label>
 				<input type="text" class="text" [ngModel]="messages.slack" (ngModelChange)="onSlackChange($event)" id="slack" />
 			</div>
 		</div>

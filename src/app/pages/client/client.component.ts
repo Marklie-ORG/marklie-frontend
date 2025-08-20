@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy, Inject, inject} from '@angular/core';
+import { HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SlackLoginService } from 'src/app/services/slack-login.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
@@ -8,6 +9,9 @@ import { ReportService } from 'src/app/services/api/report.service.js';
 import { AuthService } from 'src/app/services/api/auth.service.js';
 import {SchedulesService} from "../../services/api/schedules.service.js";
 import { DatabaseReportItem } from '../../components/database-table/database-table.component';
+import { faEllipsisVertical, faPause, faPlay, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { NotificationService } from '@services/notification.service';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog.component';
 
 interface Activity {
   status: 'new' | 'old',
@@ -43,6 +47,15 @@ export class ClientComponent implements OnInit {
   scheduleOptionsLoading = true;
   private schedulesService = inject(SchedulesService);
 
+  faEllipsisVertical = faEllipsisVertical;
+  faPlay = faPlay;
+  faPause = faPause;
+  faTrash = faTrash;
+
+  openActionsForUuid: string | null = null;
+
+  private notificationService = inject(NotificationService);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -73,6 +86,60 @@ export class ClientComponent implements OnInit {
   onViewReport(reportId: string) {
     // TODO: Implement navigation to report details
     console.log(`Viewing report with ID: ${reportId}`);
+  }
+
+  toggleActionsMenu(scheduleOption: ScheduledReport, event?: Event) {
+    this.openActionsForUuid = this.openActionsForUuid === scheduleOption.uuid ? null : scheduleOption.uuid;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // Close actions menu when clicking outside
+    this.openActionsForUuid = null;
+  }
+
+  async activateSchedule(uuid: string) {
+    try {
+      await this.reportService.activateSchedulingOptions([uuid]);
+      this.scheduleOptions = this.scheduleOptions.map(s => s.uuid === uuid ? { ...s, isActive: true } : s);
+      this.notificationService.info('Report activated');
+    } finally {
+      this.openActionsForUuid = null;
+    }
+  }
+
+  async pauseSchedule(uuid: string) {
+    try {
+      await this.reportService.stopSchedulingOptions([uuid]);
+      this.scheduleOptions = this.scheduleOptions.map(s => s.uuid === uuid ? { ...s, isActive: false } : s);
+      this.notificationService.info('Report paused');
+    } finally {
+      this.openActionsForUuid = null;
+    }
+  }
+
+  deleteSchedule(uuid: string) {
+    this.openActionsForUuid = null;
+    const data: ConfirmDialogData = {
+      title: 'Delete scheduled report',
+      message: 'Are you sure you want to delete this scheduled report?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      data
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      try {
+        await this.reportService.deleteSchedulingOptions([uuid]);
+        this.scheduleOptions = this.scheduleOptions.filter(s => s.uuid !== uuid);
+        this.notificationService.info('Report deleted');
+      } catch (e) {
+        console.error('Failed to delete schedule', e);
+      }
+    });
   }
 
   private async loadClientDetails() {

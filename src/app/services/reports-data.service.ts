@@ -249,18 +249,19 @@ export class ReportsDataService {
           metrics = kpiData.map(m => ({
             name: m.name,
             order: m.order,
-            enabled: true,
+            enabled: m.enabled === undefined ? true : m.enabled,
             value: m.value
           }));
         } else if (section.name === 'graphs') {
-          let metricsList: {name: string, order: number}[] = []
+          let metricsList: {name: string, order: number, enabled: boolean}[] = []
 
           for (let point of adAccount.data as GraphsAdAccountData) {
             for (let dataPoint of point.data) {
               if (!metricsList.find(m => m.name === dataPoint.name)) {
                 metricsList.push({
                   name: dataPoint.name,
-                  order: dataPoint.order
+                  order: dataPoint.order,
+                  enabled: dataPoint.enabled === undefined ? true : dataPoint.enabled
                 });
               }
             }
@@ -283,7 +284,7 @@ export class ReportsDataService {
             metrics.push({
               name: metric.name,
               order: metric.order,
-              enabled: true,
+              enabled: metric.enabled,
               dataPoints: dataPoints
             })
           }
@@ -292,16 +293,24 @@ export class ReportsDataService {
 
           creativesDataVar = adAccount.data as AdsAdAccountData;
 
-          // derive metrics list from creatives data if available
-          const metricNameSet = new Set<string>();
+          // derive metrics map from creatives data points, capturing order and enabled state
+          const metricMap = new Map<string, { order: number; enabled: boolean }>();
           if (Array.isArray(creativesDataVar)) {
             for (const creative of creativesDataVar) {
               for (const point of creative.data) {
-                metricNameSet.add(point.name);
+                const current = metricMap.get(point.name);
+                const pointEnabled = point.enabled === undefined ? true : point.enabled;
+                if (!current) {
+                  metricMap.set(point.name, { order: point.order, enabled: pointEnabled });
+                } else {
+                  metricMap.set(point.name, { order: Math.min(current.order, point.order), enabled: current.enabled || pointEnabled });
+                }
               }
             }
           }
-          metrics = Array.from(metricNameSet).map((name, idx) => ({ name, order: idx, enabled: true }));
+          metrics = Array.from(metricMap.entries())
+            .map(([name, v]) => ({ name, order: v.order, enabled: v.enabled }))
+            .sort((a, b) => a.order - b.order);
           // Ensure 'impressions' is always included and enabled
           const impressions = metrics.find(m => m.name === 'impressions');
           if (impressions) {
@@ -312,16 +321,20 @@ export class ReportsDataService {
 
         } else if (section.name === 'campaigns') {
            const tableData = adAccount.data as TableAdAccountData;
-           const metricMap = new Map<string, number>();
+           const metricMap = new Map<string, { order: number; enabled: boolean }>();
            for (const campaign of tableData) {
              for (const point of campaign.data) {
-               if (!metricMap.has(point.name)) {
-                 metricMap.set(point.name, point.order);
+               const current = metricMap.get(point.name);
+               const pointEnabled = point.enabled === undefined ? true : point.enabled;
+               if (!current) {
+                 metricMap.set(point.name, { order: point.order, enabled: pointEnabled });
+               } else {
+                 metricMap.set(point.name, { order: Math.min(current.order, point.order), enabled: current.enabled || pointEnabled });
                }
              }
            }
            metrics = Array.from(metricMap.entries())
-             .map(([name, order]) => ({ name, order, enabled: true }))
+             .map(([name, v]) => ({ name, order: v.order, enabled: v.enabled }))
              .sort((a, b) => a.order - b.order);
            campaignsDataVar = tableData;
         }

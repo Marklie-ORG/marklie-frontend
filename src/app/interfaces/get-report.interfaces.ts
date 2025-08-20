@@ -47,6 +47,7 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }
 
   // graphs
@@ -62,6 +63,7 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }
 
   // ads
@@ -80,6 +82,7 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }
 
   // campaigns
@@ -95,4 +98,5 @@ export interface GetReportResponse {
     name: string
     order: number
     value: number
+    enabled?: boolean
   }

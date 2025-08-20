@@ -205,7 +205,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     for (const metric of adAccount.metrics ?? []) {
       orderByName.set(metric.name, metric.order);
     }
-    const points = [...(creative.data ?? [])];
+    const points = [...(creative.data ?? [])].filter(p => this.isMetricEnabled(adAccount, p.name));
     points.sort((a, b) => {
       const orderA = orderByName.get(a.name);
       const orderB = orderByName.get(b.name);

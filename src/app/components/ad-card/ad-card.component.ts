@@ -3,7 +3,7 @@ import { MetricsService } from 'src/app/services/metrics.service';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
 import { NgZone, inject } from '@angular/core';
-import { AdsAdAccountDataCreative } from 'src/app/interfaces/get-report.interfaces';
+import { AdsAdAccountDataCreative, AdsAdAccountDataPoint } from 'src/app/interfaces/get-report.interfaces';
 
 @Component({
   selector: 'ad-card',
@@ -200,21 +200,24 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     return false;
   }
 
-  getOrderedCreativePoints(adAccount: AdAccount, creative: AdsAdAccountDataCreative) {
-    const orderByName = new Map<string, number>();
-    for (const metric of adAccount.metrics ?? []) {
-      orderByName.set(metric.name, metric.order);
+  getOrderedCreativePoints(adAccount: AdAccount, creative: AdsAdAccountDataCreative): AdsAdAccountDataPoint[] {
+    const metrics = [...(adAccount.metrics ?? [])].sort((a, b) => a.order - b.order);
+    const dataByName = new Map<string, AdsAdAccountDataPoint>();
+    for (const p of creative.data ?? []) {
+      dataByName.set(p.name, p);
     }
-    const points = [...(creative.data ?? [])].filter(p => this.isMetricEnabled(adAccount, p.name));
-    points.sort((a, b) => {
-      const orderA = orderByName.get(a.name);
-      const orderB = orderByName.get(b.name);
-      if (orderA === undefined && orderB === undefined) return 0;
-      if (orderA === undefined) return 1;
-      if (orderB === undefined) return -1;
-      return orderA - orderB;
-    });
-    return points;
+
+    const enabledMetrics = metrics.filter(m => Boolean(m.enabled));
+    const result: AdsAdAccountDataPoint[] = [];
+    for (const m of enabledMetrics) {
+      const existing = dataByName.get(m.name);
+      if (existing) {
+        result.push(existing);
+      } else {
+        result.push({ name: m.name, order: m.order, value: 0 });
+      }
+    }
+    return result;
   }
 
 }

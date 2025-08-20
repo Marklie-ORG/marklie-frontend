@@ -89,30 +89,22 @@ export class EditMetricsComponent {
   }
 
   onMetricsChange(data: ReportSection, sectionKey: string): void {
-    // console.log(data)
-    // console.log(1)
-    // let reportSectionsCopy = JSON.parse(JSON.stringify(this.reportSections())) as ReportSection[];
-    // console.log(reportSectionsCopy)
-    // let section = reportSectionsCopy.find((section: ReportSection) => section.key === sectionKey);
+    const currentSections = this.reportSections();
 
-    // section = data;
-    // console.log(reportSectionsCopy)
-    // this.reportSections.set(reportSectionsCopy as ReportSection[]);
-    // console.log(this.reportSections())
+    const updatedSections: ReportSection[] = currentSections.map((section) => {
+      if (section.key !== sectionKey) return section;
 
+      // Use the mutated `data` from the template as the source of truth,
+      // but create new references for adAccounts and metrics
+      const updatedAdAccounts = (data.adAccounts || []).map((account) => ({
+        ...account,
+        metrics: (account.metrics || []).map((metric) => ({ ...metric }))
+      }));
 
-    this.reportSections.set([...this.reportSections()] as ReportSection[]);
+      return { ...data, adAccounts: updatedAdAccounts } as ReportSection;
+    });
 
-
-    // update(sections => {
-    //   let section = sections
-    //   if (section) {
-    //     console.log(section)
-    //     section = data;
-    //   }
-    //   // sections.find(section => section.key === sectionKey) = data;
-    //   return sections;
-    // });
+    this.reportSections.set(updatedSections);
   }
 
   onObligatoryMetricClick(event: MouseEvent, sectionKey: string, metric: Metric): void {

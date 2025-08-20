@@ -344,7 +344,7 @@ export class ReportsDataService {
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
-          enabled: true
+          enabled: adAccount.enabled === undefined ? true : adAccount.enabled
         };
         if (campaignsDataVar) {
           adAccountObj.campaignsData = campaignsDataVar;
@@ -359,7 +359,7 @@ export class ReportsDataService {
       reportSections.push({
         key: section.name,
         title: section.name,
-        enabled: true,
+        enabled: section.enabled === undefined ? true : section.enabled,
         adAccounts: adAccounts,
         order: section.order
       })

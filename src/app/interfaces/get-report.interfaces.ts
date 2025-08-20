@@ -29,6 +29,7 @@ export interface GetReportResponse {
     name: SectionKey
     order: number
     adAccounts: AdAccountReportResponse[]
+    enabled?: boolean
   }
 
   export interface AdAccountReportResponse {
@@ -36,6 +37,7 @@ export interface GetReportResponse {
     adAccountName: string
     data: AdAccountData
     order: number
+    enabled?: boolean
   }
 
   export type AdAccountData = KpiAdAccountData | GraphsAdAccountData | AdsAdAccountData | TableAdAccountData

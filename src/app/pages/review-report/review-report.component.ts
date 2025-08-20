@@ -71,8 +71,8 @@ export class ReviewReportComponent implements OnInit {
 
       this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
       this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
-      this.clientImageGsUri.set(res.schedulingOption.jobData.images?.clientLogo || '');
-      this.agencyImageGsUri.set(res.schedulingOption.jobData.images?.organizationLogo || '');
+      this.clientImageGsUri.set(res.metadata.images?.clientLogoGsUri || '');
+      this.agencyImageGsUri.set(res.metadata.images?.organizationLogoGsUri || '');
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
@@ -101,10 +101,10 @@ export class ReviewReportComponent implements OnInit {
 
       // const metricsSelections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
       await this.reportService.updateReportData(this.reportUuid, providers);
-      // await this.reportService.updateReportImages(this.reportUuid, {
-      //   clientLogo: this.clientImageGsUri(),
-      //   organizationLogo: this.agencyImageGsUri()
-      // });
+      await this.reportService.updateReportImages(this.reportUuid, {
+        clientLogo: this.clientImageGsUri(),
+        organizationLogo: this.agencyImageGsUri()
+      });
       
       this.notificationService.info('Report updated successfully!');
       await this.loadReport();

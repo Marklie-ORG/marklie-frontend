@@ -1,10 +1,8 @@
-<div *ngIf="notification" 
-class="notification p-4" 
-[ngClass]="'notification--' + notification.type"
->
-    <div class="notification__content">
-        <p class="notification__message">{{ notification.message }}</p>
-        <!-- <button class="notification__close" (click)="close()">×</button> -->
+<div class="notifications-container">
+  @for (n of notifications; track n.id) {
+    <div #item class="notification p-4" [attr.data-id]="n.id" [ngClass]="'notification--' + n.type" [class.slide-out]="n.isHiding">
+      <div class="notification__content">
+        <p class="notification__message">{{ n.message }}</p>
         <div 
             class="d-flex align-center justify-center cursor-pointer"
             style="
@@ -14,9 +12,11 @@ class="notification p-4"
             width: 24px;
             height: 24px;
             "
-            (click)="close()">
+            (click)="close(n.id)">
             ✕
         </div>
+      </div>
     </div>
+  }
 </div>
 

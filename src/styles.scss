@@ -58,6 +58,32 @@ body {
   font-family: "Inter Variable", sans-serif !important;
 }
 
+// Custom scrollbar styles
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f9fafb;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f9fafb;
+}
+
+// Firefox scrollbar styles
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f9fafb;
+}
+
 // h1 {
 //   font-size: 2rem;
 //   font-weight: 600;

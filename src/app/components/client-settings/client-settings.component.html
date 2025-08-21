@@ -39,6 +39,7 @@
       <div [hidden]="activeTab !== 'ad_platform'">
         <ad-accounts-settings
           [(facebookAdAccounts)]="facebookAdAccounts"
+          [fixedSelectedBusinessId]="selectedBusinessId"
         ></ad-accounts-settings>
       </div>
     </ng-container>

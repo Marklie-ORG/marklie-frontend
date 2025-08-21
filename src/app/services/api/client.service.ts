@@ -122,7 +122,7 @@ export interface Client {
     phoneNumbers: string[];
     slack: string;
     schedulingOption: any[];
-    adAccounts: string[];
+    adAccounts: {adAccountId: string, adAccountName: string, businessId: string}[];
     facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
 }
 

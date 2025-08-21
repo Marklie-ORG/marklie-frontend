@@ -86,7 +86,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
         let graphs: GraphConfig[] = [];
 
         for (const metric of metrics) {
-          let config = graphConfigs.find(c => c.metric === metric.name);
+          let config = graphConfigs.find((c: { metric: string }) => c.metric === metric.name);
 
           if (!config) {
             config = {
@@ -96,9 +96,22 @@ export class ChartsComponent implements OnChanges, OnDestroy {
             }
           }
 
-          let graph = {
+          let graph: GraphConfig = {
             ...config,
             ...metric,
+          } as GraphConfig;
+
+          // If this metric carries currency, override formatter to include currency string
+          const isCurrencyMetric = this.isCurrencyMetric(graph.metric || graph.name);
+          const currency = (graph as any).currency as string | undefined;
+          if (isCurrencyMetric && currency) {
+            graph.format = (v: any) => {
+              const num = typeof v === 'number' ? v : parseFloat(String(v));
+              if (Number.isNaN(num)) return String(v);
+              const formatted = num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+              const isSymbol = currency.length === 1 || ['$', '€', '£', '¥'].includes(currency);
+              return isSymbol ? `${currency}${formatted}` : `${formatted} ${currency}`;
+            };
           }
 
           graphs.push(graph)
@@ -186,9 +199,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
     return `Chart-${adAccountId}-${metric.replaceAll(' ', '_')}`;
   }
 
-  
-
-  getGraphConfigs() {
+  getGraphConfigs(): { metric: string; label: string; color: string; format: (v: any) => string }[] {
     return [
       { metric: 'spend', label: 'Daily Spend', color: '#77B6FB', format: (v: any) => `$${Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })}` },
       { metric: 'purchase_roas', label: 'ROAS', color: '#77B6FB', format: (v: any) => `${parseFloat(v).toFixed(1)}` },
@@ -390,5 +401,22 @@ export class ChartsComponent implements OnChanges, OnDestroy {
     // Re-render charts to reflect new ordering
     this.adAccounts = updatedAdAccounts;
     this.initializeGraphs();
+  }
+
+  private isCurrencyMetric(metricName?: string): boolean {
+    if (!metricName) return false;
+    const normalized = metricName.toLowerCase().replace(/\s|_/g, '');
+    const currencyMetrics = new Set([
+      'spend',
+      'conversionvalue',
+      'cpc',
+      'cpm',
+      'cpp',
+      'costperpurchase',
+      'costperaddtocart',
+      'costperlead',
+      'costpercart'
+    ]);
+    return currencyMetrics.has(normalized);
   }
 }

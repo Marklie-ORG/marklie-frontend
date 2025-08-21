@@ -3,7 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import parsePhoneNumberFromString, { AsYouType, CountryCode, getCountryCallingCode, MetadataJson, getExampleNumber } from 'libphonenumber-js';
 import { buildCountryOptions, CountryOption } from './countries.util';
 import examples from 'libphonenumber-js/examples.mobile.json';
-import { ElementRef, HostListener } from '@angular/core';
+import { ElementRef, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
 	selector: 'app-phone-input',
@@ -17,7 +17,7 @@ import { ElementRef, HostListener } from '@angular/core';
 		}
 	]
 })
-export class PhoneInputComponent implements ControlValueAccessor {
+export class PhoneInputComponent implements ControlValueAccessor, OnChanges {
 	@Input() placeholder: string = 'Enter phone number';
 	@Input() required: boolean = false;
 	@Input() defaultCountry?: CountryCode;
@@ -26,7 +26,7 @@ export class PhoneInputComponent implements ControlValueAccessor {
 	@Output() extensionChange = new EventEmitter<string | undefined>();
 	@Output() countryChange = new EventEmitter<CountryCode | undefined>();
 
-	// control value (canonical E.164)
+	// control value (canonical E.164, internally we keep with '+', but emit without '+')
 	private e164Value: string = '';
 	// UI value (as typed/formatted)
 	value: string = '';
@@ -43,14 +43,16 @@ export class PhoneInputComponent implements ControlValueAccessor {
 	onTouched: () => void = () => {};
 
 	constructor(private hostRef: ElementRef<HTMLElement>) {
-		if (this.defaultCountry) {
-			this.setCountry(this.defaultCountry);
-		} else {
-			// Try navigator.language region; do not force
-			const guessed = (navigator?.language || '').split('-')[1];
-			if (guessed) {
-				this.setCountry(guessed.toUpperCase() as CountryCode, false);
-			}
+		// Try navigator.language region; do not force
+		const guessed = (navigator?.language || '').split('-')[1];
+		if (guessed) {
+			this.setCountry(guessed.toUpperCase() as CountryCode, false);
+		}
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		if (changes['defaultCountry'] && this.defaultCountry) {
+			this.setCountry(this.defaultCountry, false);
 		}
 	}
 
@@ -69,22 +71,46 @@ export class PhoneInputComponent implements ControlValueAccessor {
 	}
 
 	writeValue(value: string): void {
-		// accept E.164 or international-formatted numbers and display national part in the input
+		// accept E.164 (with or without '+') or international-formatted/national numbers
 		this.e164Value = '';
 		this.value = '';
-		if (value) {
-			try {
-				const parsed = parsePhoneNumberFromString(value, this.selectedCountry?.code);
-				if (parsed) {
-					if (parsed.country) this.setCountry(parsed.country as CountryCode, false);
-					this.value = parsed.formatNational();
-					this.e164Value = parsed.number; // store canonical
-					this.extensionValue = parsed.ext;
-					this.extensionChange.emit(this.extensionValue);
-					return;
+		if (!value) return;
+
+		const raw = (value || '').trim();
+		try {
+			let parsed;
+			const digitsOnly = raw.replace(/\D+/g, '');
+
+			// Prefer treating pure digits as E.164 without '+'
+			if (raw === digitsOnly && digitsOnly.length >= 6) {
+				parsed = parsePhoneNumberFromString('+' + digitsOnly);
+			}
+
+			// Fallback: try with selected country context (national or international formatting)
+			if (!parsed) {
+				parsed = parsePhoneNumberFromString(raw, this.selectedCountry?.code);
+			}
+
+			// If still not parsed and does not start with '+', try detecting country by scanning
+			if (!parsed && !raw.startsWith('+')) {
+				const digitsNational = digitsOnly;
+				for (const c of this.countries) {
+					try {
+						const p = parsePhoneNumberFromString(digitsNational, c.code as CountryCode);
+						if (p && p.isValid()) { parsed = p; break; }
+					} catch {}
 				}
-			} catch {}
-		}
+			}
+
+			if (parsed) {
+				if (parsed.country) this.setCountry(parsed.country as CountryCode, false);
+				this.value = parsed.formatNational();
+				this.e164Value = parsed.number; // store canonical with '+' internally
+				this.extensionValue = parsed.ext;
+				this.extensionChange.emit(this.extensionValue);
+				return;
+			}
+		} catch {}
 	}
 
 	registerOnChange(fn: (value: string) => void): void {
@@ -135,6 +161,11 @@ export class PhoneInputComponent implements ControlValueAccessor {
 			}
 		} catch {}
 		return this.buildTooGenericMessage();
+	}
+
+	private emitWithoutPlus(value: string) {
+		// Ensure parent always receives a number without '+'
+		this.onChange(value.replace(/^\+/, '').replace(/\+/g, ''));
 	}
 
 	setCountry(code: CountryCode, revalidate: boolean = true) {
@@ -189,7 +220,7 @@ export class PhoneInputComponent implements ControlValueAccessor {
 		// Convert 00 prefix to +
 		normalized = normalized.replace(/^00/, '+');
 		// Remove common separators, keep + and digits and possible ext markers
-		const match = normalized.match(/(\+)?[0-9() .\-/#xext]+/i);
+		const match = normalized.match(/(\+)?[0-9() .\-\/#[xext]+/i);
 		if (match) {
 			ev.preventDefault();
 			this.handleInput(match[0]);
@@ -204,33 +235,67 @@ export class PhoneInputComponent implements ControlValueAccessor {
 			const parsed = parsePhoneNumberFromString(this.value, this.selectedCountry?.code);
 			if (parsed && parsed.isValid()) {
 				this.value = parsed.formatNational();
-				this.e164Value = parsed.number; // E.164
+				this.e164Value = parsed.number; // E.164 with '+'
 				this.extensionValue = parsed.ext;
 				this.extensionChange.emit(this.extensionValue);
-				this.onChange(this.e164Value);
+				this.emitWithoutPlus(this.e164Value);
 			}
 		} catch {}
 	}
 
 	private propagateValue() {
-		// While typing, try to compute E.164; if not valid yet, pass raw for parent display but not canonical
+		// While typing, try to compute E.164; if not valid yet, pass raw (without '+') for parent display
 		try {
-			const parsed = parsePhoneNumberFromString(this.value, this.selectedCountry?.code);
+			let parsed = parsePhoneNumberFromString(this.value, this.selectedCountry?.code);
 			if (parsed) {
-				if (parsed.country && parsed.country !== this.selectedCountry?.code) {
-					// adapt country from a +CC input without reformatting mid-typing
-					this.setCountry(parsed.country as CountryCode, false);
-				}
+				// Do not change country while typing
 				if (parsed.isValid()) {
 					this.e164Value = parsed.number;
 					this.extensionValue = parsed.ext;
 					this.extensionChange.emit(this.extensionValue);
-					this.onChange(this.e164Value);
+					this.emitWithoutPlus(this.e164Value);
 					return;
 				}
 			}
+
+			// If not valid and user input doesn't start with '+', try interpreting digits as E.164 without '+'
+			const raw = (this.value || '').trim();
+			if (!raw.startsWith('+')) {
+				const digits = raw.replace(/\D+/g, '');
+				if (digits.length >= 6) {
+					try {
+						const pIntl = parsePhoneNumberFromString('+' + digits);
+						if (pIntl && pIntl.isValid()) {
+							// Do not change country while typing
+							this.e164Value = pIntl.number;
+							this.extensionValue = pIntl.ext;
+							this.extensionChange.emit(this.extensionValue);
+							this.emitWithoutPlus(this.e164Value);
+							return;
+						}
+					} catch {}
+				}
+			}
+
+			// If still not valid, try detecting country by scanning as national numbers
+			if (!raw.startsWith('+')) {
+				const digits = raw.replace(/\D+/g, '');
+				for (const c of this.countries) {
+					try {
+						const p = parsePhoneNumberFromString(digits, c.code as CountryCode);
+						if (p && p.isValid()) {
+							// Do not change country while typing
+							this.e164Value = p.number;
+							this.extensionValue = p.ext;
+							this.extensionChange.emit(this.extensionValue);
+							this.emitWithoutPlus(this.e164Value);
+							return;
+						}
+					} catch {}
+				}
+			}
 		} catch {}
-		// Not valid yet => pass through current raw, so parent list stays in sync
-		this.onChange(this.value);
+		// Not valid yet => pass through current raw, so parent list stays in sync, but without '+'
+		this.emitWithoutPlus(this.value);
 	}
 } 

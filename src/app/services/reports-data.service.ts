@@ -177,7 +177,8 @@ export class ReportsDataService {
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
-          enabled: adAccount.enabled
+          enabled: adAccount.enabled,
+          currency: adAccount.currency
         };
 
         if (section.name === 'kpis') {
@@ -345,7 +346,8 @@ export class ReportsDataService {
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
-          enabled: adAccount.enabled === undefined ? true : adAccount.enabled
+          enabled: adAccount.enabled === undefined ? true : adAccount.enabled,
+          currency: adAccount.currency
         };
         if (campaignsDataVar) {
           adAccountObj.campaignsData = campaignsDataVar;
@@ -531,12 +533,18 @@ export class ReportsDataService {
           }
         }
 
+        const currencyResponse = await this.adAccountsService.getAdAccountCurrency(adAccount.adAccountId);
+        let currencySymbol = (currencyResponse as any)?.currency || '';
+        if (currencySymbol === 'USD') currencySymbol = '$';
+        if (currencySymbol === 'EUR') currencySymbol = '€';
+
         const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,
           metrics: metrics,
           order: idx,
-          enabled: true
+          enabled: true,
+          currency: currencySymbol
         };
 
         // attach lightweight preview data per section so UI can render something meaningful
@@ -660,7 +668,8 @@ export class ReportsDataService {
           order: adAccount.order,
           enabled: adAccount.enabled,
           metrics: metrics,
-          customMetrics: customMetrics
+          customMetrics: customMetrics,
+          currency: adAccount.currency
         })
         
       }
@@ -798,32 +807,11 @@ export class ReportsDataService {
 
   private async appendCurrencyToMetrics(reportSections: ReportSection[]): Promise<ReportSection[]> {
     try {
-      const me = await this.userService.me();
-      const organizationUuid = (me as any)?.activeOrganization || '';
-      if (!organizationUuid) return reportSections;
-
-      const adAccountIds = new Set<string>();
-      for (const section of reportSections) {
-        for (const acc of section.adAccounts) {
-          if (acc?.id) adAccountIds.add(String(acc.id));
-        }
-      }
-
-      const currencyByAccount = new Map<string, string>();
-      await Promise.all(Array.from(adAccountIds).map(async (adAccountId) => {
-        try {
-          const res = await this.adAccountsService.getAdAccountCurrency(adAccountId, organizationUuid);
-          let currency = (res as any)?.currency || '';
-          if (currency === 'USD') currency = '$';
-          if (currency === 'EUR') currency = '€';
-          if (currency) currencyByAccount.set(String(adAccountId), currency);
-        } catch {}
-      }));
-
       const withCurrency = reportSections.map(section => ({
         ...section,
         adAccounts: section.adAccounts.map(adAccount => {
-          const currency = currencyByAccount.get(String(adAccount.id));
+          const currency = adAccount.currency;
+
           const metrics = adAccount.metrics.map(metric => this.isCurrencyMetric(metric.name)
             ? ({ ...metric, currency })
             : metric

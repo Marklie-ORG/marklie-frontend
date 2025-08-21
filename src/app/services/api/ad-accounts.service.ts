@@ -41,12 +41,12 @@ export class AdAccountsService {
     return firstValueFrom(this.http.get<Root>(`${this.apiUrl}/ad-accounts/businesses-hierarchy`, {headers: this.headers}));
   }
 
-  async getAdAccountCurrency(adAccountId: string, organizationUuid: string): Promise<AdAccountCurrencyResponse> {
+  async getAdAccountCurrency(adAccountId: string): Promise<AdAccountCurrencyResponse> {
     return firstValueFrom(
       this.http.get<AdAccountCurrencyResponse>(
         `${this.apiUrl}/ad-accounts/currency`,
         {
-          params: { adAccountId, organizationUuid },
+          params: { adAccountId },
           headers: this.headers
         }
       )

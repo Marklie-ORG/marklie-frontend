@@ -38,6 +38,7 @@ export interface GetReportResponse {
     data: AdAccountData
     order: number
     enabled?: boolean
+    currency: string
   }
 
   export type AdAccountData = KpiAdAccountData | GraphsAdAccountData | AdsAdAccountData | TableAdAccountData

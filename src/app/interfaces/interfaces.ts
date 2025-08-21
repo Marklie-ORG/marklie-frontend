@@ -72,6 +72,7 @@ export interface AdAccountScheduleReportRequest {
   enabled: boolean;
   metrics: MetricScheduleReportRequest[];
   customMetrics: CustomMetricScheduleReportRequest[];
+  currency: string;
 }
 
 export interface MetricScheduleReportRequest {

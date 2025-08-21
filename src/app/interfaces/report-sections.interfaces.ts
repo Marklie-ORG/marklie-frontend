@@ -17,6 +17,7 @@ export interface ReportSection {
     metrics: Metric[]
     campaignsData?: CampaignData[]
     creativesData?: AdsAdAccountDataCreative[]
+    currency: string;
   }
   
   export interface Metric {

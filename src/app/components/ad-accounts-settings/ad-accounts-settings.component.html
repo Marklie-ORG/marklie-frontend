@@ -23,11 +23,11 @@
           <div 
           *ngFor="let account of selectedBusiness.ad_accounts" 
           class="account-option"
-          (click)="disabledAdAccountAlert(account.business.id)"
+          (click)="onAccountOptionClick(account, $event)"
           >
             <input 
               *ngIf="account.business"
-              [disabled]="isAdAccountDisabled(account.business.id)"
+              [disabled]="isCheckboxDisabled(account)"
               type="checkbox" 
               [id]="account.id"
               [checked]="isAdAccountSelected(account.id)"

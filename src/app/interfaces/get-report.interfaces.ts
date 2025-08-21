@@ -38,6 +38,7 @@ export interface GetReportResponse {
     data: AdAccountData
     order: number
     enabled?: boolean
+    currency: string
   }
 
   export type AdAccountData = KpiAdAccountData | GraphsAdAccountData | AdsAdAccountData | TableAdAccountData
@@ -85,6 +86,8 @@ export interface GetReportResponse {
     order: number
     value: number
     enabled?: boolean
+    symbol?: string
+    currency?: string
   }
 
   // campaigns
@@ -101,4 +104,6 @@ export interface GetReportResponse {
     order: number
     value: number
     enabled?: boolean
+    symbol?: string
+    currency?: string
   }

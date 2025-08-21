@@ -6,6 +6,8 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { SchedulesService } from "./api/schedules.service.js";
 import { ReportData, KpiAdAccountData, GraphsAdAccountData, AdsAdAccountData, TableAdAccountData, AdsAdAccountDataCreative } from '../interfaces/get-report.interfaces';
 import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces/report-sections.interfaces';
+import { AdAccountsService } from './api/ad-accounts.service.js';
+import { UserService } from './api/user.service.js';
 
 
 @Injectable({
@@ -13,6 +15,8 @@ import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces
 })
 export class ReportsDataService {
   private schedulesService = inject(SchedulesService);
+  private adAccountsService = inject(AdAccountsService);
+  private userService = inject(UserService);
   readonly chartConfigs = [
     { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
     { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
@@ -65,10 +69,6 @@ export class ReportsDataService {
 
     const providers = schedulingOption.jobData.providers;
     const facebookProvider = providers.find(p => p.provider === 'facebook');
-
-    console.log(facebookProvider!.sections)
-
-    console.log(availableMetrics)
 
     // helpers to generate lightweight preview data (keep scoped to this method)
     const generateDateSeries = (days: number = 10) => {
@@ -177,7 +177,8 @@ export class ReportsDataService {
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
-          enabled: adAccount.enabled
+          enabled: adAccount.enabled,
+          currency: adAccount.currency
         };
 
         if (section.name === 'kpis') {
@@ -225,7 +226,8 @@ export class ReportsDataService {
 
     }
 
-    return reportSections
+    reportSections = await this.appendCurrencyToMetrics(reportSections);
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
   async getReportsSectionsBasedOnReportData(providers: ReportData): Promise<ReportSection[]> {
@@ -344,7 +346,8 @@ export class ReportsDataService {
           name: adAccount.adAccountName,
           metrics: metrics,
           order: adAccount.order,
-          enabled: adAccount.enabled === undefined ? true : adAccount.enabled
+          enabled: adAccount.enabled === undefined ? true : adAccount.enabled,
+          currency: adAccount.currency
         };
         if (campaignsDataVar) {
           adAccountObj.campaignsData = campaignsDataVar;
@@ -368,7 +371,8 @@ export class ReportsDataService {
 
     reportSections = this.roundValues(reportSections);
 
-    return reportSections
+    reportSections = await this.appendCurrencyToMetrics(reportSections);
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
   roundValues(reportSections: ReportSection[]): ReportSection[] {
@@ -529,12 +533,18 @@ export class ReportsDataService {
           }
         }
 
+        const currencyResponse = await this.adAccountsService.getAdAccountCurrency(adAccount.adAccountId);
+        let currencySymbol = (currencyResponse as any)?.currency || '';
+        if (currencySymbol === 'USD') currencySymbol = '$';
+        if (currencySymbol === 'EUR') currencySymbol = '€';
+
         const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
           name: adAccount.adAccountName,
           metrics: metrics,
           order: idx,
-          enabled: true
+          enabled: true,
+          currency: currencySymbol
         };
 
         // attach lightweight preview data per section so UI can render something meaningful
@@ -578,7 +588,8 @@ export class ReportsDataService {
 
     }
 
-    return reportSections
+    reportSections = await this.appendCurrencyToMetrics(reportSections);
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
   getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[]): Metric[] {
@@ -613,7 +624,6 @@ export class ReportsDataService {
       .forEach(m => m.enabled = true);
 
     return metricsToReturn;
-    
   }
 
   getProviders(reportSections: ReportSection[]): Provider[] {
@@ -658,7 +668,8 @@ export class ReportsDataService {
           order: adAccount.order,
           enabled: adAccount.enabled,
           metrics: metrics,
-          customMetrics: customMetrics
+          customMetrics: customMetrics,
+          currency: adAccount.currency
         })
         
       }
@@ -730,9 +741,106 @@ export class ReportsDataService {
 
     const rounded = num.toFixed(2);
     if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
-    if (metric.includes('ctr')) return `${rounded}%`;
+    if (metric.includes('ctr') || metric.includes('conversion rate') || metric.includes('conversion_rate')) return `${rounded}%`;
     if (metric.includes('roas')) return `${rounded}x`;
     return Number(num).toLocaleString();
+  }
+
+  private appendPercentForSpecificMetrics(reportSections: ReportSection[]): ReportSection[] {
+    const shouldAppendPercent = (metricName: string): boolean => {
+      if (!metricName) return false;
+      const name = metricName.toLowerCase();
+      return (
+        name.includes('ctr') ||
+        name.includes('click-through rate') || name.includes('click through rate') || name.includes('click_through_rate') ||
+        name.includes('conversion rate') || name.includes('conversion_rate')
+      );
+    };
+
+    return reportSections.map(section => ({
+      ...section,
+      adAccounts: section.adAccounts.map(adAccount => ({
+        ...adAccount,
+        metrics: adAccount.metrics.map(metric => {
+          const updated: Metric = { ...metric };
+          if (shouldAppendPercent(updated.name)) {
+            updated.symbol = '%';
+          }
+          return updated;
+        }),
+        campaignsData: adAccount.campaignsData?.map(c => ({
+          ...c,
+          data: c.data.map(point => ({
+            ...point,
+            symbol: shouldAppendPercent(point.name) ? '%' : point.symbol
+          }))
+        })),
+        creativesData: adAccount.creativesData?.map(creative => ({
+          ...creative,
+          data: creative.data.map(point => ({
+            ...point,
+            symbol: shouldAppendPercent(point.name) ? '%' : point.symbol
+          }))
+        }))
+      }))
+    }));
+  }
+
+  private isCurrencyMetric(metricName: string): boolean {
+    if (!metricName) return false;
+    const normalized = metricName.toLowerCase().replace(/\s|_/g, '');
+    const currencyMetrics = new Set([
+      'spend',
+      'conversionvalue',
+      'cpc',
+      'cpm',
+      'cpp',
+      'costperlead',
+      'costperaddtocart',
+      'costperpurchase',
+      // common camelCase variants used elsewhere
+      'costpercart',
+      'costperpurchase'
+    ]);
+    return currencyMetrics.has(normalized);
+  }
+
+  private async appendCurrencyToMetrics(reportSections: ReportSection[]): Promise<ReportSection[]> {
+    try {
+      const withCurrency = reportSections.map(section => ({
+        ...section,
+        adAccounts: section.adAccounts.map(adAccount => {
+          const currency = adAccount.currency;
+
+          const metrics = adAccount.metrics.map(metric => this.isCurrencyMetric(metric.name)
+            ? ({ ...metric, currency })
+            : metric
+          );
+
+          const campaignsData = adAccount.campaignsData?.map(c => ({
+            ...c,
+            data: c.data.map(point => this.isCurrencyMetric(point.name)
+              ? ({ ...point, currency })
+              : point
+            )
+          }));
+
+          const creativesData = adAccount.creativesData?.map(creative => ({
+            ...creative,
+            data: creative.data.map(point => this.isCurrencyMetric(point.name)
+              ? ({ ...point, currency })
+              : point
+            )
+          }));
+
+          return { ...adAccount, metrics, campaignsData, creativesData } as AdAccount;
+        })
+      }));
+
+      return withCurrency;
+    } catch {
+      return reportSections;
+    }
   }
 
   renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
@@ -747,14 +855,16 @@ export class ReportsDataService {
       if (!canvas) continue;
 
       const hasData = graphs.some(g => g[config.key] !== undefined && g[config.key] !== null);
-      if (!hasData) {
+      if (hasData) {
+        if (canvas) {
+          canvas.style.display = 'block';
+        }
+      } else {
         if (canvas) {
           canvas.style.display = 'none';
         }
         continue;
       }
-
-
 
       const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
 

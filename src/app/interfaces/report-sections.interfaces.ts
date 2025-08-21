@@ -17,6 +17,7 @@ export interface ReportSection {
     metrics: Metric[]
     campaignsData?: CampaignData[]
     creativesData?: AdsAdAccountDataCreative[]
+    currency: string;
   }
   
   export interface Metric {
@@ -26,6 +27,8 @@ export interface ReportSection {
     isCustom?: boolean
     id?: string
     value?: number
+    currency?: string
+    symbol?: string
     dataPoints?: MetricDataPoint[]
   }
 

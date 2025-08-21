@@ -37,7 +37,7 @@ export class ScheduleReportComponent implements OnInit {
   dayOfMonth: number = 1;
   intervalDays: number = 1;
   cronExpression: string = '';
-  reviewRequired: boolean = false;
+  reviewRequired: boolean = true;
   clientUuid: string = '';
   reportStatsLoading = signal(true);
 

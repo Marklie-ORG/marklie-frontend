@@ -185,6 +185,13 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
 
   getCampaignMetricValue(campaign: CampaignData, metricName: string): string {
     const point = campaign?.data?.find(d => d.name === metricName);
-    return this.metricsService.formatMetricValue(metricName, point?.value);
+    if (!point) return '';
+    if ((point as any).currency) {
+      const num = typeof point.value === 'number' ? point.value : parseFloat(String(point.value));
+      const formatted = isNaN(num) ? String(point.value ?? '') : num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      return `${formatted} ${(point as any).currency}${point?.symbol ?? ''}`;
+    }
+    const formatted = this.metricsService.formatMetricValue(metricName, point?.value);
+    return `${formatted}${point?.symbol ?? ''}`;
   }
 }

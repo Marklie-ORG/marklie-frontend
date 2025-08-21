@@ -22,7 +22,6 @@ export class MetricsService {
 
     const rounded = num.toFixed(2);
     if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
-    if (metric.includes('ctr')) return `${rounded}%`;
     if (metric.includes('roas')) return `${rounded}x`;
     return Number(num).toLocaleString();
   }

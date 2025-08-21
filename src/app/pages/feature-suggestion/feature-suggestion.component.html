@@ -1,27 +1,37 @@
-<div class="feature-suggestion" *ngIf="!loading() && suggestion() as s">
-	<div class="topbar">
-		<button type="button" class="back" routerLink="/suggested-features">← Back to suggestions</button>
-	</div>
-	<div class="header">
-		<h2>{{ s.title }}</h2>
-		<button type="button" class="vote" [class.active]="s.userHasUpvoted" (click)="toggleUpvote()">
-			<fa-icon [icon]="faChevronUp"></fa-icon>
-			<span>{{ s.upvotes }}</span>
-		</button>
-	</div>
-	<p class="desc">{{ s.description }}</p>
-
-	<div class="comments">
-		<h3><fa-icon [icon]="faCommentDots"></fa-icon> Comments ({{ comments().length }})</h3>
-		<div class="list">
-			<div class="comment" *ngFor="let c of comments()">
-				<div class="head"><strong>{{ c.user.firstName || '' }} {{ c.user.lastName || '' }}</strong><span>{{ c.createdAt | date:'short' }}</span></div>
-				<p>{{ c.comment }}</p>
+<div class="feature-suggestion">
+	@if (!loading()) {
+		@if (suggestion(); as s) {
+			<div class="topbar">
+				<button type="button" class="back" routerLink="/suggested-features">← All posts</button>
 			</div>
-		</div>
-		<div class="add">
-			<input type="text" placeholder="Write a comment" [ngModel]="commentDraft()" (ngModelChange)="commentDraft.set($event)" (keydown.enter)="addComment()" />
-			<button type="button" (click)="addComment()">Post</button>
-		</div>
-	</div>
+
+			<div class="grid">
+				<div class="left">
+					<div class="post card">
+						<button type="button" class="vote" [class.active]="s.userHasUpvoted" (click)="toggleUpvote()" aria-label="Upvote">
+							<fa-icon [icon]="faChevronUp"></fa-icon>
+							<div class="count">{{ s.upvotes }}</div>
+						</button>
+						<div class="content">
+							<h2 class="title">{{ s.title }}</h2>
+							<p class="desc">{{ s.description }}</p>
+							<div class="meta">— {{ s.user.firstName || '' }} {{ s.user.lastName || '' }} · {{ s.createdAt | date:'short' }}</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="right">
+					<div class="composer card">
+						<input type="text" placeholder="Leave a comment" [ngModel]="commentDraft()" (ngModelChange)="commentDraft.set($event)" (keydown.enter)="addComment()" />
+					</div>
+					<div class="comments">
+						<div class="comment card" *ngFor="let c of comments()">
+							<p class="text">{{ c.comment }}</p>
+							<div class="meta">— {{ c.user.firstName || '' }} {{ c.user.lastName || '' }} · {{ c.createdAt | date:'short' }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	}
 </div> 

@@ -8,7 +8,7 @@
 				<input type="text" placeholder="Funnels" [ngModel]="title()" (ngModelChange)="title.set($event)" />
 				<label class="lbl">Description</label>
 				<textarea rows="4" placeholder="I want to see a visual funnel to track..." [ngModel]="description()" (ngModelChange)="description.set($event)" style="resize: vertical; width: 100%; max-width: 100%; box-sizing: border-box;"></textarea>
-				<button type="button" class="cta" (click)="create()" [disabled]="!title().trim() || !description().trim()">Suggest feature</button>
+				<button type="button" class="blue width-100 mt-3" (click)="create()" [disabled]="!title().trim() || !description().trim()">Suggest feature</button>
 			</div>
 		</div>
 
@@ -30,9 +30,12 @@
 									</div>
 								</div>
 							</div>
-							<button type="button" class="vote" [class.active]="s.userHasUpvoted" (click)="toggleUpvote(s); $event.stopPropagation()" aria-label="Upvote">
-								<fa-icon [icon]="faChevronUp"></fa-icon>
-								<div class="count">{{ s.upvotes }}</div>
+							<button type="button" class="vote" [class.active]="s.userHasUpvoted" (click)="toggleUpvote(s); $event.stopPropagation()" aria-label="Upvote" [attr.aria-pressed]="s.userHasUpvoted">
+								<span class="label">
+									<fa-icon [icon]="faChevronUp"></fa-icon>
+									<span class="text">Vote</span>
+								</span>
+								<span class="count">{{ s.upvotes }}</span>
 							</button>
 						</div>
 					}

@@ -20,7 +20,7 @@
             @for (point of getOrderedCreativePoints(adAccount, creative); track point.name) {
               <div class="metric cursor-pointer" [class.enabled]="isMetricEnabled(adAccount, point.name)" [attr.data-metric-name]="point.name">
                 <div class="metric-label">{{ metricsService.formatMetricLabel(point.name) }}</div>
-                <div class="metric-value">{{ metricsService.formatMetricValue(point.name, point.value) }}{{ point.symbol || '' }}</div>
+                <div class="metric-value">{{ point.currency ? ((point.value | number:'1.0-2') + ' ' + point.currency) : metricsService.formatMetricValue(point.name, point.value) }}{{ point.symbol || '' }}</div>
               </div>
             }
           </div>

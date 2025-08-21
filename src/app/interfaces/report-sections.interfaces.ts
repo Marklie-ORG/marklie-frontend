@@ -26,6 +26,7 @@ export interface ReportSection {
     isCustom?: boolean
     id?: string
     value?: number
+    currency?: string
     symbol?: string
     dataPoints?: MetricDataPoint[]
   }

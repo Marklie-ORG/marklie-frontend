@@ -86,6 +86,7 @@ export interface GetReportResponse {
     value: number
     enabled?: boolean
     symbol?: string
+    currency?: string
   }
 
   // campaigns
@@ -103,4 +104,5 @@ export interface GetReportResponse {
     value: number
     enabled?: boolean
     symbol?: string
+    currency?: string
   }

@@ -11,9 +11,9 @@ export class MessagesAccordionComponent {
 	@Output() messagesChange = new EventEmitter<Messages>();
 
 	accordion: { whatsapp: boolean; slack: boolean; email: boolean } = {
-		whatsapp: false,
-		slack: false,
-		email: false
+		whatsapp: true,
+		slack: true,
+		email: true
 	};
 
 	onWhatsappChange(value: string): void {

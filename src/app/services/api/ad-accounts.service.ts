@@ -20,6 +20,10 @@ export interface AdAccount {
   }
 }
 
+export interface AdAccountCurrencyResponse {
+  currency: string
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -35,5 +39,17 @@ export class AdAccountsService {
 
   async getBusinessesHierarchy(): Promise<Root> {
     return firstValueFrom(this.http.get<Root>(`${this.apiUrl}/ad-accounts/businesses-hierarchy`, {headers: this.headers}));
+  }
+
+  async getAdAccountCurrency(adAccountId: string, organizationUuid: string): Promise<AdAccountCurrencyResponse> {
+    return firstValueFrom(
+      this.http.get<AdAccountCurrencyResponse>(
+        `${this.apiUrl}/ad-accounts/currency`,
+        {
+          params: { adAccountId, organizationUuid },
+          headers: this.headers
+        }
+      )
+    );
   }
 }

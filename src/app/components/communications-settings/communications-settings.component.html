@@ -18,6 +18,7 @@
           (ngModelChange)="onEmailChange(i, $event)"
           class="text"
           >
+        <button type="button" (click)="removeEmail(i)">Remove</button>
         <!-- <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p> -->
         <!-- <button 
         *ngIf="email.isEditMode"
@@ -57,6 +58,7 @@
           [ngModelOptions]="{standalone: true}"
           (ngModelChange)="onPhoneNumberChange(i, $event)"
         ></app-phone-input>
+        <button type="button" (click)="removePhoneNumber(i)">Remove</button>
       </div>
       <!-- <div *ngIf="emails.at(0)?.get('email')?.invalid && emails.at(0)?.get('email')?.touched" class="invalid-feedback">
         Please enter a valid email address

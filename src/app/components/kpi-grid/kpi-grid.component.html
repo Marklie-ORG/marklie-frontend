@@ -21,7 +21,7 @@
                   <div class="kpi-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
                   <div class="kpi-value">
                     <!-- {{ metricsService.formatMetricValue(metric.name, kpis()[metric.name]) }} -->
-                    {{ metric.value }}
+                    {{ metric.value }}{{ metric.symbol || '' }}
                   </div>
                 </div>
           

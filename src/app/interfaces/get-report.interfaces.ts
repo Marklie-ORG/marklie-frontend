@@ -85,6 +85,7 @@ export interface GetReportResponse {
     order: number
     value: number
     enabled?: boolean
+    symbol?: string
   }
 
   // campaigns
@@ -101,4 +102,5 @@ export interface GetReportResponse {
     order: number
     value: number
     enabled?: boolean
+    symbol?: string
   }

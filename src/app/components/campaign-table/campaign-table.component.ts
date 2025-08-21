@@ -185,6 +185,7 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
 
   getCampaignMetricValue(campaign: CampaignData, metricName: string): string {
     const point = campaign?.data?.find(d => d.name === metricName);
-    return this.metricsService.formatMetricValue(metricName, point?.value);
+    const formatted = this.metricsService.formatMetricValue(metricName, point?.value);
+    return `${formatted}${point?.symbol ?? ''}`;
   }
 }

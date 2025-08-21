@@ -66,10 +66,6 @@ export class ReportsDataService {
     const providers = schedulingOption.jobData.providers;
     const facebookProvider = providers.find(p => p.provider === 'facebook');
 
-    console.log(facebookProvider!.sections)
-
-    console.log(availableMetrics)
-
     // helpers to generate lightweight preview data (keep scoped to this method)
     const generateDateSeries = (days: number = 10) => {
       const today = new Date();
@@ -225,7 +221,7 @@ export class ReportsDataService {
 
     }
 
-    return reportSections
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
   async getReportsSectionsBasedOnReportData(providers: ReportData): Promise<ReportSection[]> {
@@ -368,7 +364,7 @@ export class ReportsDataService {
 
     reportSections = this.roundValues(reportSections);
 
-    return reportSections
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
   roundValues(reportSections: ReportSection[]): ReportSection[] {
@@ -578,7 +574,7 @@ export class ReportsDataService {
 
     }
 
-    return reportSections
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
   getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[]): Metric[] {
@@ -613,7 +609,6 @@ export class ReportsDataService {
       .forEach(m => m.enabled = true);
 
     return metricsToReturn;
-    
   }
 
   getProviders(reportSections: ReportSection[]): Provider[] {
@@ -730,9 +725,49 @@ export class ReportsDataService {
 
     const rounded = num.toFixed(2);
     if (['spend', 'cpc'].includes(metric)) return `$${rounded}`;
-    if (metric.includes('ctr')) return `${rounded}%`;
+    if (metric.includes('ctr') || metric.includes('conversion rate') || metric.includes('conversion_rate')) return `${rounded}%`;
     if (metric.includes('roas')) return `${rounded}x`;
     return Number(num).toLocaleString();
+  }
+
+  private appendPercentForSpecificMetrics(reportSections: ReportSection[]): ReportSection[] {
+    const shouldAppendPercent = (metricName: string): boolean => {
+      if (!metricName) return false;
+      const name = metricName.toLowerCase();
+      return (
+        name.includes('ctr') ||
+        name.includes('click-through rate') || name.includes('click through rate') || name.includes('click_through_rate') ||
+        name.includes('conversion rate') || name.includes('conversion_rate')
+      );
+    };
+
+    return reportSections.map(section => ({
+      ...section,
+      adAccounts: section.adAccounts.map(adAccount => ({
+        ...adAccount,
+        metrics: adAccount.metrics.map(metric => {
+          const updated: Metric = { ...metric };
+          if (shouldAppendPercent(updated.name)) {
+            updated.symbol = '%';
+          }
+          return updated;
+        }),
+        campaignsData: adAccount.campaignsData?.map(c => ({
+          ...c,
+          data: c.data.map(point => ({
+            ...point,
+            symbol: shouldAppendPercent(point.name) ? '%' : point.symbol
+          }))
+        })),
+        creativesData: adAccount.creativesData?.map(creative => ({
+          ...creative,
+          data: creative.data.map(point => ({
+            ...point,
+            symbol: shouldAppendPercent(point.name) ? '%' : point.symbol
+          }))
+        }))
+      }))
+    }));
   }
 
   renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {

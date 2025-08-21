@@ -1,5 +1,6 @@
 import { Component, effect, inject, input, model, signal } from '@angular/core';
 import { AdAccountsService, Business, AdAccount } from 'src/app/services/api/ad-accounts.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 export interface FacebookAdAccount {
   adAccountId: string;
@@ -21,6 +22,7 @@ export class AdAccountsSettingsComponent {
   selectedAdAccounts: { [key: string]: boolean } = {};
     
   adAccountsService = inject(AdAccountsService);
+  notificationService = inject(NotificationService);
 
   facebookAdAccounts = model<FacebookAdAccount[]>([]);
   // FacebookAdAccount
@@ -99,7 +101,7 @@ export class AdAccountsSettingsComponent {
 
   disabledAdAccountAlert(accountBusinessId: string) {
     if (this.isAdAccountDisabled(accountBusinessId)) {
-      alert('You cannot select an ad account that is not associated with the selected business');
+      this.notificationService.info('Please select ad accounts that are associated with the selected business');
     }
   }
 

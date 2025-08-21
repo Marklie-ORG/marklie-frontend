@@ -37,6 +37,10 @@
     cursor: pointer;
     font-size: 14px;
   }
+
+  .row:last-child {
+    border-bottom: none;
+  }
 }
 
 .dashboard-container {

@@ -33,7 +33,7 @@
 	.suggestions { display: flex; flex-direction: column; gap: 18px; }
 	.suggestion { position: relative; }
 	.suggestion .card-body { display: flex; gap: 16px; padding: 18px; cursor: pointer; text-decoration: none; color: inherit; }
-	.suggestion .content { flex: 1; }
+	.suggestion .content { flex: 1; } 
 	.suggestion .title { margin: 0 0 6px 0; font-size: 16px; color: var(--ink); font-weight: 600; }
 	.suggestion .desc { margin: 0; color: #333; line-height: 1.5; }
 	.suggestion .meta { margin-top: 10px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }

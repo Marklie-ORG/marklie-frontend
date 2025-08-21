@@ -17,20 +17,20 @@ export class ReportsDataService {
   private schedulesService = inject(SchedulesService);
   private adAccountsService = inject(AdAccountsService);
   private userService = inject(UserService);
-  // readonly chartConfigs = [
-  //   { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
-  //   { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
-  //   { key: 'conversionValue', label: 'Conversion Value', color: '#c0392b', format: (v: any) => `$${v}` },
-  //   { key: 'purchases', label: 'Purchases', color: '#e74c3c', format: (v: any) => `${v}` },
-  //   { key: 'addToCart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
-  //   { key: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
-  //   { key: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
-  //   { key: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
-  //   { key: 'ctr', label: 'CTR', color: '#34495e', format: (v: any) => `${v}%` },
-  //   { key: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
-  //   { key: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
-  //   { key: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
-  // ];
+  readonly chartConfigs = [
+    { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
+    { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
+    { key: 'conversionValue', label: 'Conversion Value', color: '#c0392b', format: (v: any) => `$${v}` },
+    { key: 'purchases', label: 'Purchases', color: '#e74c3c', format: (v: any) => `${v}` },
+    { key: 'addToCart', label: 'Add to Cart', color: '#f1c40f', format: (v: any) => `${v}` },
+    { key: 'initiatedCheckouts', label: 'Checkouts', color: '#9b59b6', format: (v: any) => `${v}` },
+    { key: 'clicks', label: 'Clicks', color: '#e67e22', format: (v: any) => `${v}` },
+    { key: 'impressions', label: 'Impressions', color: '#1abc9c', format: (v: any) => `${v}` },
+    { key: 'ctr', label: 'CTR', color: '#34495e', format: (v: any) => `${v}%` },
+    { key: 'cpc', label: 'CPC', color: '#16a085', format: (v: any) => `$${v}` },
+    { key: 'costPerPurchase', label: 'Cost Per Purchase', color: '#8e44ad', format: (v: any) => `$${v}` },
+    { key: 'costPerCart', label: 'Cost Per Add to Cart', color: '#d35400', format: (v: any) => `$${v}` }
+  ];
 
   availableMetrics: GetAvailableMetricsResponse = [];
 
@@ -57,9 +57,9 @@ export class ReportsDataService {
   ];
   readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  // getChartConfigs() {
-  //   return this.chartConfigs;
-  // }
+  getChartConfigs() {
+    return this.chartConfigs;
+  }
   
   async getReportsSectionsBasedOnSchedulingOption(schedulingOption: SchedulingOption): Promise<ReportSection[]> {
 
@@ -855,72 +855,72 @@ export class ReportsDataService {
     }
   }
 
-  // renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
-  //   const labels = graphs.map(g =>
-  //     new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  //   );
+  renderCharts(graphs: any[], chartStore: Record<string, Chart>, dateLabel: string, prefix = '') {
+    const labels = graphs.map(g =>
+      new Date(g.date_start).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    );
 
-  //   for (const config of this.getChartConfigs()) {
-  //     const canvasId = `${prefix}_${config.key}_Chart`;
+    for (const config of this.getChartConfigs()) {
+      const canvasId = `${prefix}_${config.key}_Chart`;
 
-  //     const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
-  //     if (!canvas) continue;
+      const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+      if (!canvas) continue;
 
-  //     const hasData = graphs.some(g => g[config.key] !== undefined && g[config.key] !== null);
-  //     if (hasData) {
-  //       if (canvas) {
-  //         canvas.style.display = 'block';
-  //       }
-  //     } else {
-  //       if (canvas) {
-  //         canvas.style.display = 'none';
-  //       }
-  //       continue;
-  //     }
+      const hasData = graphs.some(g => g[config.key] !== undefined && g[config.key] !== null);
+      if (hasData) {
+        if (canvas) {
+          canvas.style.display = 'block';
+        }
+      } else {
+        if (canvas) {
+          canvas.style.display = 'none';
+        }
+        continue;
+      }
 
-  //     const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
+      const data = graphs.map(g => parseFloat(g[config.key] ?? 0));
 
-  //     const existingChart = Chart.getChart(canvasId);
-  //     if (existingChart) {
-  //       existingChart.destroy();
-  //     }
+      const existingChart = Chart.getChart(canvasId);
+      if (existingChart) {
+        existingChart.destroy();
+      }
 
-  //     chartStore[canvasId] = new Chart(canvas, {
-  //       type: 'line',
-  //       data: {
-  //         labels,
-  //         datasets: [{
-  //           label: config.label,
-  //           data,
-  //           borderColor: config.color,
-  //           pointBackgroundColor: config.color,
-  //           tension: 0.3,
-  //           pointRadius: 3,
-  //           fill: false,
-  //         }],
-  //       },
-  //       options: {
-  //         responsive: true,
-  //         plugins: {
-  //           title: {
-  //             display: true,
-  //             text: `${config.label} (${dateLabel})`,
-  //             font: { size: 16 },
-  //           },
-  //           datalabels: { display: false },
-  //         },
-  //         scales: {
-  //           y: {
-  //             beginAtZero: false,
-  //             ticks: {
-  //               callback: value => config.format(Number(value).toFixed(0))
-  //             }
-  //           }
-  //         }
-  //       },
-  //       plugins: [ChartDataLabels]
-  //     });
-  //   }
-  // }
+      chartStore[canvasId] = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: config.label,
+            data,
+            borderColor: config.color,
+            pointBackgroundColor: config.color,
+            tension: 0.3,
+            pointRadius: 3,
+            fill: false,
+          }],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `${config.label} (${dateLabel})`,
+              font: { size: 16 },
+            },
+            datalabels: { display: false },
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: {
+                callback: value => config.format(Number(value).toFixed(0))
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    }
+  }
 
 }

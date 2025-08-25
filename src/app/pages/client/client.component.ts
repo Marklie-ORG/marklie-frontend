@@ -12,6 +12,7 @@ import { DatabaseReportItem } from '../../components/database-table/database-tab
 import { faEllipsisVertical, faPause, faPlay, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { NotificationService } from '@services/notification.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog.component';
+import {firstValueFrom} from "rxjs";
 
 interface Activity {
   status: 'new' | 'old',
@@ -204,13 +205,13 @@ export class ClientComponent implements OnInit {
   onEditClient() {
     const dialogRef = this.dialog.open(ClientSettingsComponent, {
       width: '800px',
-      data: {
-        client: this.client
-      }
+      data: { client: this.client }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.loadClientDetails();
+    firstValueFrom(dialogRef.afterClosed()).then(async (res) => {
+      if (res?.updated) {
+        await this.loadClientDetails();
+      }
     });
   }
 

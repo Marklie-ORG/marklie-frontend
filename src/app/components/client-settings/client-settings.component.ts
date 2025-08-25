@@ -24,7 +24,7 @@ export class ClientSettingsComponent implements OnInit {
   clientName: string = "";
 
   selectedBusinessId: string | null = null;
-  
+
   emails = signal<string[]>([]);
   phoneNumbers = signal<string[]>([]);
   facebookAdAccounts = signal<FacebookAdAccount[]>([]);
@@ -67,22 +67,19 @@ export class ClientSettingsComponent implements OnInit {
       ...(emails && { emails }),
       ...(phoneNumbers && { phoneNumbers }),
       facebookAdAccounts: this.facebookAdAccounts()
-    }
-    try {
-      const response = await this.clientService.updateClient(this.data.client.uuid!, client);
-      this.notificationService.info('Information updated successfully');
-    } catch (error) {
-      this.notificationService.info('Error updating Information');
-    }
+    };
+    await this.clientService.updateClient(this.data.client.uuid!, client);
   }
 
-  saveChanges() {
-    this.updateClient(
-      this.clientName, 
-      this.emails(), 
-      this.phoneNumbers()
-    );
-    this.dialogRef.close();
+  async saveChanges() {
+    try {
+      await this.updateClient(this.clientName, this.emails(), this.phoneNumbers());
+      this.notificationService.info('Information updated successfully');
+      this.dialogRef.close({ updated: true });
+    } catch {
+      this.notificationService.info('Error updating Information');
+      this.dialogRef.close({ updated: false });
+    }
   }
 
 

@@ -60,7 +60,7 @@ export class ReportsDataService {
   getChartConfigs() {
     return this.chartConfigs;
   }
-  
+
   async getReportsSectionsBasedOnSchedulingOption(schedulingOption: SchedulingOption): Promise<ReportSection[]> {
 
     let reportSections: ReportSection[] = [];
@@ -233,7 +233,7 @@ export class ReportsDataService {
   async getReportsSectionsBasedOnReportData(providers: ReportData): Promise<ReportSection[]> {
 
     let reportSections: ReportSection[] = [];
-    
+
     const facebookProvider = providers.find(p => p.provider === 'facebook');
 
     for (let section of facebookProvider?.sections || []) {
@@ -474,7 +474,7 @@ export class ReportsDataService {
         order: 3
       }
     ]
-    
+
     const availableMetrics = await this.schedulesService.getAvailableMetrics(clientUuid);
 
     // helpers to generate lightweight preview data
@@ -503,6 +503,17 @@ export class ReportsDataService {
       if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
       return +(Math.random() * 100).toFixed(2) as unknown as number;
     };
+
+    const currencyMap = new Map<string, string>();
+    await Promise.all(
+      availableMetrics.map(async (adAccount) => {
+        const response = await this.adAccountsService.getAdAccountCurrency(adAccount.adAccountId);
+        let symbol = (response as any)?.currency || '';
+        if (symbol === 'USD') symbol = '$';
+        if (symbol === 'EUR') symbol = '€';
+        currencyMap.set(adAccount.adAccountId, symbol);
+      })
+    );
 
     for (let section of reportSections) {
       const sectionKey = section.key;
@@ -533,10 +544,7 @@ export class ReportsDataService {
           }
         }
 
-        const currencyResponse = await this.adAccountsService.getAdAccountCurrency(adAccount.adAccountId);
-        let currencySymbol = (currencyResponse as any)?.currency || '';
-        if (currencySymbol === 'USD') currencySymbol = '$';
-        if (currencySymbol === 'EUR') currencySymbol = '€';
+        const currencySymbol = currencyMap.get(adAccount.adAccountId) ?? '';
 
         const adAccountObj: AdAccount = {
           id: adAccount.adAccountId,
@@ -647,7 +655,7 @@ export class ReportsDataService {
 
         for (const metric of adAccount.metrics) {
           if (!metric.enabled) continue;
-          
+
           if (metric.isCustom) {
             customMetrics.push({
               name: metric.name,
@@ -671,7 +679,7 @@ export class ReportsDataService {
           customMetrics: customMetrics,
           currency: adAccount.currency
         })
-        
+
       }
 
       sections.push({

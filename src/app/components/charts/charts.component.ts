@@ -31,8 +31,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
 
   @ViewChildren('chartsGridContainer') chartsGridContainers!: QueryList<ElementRef<HTMLElement>>;
   @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
-
-  graphs = input<any[]>([]);
+  
   @Input() adAccounts: AdAccount[] = [];
   @Output() adAccountsChange = new EventEmitter<AdAccount[]>();
   isViewMode = input<boolean>(false);

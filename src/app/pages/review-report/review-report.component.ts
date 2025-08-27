@@ -1,11 +1,9 @@
 import {ChangeDetectorRef, Component, inject, OnInit, signal} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ReportService} from 'src/app/services/api/report.service';
-import {Data} from '../schedule-report/schedule-report.component';
 import {GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
 import {MetricsService} from 'src/app/services/metrics.service';
 import {ReportsDataService} from 'src/app/services/reports-data.service';
-import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 import { NotificationService } from '@services/notification.service';
@@ -20,18 +18,10 @@ import { FinishReviewDialogComponent } from 'src/app/components/finish-review-di
 })
 export class ReviewReportComponent implements OnInit {
 
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
-
   reportUuid: string = '';
   clientUuid: string = '';
   availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
-  private schedulesService = inject(SchedulesService);
 
   isPreviewMode: boolean = false;
 

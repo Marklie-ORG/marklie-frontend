@@ -9,10 +9,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportService } from '../../services/api/report.service.js';
 import { ReportsDataService } from '../../services/reports-data.service.js';
-import { Data } from '../schedule-report/schedule-report.component.js';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
-import { SchedulesService } from 'src/app/services/api/schedules.service.js';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
 
 
@@ -22,13 +20,6 @@ import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
   styleUrls: ['./view-report.component.scss'],
 })
 export class ViewReportComponent implements OnInit {
-
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
 
   reportId: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = [];
@@ -47,17 +38,14 @@ export class ViewReportComponent implements OnInit {
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
 
-  //
   selectedAdAccountIndex = -1;
   providers: ReportData = [];
-  //
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
-  private schedulesService = inject(SchedulesService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -81,8 +69,6 @@ export class ViewReportComponent implements OnInit {
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
-      
-      this.processSelectedAccount();
 
     } catch (error) {
       console.error('Error loading report:', error);
@@ -91,22 +77,6 @@ export class ViewReportComponent implements OnInit {
 
   openAd(url: string): void {
     window.open(url, '_blank');
-  }
-
-  public processSelectedAccount(): void {
-    const isAllAccounts = Number(this.selectedAdAccountIndex) === -1;
-    const data = isAllAccounts
-      ? this.reportsDataService.aggregateReports(this.providers)
-      : this.providers[this.selectedAdAccountIndex];
-
-    this.data = {
-      KPIs: data.KPIs,
-      ads: data.ads,
-      campaigns: data.campaigns,
-      graphs: data.graphs
-    }
-
-    this.ref.detectChanges();
   }
 
 }

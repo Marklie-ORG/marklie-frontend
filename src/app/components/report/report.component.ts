@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, computed, effect, inject, input, Input, model, signal, SimpleChanges } from '@angular/core';
-import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
@@ -19,7 +18,6 @@ export interface MetricSelections {
 export class ReportComponent {
 
   reportSections = model<ReportSection[]>([]);
-  @Input() data: Data | undefined = undefined;
   @Input() reportTitle: string = 'Report Title';
   @Input() selectedDatePresetText: string = '';
 

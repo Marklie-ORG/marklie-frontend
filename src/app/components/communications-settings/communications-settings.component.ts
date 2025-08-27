@@ -16,9 +16,6 @@ export class CommunicationsSettingsComponent {
   clientEmails = model<string[]>([]);
   clientPhoneNumbers = model<string[]>([]);
 
-  // emails: {email: string}[] = [];
-  // phoneNumbers: {phoneNumber: string}[] = [];
-
   selectedConversationId: string | null = null;
   workspaces: Workspace[] | null = null;
   currentWorkspace: Workspace | null = null;

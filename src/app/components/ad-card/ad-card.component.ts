@@ -18,7 +18,6 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   @ViewChildren('adsGridContainer') gridContainers!: QueryList<ElementRef>;
   @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
   
-  @Input() ads: any[] = [];
   adAccounts = model<AdAccount[]>([]);
   isViewMode = input<boolean>(false);
 

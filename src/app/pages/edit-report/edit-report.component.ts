@@ -1,10 +1,8 @@
 import {Component, inject, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Data } from '../schedule-report/schedule-report.component';
 import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent, ScheduleOptionsMatDialogData } from 'src/app/components/schedule-options/schedule-options.component';
-import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
@@ -91,13 +89,6 @@ export class EditReportComponent {
 
   metricsGraphConfig: any[] = [];
 
-  mockData: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
-
   schedulingOptionId: string | null = null;
 
   schedulingOption: SchedulingOption | null = null;
@@ -121,7 +112,6 @@ export class EditReportComponent {
 
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
-  private mockReportService = inject(MockReportService);
   public reportsDataService = inject(ReportsDataService);
   private schedulesService = inject(SchedulesService);
 
@@ -165,8 +155,6 @@ export class EditReportComponent {
     this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.organizationLogo || '');
 
     this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnSchedulingOption(this.schedulingOption);
-    
-    this.mockData = this.mockReportService.generateMockData();
   }
 
   editScheduleConfiguration() {

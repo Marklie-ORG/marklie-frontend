@@ -23,8 +23,7 @@
     <div class="report-container d-flex flex-column pt-3 pl-4 pr-3 pb-3" >
         
       <report
-        [reportSections]="reportSections()"
-        [data]="mockData"
+        [(reportSections)]="reportSections"
         [reportTitle]="reportTitle"
         [selectedDatePresetText]="selectedDatePresetText"
         [(clientImageGsUri)]="clientImageGsUri"

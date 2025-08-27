@@ -1,18 +1,9 @@
 <div class="report-container d-flex flex-column align-center pt-3 pl-5 pr-5">
 
   <div style="width: 80%;">
-    <!-- <div class="account-selector mb-3">
-      <select id="account-select" [(ngModel)]="selectedAdAccountIndex" (change)="processSelectedAccount()">
-        <option [value]="-1">All Accounts (Average)</option>
-        <option *ngFor="let acc of providers; let i = index" [value]="i">
-          {{ acc.accountName || 'Ad Account ' + (i + 1) }}
-        </option>
-      </select>
-    </div> -->
    
     <report
       [reportSections]="reportSections"
-      [data]="data"
       [selectedDatePresetText]="selectedDatePresetText()"
       [reportTitle]="reportTitle()"
       [(clientImageUrl)]="clientImageUrl"

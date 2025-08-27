@@ -4,9 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
 import { ReportService } from 'src/app/services/api/report.service';
-import { MockReportService } from 'src/app/services/mock-report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import {SchedulesService} from "../../services/api/schedules.service.js";
 import { ScheduleReportRequest, Frequency, Messages, FACEBOOK_DATE_PRESETS } from 'src/app/interfaces/interfaces.js';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 
@@ -29,7 +27,6 @@ export interface Data {
   ]
 })
 export class ScheduleReportComponent implements OnInit {
-  private schedulesService = inject(SchedulesService);
 
   frequency: Frequency = 'weekly';
   time: string = '09:00';
@@ -40,13 +37,6 @@ export class ScheduleReportComponent implements OnInit {
   reviewRequired: boolean = true;
   clientUuid: string = '';
   reportStatsLoading = signal(true);
-
-  mockData: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
 
   reportSections = model<ReportSection[]>([]);
 
@@ -72,7 +62,6 @@ export class ScheduleReportComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reportService = inject(ReportService);
-  private mockReportService = inject(MockReportService);
   public reportsDataService = inject(ReportsDataService);
 
   constructor() {
@@ -87,18 +76,6 @@ export class ScheduleReportComponent implements OnInit {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
 
     this.reportSections.set(await this.reportsDataService.getDefaultReportsSections(this.clientUuid));
-
-    // console.log(this.reportSections)
-
-    // return
-
-    // this.reportSections.forEach(section => {
-    //   for (let i = 0; i < 3; i++) {
-    //     section.metrics[i].enabled = true;
-    //   }
-    // });
-
-    this.mockData = this.mockReportService.generateMockData();
 
     this.reportStatsLoading.set(false);
   }

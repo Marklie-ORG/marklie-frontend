@@ -19,21 +19,11 @@
           class="text"
           >
         <button type="button" (click)="removeEmail(i)">Remove</button>
-        <!-- <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p> -->
-        <!-- <button 
-        *ngIf="email.isEditMode"
-          type="button" 
-          (click)="removeEmail(i)"
-          >
-          Remove
-        </button> -->
-      </div>
-      <!-- <div *ngIf="emails.at(0)?.get('email')?.invalid && emails.at(0)?.get('email')?.touched" class="invalid-feedback">
-        Please enter a valid email address
-      </div> -->
 
-      <button (click)="addEmail()">
-        Add recipient email
+      </div>
+
+      <button type="button" (click)="addEmail()">
+        Add client's email
       </button>
 
     </div>
@@ -60,12 +50,9 @@
         ></app-phone-input>
         <button type="button" (click)="removePhoneNumber(i)">Remove</button>
       </div>
-      <!-- <div *ngIf="emails.at(0)?.get('email')?.invalid && emails.at(0)?.get('email')?.touched" class="invalid-feedback">
-        Please enter a valid email address
-      </div> -->
 
-      <button (click)="addPhoneNumber()">
-        Add recipient phone number
+      <button type="button" (click)="addPhoneNumber()">
+        Add client's phone number
       </button>
     </div>
     
@@ -81,45 +68,64 @@
         </div>
       </div>
       <div class="d-flex flex-column gap-2">
-        <div *ngIf="currentWorkspace" class="d-flex flex-row gap-2 align-items-center">
-          Current Selected Slack Workspace: <img src="{{currentWorkspace.image}}" width="20px" height="20px" style="border-radius: 4px"> {{currentWorkspace.name}}
-        </div>
-        <div *ngIf="selectedConversationId" class="d-flex flex-row gap-2 align-items-center">
-          Current Selected Slack Conversation: {{selectedConversationId}}
-        </div>
-        <div *ngIf="currentWorkspace && !selectedConversationId">
-          Please select a conversation to send reports to!
-        </div>
-        <select 
-        *ngIf="conversations" 
-        class="conversation-select" 
-        [(ngModel)]="selectedConversationId" 
-        [ngModelOptions]="{standalone: true}"
-        (ngModelChange)="onConversationChange($event)">
-            <option *ngIf="!selectedConversationId" [ngValue]="null">Select a conversation</option>
-            <option *ngFor="let conversation of conversations.channels" [ngValue]="conversation.id">
-                # {{conversation.name}}
+        @if (currentWorkspace) {
+          <div class="d-flex flex-row gap-2 align-items-center">
+            Current Selected Slack Workspace: <img src="{{currentWorkspace.image}}" width="20px" height="20px" style="border-radius: 4px"> {{currentWorkspace.name}}
+          </div>
+        }
+        @if (selectedConversationId) {
+          <div class="d-flex flex-row gap-2 align-items-center">
+            Current Selected Slack Conversation: {{selectedConversationId}}
+          </div>
+        }
+        @if (currentWorkspace && !selectedConversationId) {
+          <div>
+            Select a conversation to send reports to.
+          </div>
+        }
+        @if (conversations) {
+          <label for="conversation-select">Conversation</label>
+          <select 
+            class="conversation-select" 
+            [(ngModel)]="selectedConversationId" 
+            [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onConversationChange($event)">
+              @if (!selectedConversationId) {
+                <option [ngValue]="null">Select a conversation</option>
+              }
+              <option *ngFor="let conversation of conversations.channels" [ngValue]="conversation.id">
+                  # {{conversation.name}}
+              </option>
+              <option *ngFor="let conversation of conversations.ims" [ngValue]="conversation.id">
+                  <img src="{{conversation.image}}" width="20px" height="20px" style="border-radius: 50%;"> {{conversation.name}}
+              </option>
+          </select>
+        }
+        @if (!(isSlackWorkspaceConnected$ | async)) {
+          <button type="button" class="" (click)="connectSlack()">
+              Connect Slack
+          </button>
+        }
+        @if (workspaces && workspaces.length > 0) {
+          <label for="workspace-select">Workspace</label>
+          <select 
+            class="workspace-select" 
+            [(ngModel)]="currentWorkspaceTokenId" 
+            [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onWorkspaceTokenIdChange($event)">
+            @if (!currentWorkspace) {
+              <option [ngValue]="null">Select previously connected workspace</option>
+            }
+            <option *ngFor="let workspace of workspaces" [ngValue]="workspace.tokenId">
+              {{workspace.clientName}}: {{workspace.name}}
             </option>
-            <option *ngFor="let conversation of conversations.ims" [ngValue]="conversation.id">
-                <img src="{{conversation.image}}" width="20px" height="20px" style="border-radius: 50%;"> {{conversation.name}}
-            </option>
-        </select>
-        <button class="" (click)="connectSlack()" *ngIf="!(isSlackWorkspaceConnected$ | async)">
-            Connect Slack
-        </button>
-        <select *ngIf="workspaces && workspaces.length > 0" 
-          class="conversation-select" 
-          [(ngModel)]="currentWorkspaceTokenId" 
-          [ngModelOptions]="{standalone: true}"
-          (ngModelChange)="onWorkspaceTokenIdChange($event)">
-          <option *ngIf="!currentWorkspace" [ngValue]="null">Select previously connected workspace</option>
-          <option *ngFor="let workspace of workspaces" [ngValue]="workspace.tokenId">
-            {{workspace.clientName}}: {{workspace.name}}
-          </option>
-        </select>
-        <button *ngIf="(isSlackWorkspaceConnected$ | async)" class="" (click)="connectSlack()">
-            Connect a new slack workspace
-        </button>
+          </select>
+        }
+        @if (isSlackWorkspaceConnected$ | async) {
+          <button type="button" class="" (click)="connectSlack()">
+              Connect a new slack workspace
+          </button>
+        }
       </div>
   
     </div>

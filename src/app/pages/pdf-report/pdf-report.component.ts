@@ -8,10 +8,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import { Data } from '../schedule-report/schedule-report.component';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 
@@ -21,12 +19,6 @@ import { ReportData } from 'src/app/interfaces/get-report.interfaces';
   styleUrls: ['./pdf-report.component.scss'],
 })
 export class PdfReportComponent implements OnInit {
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
 
   reportUuid: string = '';
   clientUuid: string = '';
@@ -45,24 +37,18 @@ export class PdfReportComponent implements OnInit {
 
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
-
-  //
+  
   providers: ReportData = [];
-  //
-
-  // schedulingOption: SchedulingOption | null = null;
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
-  private schedulesService = inject(SchedulesService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       this.reportUuid = params['reportUuid'];
-      // this.clientUuid = params['clientUuid'];
       await this.loadReport();
     });
   }
@@ -76,16 +62,13 @@ export class PdfReportComponent implements OnInit {
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
-      // this.schedulingOption = await this.schedulesService.getSchedulingOption(res.schedulingOption) as SchedulingOption;
       this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
       this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
-
       
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
-      console.log(this.reportSections)
-
+      
     } catch (error) {
       console.error('Error loading report:', error);
     }

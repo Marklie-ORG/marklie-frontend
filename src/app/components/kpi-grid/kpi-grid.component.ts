@@ -19,8 +19,7 @@ export class KpiGridComponent implements AfterViewInit, OnDestroy {
   @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
   
   adAccounts = model<AdAccount[]>([]);
-
-  kpis = input<any>({});
+  
   isViewMode = input<boolean>(false);
 
   isReorderingAdAccounts = signal<boolean>(false);

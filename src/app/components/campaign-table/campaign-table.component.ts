@@ -17,8 +17,7 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
 
   @ViewChildren('campaignsHeaderContainer') headerContainers!: QueryList<ElementRef>;
   @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
-
-  @Input() campaigns: any[] = [];
+  
   adAccounts = model<AdAccount[]>([]);
   isViewMode = input<boolean>(false);
 

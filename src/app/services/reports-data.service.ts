@@ -646,13 +646,13 @@ export class ReportsDataService {
 
     for (const [sectionIndex, section] of reportSections.entries()) {
 
-      if (!section.enabled) continue; // dont add section if its disabled
+      // if (!section.enabled) continue; // dont add section if its disabled
 
       let adAccounts: AdAccountScheduleReportRequest[] = [];
 
       for (const [adAccountIndex, adAccount] of section.adAccounts.entries()) {
 
-        if (!adAccount.enabled) continue; // dont add ad account if its disabled
+        // if (!adAccount.enabled) continue; // dont add ad account if its disabled
 
         let metrics: MetricScheduleReportRequest[] = [];
         let customMetrics: CustomMetricScheduleReportRequest[] = [];

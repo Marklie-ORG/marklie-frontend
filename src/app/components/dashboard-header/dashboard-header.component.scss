@@ -56,6 +56,10 @@ a {
   padding: 12px;
   z-index: 1000;
   animation: dropdown-fade-in 120ms ease-out;
+
+  textarea {
+    width: 100%;
+  }
 }
 
 .feedback-input {

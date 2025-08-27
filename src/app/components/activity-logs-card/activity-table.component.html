@@ -82,6 +82,10 @@
                       }
                     }
     
+                    @case ('report_ready_sent') {
+                      Report is ready for review
+                    }
+    
                     @default {
                       {{ log.message || 'Activity logged' }}
                     }

@@ -81,6 +81,12 @@ export class ClientService {
     );
   }
 
+  async deleteClient(clientUuid: string) {
+    return firstValueFrom(
+      this.http.delete(`${this.apiUrl}/${clientUuid}`, { responseType: 'text' })
+    );
+  }
+
 }
 
 export interface Workspace {

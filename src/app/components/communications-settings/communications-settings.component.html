@@ -19,21 +19,11 @@
           class="text"
           >
         <button type="button" (click)="removeEmail(i)">Remove</button>
-        <!-- <p *ngIf="!email.isEditMode" (click)="email.isEditMode = true; focusInput('email' + i)" style="cursor: pointer; padding: 6px 0;" class="d-flex align-center">{{email.email}}</p> -->
-        <!-- <button 
-        *ngIf="email.isEditMode"
-          type="button" 
-          (click)="removeEmail(i)"
-          >
-          Remove
-        </button> -->
-      </div>
-      <!-- <div *ngIf="emails.at(0)?.get('email')?.invalid && emails.at(0)?.get('email')?.touched" class="invalid-feedback">
-        Please enter a valid email address
-      </div> -->
 
-      <button (click)="addEmail()">
-        Add recipient email
+      </div>
+
+      <button type="button" (click)="addEmail()">
+        Add client's email
       </button>
 
     </div>
@@ -60,12 +50,9 @@
         ></app-phone-input>
         <button type="button" (click)="removePhoneNumber(i)">Remove</button>
       </div>
-      <!-- <div *ngIf="emails.at(0)?.get('email')?.invalid && emails.at(0)?.get('email')?.touched" class="invalid-feedback">
-        Please enter a valid email address
-      </div> -->
 
-      <button (click)="addPhoneNumber()">
-        Add recipient phone number
+      <button type="button" (click)="addPhoneNumber()">
+        Add client's phone number
       </button>
     </div>
     
@@ -104,7 +91,7 @@
                 <img src="{{conversation.image}}" width="20px" height="20px" style="border-radius: 50%;"> {{conversation.name}}
             </option>
         </select>
-        <button class="" (click)="connectSlack()" *ngIf="!(isSlackWorkspaceConnected$ | async)">
+        <button type="button" class="" (click)="connectSlack()" *ngIf="!(isSlackWorkspaceConnected$ | async)">
             Connect Slack
         </button>
         <select *ngIf="workspaces && workspaces.length > 0" 
@@ -117,7 +104,7 @@
             {{workspace.clientName}}: {{workspace.name}}
           </option>
         </select>
-        <button *ngIf="(isSlackWorkspaceConnected$ | async)" class="" (click)="connectSlack()">
+        <button type="button" *ngIf="(isSlackWorkspaceConnected$ | async)" class="" (click)="connectSlack()">
             Connect a new slack workspace
         </button>
       </div>

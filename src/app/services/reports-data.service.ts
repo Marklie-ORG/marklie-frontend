@@ -524,13 +524,14 @@ export class ReportsDataService {
         const customMetrics = availableMetricsAdAccount.customMetrics;
 
         // base metrics for this ad account and section
-        const metrics = this.getMetrics(sectionMetrics, customMetrics);
+        let metrics = this.getMetrics(sectionMetrics, customMetrics);
         // normalize order
         metrics.forEach((m, i) => (m.order = i));
 
         // Ensure 'impressions' is always present and enabled for the 'ads' section
         if (sectionKey === 'ads') {
           const impressions = metrics.find(m => m.name === 'impressions');
+          metrics = metrics.filter(m => m.name !== 'ad_name');
           if (impressions) {
             impressions.enabled = true;
           } else {

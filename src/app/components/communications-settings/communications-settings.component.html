@@ -68,21 +68,21 @@
         </div>
       </div>
       <div class="d-flex flex-column gap-2">
-        @if (currentWorkspace) {
+        <!-- @if (currentWorkspace) {
           <div class="d-flex flex-row gap-2 align-items-center">
             Current Selected Slack Workspace: <img src="{{currentWorkspace.image}}" width="20px" height="20px" style="border-radius: 4px"> {{currentWorkspace.name}}
           </div>
-        }
-        @if (selectedConversationId) {
+        } -->
+        <!-- @if (selectedConversationId) {
           <div class="d-flex flex-row gap-2 align-items-center">
             Current Selected Slack Conversation: {{selectedConversationId}}
           </div>
-        }
-        @if (currentWorkspace && !selectedConversationId) {
+        } -->
+        <!-- @if (currentWorkspace && !selectedConversationId) {
           <div>
             Select a conversation to send reports to.
           </div>
-        }
+        } -->
         @if (conversations) {
           <label for="conversation-select">Conversation</label>
           <select 
@@ -90,9 +90,9 @@
             [(ngModel)]="selectedConversationId" 
             [ngModelOptions]="{standalone: true}"
             (ngModelChange)="onConversationChange($event)">
-              @if (!selectedConversationId) {
+              <!-- @if (!selectedConversationId) { -->
                 <option [ngValue]="null">Select a conversation</option>
-              }
+              <!-- } -->
               <option *ngFor="let conversation of conversations.channels" [ngValue]="conversation.id">
                   # {{conversation.name}}
               </option>

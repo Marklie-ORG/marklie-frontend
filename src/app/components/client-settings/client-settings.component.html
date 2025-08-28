@@ -26,7 +26,7 @@
     <ng-container *ngIf="isCommTabLoaded">
       <div [hidden]="activeTab !== 'comm_channels'">
         <communications-settings
-          [slackConversationId]="data.client.slackConversationId!"
+          [slackConversationId]="data.client.slack"
           [clientUuid]="data.client.uuid"
           [(clientEmails)]="emails"
           [(clientPhoneNumbers)]="phoneNumbers"

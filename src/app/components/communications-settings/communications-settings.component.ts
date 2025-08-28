@@ -10,7 +10,7 @@ import { SlackLoginService } from 'src/app/services/slack-login.service';
 })
 export class CommunicationsSettingsComponent {
 
-  slackConversationId = input<string>('');
+  slackConversationId = input<string | null>(null);
   clientUuid = input<string>('');
 
   clientEmails = model<string[]>([]);
@@ -33,7 +33,8 @@ export class CommunicationsSettingsComponent {
   constructor() {
     effect(async () => {
 
-      this.selectedConversationId = this.slackConversationId();
+      this.selectedConversationId = this.slackConversationId() || null;
+      // console.log(this.slackConversationId())
 
       if (this.clientUuid()) {
         await this.getWorkspaces();
@@ -43,7 +44,7 @@ export class CommunicationsSettingsComponent {
         this.isSlackWorkspaceConnectedSubject.subscribe(async (status) => {
           if (status) {
             this.conversations = await this.clientService.getSlackAvailableConversations(this.clientUuid());
-            console.log(this.conversations)
+            // console.log(this.conversations)
           }
         })
       );

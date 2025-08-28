@@ -36,15 +36,14 @@ export class ClientSettingsComponent implements OnInit {
     private notificationService: NotificationService,
   ) {
     console.log(this.data)
+    
     this.clientName = this.data.client.name;
     this.emails.set(this.data.client.emails);
     this.phoneNumbers.set(this.data.client.phoneNumbers);
     this.selectedBusinessId = this.data.client.adAccounts[0].businessId;
-    console.log(this.selectedBusinessId)
     // Initialize facebookAdAccounts if present on client
     if (this.data.client.adAccounts && this.data.client.adAccounts.length > 0) {
       this.facebookAdAccounts.set(this.data.client.adAccounts);
-      console.log(this.facebookAdAccounts())
     }
   }
 

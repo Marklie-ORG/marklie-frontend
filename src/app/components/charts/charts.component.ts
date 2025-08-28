@@ -282,7 +282,18 @@ export class ChartsComponent implements OnChanges, OnDestroy {
                   label: (ctx: any) => config.format(ctx.parsed.y.toFixed(2))
                 }
               },
-              datalabels: { display: false },
+              datalabels: {
+                display: true,
+                align: 'top',
+                anchor: 'end',
+                color: '#409bff',
+                font: { family: 'Inter Variable, sans-serif', size: 10 },
+                formatter: (value: any) => {
+                  const num = typeof value === 'number' ? value : parseFloat(String(value));
+                  if (Number.isNaN(num)) return String(value);
+                  return config.format(num);
+                }
+              },
               legend: {
                 display: false
               }

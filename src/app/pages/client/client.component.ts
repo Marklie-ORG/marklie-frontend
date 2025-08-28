@@ -1,12 +1,10 @@
-import {Component, OnInit, OnDestroy, Inject, inject} from '@angular/core';
+import {Component, OnInit, inject} from '@angular/core';
 import { HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SlackLoginService } from 'src/app/services/slack-login.service';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ClientSettingsComponent } from '../../components/client-settings/client-settings.component';
 import { Client, ClientService } from 'src/app/services/api/client.service.js';
 import { ReportService } from 'src/app/services/api/report.service.js';
-import { AuthService } from 'src/app/services/api/auth.service.js';
 import {SchedulesService} from "../../services/api/schedules.service.js";
 import { DatabaseReportItem } from '../../components/database-table/database-table.component';
 import { faEllipsisVertical, faPause, faPlay, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -56,16 +54,13 @@ export class ClientComponent implements OnInit {
   openActionsForUuid: string | null = null;
 
   private notificationService = inject(NotificationService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private clientService = inject(ClientService);
+  private reportService = inject(ReportService);
+  private dialog = inject(MatDialog);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private clientService: ClientService,
-    private reportService: ReportService,
-    private slackLoginService: SlackLoginService,
-    private dialog: MatDialog,
-    private authService: AuthService,
-  ) {}
+  constructor() {}
 
 
   async ngOnInit() {

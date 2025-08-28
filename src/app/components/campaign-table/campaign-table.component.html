@@ -1,4 +1,4 @@
-<h1>Campaigns</h1>
+<h1>Best campaigns</h1>
 
 <div #adAccountsContainer>
 @for (adAccount of adAccounts(); track adAccount.id) {
@@ -15,7 +15,7 @@
           <ng-container *ngFor="let metric of adAccount.metrics">
             @if (metric.enabled) {
               <th class="draggable-metric-header" [attr.data-metric-name]="metric.name">
-                {{metricsService.formatMetricLabel(metric.name)}}
+                {{metricsService.getFormattedMetricName(metric.name)}}
               </th>
             }
           </ng-container>

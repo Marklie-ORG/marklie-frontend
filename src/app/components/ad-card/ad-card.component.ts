@@ -4,6 +4,7 @@ import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces
 import Sortable from 'sortablejs';
 import { NgZone, inject } from '@angular/core';
 import { AdsAdAccountDataCreative, AdsAdAccountDataPoint } from 'src/app/interfaces/get-report.interfaces';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'ad-card',
@@ -24,6 +25,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   constructor(public metricsService: MetricsService) {}
 
   private ngZone = inject(NgZone);
+  private notificationService = inject(NotificationService);
 
   ngAfterViewInit(): void {
     this.initAdAccountsSortable();
@@ -219,4 +221,40 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     return result;
   }
 
+  async copyToClipboard(text: string, event?: MouseEvent): Promise<void> {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    const write = async () => {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (_) {
+        // ignore and try fallback
+      }
+
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    };
+
+    const success = await write();
+    if (success) {
+      this.notificationService.info('Ad name copied to clipboard');
+    }
+  }
 }

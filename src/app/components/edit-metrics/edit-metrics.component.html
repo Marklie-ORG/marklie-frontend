@@ -154,7 +154,7 @@
                   [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
                   />
                   <span class="checkmark"></span>
-                  {{ metric.name }}
+                  {{ getFormattedMetricName(metric.name) }}
                 </label>
               }
             </div>

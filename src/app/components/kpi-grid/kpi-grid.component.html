@@ -1,6 +1,6 @@
 
 
-<h1>KPIs</h1>
+<h1>Main KPIs</h1>
 
 <div #adAccountsContainer>
   @for (adAccount of adAccounts(); track adAccount.id) {
@@ -18,7 +18,7 @@
             [style.display]="metric.enabled ? 'block' : 'none'"
             [style.cursor]="isViewMode() ? 'auto' : 'grab'"
             >
-              <div class="kpi-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
+              <div class="kpi-label">{{ metricsService.getFormattedMetricName(metric.name) }}</div>
               <div class="kpi-value">
                 {{ metric.currency ? ((metric.value | number:'1.0-2') + ' ' + metric.currency) : metric.value }}{{ metric.symbol || '' }}
               </div>

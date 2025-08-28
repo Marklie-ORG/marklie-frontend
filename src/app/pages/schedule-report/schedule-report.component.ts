@@ -7,6 +7,7 @@ import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import { ScheduleReportRequest, Frequency, Messages, FACEBOOK_DATE_PRESETS } from 'src/app/interfaces/interfaces.js';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { NotificationService } from '@services/notification.service';
 
 export interface Data {
   KPIs: Record<string, any>;
@@ -63,6 +64,7 @@ export class ScheduleReportComponent implements OnInit {
   private router = inject(Router);
   private reportService = inject(ReportService);
   public reportsDataService = inject(ReportsDataService);
+  private notificationService = inject(NotificationService);
 
   constructor() {
     this.updateSelectedDatePresetText();
@@ -161,6 +163,7 @@ export class ScheduleReportComponent implements OnInit {
     };
 
     const response = await this.reportService.scheduleReport(payload) as { uuid: string };
+    this.notificationService.info('Report scheduled successfully');
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 

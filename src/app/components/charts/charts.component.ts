@@ -1,4 +1,5 @@
 import { Component, effect, ElementRef, EventEmitter, Input, input, model, OnChanges, Output, signal, SimpleChanges, ViewChild, ViewChildren, QueryList, OnDestroy, NgZone, inject } from '@angular/core';
+import { MetricsService } from '@services/metrics.service';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Sortable from 'sortablejs';
@@ -44,6 +45,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
   isReorderingAdAccounts = signal<boolean>(false);
 
   private ngZone = inject(NgZone);
+  private metricsService = inject(MetricsService);
 
   constructor() {}
 
@@ -98,6 +100,7 @@ export class ChartsComponent implements OnChanges, OnDestroy {
           let graph: GraphConfig = {
             ...config,
             ...metric,
+            label: this.metricsService.getFormattedMetricName(metric.name),
           } as GraphConfig;
 
           // If this metric carries currency, override formatter to include currency string

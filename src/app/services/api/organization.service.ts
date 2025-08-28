@@ -45,12 +45,6 @@ export class OrganizationService {
     );
   }
 
-  async getReports(orgUuid: string) {
-    return firstValueFrom(
-      this.http.get<any[]>(`${this.apiUrl}/${orgUuid}/logs`)
-    );
-  }
-
   async useInviteCode(code: string) {
     return firstValueFrom(
       this.http.post<{

@@ -100,6 +100,7 @@ export class ReportsDataService {
     for (let section of facebookProvider?.sections || []) {
 
       let adAccounts: AdAccount[] = [];
+      let sectionTitle: string = ''
 
       for (let adAccount of section.adAccounts) {
 
@@ -182,14 +183,17 @@ export class ReportsDataService {
         };
 
         if (section.name === 'kpis') {
+          sectionTitle = 'Main KPIs'
           adAccountObj.metrics = adAccountObj.metrics.map(m => ({ ...m, value: randomFor(m.name) }));
         } else if (section.name === 'graphs') {
+          sectionTitle = 'Graphs'
           const dates = generateDateSeries(10);
           adAccountObj.metrics = adAccountObj.metrics.map(m => ({
             ...m,
             dataPoints: dates.map(date => ({ date, value: randomFor(m.name) }))
           }));
         } else if (section.name === 'ads') {
+          sectionTitle = 'Best creatives'
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
@@ -202,6 +206,7 @@ export class ReportsDataService {
             data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           })) as any;
         } else if (section.name === 'campaigns') {
+          sectionTitle = 'Best campaigns'
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForRow = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
@@ -218,7 +223,7 @@ export class ReportsDataService {
 
       reportSections.push({
         key: section.name,
-        title: section.name,
+        title: sectionTitle,
         enabled: section.enabled,
         adAccounts: adAccounts,
         order: section.order
@@ -239,6 +244,7 @@ export class ReportsDataService {
     for (let section of facebookProvider?.sections || []) {
 
       let adAccounts: AdAccount[] = [];
+      let sectionTitle: string = ''
 
       for (let adAccount of section.adAccounts) {
 
@@ -247,6 +253,7 @@ export class ReportsDataService {
         let creativesDataVar: AdsAdAccountDataCreative[] | undefined;
 
         if (section.name === 'kpis') {
+          sectionTitle = 'Main KPIs'
           const kpiData = adAccount.data as KpiAdAccountData;
           metrics = kpiData.map(m => ({
             name: m.name,
@@ -255,6 +262,7 @@ export class ReportsDataService {
             value: m.value
           }));
         } else if (section.name === 'graphs') {
+          sectionTitle = 'Graphs'
           let metricsList: {name: string, order: number, enabled: boolean}[] = []
 
           for (let point of adAccount.data as GraphsAdAccountData) {
@@ -293,6 +301,7 @@ export class ReportsDataService {
 
         } else if (section.name === 'ads') {
 
+          sectionTitle = 'Best creatives'
           creativesDataVar = adAccount.data as AdsAdAccountData;
 
           // derive metrics map from creatives data points, capturing order and enabled state
@@ -322,6 +331,7 @@ export class ReportsDataService {
           }
 
         } else if (section.name === 'campaigns') {
+            sectionTitle = 'Best campaigns'
            const tableData = adAccount.data as TableAdAccountData;
            const metricMap = new Map<string, { order: number; enabled: boolean }>();
            for (const campaign of tableData) {
@@ -361,7 +371,7 @@ export class ReportsDataService {
 
       reportSections.push({
         key: section.name,
-        title: section.name,
+        title: sectionTitle,
         enabled: section.enabled === undefined ? true : section.enabled,
         adAccounts: adAccounts,
         order: section.order
@@ -672,6 +682,16 @@ export class ReportsDataService {
               name: metric.name,
               order: metric.order
             })
+          }
+        }
+
+        if (section.key === 'ads') { // ad_name is obligatory in ads
+          const adName = metrics.find(m => m.name === 'ad_name');
+          if (!adName) {
+            metrics.push({
+              name: 'ad_name',
+              order: metrics.length
+            });
           }
         }
 

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, inject, OnInit, signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ReportService} from 'src/app/services/api/report.service';
 import {GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
 import {MetricsService} from 'src/app/services/metrics.service';
@@ -45,6 +45,7 @@ export class ReviewReportComponent implements OnInit {
   private reportsDataService = inject(ReportsDataService);
   private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
+  private router = inject(Router);
 
   private currentMessages: Messages = { whatsapp: '', slack: '', email: { title: '', body: '' } };
 
@@ -109,7 +110,8 @@ export class ReviewReportComponent implements OnInit {
       }
     }).afterClosed().subscribe((didSend: boolean) => {
       if (didSend) {
-        this.loadReport();
+        // this.loadReport();
+        this.router.navigate(['/reports-database']);
       }
     });
   }

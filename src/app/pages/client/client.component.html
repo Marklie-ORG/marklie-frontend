@@ -30,7 +30,7 @@
               class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
                 <div style="width: 20%;">{{scheduleOption.reportName}}</div>
                 <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
-                <div style="width: 20%;">{{scheduleOption.lastRun}}</div>
+                <div style="width: 20%;">{{scheduleOption.lastRun ?? 'Upcoming'}}</div>
                 <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
                 <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
                 <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">

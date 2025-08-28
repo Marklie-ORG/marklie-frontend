@@ -87,7 +87,6 @@ export class ChartsComponent implements OnChanges, OnDestroy {
         let graphs: GraphConfig[] = [];
 
         for (const metric of metrics) {
-          console.log(metric.name)
           let config = graphConfigs.find((c: { metric: string }) => c.metric === metric.name);
 
           if (!config) {

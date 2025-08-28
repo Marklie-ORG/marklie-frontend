@@ -53,8 +53,8 @@ style="padding-bottom: 100px;"
                 <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon" *ngIf="randomNumber === 3">
               </div>
             </div>
-            <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulingOption?.length ?? 0}}</div>
-            <div style="width: 15%;" class="d-flex align-center justify-center">Last activity</div>
+            <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulesCount}}</div>
+            <div style="width: 15%;" class="d-flex align-center justify-center">{{ client.lastActivity ? (client.lastActivity | date:'MMM d, yyyy') : '-' }}</div>
             <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
               <button type="button" (click)="toggleClientActionsMenu(client, $event)" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
                 <fa-icon [icon]="faEllipsisVertical"></fa-icon>

@@ -159,4 +159,8 @@ export class EditMetricsComponent {
     this.reportSections.set(sections);
   }
 
+  getFormattedMetricName(metricName: string): string {
+    return this.metricsService.getFormattedMetricName(metricName);
+  }
+
 }

@@ -67,8 +67,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
+    console.log(user)
+
     if (!user.activeOrganization) {
       this.router.navigate(['/onboarding']);
+      return
     }
 
     await this.getClients();

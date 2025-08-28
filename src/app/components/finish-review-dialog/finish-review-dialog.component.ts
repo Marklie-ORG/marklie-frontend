@@ -51,8 +51,8 @@ export class FinishReviewDialogComponent {
 		try {
 			await this.reportService.updateReportMessages(this.data.reportUuid, this.messages);
 			const sendAt = this.buildSendAtString();
-			const res = await this.reportService.sendAfterReview({ reportUuid: this.data.reportUuid, sendAt });
-			this.notificationService.info(res.message || 'Report was saved and sent to the client');
+			this.reportService.sendAfterReview({ reportUuid: this.data.reportUuid, sendAt });
+			this.notificationService.info('Report was saved and sent to the client');
 			this.dialogRef.close(true);
 		} catch (err) {
 			console.error('Failed to send report after review:', err);

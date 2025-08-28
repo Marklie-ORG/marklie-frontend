@@ -6,6 +6,7 @@ import { ScheduleOptionsComponent, ScheduleOptionsMatDialogData } from 'src/app/
 import { ReportsDataService } from 'src/app/services/reports-data.service';
 import {SchedulesService} from "../../services/api/schedules.service.js";
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { NotificationService } from '@services/notification.service.js';
 
 export interface SchedulingOption {
   uuid: string
@@ -114,6 +115,7 @@ export class EditReportComponent {
   private dialog = inject(MatDialog);
   public reportsDataService = inject(ReportsDataService);
   private schedulesService = inject(SchedulesService);
+  private notificationService = inject(NotificationService);
 
   ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -235,6 +237,7 @@ export class EditReportComponent {
 
     await this.schedulesService.updateSchedulingOption(this.schedulingOptionId, payload);
     await this.loadReport();
+    this.notificationService.info('Scheduled report updated');
   }
 
   onDatePresetChange(event: any) {

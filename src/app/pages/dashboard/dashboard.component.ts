@@ -68,7 +68,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       const [_, logs, onboardingSteps] = await Promise.all([
         this.getClients(),
-        this.organizationService.getLogs(user.activeOrganization),
+        this.organizationService.getLogs(user.activeOrganization?.uuid ?? user.activeOrganization),
         this.onboardingService.getOnboardingSteps(),
       ]);
 

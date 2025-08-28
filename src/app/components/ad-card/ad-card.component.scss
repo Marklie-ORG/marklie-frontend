@@ -51,6 +51,7 @@
   border-radius: 8px;
   padding: 8px 10px;
   border: var(--block-border);
+  position: relative;
 }
 
 .metric-label {
@@ -67,6 +68,36 @@
   line-height: 1.2;
   font-weight: 700;
   color: #111827; /* gray-900 */
+}
+
+/* Ensure ad name text stays within the metric box */
+.metric .ad-name {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.metric .ad-name:hover::after {
+  content: attr(data-full-text);
+  position: absolute;
+  left: 10px;
+  top: 100%;
+  transform: translateY(6px);
+  background: #111827;
+  color: #ffffff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  max-width: calc(100% - 20px);
+  white-space: normal;
+  word-break: break-word;
+  pointer-events: none;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 

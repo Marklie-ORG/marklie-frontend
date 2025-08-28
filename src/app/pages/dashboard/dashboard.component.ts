@@ -57,36 +57,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // this.showAddClientModal()
   }
 
-  async ngOnInit() {
-    let user: User;
-
+  async ngOnInit(): Promise<void> {
     try {
-      user = await this.userService.me();
-    } catch (error) {
-      this.router.navigate(['/']);
-      return;
+      const user = await this.userService.me();
+
+      if (!user.activeOrganization) {
+        await this.router.navigate(['/onboarding']);
+        return;
+      }
+
+      const [_, logs, onboardingSteps] = await Promise.all([
+        this.getClients(),
+        this.organizationService.getLogs(user.activeOrganization),
+        this.onboardingService.getOnboardingSteps(),
+      ]);
+
+      this.activityLogs = logs;
+
+      this.isFacebookConnected = !!onboardingSteps.facebookConnected;
+      document.body.classList.toggle('no-scroll', !this.isFacebookConnected);
+
+    } catch {
+      await this.router.navigate(['/']);
     }
-
-    console.log(user)
-
-    if (!user.activeOrganization) {
-      this.router.navigate(['/onboarding']);
-      return
-    }
-
-    await this.getClients();
-    this.activityLogs = await this.organizationService.getLogs(user.activeOrganization)
-
-    const onboardingSteps = await this.onboardingService.getOnboardingSteps();
-
-    if (!onboardingSteps.facebookConnected) {
-      this.isFacebookConnected = false;
-      document.body.classList.add('no-scroll');
-    } else {
-      this.isFacebookConnected = true;
-      document.body.classList.remove('no-scroll');
-    }
-
   }
 
   ngOnDestroy() {

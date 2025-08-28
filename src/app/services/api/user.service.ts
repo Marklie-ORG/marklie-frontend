@@ -7,8 +7,8 @@ export interface User {
   uuid: string
   createdAt: string
   updatedAt: string
-  firstName: any
-  lastName: any
+  firstName: string
+  lastName: string
   email: string
   password: string
   activeOrganization: any

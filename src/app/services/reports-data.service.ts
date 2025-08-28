@@ -675,6 +675,16 @@ export class ReportsDataService {
           }
         }
 
+        if (section.key === 'ads') { // ad_name is obligatory in ads
+          const adName = metrics.find(m => m.name === 'ad_name');
+          if (!adName) {
+            metrics.push({
+              name: 'ad_name',
+              order: metrics.length
+            });
+          }
+        }
+
         adAccounts.push({
           adAccountId: adAccount.id,
           adAccountName: adAccount.name,

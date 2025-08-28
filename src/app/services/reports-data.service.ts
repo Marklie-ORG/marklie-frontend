@@ -193,7 +193,7 @@ export class ReportsDataService {
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
-          adAccountObj.creativesData = Array.from({ length: 3 }).map((_, i) => ({
+          adAccountObj.creativesData = Array.from({ length: 5 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
             ad_name: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
@@ -569,7 +569,7 @@ export class ReportsDataService {
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
-          const creatives = Array.from({ length: 3 }).map((_, i) => ({
+          const creatives = Array.from({ length: 5 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
             ad_name: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,

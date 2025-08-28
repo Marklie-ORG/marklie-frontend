@@ -44,12 +44,11 @@ export class DashboardHeaderComponent implements OnInit {
     private reportService: ReportService,
   ) {}
 
-  ngOnInit(): void {
-    const userInfo = this.authService.getDecodedAccessTokenInfo()
-    console.log(userInfo)
+  async ngOnInit() {
+    const userInfo = await this.userService.me()
     this.email = userInfo.email;
     this.userName = userInfo.firstName;
-    this.loadPendingReviewCount();
+    await this.loadPendingReviewCount();
   }
 
   private async loadPendingReviewCount() {

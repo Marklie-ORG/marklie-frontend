@@ -10,4 +10,8 @@
     font-weight: 500;
   }
   
-  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }

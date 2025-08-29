@@ -29,9 +29,9 @@
         [(clientPhoneNumbers)]="phoneNumbers"
         ></communications-settings>
   
-        <div class="modal-actions">
+        <div class="modal-actions mt-4">
           <button type="button" (click)="dialogRef.close()">Cancel</button>
-          <button type="submit" [disabled]="!clientForm.valid">Add Client</button>
+          <button type="submit" class="blue">Add Client</button>
         </div>
       </form>
 </modal-base>

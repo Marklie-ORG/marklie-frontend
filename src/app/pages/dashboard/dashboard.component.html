@@ -10,12 +10,13 @@
 </div>
 
 <div class="container" *ngIf="isFacebookConnected === true"
-style="padding-bottom: 100px;"
+style="padding-bottom: 100px; min-height: 85vh;"
 >
 
   <div class="dashboard-container mt-4">
     <div
     class="block"
+    style=" min-height: 85vh;"
     >
       <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
@@ -48,9 +49,21 @@ style="padding-bottom: 100px;"
             </div>
             <div style="width: 20%;">
               <div class="d-flex align-center gap-2 justify-center">
-                <img src="../../../assets/img/emai_icon.png" alt="Email icon">
-                <img src="../../../assets/img/slack_icon.png" alt="Slack icon" *ngIf="randomNumber === 2">
-                <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon" *ngIf="randomNumber === 3">
+                @if (client.channels.length > 0) {
+                  @if (client.channels.includes('email')) {
+                    <img src="../../../assets/img/emai_icon.png" alt="Email icon">
+                  }
+                  @if (client.channels.includes('whatsapp')) {
+                    <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon">
+                  }
+                  @if (client.channels.includes('slack')) {
+                    <img src="../../../assets/img/slack_icon.png" alt="Slack icon">
+                  }
+                }
+                @else {
+                  -
+                }
+                
               </div>
             </div>
             <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulesCount}}</div>
@@ -71,7 +84,7 @@ style="padding-bottom: 100px;"
 
       <div *ngIf="clients.length === 0" class="d-flex align-center justify-center mt-4">
         <button class="blue" (click)="showAddClientModal()">
-          Add your first client
+          Add your first client!
         </button>
       </div>
     </div>

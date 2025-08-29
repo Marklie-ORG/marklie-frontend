@@ -35,25 +35,25 @@ export class ReportsDataService {
   availableMetrics: GetAvailableMetricsResponse = [];
 
   readonly DATE_PRESETS = [
-    { value: 'today', text: 'Today' },
-    { value: 'yesterday', text: 'Yesterday' },
-    { value: 'this_month', text: 'This Month' },
-    { value: 'last_month', text: 'Last Month' },
-    { value: 'this_quarter', text: 'This Quarter' },
-    { value: 'last_3d', text: 'Last 3 Days' },
+    // { value: 'today', text: 'Today' },
+    // { value: 'yesterday', text: 'Yesterday' },
+    // { value: 'this_month', text: 'This Month' }, // broken graphs
+    // { value: 'last_month', text: 'Last Month' },
+    // { value: 'this_quarter', text: 'This Quarter' },
+    // { value: 'last_3d', text: 'Last 3 Days' },
     { value: 'last_7d', text: 'Last 7 Days' },
     { value: 'last_14d', text: 'Last 14 Days' },
     { value: 'last_28d', text: 'Last 28 Days' },
     { value: 'last_30d', text: 'Last 30 Days' },
     { value: 'last_90d', text: 'Last 90 Days' },
-    { value: 'last_week_mon_sun', text: 'Last Week (Mon-Sun)' },
-    { value: 'last_week_sun_sat', text: 'Last Week (Sun-Sat)' },
-    { value: 'last_quarter', text: 'Last Quarter' },
-    { value: 'last_year', text: 'Last Year' },
-    { value: 'this_week_mon_today', text: 'This Week (Mon-Today)' },
-    { value: 'this_week_sun_today', text: 'This Week (Sun-Today)' },
-    { value: 'this_year', text: 'This Year' },
-    { value: 'maximum', text: 'Maximum' }
+    // { value: 'last_week_mon_sun', text: 'Last Week (Mon-Sun)' },
+    // { value: 'last_week_sun_sat', text: 'Last Week (Sun-Sat)' },
+    // { value: 'last_quarter', text: 'Last Quarter' },
+    // { value: 'last_year', text: 'Last Year' },
+    // { value: 'this_week_mon_today', text: 'This Week (Mon-Today)' },
+    // { value: 'this_week_sun_today', text: 'This Week (Sun-Today)' },
+    // { value: 'this_year', text: 'This Year' },
+    // { value: 'maximum', text: 'Maximum' }
   ];
   readonly DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 

@@ -35,7 +35,7 @@ export class FinishReviewDialogComponent {
 
 	private buildSendAtString(): string {
 		// Build a Temporal.PlainDateTime-compatible string (local time), e.g. 2025-08-20T14:30:00
-		const date = new Date(Date.now() + 60_000); // schedule 1 minute from now
+		const date = new Date(Date.now() - 60_000); 
 		const year = date.getFullYear();
 		const month = String(date.getMonth() + 1).padStart(2, '0');
 		const day = String(date.getDate()).padStart(2, '0');

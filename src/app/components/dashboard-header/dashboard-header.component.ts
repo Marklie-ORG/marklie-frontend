@@ -46,6 +46,7 @@ export class DashboardHeaderComponent implements OnInit {
 
   async ngOnInit() {
     const userInfo = await this.userService.me()
+    console.log(userInfo);
     this.email = userInfo.email;
     this.userName = userInfo.firstName;
     await this.loadPendingReviewCount();

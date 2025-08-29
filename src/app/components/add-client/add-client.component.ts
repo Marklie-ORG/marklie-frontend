@@ -3,6 +3,7 @@ import { ClientService } from 'src/app/services/api/client.service';
 import { Component, effect, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FacebookAdAccount } from '../ad-accounts-settings/ad-accounts-settings.component';
+import { NotificationService } from '@services/notification.service';
 
 @Component({
   selector: 'app-add-client',
@@ -22,7 +23,8 @@ export class AddClientComponent {
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddClientComponent>,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private notificationService: NotificationService
   ) {
     
     this.clientForm = this.fb.group({
@@ -37,16 +39,26 @@ export class AddClientComponent {
   }
 
   async onSubmit() {
-    if (this.clientForm.valid) {
-      console.log(this.clientForm.value);
-      await this.clientService.createClient({
-        ...this.clientForm.value, 
-        emails: this.emails(), 
-        phoneNumbers: this.phoneNumbers(),
-        facebookAdAccounts: this.facebookAdAccounts()
-      });
-      this.dialogRef.close();
+
+    console.log(this.clientForm);
+
+    if (!this.clientForm.valid) {
+      this.notificationService.info('Please enter a client name');
+      return;
     }
+    
+    if (this.facebookAdAccounts().length === 0) {
+      this.notificationService.info('Please add at least one ad account');
+      return;
+    }
+    await this.clientService.createClient({
+      ...this.clientForm.value, 
+      emails: this.emails(), 
+      phoneNumbers: this.phoneNumbers(),
+      facebookAdAccounts: this.facebookAdAccounts()
+    });
+    this.dialogRef.close();
+    
   }
 
   

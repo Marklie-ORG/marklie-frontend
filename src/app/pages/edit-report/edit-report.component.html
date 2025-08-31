@@ -51,14 +51,22 @@
 
   </div>
 
+  
+
   <div 
   style="display: grid; grid-template-columns: 0% 80% 20%; gap: 0%; background-color: #f9fafb;" 
   [style]="{'grid-template-columns': isPreviewMode ? '10% 80% 10%' : '0% 80% 20%'}">
 
+    
+
     <div></div>
 
     <div class="report-container d-flex flex-column pt-3 pl-5 pr-5">
-    
+
+      <div class="d-flex justify-center">
+        <p class="dummy-data-warning">Right now you are seeing a dummy data. The real data will be loaded when the report is generated.</p>
+      </div>
+          
       <report
         [(reportSections)]="reportSections"
         [selectedDatePresetText]="selectedDatePresetText"

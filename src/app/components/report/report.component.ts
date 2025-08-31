@@ -33,6 +33,11 @@ export class ReportComponent {
 
   availableMetrics: GetAvailableMetricsResponse = [];
 
+  orderedSections = computed(() => {
+    const sections = this.reportSections();
+    return [...sections].sort((a, b) => a.order - b.order);
+  });
+
   kpisSection = computed(() => {
     const sections = this.reportSections();
     return sections.find(section => section.key === 'kpis') || {} as ReportSection;

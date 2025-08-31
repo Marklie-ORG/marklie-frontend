@@ -12,39 +12,39 @@
   ></report-header>
 
   <div class="d-flex flex-column gap-5">
-    @if (kpisSection().enabled) {
-      <hr>
-      <kpi-grid
-      [adAccounts]="kpisSection().adAccounts"
-      (adAccountsChange)="onKpiAdAccountsChange($event)"
-      [isViewMode]="isViewMode()"
-      ></kpi-grid>
-    }
-
-    @if (graphsSection().enabled) {
-      <hr>
-    <charts
-    [adAccounts]="graphsSectionAdAccounts"
-    (adAccountsChange)="onGraphsAdAccountsChange($event)"
-    [isViewMode]="isViewMode()"
-    ></charts>
-    }
-
-    @if (adsSection().enabled) {
-      <hr>
-    <ad-card
-    [adAccounts]="adsSection().adAccounts"
-    (adAccountsChange)="onAdsAdAccountsChange($event)"
-    [isViewMode]="isViewMode()"
-    ></ad-card>
-    }
-
-    @if (campaignsSection().enabled) {
-      <hr>
-    <campaign-table
-    [(adAccounts)]="campaignsSection().adAccounts"
-    [isViewMode]="isViewMode()"
-      ></campaign-table>
+    @for (section of orderedSections(); track section.key) {
+      @if (section.enabled) {
+        <hr>
+        @switch (section.key) {
+          @case ('kpis') {
+            <kpi-grid
+            [adAccounts]="kpisSection().adAccounts"
+            (adAccountsChange)="onKpiAdAccountsChange($event)"
+            [isViewMode]="isViewMode()"
+            ></kpi-grid>
+          }
+          @case ('graphs') {
+            <charts
+            [adAccounts]="graphsSectionAdAccounts"
+            (adAccountsChange)="onGraphsAdAccountsChange($event)"
+            [isViewMode]="isViewMode()"
+            ></charts>
+          }
+          @case ('ads') {
+            <ad-card
+            [adAccounts]="adsSection().adAccounts"
+            (adAccountsChange)="onAdsAdAccountsChange($event)"
+            [isViewMode]="isViewMode()"
+            ></ad-card>
+          }
+          @case ('campaigns') {
+            <campaign-table
+            [(adAccounts)]="campaignsSection().adAccounts"
+            [isViewMode]="isViewMode()"
+            ></campaign-table>
+          }
+        }
+      }
     }
   </div>
 

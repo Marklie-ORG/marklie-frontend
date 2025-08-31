@@ -41,6 +41,11 @@
   .row:last-child {
     border-bottom: none;
   }
+
+  .row:hover {
+    background-color: #f5f7fa;
+    transition: background-color 0.2s ease;
+  }
 }
 
 .dashboard-container {

@@ -24,36 +24,39 @@
             </div>
 
             <div class="list">
-              <div
-              *ngFor="let scheduleOption of scheduleOptions"
-              (click)="onEditReport(scheduleOption.uuid)"
-              class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
-                <div style="width: 20%;">{{scheduleOption.reportName}}</div>
-                <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
-                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.lastRun}}</div>
-                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
-                <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
-                <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
-                  <button type="button" (click)="toggleActionsMenu(scheduleOption, $event)" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
-                    <fa-icon [icon]="faEllipsisVertical"></fa-icon>
-                  </button>
-                  <div class="dropdown-menu actions-menu" *ngIf="openActionsForUuid === scheduleOption.uuid">
-                    @if (!scheduleOption.isActive) {
-                      <button type="button" (click)="activateSchedule(scheduleOption.uuid)">
-                        <fa-icon [icon]="faPlay"></fa-icon> Activate
-                      </button>
-                    }
-                    @if (scheduleOption.isActive) {
-                      <button type="button" (click)="pauseSchedule(scheduleOption.uuid)">
-                        <fa-icon [icon]="faPause"></fa-icon> Pause
-                      </button>
-                    }
-                    <button type="button" (click)="deleteSchedule(scheduleOption.uuid)">
-                      <fa-icon [icon]="faTrash"></fa-icon> Delete
+              @for (scheduleOption of scheduleOptions; let i = $index; track i) {
+                <div
+                (click)="onEditReport(scheduleOption.uuid)"
+                [style.border-bottom]="scheduleOptions.length - 1 === i && scheduleOptions.length > 1 ? 'none' : '1px solid #e5e7eb'"
+                class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
+                  <div style="width: 20%;">{{scheduleOption.reportName}}</div>
+                  <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
+                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.lastRun}}</div>
+                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
+                  <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
+                  <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
+                    <button type="button" (click)="toggleActionsMenu(scheduleOption, $event)" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                      <fa-icon [icon]="faEllipsisVertical"></fa-icon>
                     </button>
+                    <div class="dropdown-menu actions-menu" *ngIf="openActionsForUuid === scheduleOption.uuid">
+                      @if (!scheduleOption.isActive) {
+                        <button type="button" (click)="activateSchedule(scheduleOption.uuid)">
+                          <fa-icon [icon]="faPlay"></fa-icon> Activate
+                        </button>
+                      }
+                      @if (scheduleOption.isActive) {
+                        <button type="button" (click)="pauseSchedule(scheduleOption.uuid)">
+                          <fa-icon [icon]="faPause"></fa-icon> Pause
+                        </button>
+                      }
+                      <button type="button" (click)="deleteSchedule(scheduleOption.uuid)">
+                        <fa-icon [icon]="faTrash"></fa-icon> Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
+              
             </div>
           </div>
 

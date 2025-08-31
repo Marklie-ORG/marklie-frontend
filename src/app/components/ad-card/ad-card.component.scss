@@ -36,48 +36,54 @@
 .metrics {
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 6px;
+  padding: 12px 14px;
+  gap: 7px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .metric {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  padding: 8px 10px;
-  border: var(--block-border);
+  align-items: center;
   position: relative;
 }
 
 .metric-label {
-  font-size: 11px;
+  width: 50%;
+  font-size: 12px;
   line-height: 1.2;
-  color: #6b7280; /* gray-500 */
-  text-transform: uppercase;
+  color: #6b7280;
   letter-spacing: 0.02em;
   font-weight: 500;
 }
 
 .metric-value {
-  font-size: 16px;
+  width: 50%;
+  font-size: 14px;
   line-height: 1.2;
-  font-weight: 700;
-  color: #111827; /* gray-900 */
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 /* Ensure ad name text stays within the metric box */
 .metric .ad-name {
   display: block;
-  max-width: 100%;
+  // max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #111827;
+  // display: flex;
+  // align-items: center;
+  // justify-content: flex-end;
 }
 
 .metric .ad-name:hover::after {

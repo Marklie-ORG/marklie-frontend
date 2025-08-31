@@ -3,7 +3,6 @@
   @if (toggles.main) {
     <div class="d-flex flex-column gap-3">
       <item
-        [hideDrag]="true"
         [title]="'Header'"
         (click)="togglePage('header')"
       ></item>
@@ -13,6 +12,7 @@
           <item
             [style.opacity]="section.enabled ? 1 : 0.5"
             [title]="section.title"
+            [showDrag]="true"
             (click)="togglePage(section.key)"
           ></item>
         }

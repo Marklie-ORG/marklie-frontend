@@ -142,21 +142,43 @@
               <span class="slider round"></span>
             </label>
 
+            <!-- todo: test reordering before commiting -->
             <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2">
+              <p class="mt-2">Default metrics</p>
               @for (metric of adAccount.metrics; track metric.name) {
-                <label class="prevent-select" 
-                  [ngClass]="{ 'obligatory-metric': sectionKey === 'ads' && metric.name === 'impressions' }"
-                  (click)="onObligatoryMetricClick($event, sectionKey, metric)">
-                  <input 
-                  type="checkbox" 
-                  [(ngModel)]="metric.enabled" 
-                  (change)="onMetricsChange(data, sectionKey)"
-                  [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
-                  />
-                  <span class="checkmark"></span>
-                  {{ getFormattedMetricName(metric.name) }}
-                </label>
+                @if (!metric.isCustom) {
+                  <label class="prevent-select" 
+                    [ngClass]="{ 'obligatory-metric': sectionKey === 'ads' && metric.name === 'impressions' }"
+                    (click)="onObligatoryMetricClick($event, sectionKey, metric)">
+                    <input 
+                    type="checkbox" 
+                    [(ngModel)]="metric.enabled" 
+                    (change)="onMetricsChange(data, sectionKey)"
+                    [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
+                    />
+                    <span class="checkmark"></span>
+                    {{ getFormattedMetricName(metric.name) }}
+                  </label>
+                }
               }
+              <p class="mt-2">Custom metrics</p>
+              @for (metric of adAccount.metrics; track metric.name) {
+                @if (metric.isCustom) {
+                  <label class="prevent-select" 
+                    [ngClass]="{ 'obligatory-metric': sectionKey === 'ads' && metric.name === 'impressions' }"
+                    (click)="onObligatoryMetricClick($event, sectionKey, metric)">
+                    <input 
+                    type="checkbox" 
+                    [(ngModel)]="metric.enabled" 
+                    (change)="onMetricsChange(data, sectionKey)"
+                    [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
+                    />
+                    <span class="checkmark"></span>
+                    {{ getFormattedMetricName(metric.name) }}
+                  </label>
+                }
+              }
+              
             </div>
           </div>
         }

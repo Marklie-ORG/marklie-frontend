@@ -1,0 +1,38 @@
+.title {
+  height: 40px;
+}
+.table {
+  
+  .header {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  .row {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+  }
+  .header {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+    color: #333333cb !important;
+
+    // div:not(:first-child) {
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: center;
+    // }
+    .center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .row {
+    // cursor: pointer;
+    font-size: 14px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}

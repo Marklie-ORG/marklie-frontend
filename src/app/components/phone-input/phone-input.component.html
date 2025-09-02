@@ -1,0 +1,48 @@
+<div class="phone-input">
+	<div class="country-select">
+		<button type="button" class="country-toggle" (click)="isCountryOpen = !isCountryOpen" [attr.aria-expanded]="isCountryOpen">
+			<span class="flag">{{selectedCountry?.flag || '🌐'}}</span>
+			<span class="code">+{{selectedCountry?.callingCode}}</span>
+		</button>
+		<div class="country-dropdown" *ngIf="isCountryOpen">
+			<input
+				type="text"
+				class="country-search"
+				placeholder="Search country or code"
+				[(ngModel)]="countrySearch"
+				[ngModelOptions]="{standalone: true}"
+			/>
+			<ul role="listbox" class="country-list">
+				<li *ngFor="let c of filteredCountries()" role="option" tabindex="0"
+					(click)="setCountry(c.code); isCountryOpen=false"
+					(keydown.enter)="setCountry(c.code); isCountryOpen=false"
+					(keydown.space)="setCountry(c.code); isCountryOpen=false">
+					<span class="flag">{{c.flag}}</span>
+					<span class="name">{{c.name}}</span>
+					<span class="dial">+{{c.callingCode}}</span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="number-field">
+		<input
+			[id]="inputId"
+			type="tel"
+			inputmode="tel"
+			autocomplete="tel"
+			maxlength="{{maxLength || ''}}"
+			[class.invalid]="isInvalid"
+			class="text"
+			[placeholder]="placeholder"
+			[disabled]="isDisabled"
+			[ngModel]="value"
+			[ngModelOptions]="{standalone: true}"
+			(ngModelChange)="handleInput($event)"
+			(paste)="handlePaste($event)"
+			(blur)="handleBlur()"
+		/>
+		<div *ngIf="isInvalid" class="invalid-feedback" aria-live="polite">
+			{{validationMessage}}
+		</div>
+	</div>
+</div> 

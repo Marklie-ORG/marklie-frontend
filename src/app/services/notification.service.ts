@@ -8,16 +8,21 @@ export interface Notification {
   duration?: number;
 }
 
+export interface NotificationItem extends Notification {
+  id: string;
+  isHiding?: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  private notificationSubject = new BehaviorSubject<Notification | null>(null);
-  notification$ = this.notificationSubject.asObservable();
   private componentRef: ComponentRef<NotificationComponent> | null = null;
 
-  private isVisibleSubject = new BehaviorSubject<boolean>(false);
-  isVisible$ = this.isVisibleSubject.asObservable();
+  private notificationsSubject = new BehaviorSubject<NotificationItem[]>([]);
+  notifications$ = this.notificationsSubject.asObservable();
+
+  private timeoutHandles = new Map<string, any>();
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -30,17 +35,13 @@ export class NotificationService {
       return;
     }
 
-    // Create component
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(NotificationComponent);
     this.componentRef = componentFactory.create(this.injector);
 
-    // Attach to the appRef so that it's inside the ng component tree
     this.appRef.attachView(this.componentRef.hostView);
 
-    // Get DOM element from component
     const domElem = (this.componentRef.hostView as EmbeddedViewRef<any>).rootNodes[0];
 
-    // Append DOM element to the body
     document.body.appendChild(domElem);
   }
 
@@ -52,37 +53,52 @@ export class NotificationService {
     }
   }
 
-  show(notification: Notification) {
-    if (this.isVisibleSubject.getValue()) {
-      return;
-    }
-    this.isVisibleSubject.next(true);
-    this.createComponent();
-    this.notificationSubject.next(notification);
-
-    if (notification.duration) {
-      setTimeout(() => {
-        this.hide();
-      }, notification.duration);
-    }
+  private generateId(): string {
+    return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
-  hide() {
+  private scheduleAutoHide(id: string, duration?: number) {
+    if (!duration) return;
+    const handle = setTimeout(() => {
+      this.hide(id);
+    }, duration);
+    this.timeoutHandles.set(id, handle);
+  }
 
-    if (!this.isVisibleSubject.getValue()) {
-      return;
+  show(notification: Notification) {
+    this.createComponent();
+
+    const id = this.generateId();
+    const item: NotificationItem = { ...notification, id };
+
+    const current = this.notificationsSubject.getValue();
+    this.notificationsSubject.next([item, ...current]);
+
+    this.scheduleAutoHide(id, notification.duration);
+  }
+
+  hide(id: string) {
+    const handle = this.timeoutHandles.get(id);
+    if (handle) {
+      clearTimeout(handle);
+      this.timeoutHandles.delete(id);
     }
 
-    console.log('hide');
+    const list = this.notificationsSubject.getValue();
+    const index = list.findIndex(n => n.id === id);
+    if (index === -1) return;
 
-    const domElem = (this.componentRef!.hostView as EmbeddedViewRef<any>).rootNodes[0];
-
-    domElem.querySelector('.notification')?.classList.add('slide-out');
+    const updated = [...list];
+    if (updated[index].isHiding) return;
+    updated[index] = { ...updated[index], isHiding: true };
+    this.notificationsSubject.next(updated);
 
     setTimeout(() => {
-      this.notificationSubject.next(null);
-      this.destroyComponent();
-      this.isVisibleSubject.next(false);
+      const afterHide = this.notificationsSubject.getValue().filter(n => n.id !== id);
+      this.notificationsSubject.next(afterHide);
+      if (afterHide.length === 0) {
+        this.destroyComponent();
+      }
     }, 500);
   }
 

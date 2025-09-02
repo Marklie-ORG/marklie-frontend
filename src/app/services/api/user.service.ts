@@ -7,8 +7,8 @@ export interface User {
   uuid: string
   createdAt: string
   updatedAt: string
-  firstName: any
-  lastName: any
+  firstName: string
+  lastName: string
   email: string
   password: string
   activeOrganization: any
@@ -89,6 +89,12 @@ export class UserService {
       this.http.post<{
         message: string;
       }>(`${this.apiUrl}/verify-password-recovery`, { token, newPassword }, { observe: 'response' })
+    );
+  }
+
+  async sendFeedback(message: string) {
+    return firstValueFrom(
+      this.http.post<{ message: string }>(`${this.apiUrl}/feedback`, { message })
     );
   }
 

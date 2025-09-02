@@ -12,27 +12,26 @@ export class AppComponent {
 
   showHeader = true;
   showDashboardHeader = false;
+  showLandingHeader = true;
 
   constructor(private router: Router) {
-    // Listen to route changes
     router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        // console.log(event.url)
-        const url = event.url.split('?')[0];
-        this.showHeader =
-          url === '/'
-          // ||
-          // url === '/auth';
+        const url = event.urlAfterRedirects.split('?')[0];
+        const hasToken = !!localStorage.getItem('accessToken');
+
+        this.showLandingHeader = !hasToken && url === '/';
+        this.showHeader = hasToken && url === '/';
 
         this.showDashboardHeader =
           url === '/dashboard' ||
           url.startsWith('/client/') ||
           url === '/profile' ||
           url.startsWith('/view-report/') ||
-          // url.startsWith('/edit-report/') ||
-          // url.startsWith('/schedule-report/') ||
-          // url.startsWith('/review-report/') ||
-          url.startsWith('/reports');
+          url.startsWith('/scheduled-reports') ||
+          url.startsWith('/reports-database') ||
+          url.startsWith('/suggested-features') ||
+          url.startsWith('/billing');
       }
     });
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -7,8 +7,25 @@ import { OnboardingService } from "../../services/api/onboarding.service.js";
 import { ClientService } from "../../services/api/client.service.js";
 import { FacebookLoginService } from "../../services/api/facebook-login.service.js";
 import { Client } from 'src/app/services/api/client.service.js';
+import { faEllipsisVertical, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog.component';
+import { NotificationService } from '@services/notification.service';
 import { User, UserService } from 'src/app/services/api/user.service.js';
 import {OrganizationService} from "../../services/api/organization.service.js";
+
+interface ActivityLog {
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  action: string;
+  targetType: string;
+  targetUuid: string;
+  metadata: any;
+  actor: string;
+  organization: string;
+  user: string;
+  client: any;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -19,9 +36,13 @@ import {OrganizationService} from "../../services/api/organization.service.js";
 export class DashboardComponent implements OnInit, OnDestroy {
   isFacebookConnected: boolean | undefined = undefined;
   randomNumber = this.getRandomNumber(1, 3);
-  logs: any[] = [];
+  activityLogs: ActivityLog[] = [];
 
   clients: Client[] = [];
+
+  faEllipsisVertical = faEllipsisVertical;
+  faTrash = faTrash;
+  openActionsForClientUuid: string | null = null;
 
   constructor(
     private router: Router,
@@ -30,40 +51,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private organizationService: OrganizationService,
     private dialog: MatDialog,
     private facebookLoginService: FacebookLoginService,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private notificationService: NotificationService
+  ) {
+    // this.showAddClientModal()
+  }
 
-  async ngOnInit() {
-    let user: User;
-
+  async ngOnInit(): Promise<void> {
     try {
-      user = await this.userService.me();
-    } catch (error) {
-      this.router.navigate(['/']);
-      return;
+      const user = await this.userService.me();
+
+      if (!user.activeOrganization) {
+        await this.router.navigate(['/onboarding']);
+        return;
+      }
+
+      const [_, logs, onboardingSteps] = await Promise.all([
+        this.getClients(),
+        this.organizationService.getLogs(user.activeOrganization?.uuid ?? user.activeOrganization),
+        this.onboardingService.getOnboardingSteps(),
+      ]);
+
+      this.activityLogs = logs;
+
+      this.isFacebookConnected = !!onboardingSteps.facebookConnected;
+      document.body.classList.toggle('no-scroll', !this.isFacebookConnected);
+
+    } catch {
+      await this.router.navigate(['/']);
     }
-
-    if (!user.activeOrganization) {
-      this.router.navigate(['/onboarding']);
-    }
-
-    await this.getClients();
-    this.logs = await this.organizationService.getLogs(user.activeOrganization)
-
-    const onboardingSteps = await this.onboardingService.getOnboardingSteps();
-
-    if (!onboardingSteps.facebookConnected) {
-      this.isFacebookConnected = false;
-      document.body.classList.add('no-scroll');
-    } else {
-      this.isFacebookConnected = true;
-      document.body.classList.remove('no-scroll');
-    }
-
   }
 
   ngOnDestroy() {
     document.body.classList.remove('no-scroll');
+  }
+
+  @HostListener('document:click')
+  onDocumentClick() {
+    this.openActionsForClientUuid = null;
   }
 
   async getClients() {
@@ -93,6 +118,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // this.router.navigate(['/report'], { queryParams: { clientId } });
   }
 
+  toggleClientActionsMenu(client: Client, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.openActionsForClientUuid = this.openActionsForClientUuid === client.uuid ? null : client.uuid;
+  }
+
+  deleteClient(client: Client, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.openActionsForClientUuid = null;
+    const data: ConfirmDialogData = {
+      title: 'Delete client',
+      message: `Are you sure you want to delete client "${client.name}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      data
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      try {
+        await this.clientService.deleteClient(client.uuid);
+        this.clients = this.clients.filter(c => c.uuid !== client.uuid);
+        this.notificationService.info('Client deleted');
+      } catch (e) {
+        console.error('Failed to delete client', e);
+      }
+    });
+  }
+
   formatTimeOrDate(date: string | Date): string {
     const d = new Date(date);
     const now = new Date();
@@ -113,7 +172,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     return d.toLocaleDateString();
   }
-
 
   getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;

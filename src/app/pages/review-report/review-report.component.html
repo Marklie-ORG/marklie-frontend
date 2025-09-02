@@ -9,11 +9,21 @@
       </a>
     </div>
     <p *ngIf="changesMade">Unsaved changes made</p>
-    <div class="d-flex align-center justify-end">
-      <button (click)="isPreviewMode = !isPreviewMode" class="mr-3">
+    <div class="d-flex align-center justify-between width-100">
+      <!-- <button (click)="isPreviewMode = !isPreviewMode" class="mr-3">
         Preview
-      </button>
-      <button class="blue ml-3" (click)="save()">Save</button>
+      </button> -->
+      <div class="d-flex flex-row align-center gap-3 pl-3">
+        <button type="button" routerLink="/dashboard" class="nav-btn">Dashboard</button>
+        <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button>
+        <button type="button" routerLink="/reports-database" class="nav-btn badge-container">Generated Reports</button>
+      </div>
+      
+      <div class="d-flex flex-row align-center gap-3">
+        <button class="blue ml-3" (click)="save()">Save changes</button>
+        <button class="blue ml-3" (click)="openFinishReviewDialog()">Finish review</button>
+      </div>
+      
     </div>
   </div>
 
@@ -21,8 +31,7 @@
 
     <div class="report-container d-flex flex-column pt-3 pl-5 pr-5">
       <report
-        [reportSections]="reportSections"
-        [data]="data"
+        [(reportSections)]="reportSections"
         [selectedDatePresetText]="selectedDatePresetText()"
         [reportTitle]="reportTitle()"
         [(clientImageUrl)]="clientImageUrl"

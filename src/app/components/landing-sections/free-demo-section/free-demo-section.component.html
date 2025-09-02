@@ -1,0 +1,39 @@
+<section class="landing-container free-demo-section">
+  <div class="free-demo-section__image">
+    <img src="assets/img/free-demo.png" alt="free demo" />
+  </div>
+  <div class="free-demo-section__content">
+    <h2 class="free-demo-section__content__title">
+      Get <span>FREE</span> demo report to <br />
+      your email or WhatsApp
+    </h2>
+    <p class="free-demo-section__content__description">
+      Simply enter your WhatsApp number or email <br />
+      address and get demo report in seconds.
+    </p>
+    <form (ngSubmit)="onSubmit()" class="free-demo-section__content__form">
+      <app-input
+        [(value)]="email"
+        placeholder="info@marklie.com"
+        variant="primary"
+      ></app-input>
+
+      <app-input
+        [(value)]="whatsapp"
+        placeholder="+31053450202"
+        variant="primary"
+      ></app-input>
+
+      <div>
+        <app-button type="submit" variant="secondary" size="medium"
+          >Send me free demo</app-button
+        >
+      </div>
+    </form>
+    <p class="free-demo-section__content__privacy-policy">
+      For more information on how we process your personal information and what
+      rights you have in this respect, please see our
+      <a href="/privacy-policy" target="_blank"> Privacy Policy </a>
+    </p>
+  </div>
+</section>

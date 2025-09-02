@@ -1,12 +1,16 @@
-import {Component, OnInit, OnDestroy, Inject, inject} from '@angular/core';
+import {Component, OnInit, inject} from '@angular/core';
+import { HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SlackLoginService } from 'src/app/services/slack-login.service';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ClientSettingsComponent } from '../../components/client-settings/client-settings.component';
 import { Client, ClientService } from 'src/app/services/api/client.service.js';
 import { ReportService } from 'src/app/services/api/report.service.js';
-import { AuthService } from 'src/app/services/api/auth.service.js';
 import {SchedulesService} from "../../services/api/schedules.service.js";
+import { DatabaseReportItem } from '../../components/database-table/database-table.component';
+import { faEllipsisVertical, faPause, faPlay, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { NotificationService } from '@services/notification.service';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../components/confirm-dialog/confirm-dialog.component';
+import {firstValueFrom} from "rxjs";
 
 interface Activity {
   status: 'new' | 'old',
@@ -35,21 +39,28 @@ export interface ScheduledReport {
 export class ClientComponent implements OnInit {
   clientUuid: string | null = null;
   client: Client | null = null;
-  logs: any[] = [];
+  activityLogs: any[] = [];
   scheduleOptions: ScheduledReport[] = [];
+  generatedReports: { uuid: string; reportName: string; createdAt: Date | string; }[] = [];
 
   scheduleOptionsLoading = true;
   private schedulesService = inject(SchedulesService);
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private clientService: ClientService,
-    private reportService: ReportService,
-    private slackLoginService: SlackLoginService,
-    private dialog: MatDialog,
-    private authService: AuthService,
-  ) {}
+  faEllipsisVertical = faEllipsisVertical;
+  faPlay = faPlay;
+  faPause = faPause;
+  faTrash = faTrash;
+
+  openActionsForUuid: string | null = null;
+
+  private notificationService = inject(NotificationService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private clientService = inject(ClientService);
+  private reportService = inject(ReportService);
+  private dialog = inject(MatDialog);
+
+  constructor() {}
 
 
   async ngOnInit() {
@@ -61,7 +72,7 @@ export class ClientComponent implements OnInit {
   }
 
   onEditReport(reportId: string) {
-    this.router.navigate(['/edit-report', reportId]);
+    this.router.navigate(['/edit-report', this.clientUuid, reportId]);
   }
 
   scheduleReport(): void {
@@ -73,12 +84,73 @@ export class ClientComponent implements OnInit {
     console.log(`Viewing report with ID: ${reportId}`);
   }
 
+  toggleActionsMenu(scheduleOption: ScheduledReport, event?: Event) {
+    this.openActionsForUuid = this.openActionsForUuid === scheduleOption.uuid ? null : scheduleOption.uuid;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // Close actions menu when clicking outside
+    this.openActionsForUuid = null;
+  }
+
+  async activateSchedule(uuid: string) {
+    try {
+      await this.reportService.activateSchedulingOptions([uuid]);
+      this.scheduleOptions = this.scheduleOptions.map(s => s.uuid === uuid ? { ...s, isActive: true } : s);
+      this.notificationService.info('Report activated');
+    } finally {
+      this.openActionsForUuid = null;
+    }
+  }
+
+  async pauseSchedule(uuid: string) {
+    try {
+      await this.reportService.stopSchedulingOptions([uuid]);
+      this.scheduleOptions = this.scheduleOptions.map(s => s.uuid === uuid ? { ...s, isActive: false } : s);
+      this.notificationService.info('Report paused');
+    } finally {
+      this.openActionsForUuid = null;
+    }
+  }
+
+  deleteSchedule(uuid: string) {
+    this.openActionsForUuid = null;
+    const data: ConfirmDialogData = {
+      title: 'Delete scheduled report',
+      message: 'Are you sure you want to delete this scheduled report?',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      data
+    });
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) return;
+      try {
+        await this.reportService.deleteSchedulingOptions([uuid]);
+        this.scheduleOptions = this.scheduleOptions.filter(s => s.uuid !== uuid);
+        this.notificationService.info('Report deleted');
+      } catch (e) {
+        console.error('Failed to delete schedule', e);
+      }
+    });
+  }
+
   private async loadClientDetails() {
     if (!this.clientUuid) return;
     this.client = await this.clientService.getClient(this.clientUuid);
-    this.logs = await this.clientService.getClientsLogs(this.clientUuid);
+    this.activityLogs = await this.clientService.getClientsLogs(this.clientUuid);
     this.scheduleOptions = await this.schedulesService.getSchedulingOptions(this.clientUuid)
     this.scheduleOptionsLoading = false;
+
+    const reports: any[] = await this.reportService.getClientReports(this.clientUuid);
+    this.generatedReports = (reports || []).map((r: any): DatabaseReportItem => ({
+      uuid: r.uuid,
+      reportName: r?.schedulingOption?.reportName || r?.reportType || 'Report',
+      createdAt: r.createdAt
+    }));
   }
 
 
@@ -128,13 +200,13 @@ export class ClientComponent implements OnInit {
   onEditClient() {
     const dialogRef = this.dialog.open(ClientSettingsComponent, {
       width: '800px',
-      data: {
-        client: this.client
-      }
+      data: { client: this.client }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.loadClientDetails();
+    firstValueFrom(dialogRef.afterClosed()).then(async (res) => {
+      if (res?.updated) {
+        await this.loadClientDetails();
+      }
     });
   }
 

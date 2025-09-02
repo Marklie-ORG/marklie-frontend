@@ -1,209 +1,188 @@
-<!-- <div class="d-flex flex-column gap-3">
-  <div *ngFor="let section of reportSections; let i = index" class="accordion-item">
-    
-    <div class="accordion-header" >
-      <div class="section-toggle" [class.expanded]="isSectionExpanded(i)">
-        <label>{{ section.title }}</label>
-        <div class="header-controls">
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="section.enabled" (click)="$event.stopPropagation()"/>
-            <span class="slider round"></span>
-          </label>
-          <div class="accordion-arrow" [class.expanded]="isSectionExpanded(i)" (click)="toggleSection(i)">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="accordion-content" [class.expanded]="isSectionExpanded(i)">
-      <div class="metric-group p-2" >
-        <div *ngFor="let metric of section.metrics; let j = index">
-          <label class="prevent-select">
-            <input [disabled]="!section.enabled" type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-            {{metric.name}}
-          </label>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-
 <div class="side-panel d-flex flex-column p-3">
-  <div class="d-flex flex-column gap-3" *ngIf="toggles.main">
-
-    <item
-      [hideDrag]="true"
-      [title]="'Header'"
-      (click)="togglePage('header')"
-    ></item>
-  
-    <div #sectionsContainer class="d-flex flex-column gap-3">
+  <!-- Main Navigation -->
+  @if (toggles.main) {
+    <div class="d-flex flex-column gap-3">
       <item
-      *ngFor="let section of reportSections; let i = index"
-      [title]="section.title"
-      (click)="togglePage(section.key)"
+        [title]="'Header'"
+        (click)="togglePage('header')"
       ></item>
-    </div>
     
+      <div #sectionsContainer class="d-flex flex-column gap-3">
+        @for (section of reportSections(); track section.key) {
+          <item
+            [style.opacity]="section.enabled ? 1 : 0.5"
+            [title]="section.title"
+            [showDrag]="true"
+            (click)="togglePage(section.key)"
+          ></item>
+        }
+      </div>
+    </div>
+  }
   
-    <!-- <item
-      [title]="'Graphs'"
-      (click)="togglePage('graphs')"
-    ></item>
-  
-    <item
-      [title]="'Best creatives'"
-      (click)="togglePage('bestCreatives')"
-    ></item>
-  
-    <item
-      [title]="'Best campaigns'"
-      (click)="togglePage('bestCampaigns')"
-    ></item> -->
+  <!-- Header Section -->
+  @if (toggles.header) {
+    <div>
+      <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+        <div class="d-flex align-items-center gap-2">
+          <img 
+            class="cursor-pointer"
+            src="../../../assets/img/icons/arrow_left.svg" 
+            alt="Back to main" 
+            (click)="togglePage('main')"
+          >
+          <p class="ml-2">Header</p>
+        </div>
+      </div>
     
-  </div>
-  
-  <div *ngIf="toggles.header">
-  
-    <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
-      <div class="d-flex align-items-center gap-2">
-        <img 
-        class="cursor-pointer"
-        src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
-        <p class="ml-2">Header</p>
+      <div class="metric-group mt-2 pt-3 d-flex flex-column gap-2">
+        <input 
+          class="text"
+          type="text" 
+          placeholder="Report title" 
+          [(ngModel)]="reportTitle" 
+          (keyup)="reportTitleChange.emit(reportTitle)"
+        >
       </div>
     </div>
+  }
   
-    <div class="metric-group mt-2 pt-3 d-flex flex-column gap-2" >
-      <input 
-      class="text"
-      type="text" 
-      placeholder="Report title" 
-      [(ngModel)]="reportTitle" 
-      (keyup)="reportTitleChange.emit(reportTitle)"
-      >
-    </div>
+  <!-- Metrics Sections (KPIs, Graphs, Ads, Campaigns) -->
+  @if (toggles.kpis && mainKPIs) {
+    <ng-container [ngTemplateOutlet]="metricsSection" 
+                  [ngTemplateOutletContext]="{ 
+                    title: 'Main KPIs', 
+                    data: mainKPIs, 
+                    sectionKey: 'kpis' 
+                  }">
+    </ng-container>
+  }
   
-    
-  </div>
+  @if (toggles.graphs && graphs) {
+    <ng-container [ngTemplateOutlet]="metricsSection" 
+                  [ngTemplateOutletContext]="{ 
+                    title: 'Graphs', 
+                    data: graphs, 
+                    sectionKey: 'graphs' 
+                  }">
+    </ng-container>
+  }
   
-  <div *ngIf="toggles.kpis && mainKPIs">
+  @if (toggles.ads && bestCreatives) {
+    <ng-container [ngTemplateOutlet]="metricsSection" 
+                  [ngTemplateOutletContext]="{ 
+                    title: 'Best creatives', 
+                    data: bestCreatives, 
+                    sectionKey: 'ads' 
+                  }">
+    </ng-container>
+  }
   
-    <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
-      <div class="d-flex align-items-center gap-2">
-        <img 
-        class="cursor-pointer"
-        src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
-        <p class="ml-2">Main KPIs</p>
-      </div>
-      
-      <div>
-        <label class="switch">
-          <input type="checkbox" [(ngModel)]="mainKPIs.enabled" (click)="$event.stopPropagation()"/>
-          <span class="slider round"></span>
-        </label>
-      </div>
-      
-    </div>
-  
-    
-  
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of mainKPIs.metrics; let j = index">
-        <input  type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
-    </div>
-  </div>
-  
-  <div *ngIf="toggles.graphs && graphs">
-  
-    <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
-      <div class="d-flex align-items-center gap-2">
-        <img 
-        class="cursor-pointer"
-        src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
-        <p class="ml-2">Graphs</p>
-      </div>
-      
-      <div>
-        <label class="switch">
-          <input type="checkbox" [(ngModel)]="graphs.enabled" (click)="$event.stopPropagation()"/>
-          <span class="slider round"></span>
-        </label>
-      </div>
-    </div>
-  
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of graphs.metrics; let j = index">
-        <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
-    </div>
-  </div>
-  
-  <div *ngIf="toggles.ads && bestCreatives">
-  
-    <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
-      <div class="d-flex align-items-center gap-2">
-        <img 
-        class="cursor-pointer"
-        src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
-        <p class="ml-2">Best creatives</p>
-      </div>
-      
-      <div>
-        <label class="switch">
-          <input type="checkbox" [(ngModel)]="bestCreatives.enabled" (click)="$event.stopPropagation()"/>
-          <span class="slider round"></span>
-        </label>
-      </div>
-    </div>
-  
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of bestCreatives.metrics; let j = index">
-        <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
-    </div>
-  </div>
-  
-  <div *ngIf="toggles.campaigns && bestCampaigns">
-  
-    <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
-      <div class="d-flex align-items-center gap-2">
-        <img 
-        class="cursor-pointer"
-        src="../../../assets/img/icons/arrow_left.svg" alt="Report title" (click)="togglePage('main')">
-        <p class="ml-2">Best campaigns</p>
-      </div>
-      
-      <div>
-        <label class="switch">
-          <input type="checkbox" [(ngModel)]="bestCampaigns.enabled" (click)="$event.stopPropagation()"/>
-          <span class="slider round"></span>
-        </label>
-      </div>
-    </div>
-  
-    
-  
-    <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2" >
-      <label class="prevent-select" *ngFor="let metric of bestCampaigns.metrics; let j = index">
-        <input type="checkbox" [(ngModel)]="metric.enabled" (change)="onMetricsChange()"/>
-        <span class="checkmark"></span>
-        {{metric.name}}
-      </label>
-    </div>
-  </div>
+  @if (toggles.campaigns && bestCampaigns) {
+    <ng-container [ngTemplateOutlet]="metricsSection" 
+                  [ngTemplateOutletContext]="{ 
+                    title: 'Best campaigns', 
+                    data: bestCampaigns, 
+                    sectionKey: 'campaigns' 
+                  }">
+    </ng-container>
+  }
 </div>
 
+<!-- Reusable Metrics Section Template -->
+<ng-template #metricsSection let-title="title" let-data="data" let-sectionKey="sectionKey">
+  <div>
+    <div class="d-flex align-items-center justify-between gap-2 pl-2 pr-2">
+      <div class="d-flex align-items-center gap-2 cursor-pointer" (click)="togglePage('main')">
+        <img 
+          src="../../../assets/img/icons/arrow_left.svg" 
+          alt="Back to main" 
+        >
+        <p class="ml-2">{{ title }}</p>
+      </div>
+      
+      <div>
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="data.enabled" 
+            (change)="onMetricsChange(data, sectionKey)"
+            (click)="$event.stopPropagation()"
+          />
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+  
+    <div class="metrics-container">
+      <!-- Ad Account Selection -->
+      @if (!selectedAdAccountId) {
+        @for (adAccount of data.adAccounts; track adAccount.id) {
+          <item
+            [style.opacity]="adAccount.enabled ? 1 : 0.5"
+            [title]="adAccount.name"
+            (click)="toggleSelectedAdAccount(adAccount.id)"
+          ></item>
+        }
+      }
+      
+      <!-- Ad Account Details -->
+      @for (adAccount of data.adAccounts; track adAccount.id) {
+        @if (selectedAdAccountId === adAccount.id) {
+          <div>
+            <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
 
+            <label class="switch">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="adAccount.enabled" 
+                (change)="onMetricsChange(data, sectionKey)"
+                (click)="$event.stopPropagation()"
+              />
+              <span class="slider round"></span>
+            </label>
 
+            <!-- todo: test reordering before commiting -->
+            <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2">
+              <p class="mt-2">Default metrics</p>
+              @for (metric of adAccount.metrics; track metric.name) {
+                @if (!metric.isCustom) {
+                  <label class="prevent-select" 
+                    [ngClass]="{ 'obligatory-metric': sectionKey === 'ads' && metric.name === 'impressions' }"
+                    (click)="onObligatoryMetricClick($event, sectionKey, metric)">
+                    <input 
+                    type="checkbox" 
+                    [(ngModel)]="metric.enabled" 
+                    (change)="onMetricsChange(data, sectionKey)"
+                    [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
+                    />
+                    <span class="checkmark"></span>
+                    {{ getFormattedMetricName(metric.name) }}
+                  </label>
+                }
+              }
+              <p class="mt-2">Custom metrics</p>
+              @for (metric of adAccount.metrics; track metric.name) {
+                @if (metric.isCustom) {
+                  <label class="prevent-select" 
+                    [ngClass]="{ 'obligatory-metric': sectionKey === 'ads' && metric.name === 'impressions' }"
+                    (click)="onObligatoryMetricClick($event, sectionKey, metric)">
+                    <input 
+                    type="checkbox" 
+                    [(ngModel)]="metric.enabled" 
+                    (change)="onMetricsChange(data, sectionKey)"
+                    [disabled]="sectionKey === 'ads' && metric.name === 'impressions'"
+                    />
+                    <span class="checkmark"></span>
+                    {{ getFormattedMetricName(metric.name) }}
+                  </label>
+                }
+              }
+              
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,46 @@
+<div class="suggested-features">
+	<div class="grid">
+		<!-- Left: Suggest form -->
+		<div class="left">
+			<div class="form-card card">
+				<h3 class="form-title">Suggest a feature</h3>
+				<label class="lbl">Short, descriptive title</label>
+				<input type="text" placeholder="Funnels" [ngModel]="title()" (ngModelChange)="title.set($event)" />
+				<label class="lbl">Description</label>
+				<textarea rows="4" placeholder="I want to see a visual funnel to track..." [ngModel]="description()" (ngModelChange)="description.set($event)" style="resize: vertical; width: 100%; max-width: 100%; box-sizing: border-box;"></textarea>
+				<button type="button" class="blue width-100 mt-3" (click)="create()" [disabled]="!title().trim() || !description().trim()">Suggest feature</button>
+			</div>
+		</div>
+
+		<!-- Right: Suggestions feed -->
+		<div class="right">
+			@if (loading()) {
+				<div class="loading">Loading…</div>
+			} @else {
+				<div class="suggestions">
+					@for (s of filtered(); track s.uuid) {
+						<div class="suggestion card">
+							<div class="card-body" [routerLink]="['/suggested-features', s.uuid]">
+								<div class="content">
+									<h4 class="title">{{ s.title }}</h4>
+									<p class="desc">{{ s.description }}</p>
+									<div class="meta">
+										<fa-icon [icon]="faCommentDots"></fa-icon>
+										<span>{{ s.commentsCount }}</span>
+									</div>
+								</div>
+							</div>
+							<button type="button" class="vote" [class.active]="s.userHasUpvoted" (click)="toggleUpvote(s); $event.stopPropagation()" aria-label="Upvote" [attr.aria-pressed]="s.userHasUpvoted">
+								<span class="label">
+									<fa-icon [icon]="faChevronUp"></fa-icon>
+									<span class="text">Vote</span>
+								</span>
+								<span class="count">{{ s.upvotes }}</span>
+							</button>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	</div>
+</div> 

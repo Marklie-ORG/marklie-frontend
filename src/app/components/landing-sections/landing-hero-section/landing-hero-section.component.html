@@ -1,0 +1,66 @@
+<section class="landing-container hero-section">
+  <!-- Desktop -->
+  <div class="hero-section__content">
+    <div class="hero-section__content-tags">
+      <app-info-tag text="Save time"></app-info-tag>
+      <app-info-tag text="Increase client retention"></app-info-tag>
+    </div>
+    <div class="hero-section__content-title">
+      <h1>
+        The only reporting tool <br />
+        your agency needs.
+      </h1>
+      <h2>
+        Connect your Facebook, set up once, and we handle the rest. <br />
+        Clients love regular updates — we make it automatic.
+      </h2>
+    </div>
+    <div class="hero-section__content-buttons">
+      <app-button
+        [icon]="faArrowRight"
+        iconPosition="right"
+        size="large"
+        iconVariant="light"
+        link="/auth"
+        variant="primary"
+      >
+        Get started
+      </app-button>
+      <span class="hero-section__content-buttons-info"
+        >Automatic AI report analysis included</span
+      >
+    </div>
+  </div>
+  <div class="hero-section__image">
+    <img src="assets/img/demo-test.gif" alt="demo-test" />
+  </div>
+
+  <!-- Mobile -->
+  <div class="hero-section__content-mobile">
+    <div class="hero-section__content-mobile-title">
+      <h1>
+        Automate your <br />
+        reporting with Marklie
+      </h1>
+      <h2>
+        Clients love regular updates, <br />
+        we make it automatic.
+      </h2>
+    </div>
+    <div class="hero-section__content-mobile-buttons">
+      <app-button
+        [icon]="faArrowRight"
+        iconPosition="right"
+        size="medium"
+        iconVariant="light"
+        link="/auth"
+        variant="primary"
+      >
+        Start free trial
+      </app-button>
+      <span class="hero-section__content-mobile-buttons-info"
+        >No card required</span
+      >
+    </div>
+  </div>
+</section>

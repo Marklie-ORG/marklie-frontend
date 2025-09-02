@@ -40,12 +40,23 @@ html, body {
 .report-header {
   padding: 14px 5%;
   background: var(--block-color);
-  box-shadow: 0 4px 6px rgba(67, 46, 134, 0.04);
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2392156863);
+  box-shadow: 0px 1px 6px rgb(0 0 0 / 15%);
+  z-index: 1000;
 }
 
 .report-container {
   background-color: #f9fafb; 
   overflow-y: auto; 
   height: calc(100vh - 16px - 16px - 16px - 16px - 16px - 16px);
+}
+
+  
+.dummy-data-warning {
+  font-size: 12px;
+  color: #6e6e6e;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #e5e7eb;
+  width: max-content;
 }

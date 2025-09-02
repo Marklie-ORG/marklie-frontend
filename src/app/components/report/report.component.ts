@@ -1,7 +1,7 @@
-import { Component, ElementRef, input, Input, model, SimpleChanges, ViewChild } from '@angular/core';
-import { Data } from 'src/app/pages/schedule-report/schedule-report.component';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
-import Sortable from 'sortablejs';
+import { ChangeDetectorRef, Component, computed, effect, inject, input, Input, model, signal, SimpleChanges } from '@angular/core';
+import { SchedulesService } from 'src/app/services/api/schedules.service';
+import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
+import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 
 export interface MetricSelections {
   kpis: Record<string, boolean>;
@@ -17,31 +17,7 @@ export interface MetricSelections {
 })
 export class ReportComponent {
 
-  private sectionsGridSortable: Sortable | null = null;
-
-  @ViewChild('sectionsGridContainer', { static: false }) set sectionsGridContainer(el: ElementRef | undefined) {
-    if (this.sectionsGridSortable) {
-      this.sectionsGridSortable.destroy();
-      this.sectionsGridSortable = null;
-    }
-
-    if (el) {
-      this.sectionsGridSortable = Sortable.create(el.nativeElement, {
-        animation: 200,
-        easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-        ghostClass: 'sortable-ghost',
-        dragClass: 'sortable-drag',
-        onEnd: (event) => this.reorderSections(event),
-      });
-    }
-
-    if (this.isViewMode()) {
-      this.sectionsGridSortable?.option('disabled', true);
-    }
-  }
-
-  @Input() reportSections: ReportSection[] = [];
-  @Input() data: Data | undefined = undefined;
+  reportSections = model<ReportSection[]>([]);
   @Input() reportTitle: string = 'Report Title';
   @Input() selectedDatePresetText: string = '';
 
@@ -53,26 +29,86 @@ export class ReportComponent {
 
   isViewMode = input<boolean>(false);
 
-  reorderSections(event: Sortable.SortableEvent) {
-    const movedSection = this.reportSections.splice(event.oldIndex!, 1)[0];
-    this.reportSections.splice(event.newIndex!, 0, movedSection);
-    this.reportSections.forEach((s, index) => s.order = index);
-    this.reportSections.sort((a, b) => a.order - b.order);
+  schedulesService = inject(SchedulesService);
+
+  availableMetrics: GetAvailableMetricsResponse = [];
+
+  orderedSections = computed(() => {
+    const sections = this.reportSections();
+    return [...sections].sort((a, b) => a.order - b.order);
+  });
+
+  kpisSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'kpis') || {} as ReportSection;
+  });
+
+  graphsSectionAdAccounts: AdAccount[] = [];
+
+  graphsSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'graphs') || {} as ReportSection;
+  });
+
+  adsSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'ads') || {} as ReportSection;
+  });
+
+  campaignsSection = computed(() => {
+    const sections = this.reportSections();
+    return sections.find(section => section.key === 'campaigns') || {} as ReportSection;
+  });
+
+  cdr = inject(ChangeDetectorRef);
+
+  constructor() {
+
+    effect(() => {
+
+      // console.log("Report sections changed:", this.reportSections());
+
+      this.checkIfAllAdAccountsDisabled();
+      
+      this.graphsSectionAdAccounts = [...this.reportSections().find(section => section.key === 'graphs')?.adAccounts || []];
+      
+    });
+  }
+
+  checkIfAllAdAccountsDisabled() {
+    for (let section of this.reportSections()) {
+      let allAdAccounts = section.adAccounts;
+      if (allAdAccounts.length > 0 && allAdAccounts.every(adAccount => !adAccount.enabled)) {
+        section.enabled = false;
+      }
+    }
+  }
+
+  onKpiAdAccountsChange(updatedAdAccounts: AdAccount[]) {
+    const updatedSections = this.reportSections().map(section => {
+      if (section.key !== 'kpis') return section;
+      return { ...section, adAccounts: [...updatedAdAccounts] } as ReportSection;
+    });
+    this.reportSections.set(updatedSections);
+  }
+
+  onGraphsAdAccountsChange(updatedAdAccounts: AdAccount[]) {
+    const updatedSections = this.reportSections().map(section => {
+      if (section.key !== 'graphs') return section;
+      return { ...section, adAccounts: [...updatedAdAccounts] } as ReportSection;
+    });
+    this.reportSections.set(updatedSections);
+  }
+
+  onAdsAdAccountsChange(updatedAdAccounts: AdAccount[]) {
+    const updatedSections = this.reportSections().map(section => {
+      if (section.key !== 'ads') return section;
+      return { ...section, adAccounts: [...updatedAdAccounts] } as ReportSection;
+    });
+    this.reportSections.set(updatedSections);
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['reportSections'] && this.reportSections) {
-      this.reportSections.sort((a, b) => a.order - b.order);
-      this.reportSections.forEach(section => {
-          section.metrics.sort((a, b) => a.order - b.order);
-      });
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.sectionsGridSortable) {
-      this.sectionsGridSortable.destroy();
-    }
   }
 
 }

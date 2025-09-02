@@ -1,13 +1,13 @@
 <modal-base>
   <!-- <h3>Add client</h3> -->
-<div *ngIf="schedule">
+<div>
     <h3>Report configuration</h3>
 
     <div class="d-flex flex-column gap-4 pl-5 pr-5 mt-5" *ngIf="!messagesWindowOpen">
 
       <div class="d-flex justify-between">
         <label>Schedule Frequency</label>
-        <select class="form-control" [(ngModel)]="schedule.frequency">
+        <select class="select-default form-control" [(ngModel)]="data.frequency">
           <option value="weekly">Weekly</option>
           <option value="biweekly">Biweekly</option>
           <option value="monthly">Monthly</option>
@@ -17,37 +17,46 @@
       </div>
 
 
-      <div class="d-flex justify-between" *ngIf="['weekly', 'biweekly'].includes(schedule.frequency)">
+      <div class="d-flex justify-between" *ngIf="['weekly', 'biweekly'].includes(data.frequency)">
         <label>Day of Week</label>
-        <select class="form-control" [(ngModel)]="schedule.dayOfWeek">
+        <select class="select-default form-control" [(ngModel)]="data.dayOfWeek">
           <option *ngFor="let day of reportsDataService.DAYS_OF_WEEK" [value]="day">{{ day }}</option>
         </select>
       </div>
 
-      <div class="d-flex justify-between" *ngIf="schedule.frequency === 'monthly'">
+      <div class="d-flex justify-between" *ngIf="data.frequency === 'monthly'">
         <label>Day of Month</label>
-        <input type="number" class="text" [(ngModel)]="schedule.dayOfMonth" min="1" max="31" />
+        <input type="number" class="text" [(ngModel)]="data.dayOfMonth" min="1" max="31" />
       </div>
 
-      <div class="d-flex justify-between" *ngIf="schedule.frequency === 'custom'">
+      <div class="d-flex justify-between" *ngIf="data.frequency === 'custom'">
         <label>Every X Days</label>
-        <input type="number" class="text" [(ngModel)]="schedule.intervalDays" min="1" />
+        <input type="number" class="text" [(ngModel)]="data.intervalDays" min="1" />
       </div>
 
-      <div class="d-flex justify-between" *ngIf="schedule.frequency === 'cron'">
+      <div class="d-flex justify-between" *ngIf="data.frequency === 'cron'">
         <label>Cron Expression</label>
-        <input type="text" class="text" [(ngModel)]="schedule.cronExpression" />
+        <input type="text" class="text" [(ngModel)]="data.cronExpression" />
       </div>
 
-      <div class="d-flex justify-between" *ngIf="schedule.frequency !== 'cron'">
+      <div class="d-flex justify-between" *ngIf="data.frequency !== 'cron'">
         <label>Time</label>
-        <input type="time" class="text" [(ngModel)]="schedule.time" step="300" />
+        <input type="time" class="text" [(ngModel)]="data.time" step="300" />
       </div>
 
-      <div class="toggle-container w-100">
-        <div class="toggle-button active p-2" [class.active]="schedule.reviewNeeded" (click)="schedule.reviewNeeded = true" >Review report before sending to client</div>
-        <div class="toggle-button p-2" [class.active]="!schedule.reviewNeeded" (click)="schedule.reviewNeeded = false" >Send report automatically to client without review</div>
+      <div class="d-flex justify-between" *ngIf="['weekly', 'biweekly'].includes(data.frequency)">
+        <label>Review needed</label>
+        <select class="select-default form-control" [(ngModel)]="data.reviewRequired">
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
       </div>
+
+
+      <!-- <div class="toggle-container w-100">
+        <div class="toggle-button active p-2" [class.active]="data.reviewNeeded" (click)="data.reviewNeeded = true" >Review report before sending to client</div>
+        <div class="toggle-button p-2" [class.active]="!data.reviewNeeded" (click)="data.reviewNeeded = false" >Send report automatically to client without review</div>
+      </div> -->
 
       <div class="d-flex justify-end gap-2 mt-5">
         <!-- <button class="" (click)="saveConfiguration()">Cancel</button> -->
@@ -57,60 +66,7 @@
     </div>
 
     <div *ngIf="messagesWindowOpen">
-      <div class="d-flex flex-column gap-3 mt-4">
-
-        <div class="accordion-container d-flex flex-column gap-2">
-
-          <div class="block" >
-              <div class="accordion-header p-3" [class.active]="accordion.whatsapp" (click)="accordion.whatsapp = !accordion.whatsapp">
-                  <img src="../../../assets/img/icons/whatsapp_colorful.svg" alt="WhatsApp Icon" class="whatsapp-icon">
-                  WhatsApp
-                  <!-- <span class="arrow-icon">&#9660;</span>  -->
-              </div>
-              <div class="accordion-content" [class.show]="accordion.whatsapp">
-                <label for="whatsapp">Message</label>
-                <input type="text" class="text" [(ngModel)]="messages.whatsapp" id="whatsapp" />
-                <p>Preview</p>
-                <whatsapp-message-preview
-                [message]="messages.whatsapp"
-                ></whatsapp-message-preview>
-              </div>
-          </div>
-
-          <div class="block">
-            <div class="accordion-header p-3" [class.active]="accordion.slack" (click)="accordion.slack = !accordion.slack">
-                <img src="../../../assets/img/icons/slack_colorful.svg" alt="Slack Icon" class="whatsapp-icon">
-                Slack
-                <!-- <span class="arrow-icon">&#9660;</span>  -->
-            </div>
-            <div class="accordion-content" [class.show]="accordion.slack">
-              <label for="slack">Slack:</label>
-              <input type="text" class="text" [(ngModel)]="messages.slack" id="slack" />
-            </div>
-          </div>
-
-          <div class="block">
-            <div class="accordion-header p-3" [class.active]="accordion.email" (click)="accordion.email = !accordion.email">
-                <img src="../../../assets/img/icons/gmail_colorful.svg" alt="WhatsApp Icon" class="whatsapp-icon">
-                Email
-                <!-- <span class="arrow-icon">&#9660;</span>  -->
-            </div>
-            <div class="accordion-content" [class.show]="accordion.email">
-              <label for="title">Title</label>
-              <input type="text" class="text" [(ngModel)]="messages.email.title" id="title" />
-              <label for="body">Body</label>
-              <input type="text" class="text" [(ngModel)]="messages.email.body" id="body" />
-            </div>
-          </div>
-
-        </div>
-
-
-
-
-      </div>
-
-
+      <messages-accordion [(messages)]="data.messages"></messages-accordion> 
 
       <div class="d-flex justify-between gap-2 mt-5">
         <!-- <button class="" (click)="saveConfiguration()">Cancel</button> -->

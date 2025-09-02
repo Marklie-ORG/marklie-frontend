@@ -1,15 +1,35 @@
-<div class="ad-grid" >
-  <div class="ad-card" *ngFor="let ad of ads; let i = index">
-    <div class="ad-image-container cursor-pointer " (click)="openAd(ad.sourceUrl)">
-      <img class="ad-media" [src]="ad.thumbnailUrl"/>
-    </div>
-    <div class="metrics" #adsGridContainer>
-      <ng-container *ngFor="let metric of this.metrics()">
-        <div class="metric" [style.display]="metric.enabled ? 'flex' : 'none'">
-          <div class="metric-label">{{ metricsService.formatMetricLabel(metric.name) }}</div>
-          <div class="metric-value">{{ad[metric.name]}}</div>
+<h1>Best creatives</h1>
+
+<div #adAccountsContainer>
+@for (adAccount of adAccounts(); track adAccount.id) {
+  @if (adAccount.enabled) {
+    <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
+      <h4 class="mb-2 mt-4">{{ adAccount.name }}</h4>
+
+      <div class="ad-grid" >
+        
+        <div class="ad-card" *ngFor="let creative of (adAccount.creativesData || []); let i = index">
+          <div class="ad-image-container cursor-pointer " (click)="openAd(creative.sourceUrl)">
+            <img class="ad-media" [src]="creative.thumbnailUrl || '../../../assets/img/2025-03-19%2013.02.21.jpg'"/>
+          </div>
+          <div class="metrics" #adsGridContainer [attr.data-ad-account-id]="adAccount.id">
+            <div class="metric">
+              <!-- <div class="metric-label">{{ metricsService.getFormattedMetricName('ad_name') }}</div> -->
+              <div class="ad-name" [attr.data-full-text]="creative.ad_name" (click)="copyToClipboard(creative.ad_name, $event)">{{ creative.ad_name }}</div>
+            </div>
+            @for (point of getOrderedCreativePoints(adAccount, creative); track point.name) {
+              <div class="metric cursor-pointer" [class.enabled]="isMetricEnabled(adAccount, point.name)" [attr.data-metric-name]="point.name">
+                <div class="metric-label">{{ metricsService.getFormattedMetricName(point.name) }}</div>
+                <div class="metric-value">{{ point.currency ? ((point.value | number:'1.0-2') + ' ' + point.currency) : metricsService.formatMetricValue(point.name, point.value) }}{{ point.symbol || '' }}</div>
+              </div>
+            }
+          </div>
         </div>
-      </ng-container>
+      
+      </div>
     </div>
-  </div>
+  }
+  
+}
 </div>
+

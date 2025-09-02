@@ -1,3 +1,9 @@
+.section-title {
+  font-weight: 600;
+  font-size: 24px;
+  color: #000000;
+}
+
 .table-container {
   overflow-x: auto;
   background: #ffffff;
@@ -9,7 +15,7 @@
 .campaign-table {
     width: 100%;
     border-collapse: collapse;
-    
+
 
     th,
     td {
@@ -42,7 +48,7 @@
     transform: scale(1.05);
     z-index: 1000;
   }
-  
+
   /* the placeholder where the item would go */
   .sortable-ghost {
     opacity: 0.3;
@@ -55,3 +61,12 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     cursor: grabbing;
   }
+
+.ad-account-item {
+	.table-container { display: block; }
+}
+
+/* Hide entire table while dragging ad accounts to improve performance */
+:host ::ng-deep [data-reordering="true"] .ad-account-item .table-container {
+	display: none !important;
+}

@@ -1,4 +1,8 @@
-.ad-grid {
+.section-title {
+  font-weight: 600;
+  font-size: 24px;
+  color: #000000;
+}.ad-grid {
   display: grid;
   // grid-template-columns: repeat(5, 1fr);
   // grid-template-rows: repeat(2, auto);
@@ -32,18 +36,74 @@
 .metrics {
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 6px;
+  padding: 12px 14px;
+  gap: 7px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .metric {
-  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 
 .metric-label {
+  width: 50%;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #6b7280;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
 
+.metric-value {
+  width: 50%;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Ensure ad name text stays within the metric box */
+.metric .ad-name {
+  display: block;
+  // max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #111827;
+  // display: flex;
+  // align-items: center;
+  // justify-content: flex-end;
+}
+
+.metric .ad-name:hover::after {
+  content: attr(data-full-text);
+  position: absolute;
+  left: 10px;
+  top: 100%;
+  transform: translateY(6px);
+  background: #111827;
+  color: #ffffff;
+  padding: 6px 8px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  max-width: calc(100% - 20px);
+  white-space: normal;
+  word-break: break-word;
+  pointer-events: none;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 
@@ -70,7 +130,7 @@ button {
 }
 
 :host {
-  width: 20%;
+  // width: 20%;
 
   // .ad-image-container {
   //   height: 250px;
@@ -103,4 +163,15 @@ button {
 .sortable-drag {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   cursor: grabbing;
+}
+
+.ad-account-item {
+	.ad-grid {
+		.ad-card { display: block; }
+	}
+}
+
+/* Hide entire ad cards while reordering ad accounts to improve performance */
+:host ::ng-deep [data-reordering="true"] .ad-account-item .ad-grid .ad-card {
+	display: none !important;
 }

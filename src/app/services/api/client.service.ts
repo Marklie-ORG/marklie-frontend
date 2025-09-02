@@ -45,7 +45,7 @@ export class ClientService {
     );
   }
 
-  async getSlackAvailableConversations(clientUuid: string) {
+  async getSlackAvailableConversations(clientUuid: string) { // todo: uncomment here
     return firstValueFrom(
       this.http.get<Conversations>(`${this.apiUrl}/${clientUuid}/slack/conversations`)
     );
@@ -81,6 +81,12 @@ export class ClientService {
     );
   }
 
+  async deleteClient(clientUuid: string) {
+    return firstValueFrom(
+      this.http.delete(`${this.apiUrl}/${clientUuid}`, { responseType: 'text' })
+    );
+  }
+
 }
 
 export interface Workspace {
@@ -108,9 +114,7 @@ interface IM {
   image: string;
 }
 
-
-
-export interface Client {
+export interface Client { // wef
     uuid: string;
     name: string;
     createdAt: Date;
@@ -122,17 +126,24 @@ export interface Client {
     phoneNumbers: string[];
     slack: string;
     schedulingOption: any[];
+    adAccounts: {adAccountId: string, adAccountName: string, businessId: string}[];
+    facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
+    schedulesCount: number;
+    lastActivity?: string;
+    channels: string[];
 }
 
 export interface CreateClientRequest {
   name: string;
-  facebookAdAccounts: string[];
-  tiktokAdAccounts: string[];
+  facebookAdAccounts: {adAccountId: string, adAccountName: string, businessId: string}[];
+  emails: string[];
+  phoneNumbers: string[];
 }
 
 
 export interface UpdateClientRequest {
   name?: string;
+  facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
   emails?: string[];
   phoneNumbers?: string[];
 }

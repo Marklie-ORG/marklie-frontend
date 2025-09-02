@@ -1,0 +1,44 @@
+@use "variables" as *;
+@use "breakpoints" as *;
+
+.templates-delivery-section {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+  margin-top: 6.25rem;
+  flex-direction: column-reverse;
+
+  @include from-desktop {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  &__image {
+    width: 100%;
+    max-width: 28.125rem;
+    max-height: 23.125rem;
+
+    @include from-tablet {
+      width: 30.6875rem;
+      height: 26.5rem;
+    }
+
+    @include from-desktop {
+      width: 30.6875rem;
+      height: 26.5rem;
+    }
+  }
+
+  &__content {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+
+    &__tags {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}

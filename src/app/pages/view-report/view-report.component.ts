@@ -6,12 +6,13 @@ import {
   inject,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-import { GetAvailableMetricsResponse, ReportService } from '../../services/api/report.service.js';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { ReportService } from '../../services/api/report.service.js';
 import { ReportsDataService } from '../../services/reports-data.service.js';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component.js';
+import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
-import { SchedulesService } from 'src/app/services/api/schedules.service.js';
+import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
+
 
 @Component({
   selector: 'app-view-report',
@@ -20,15 +21,8 @@ import { SchedulesService } from 'src/app/services/api/schedules.service.js';
 })
 export class ViewReportComponent implements OnInit {
 
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
-
   reportId: string | null = null;
-  availableMetrics: GetAvailableMetricsResponse = {};
+  availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
 
   isPreviewMode: boolean = false;
@@ -44,21 +38,18 @@ export class ViewReportComponent implements OnInit {
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
 
-  //
   selectedAdAccountIndex = -1;
-  reportData: any[] = [];
-  //
+  providers: ReportData = [];
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
-  private schedulesService = inject(SchedulesService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.reportId = params['id'];
+      this.reportId = params['reportUuid'];
       await this.loadReport();
     });
   }
@@ -67,20 +58,17 @@ export class ViewReportComponent implements OnInit {
     if (!this.reportId) return;
     try {
       const res = await this.reportService.getReport(this.reportId);
-      this.reportData = res.data;
+      this.providers = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
-      this.clientImageUrl.set(res.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.images?.organizationLogo || '');
+      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
+      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
 
-      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
-      this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
-
-      this.processSelectedAccount();
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
 
     } catch (error) {
       console.error('Error loading report:', error);
@@ -89,22 +77,6 @@ export class ViewReportComponent implements OnInit {
 
   openAd(url: string): void {
     window.open(url, '_blank');
-  }
-
-  public processSelectedAccount(): void {
-    const isAllAccounts = Number(this.selectedAdAccountIndex) === -1;
-    const data = isAllAccounts
-      ? this.reportsDataService.aggregateReports(this.reportData)
-      : this.reportData[this.selectedAdAccountIndex];
-
-    this.data = {
-      KPIs: data.KPIs,
-      ads: data.ads,
-      campaigns: data.campaigns,
-      graphs: data.graphs
-    }
-
-    this.ref.detectChanges();
   }
 
 }

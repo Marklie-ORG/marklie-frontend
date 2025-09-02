@@ -33,13 +33,13 @@ export class OrganizationService {
     return firstValueFrom(this.http.get<any[]>(`${this.apiUrl}/scheduling-options`));
   }
 
-  async getLogs(orgUuid: string) {
+  async listInviteCodes() {
     return firstValueFrom(
-      this.http.get<any[]>(`${this.apiUrl}/${orgUuid}/logs`)
+      this.http.get<any[]>(`${this.apiUrl}/invite-codes`, { observe: 'response' })
     );
   }
 
-  async getReports(orgUuid: string) {
+  async getLogs(orgUuid: string) {
     return firstValueFrom(
       this.http.get<any[]>(`${this.apiUrl}/${orgUuid}/logs`)
     );

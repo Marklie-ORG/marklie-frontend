@@ -1,5 +1,4 @@
 <modal-base>
-    <h3>Add client</h3>
 
     <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
         <div class="form-group mt-3">
@@ -14,62 +13,25 @@
         </div>
   
         <div class="form-group">
-          <label>Selected Ad Accounts</label>
-          <div class="selected-accounts" >
-            <div class="selected-accounts-list">
-              <ng-container *ngFor="let adAccount of uniqueAdAccounts">
-                <div *ngIf="isAdAccountSelected(adAccount.id)" class="selected-account-item">
-                  {{adAccount.name}}
-                </div>
-              </ng-container>
-            </div>
-          </div>
-  
-          <div class="ad-accounts-container">
-            <div *ngIf="isLoading" class="loading-spinner">
-              <div class="spinner"></div>
-              <p>Loading ad accounts...</p>
-            </div>
-            
-            <ng-container *ngIf="!isLoading">
-              <div class="businesses-list">
-                <div 
-                  *ngFor="let business of businesses" 
-                  class="business-item"
-                  [class.selected]="selectedBusiness?.id === business.id"
-                  [class.disabled-business]="isBusinessDisabled(business.id)"
-                  (click)="selectBusiness(business)">
-                  {{business.name}}
-                </div>
-              </div>
-              
-              <div class="accounts-list" *ngIf="selectedBusiness">
-                <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
-                  <h4>Ad Accounts</h4>
-                  <div 
-                  *ngFor="let account of selectedBusiness.ad_accounts" 
-                  class="account-option"
-                  (click)="disabledAdAccountAlert(account.business.id)"
-                  >
-                    <input 
-                      *ngIf="account.business"
-                      [disabled]="isAdAccountDisabled(account.business.id)"
-                      type="checkbox" 
-                      [id]="account.id"
-                      [checked]="isAdAccountSelected(account.id)"
-                      (change)="toggleAdAccount($event, account.id, account.business.id)"
-                      >
-                    <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-          </div>
+          <label for="name">Ad Accounts</label>
+          
+          <ad-accounts-settings
+          [(facebookAdAccounts)]="facebookAdAccounts"
+          ></ad-accounts-settings>
+          
         </div>
+
+        <label for="name">Communications Settings</label>
+        <communications-settings
+        [slackConversationId]="''"
+        [clientUuid]="''"
+        [(clientEmails)]="emails"
+        [(clientPhoneNumbers)]="phoneNumbers"
+        ></communications-settings>
   
-        <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="dialogRef.close()">Cancel</button>
-          <button type="submit" class="btn-primary" [disabled]="!clientForm.valid">Add Client</button>
+        <div class="modal-actions mt-4">
+          <button type="button" (click)="dialogRef.close()">Cancel</button>
+          <button type="submit" class="blue">Add Client</button>
         </div>
       </form>
 </modal-base>

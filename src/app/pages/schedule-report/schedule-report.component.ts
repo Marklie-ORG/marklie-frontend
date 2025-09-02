@@ -1,22 +1,13 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, model, OnInit, signal } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent } from 'src/app/components/schedule-options/schedule-options.component.js';
-import { CreateScheduleRequest, GetAvailableMetricsResponse, Metric, ReportService } from 'src/app/services/api/report.service';
-import { MockReportService } from 'src/app/services/mock-report.service';
+import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import {SchedulesService} from "../../services/api/schedules.service.js";
-
-export type MetricSectionKey = 'kpis' | 'graphs' | 'ads' | 'campaigns';
-
-export interface ReportSection {
-  key: MetricSectionKey;
-  title: string;
-  enabled: boolean;
-  metrics: Metric[];
-  order: number;
-}
+import { ScheduleReportRequest, Frequency, Messages, FACEBOOK_DATE_PRESETS } from 'src/app/interfaces/interfaces.js';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { NotificationService } from '@services/notification.service';
 
 export interface Data {
   KPIs: Record<string, any>;
@@ -37,45 +28,26 @@ export interface Data {
   ]
 })
 export class ScheduleReportComponent implements OnInit {
-  private schedulesService = inject(SchedulesService);
 
-  schedule = {
-    frequency: 'weekly',
-    time: '09:00',
-    dayOfWeek: 'Monday',
-    dayOfMonth: 1,
-    intervalDays: 1,
-    cronExpression: '',
-    reviewNeeded: false,
-  };
+  frequency: Frequency = 'weekly';
+  time: string = '09:00';
+  dayOfWeek: string = 'Monday';
+  dayOfMonth: number = 1;
+  intervalDays: number = 1;
+  cronExpression: string = '';
+  reviewRequired: boolean = true;
   clientUuid: string = '';
   reportStatsLoading = signal(true);
 
-  mockData: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
-
-  reportSections: ReportSection[] = []
-
-  availableMetrics: GetAvailableMetricsResponse = {};
+  reportSections = model<ReportSection[]>([]);
 
   reportTitle: string = 'Report Title';
 
-  selectedDatePreset: string = 'last_7d';
+  selectedDatePreset: FACEBOOK_DATE_PRESETS = FACEBOOK_DATE_PRESETS.LAST_7D;
 
   selectedDatePresetText: string = '';
 
-  messages: {
-    whatsapp: string,
-    slack: string,
-    email: {
-      title: string,
-      body: string,
-    }
-  } = {
+  messages: Messages = {
     whatsapp: '',
     slack: '',
     email: {
@@ -91,8 +63,8 @@ export class ScheduleReportComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reportService = inject(ReportService);
-  private mockReportService = inject(MockReportService);
   public reportsDataService = inject(ReportsDataService);
+  private notificationService = inject(NotificationService);
 
   constructor() {
     this.updateSelectedDatePresetText();
@@ -105,17 +77,7 @@ export class ScheduleReportComponent implements OnInit {
   async ngOnInit() {
     this.clientUuid = this.route.snapshot.paramMap.get('clientUuid') || '';
 
-    this.availableMetrics = await this.schedulesService.getAvailableMetrics();
-
-    this.reportSections = await this.reportsDataService.getInitiatedReportsSections(this.availableMetrics);
-
-    this.reportSections.forEach(section => {
-      for (let i = 0; i < 3; i++) {
-        section.metrics[i].enabled = true;
-      }
-    });
-
-    this.mockData = this.mockReportService.generateMockData();
+    this.reportSections.set(await this.reportsDataService.getDefaultReportsSections(this.clientUuid));
 
     this.reportStatsLoading.set(false);
   }
@@ -123,7 +85,7 @@ export class ScheduleReportComponent implements OnInit {
   ngOnChanges() {
     if (this.reportSections) {
       console.log(this.reportSections)
-      this.reportSections.sort((a, b) => a.order - b.order);
+      this.reportSections.update(prev => prev.sort((a, b) => a.order - b.order));
     }
     if (this.selectedDatePreset) {
       this.updateSelectedDatePresetText();
@@ -140,11 +102,14 @@ export class ScheduleReportComponent implements OnInit {
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
       data: {
-        reportSections: this.reportSections,
-        clientUuid: this.clientUuid,
-        schedule: this.schedule,
-        messages: this.messages,
-        datePreset: this.selectedDatePreset,
+        frequency: this.frequency,
+        time: this.time,
+        dayOfWeek: this.dayOfWeek,
+        dayOfMonth: this.dayOfMonth,
+        intervalDays: this.intervalDays,
+        cronExpression: this.cronExpression,
+        reviewRequired: this.reviewRequired,
+        messages: this.messages
       }
     });
 
@@ -153,37 +118,52 @@ export class ScheduleReportComponent implements OnInit {
         return;
       }
 
-      this.schedule = result.schedule;
-      this.selectedDatePreset = result.datePreset;
+      this.frequency = result.frequency;
+      this.time = result.time;
+      this.dayOfWeek = result.dayOfWeek;
+      this.dayOfMonth = result.dayOfMonth;
+      this.intervalDays = result.intervalDays;
+      this.cronExpression = result.cronExpression;
+      this.reviewRequired = result.reviewRequired;
       this.messages = result.messages;
       this.updateSelectedDatePresetText();
 
-      this.saveConfiguration();
+      this.scheduleReport();
     });
   }
 
-  async saveConfiguration() {
-    if (!this.reportSections || !this.schedule) {
+  async scheduleReport() {
+    if (!this.reportSections) {
       return;
     }
 
-    const selections = this.reportsDataService.reportSectionsToMetricsSelections(this.reportSections);
+    const providers = this.reportsDataService.getProviders(this.reportSections());
 
-    const payload: CreateScheduleRequest = {
+    console.log(providers)
+
+    const payload: ScheduleReportRequest = {
       reportName: this.reportTitle,
-      ...(this.schedule),
-      metrics: selections,
+      frequency: this.frequency,
+      time: this.time,
+      dayOfWeek: this.dayOfWeek,
+      dayOfMonth: this.dayOfMonth,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      intervalDays: this.intervalDays,
+      cronExpression: this.cronExpression,
       datePreset: this.selectedDatePreset,
       clientUuid: this.clientUuid,
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       messages: this.messages,
       images: {
         clientLogo: this.clientImageGsUri(),
         organizationLogo: this.agencyImageGsUri()
-      }
+      },
+      organizationUuid: '',
+      reviewRequired: this.reviewRequired,
+      providers: providers
     };
 
-    const response = await this.reportService.createSchedule(payload) as { uuid: string };
+    const response = await this.reportService.scheduleReport(payload) as { uuid: string };
+    this.notificationService.info('Report scheduled successfully');
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 

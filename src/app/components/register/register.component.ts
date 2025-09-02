@@ -47,6 +47,7 @@ export class RegisterComponent {
 
   async onSubmit() {
     this.submitted = true;
+    this.formError = '';
     const passwordValidated = this.validatePassword();
     const emailValidated = this.validateEmail();
     if (!emailValidated || !passwordValidated) {
@@ -59,8 +60,20 @@ export class RegisterComponent {
       // this.dialogRef.close();
       this.router.navigate(['/onboarding']);
     } catch (err) {
-      if (err instanceof HttpErrorResponse && err.status === 400) {
-        this.formError = "Wrong credentials";
+      if (err instanceof HttpErrorResponse) {
+        const backendMessage = typeof err.error === 'string' ? err.error : err.error?.message;
+        if (backendMessage) {
+          if (/already/i.test(backendMessage)) {
+            this.emailError = backendMessage;
+            this.formError = '';
+          } else {
+            this.formError = backendMessage;
+          }
+        } else {
+          this.formError = 'Registration failed. Please try again.';
+        }
+      } else {
+        this.formError = 'Registration failed. Please try again.';
       }
     }
   }

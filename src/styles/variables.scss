@@ -1,13 +1,70 @@
 :root {
-    // --main-background-color: #F1F1F1;
-    --main-background-color: #fff;
-    
-    --block-color: #fff;
+  // --main-background-color: #F1F1F1;
+  --main-background-color: #fbfbfb;
 
-    --text-color: #282828;
+  --block-color: #fff;
 
-    --box-shadow: 0 4px 6px 0 rgba(67, 46, 134, 0.04);
-    // --box-shadow: 0px 0px 2px #00000033;
+  --text-color: #282828;
+  --text-color-secondary: #0000009c;
 
-    --block-border: 1px solid rgba(128, 128, 128, 0.2392156863);
+  --box-shadow: 0 4px 6px 0 rgba(67, 46, 134, 0.04);
+  // --box-shadow: 0px 0px 2px #00000033;
+
+  --block-border: 1px solid rgba(128, 128, 128, 0.2392156863);
+
+  // Container sizes
+  --container-max-width: 100%;
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+
+  // Borders
+  --border-blue: #b7d2e9;
+
+  // Colors
+  --black-90: #333333e5;
+  --black-60: #33333399;
+  --black-30: #3333334d;
+  --blue-primary: #1f8ded;
+  --blue-secondary: #1f8ded1a;
+  --blue-subtitle: #5788b3;
+  --blue-light: #67a0d1;
+  --blue-table: #e6f0ff;
+  --gray-light: #f7f9fd;
+  --white: #fff;
+  --error-red: #dc3545;
+  --blue-card-background: #3a83c3;
+  --blue-card-logo-background: #7dc3ff21;
+  --text-white: #fff;
+
+  // Button Colors
+  --btn-primary-hover: #1a7fd8;
+  --btn-primary-shadow: rgba(31, 141, 237, 0.3);
+  --btn-disabled-bg: #ccc;
+  --btn-disabled-text: #666;
+  --btn-secondary-bg: #132637;
+  --btn-secondary-text: #fff;
+  --btn-secondary-border: #132637;
+  --btn-secondary-hover-bg: #223a54;
+  --btn-secondary-hover-border: #223a54;
+  --btn-secondary-disabled-bg: #ccc;
+  --btn-secondary-disabled-text: #666;
+  --btn-secondary-disabled-border: #e5e7eb;
+  --btn-outline-disabled-text: #9ca3af;
+  --btn-outline-disabled-border: #d1d5db;
+  --btn-ghost-hover-bg: rgba(31, 141, 237, 0.1);
+  --btn-ghost-disabled-text: #9ca3af;
+  --btn-danger-bg: #dc2626;
+  --btn-danger-hover: #b91c1c;
+  --btn-danger-shadow: rgba(220, 38, 38, 0.3);
+  --btn-danger-disabled-bg: #fecaca;
+  --btn-danger-disabled-text: #f87171;
 }
+
+$border-primary: 0.0625rem solid var(--border-blue);
+$font-family-secondary: "Shantell Sans", cursive;
+$table-box-shadow: 0 0 80px 9px rgba(51, 51, 51, 0.07);
+$table-border-color: #33333308;
+$input-placeholder-color: #3333338a;

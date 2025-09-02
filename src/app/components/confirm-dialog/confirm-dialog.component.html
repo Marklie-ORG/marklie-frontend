@@ -1,0 +1,8 @@
+<div class="confirm-dialog">
+  <div class="confirm-dialog__header">{{ data.title || 'Confirm' }}</div>
+  <div class="confirm-dialog__message">{{ data.message }}</div>
+  <div class="confirm-dialog__actions">
+    <button type="button" class="btn cancel" (click)="onCancel()">{{ data.cancelText || 'Cancel' }}</button>
+    <button type="button" class="btn danger" (click)="onConfirm()">{{ data.confirmText || 'Delete' }}</button>
+  </div>
+</div> 

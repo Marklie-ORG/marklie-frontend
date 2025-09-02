@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 
-export type Root = Root2[]
+export type Root = Business[]
 
-export interface Root2 {
+export interface Business {
   id: string
   name: string
   ad_accounts: AdAccount[]
@@ -18,6 +18,10 @@ export interface AdAccount {
     id: string
     name: string
   }
+}
+
+export interface AdAccountCurrencyResponse {
+  currency: string
 }
 
 
@@ -35,5 +39,17 @@ export class AdAccountsService {
 
   async getBusinessesHierarchy(): Promise<Root> {
     return firstValueFrom(this.http.get<Root>(`${this.apiUrl}/ad-accounts/businesses-hierarchy`, {headers: this.headers}));
+  }
+
+  async getAdAccountCurrency(adAccountId: string): Promise<AdAccountCurrencyResponse> {
+    return firstValueFrom(
+      this.http.get<AdAccountCurrencyResponse>(
+        `${this.apiUrl}/ad-accounts/currency`,
+        {
+          params: { adAccountId },
+          headers: this.headers
+        }
+      )
+    );
   }
 }

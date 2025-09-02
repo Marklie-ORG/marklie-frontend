@@ -1,7 +1,9 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, Input, model, Output, ViewChild } from '@angular/core';
 import Sortable from 'sortablejs';
-import { ReportSection } from 'src/app/pages/schedule-report/schedule-report.component';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { Metric } from 'src/app/interfaces/report-sections.interfaces';
 
 @Component({
   selector: 'edit-metrics',
@@ -29,14 +31,11 @@ export class EditMetricsComponent {
     }
   }
 
-  @Input() reportSections: ReportSection[] = [];
-  @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
+  reportSections = model<ReportSection[]>([]);
+  // @Input() reportSections: ReportSection[] = [];
+  // @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
   @Input() reportTitle: string | undefined = undefined;
   @Output() reportTitleChange = new EventEmitter<string>();
-
-
-  // Track which sections are expanded in the accordion
-  expandedSections: boolean[] = [];
 
   toggles: { [key: string]: boolean } = {
     main: true,
@@ -52,11 +51,26 @@ export class EditMetricsComponent {
   bestCreatives: ReportSection | undefined = undefined;
   bestCampaigns: ReportSection | undefined = undefined;
 
+  selectedAdAccountId: string = '';
+
   constructor(
-    public metricsService: MetricsService
-  ) {}
+    public metricsService: MetricsService,
+    private notificationService: NotificationService
+  ) {
+    effect(() => {
+      // console.log(this.reportSections())
+      this.mainKPIs = this.reportSections().find(section => section.key === 'kpis');
+      this.graphs = this.reportSections().find(section => section.key === 'graphs');
+      this.bestCreatives = this.reportSections().find(section => section.key === 'ads');
+      this.bestCampaigns = this.reportSections().find(section => section.key === 'campaigns');
+    })
+  }
 
   togglePage(page: string): void {
+    if (page === 'main' && this.selectedAdAccountId) {
+      this.selectedAdAccountId = '';
+      return;
+    }
     this.toggles[page] = !this.toggles[page];
 
     Object.keys(this.toggles).forEach(key => {
@@ -66,54 +80,87 @@ export class EditMetricsComponent {
     });
   }
 
-  ngOnInit(): void {
-    // Initialize all sections as collapsed by default
-    this.expandedSections = new Array(this.reportSections.length).fill(false);
+  // toggleAdAccount(adAccount: AdAccount): void {
+  //   adAccount.enabled = !adAccount.enabled;
+  // }
+
+  toggleSelectedAdAccount(adAccountId: string): void {
+    this.selectedAdAccountId = adAccountId;
   }
 
-  ngOnChanges(): void {
-    // Update expandedSections array when reportSections changes
-    if (this.reportSections && this.reportSections.length !== this.expandedSections.length) {
-      this.expandedSections = new Array(this.reportSections.length).fill(false);
-    }
-    if (this.reportSections) {
-      this.mainKPIs = this.reportSections.find(section => section.key === 'kpis');
-      console.log(this.mainKPIs)
+  onMetricsChange(data: ReportSection, sectionKey: string): void {
+    const currentSections = this.reportSections();
 
-      this.graphs = this.reportSections.find(section => section.key === 'graphs');
-      this.bestCreatives = this.reportSections.find(section => section.key === 'ads');
-      this.bestCampaigns = this.reportSections.find(section => section.key === 'campaigns');
-    }
-  }
+    const updatedSections: ReportSection[] = currentSections.map((section) => {
+      if (section.key !== sectionKey) return section;
 
-  toggleSection(index: number): void {
-    this.expandedSections[index] = !this.expandedSections[index];
-  }
+      // Use the mutated `data` from the template as the source of truth,
+      // but create new references for adAccounts and metrics
+      const updatedAdAccounts = (data.adAccounts || []).map((account) => ({
+        ...account,
+        metrics: (account.metrics || []).map((metric) => ({ ...metric }))
+      }));
 
-  isSectionExpanded(index: number): boolean {
-    return this.expandedSections[index];
-  }
-
-  onMetricsChange(): void {
-    if (!this.reportSections.length) return;
-
-
-    this.reportSections.forEach(section => {
-      if (!section.metrics.map(metric => metric.enabled).includes(true)) section.enabled = false; // if all metrics are disabled, disable the section
-      else if (!section.enabled && section.metrics.map(metric => metric.enabled).includes(true)) section.enabled = true; // if any metric is enabled, enable the section
+      return { ...data, adAccounts: updatedAdAccounts } as ReportSection;
     });
 
-    const reportSections: ReportSection[] = [ // explicitly copy the object so that it triggers changes in paremt component
-      ...this.reportSections
-    ];
-    this.reportSectionsChange.emit(reportSections);
+    this.reportSections.set(updatedSections);
   }
 
+  onObligatoryMetricClick(event: MouseEvent, sectionKey: string, metric: Metric): void {
+    if (sectionKey === 'ads' && metric.name === 'impressions') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.notificationService.info('This metric is necessary for the report to get generated. You cannot remove it.');
+    }
+  }
+
+  // ngOnChanges(): void {
+  //   if (this.reportSections) {
+  //     this.mainKPIs = this.reportSections().find(section => section.key === 'kpis');
+  //     this.graphs = this.reportSections().find(section => section.key === 'graphs');
+  //     this.bestCreatives = this.reportSections().find(section => section.key === 'ads');
+  //     this.bestCampaigns = this.reportSections().find(section => section.key === 'campaigns');
+  //   }
+  // }
+
+  // onMetricsChange(): void {
+  //   if (!this.reportSections.length) return;
+
+
+  //   // this.reportSections.forEach(section => {
+  //   //   if (!section.metrics.map((metric: any) => metric.enabled).includes(true)) section.enabled = false; // if all metrics are disabled, disable the section
+  //   //   else if (!section.enabled && section.metrics.map((metric: any) => metric.enabled).includes(true)) section.enabled = true; // if any metric is enabled, enable the section
+  //   // });
+
+  //   const reportSections: ReportSection[] = [ // explicitly copy the object so that it triggers changes in paremt component
+  //     ...this.reportSections
+  //   ];
+  //   this.reportSectionsChange.emit(reportSections);
+  // }
+
   reorderSections(event: Sortable.SortableEvent) {
-    const movedSection = this.reportSections.splice(event.oldIndex!, 1)[0];
-    this.reportSections.splice(event.newIndex!, 0, movedSection);
-    this.reportSections.forEach((s, index) => s.order = index);
-    this.reportSections.sort((a, b) => a.order - b.order);
+    // Get the current value of reportSections
+    const sections = [...this.reportSections()]; // create a shallow copy
+
+    // Remove the moved section from its old position
+    const [movedSection] = sections.splice(event.oldIndex!, 1);
+
+    // Insert the moved section at the new position
+    sections.splice(event.newIndex!, 0, movedSection);
+
+    // Update the order property for each section
+    sections.forEach((s, index) => s.order = index);
+
+    // Sort by order just in case
+    sections.sort((a, b) => a.order - b.order);
+
+    // Update the signal with the new array
+    this.reportSections.set(sections);
+  }
+
+  getFormattedMetricName(metricName: string): string {
+    return this.metricsService.getFormattedMetricName(metricName);
   }
 
 }

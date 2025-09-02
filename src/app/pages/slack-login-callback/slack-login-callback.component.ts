@@ -25,6 +25,7 @@ export class SlackLoginCallbackComponent {
       const code = params['code'];
       const organizationClientId = this.slackLoginService.getTargetClientIdForSlackWorkspace();
 
+      console.log(organizationClientId);
       if (code && organizationClientId) {
         const redirectUri = environment.slackLoginCallbackUrl;
 
@@ -32,7 +33,7 @@ export class SlackLoginCallbackComponent {
           const response = await this.userService.handleSlackLogin(code, redirectUri, organizationClientId);
           this.slackLoginService.removeTargetClientIdForSlackWorkspace();
           if (response.status === 200) {
-            this.router.navigate(['/dashboard']);
+            this.router.navigate([`/client/${organizationClientId}`]);
           }
         }
         catch(response) {

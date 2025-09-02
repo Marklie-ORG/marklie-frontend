@@ -11,50 +11,42 @@
   [isViewMode]="isViewMode()"
   ></report-header>
 
-  <div #sectionsGridContainer>
-
-    @for (section of reportSections; track section.key; let i = $index) {
-      <div class="report-section mb-4">
-        @if (section.enabled && data) {
-          <div class="section-title mb-3">
-            {{ section.title }}
-          </div>
-    
-          <ng-container [ngSwitch]="section.key">
-    
+  <div class="d-flex flex-column gap-5">
+    @for (section of orderedSections(); track section.key) {
+      @if (section.enabled) {
+        <hr>
+        @switch (section.key) {
+          @case ('kpis') {
             <kpi-grid
-            *ngSwitchCase="'kpis'"
-            [kpis]="data.KPIs"
-            [(metrics)]="section.metrics"
+            [adAccounts]="kpisSection().adAccounts"
+            (adAccountsChange)="onKpiAdAccountsChange($event)"
             [isViewMode]="isViewMode()"
             ></kpi-grid>
-    
+          }
+          @case ('graphs') {
             <charts
-            *ngSwitchCase="'graphs'"
-            [graphs]="data.graphs"
-            [(metrics)]="section.metrics"
+            [adAccounts]="graphsSectionAdAccounts"
+            (adAccountsChange)="onGraphsAdAccountsChange($event)"
             [isViewMode]="isViewMode()"
             ></charts>
-    
+          }
+          @case ('ads') {
             <ad-card
-            *ngSwitchCase="'ads'"
-            [ads]="data.ads"
-            [(metrics)]="section.metrics"
+            [adAccounts]="adsSection().adAccounts"
+            (adAccountsChange)="onAdsAdAccountsChange($event)"
             [isViewMode]="isViewMode()"
             ></ad-card>
-    
+          }
+          @case ('campaigns') {
             <campaign-table
-            *ngSwitchCase="'campaigns'"
-            [campaigns]="data.campaigns"
-            [(metrics)]="section.metrics"
+            [(adAccounts)]="campaignsSection().adAccounts"
             [isViewMode]="isViewMode()"
             ></campaign-table>
-            
-          </ng-container>
+          }
         }
-      </div>
+      }
     }
   </div>
-  
+
 
 </div>

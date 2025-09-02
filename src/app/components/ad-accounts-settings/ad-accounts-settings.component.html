@@ -1,0 +1,45 @@
+<div class="ad-accounts-container">
+
+    @if (isLoading) {
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading ad accounts...</p>
+      </div>
+    } @else {
+      <div class="businesses-list">
+        <div 
+          *ngFor="let business of businesses" 
+          class="business-item"
+          [class.selected]="selectedBusiness?.id === business.id"
+          [class.disabled-business]="isBusinessDisabled(business.id)"
+          (click)="selectBusiness(business)">
+          {{business.name}}
+        </div>
+      </div>
+      
+      <div class="accounts-list" *ngIf="selectedBusiness">
+        <div class="owned-accounts" *ngIf="selectedBusiness.ad_accounts.length > 0">
+          <!-- <h4>Ad Accounts</h4> -->
+          <div 
+          *ngFor="let account of selectedBusiness.ad_accounts" 
+          class="account-option"
+          (click)="onAccountOptionClick(account, $event)"
+          >
+            <input 
+              *ngIf="account.business"
+              [disabled]="isCheckboxDisabled(account)"
+              type="checkbox" 
+              [id]="account.id"
+              [checked]="isAdAccountSelected(account.id)"
+              (change)="toggleAdAccount($event, account)"
+              >
+            <label *ngIf="account.business" [for]="account.id">{{account.name}}</label>
+          </div>
+        </div>
+      </div>
+      
+    }
+
+      
+      
+  </div>

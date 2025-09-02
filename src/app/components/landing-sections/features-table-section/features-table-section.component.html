@@ -1,0 +1,83 @@
+<div class="landing-container features-table-section">
+  <table class="features-table">
+    <thead>
+      <tr>
+        <!-- Features column -->
+        <th class="features-table__header">Features</th>
+
+        <!-- Marklie column -->
+        <th class="features-table__header features-table__col--marklie">
+          <div class="features-table__header-content">
+            <img
+              src="/assets/img/logo.png"
+              alt="Marklie Logo"
+              class="features-table__logo"
+            />
+            Marklie
+          </div>
+        </th>
+
+        <!-- Looker Studio column -->
+        <th class="features-table__header">
+          <div class="features-table__header-content">
+            <img
+              src="/assets/img/looker-studio-logo.png"
+              alt="Looker Studio Logo"
+              class="features-table__logo"
+            />
+            Looker Studio
+          </div>
+        </th>
+
+        <!-- Others column -->
+        <th class="features-table__header">Others</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let feature of featuresData">
+        <!-- Feature name -->
+        <td class="features-table__cell">{{ feature.feature }}</td>
+
+        <!-- Marklie -->
+        <td class="features-table__cell features-table__col--marklie">
+          <img
+            [src]="
+              feature.marklie
+                ? '/assets/img/icons/checkmark-circle.svg'
+                : '/assets/img/icons/uncheckmark-circle.svg'
+            "
+            [alt]="feature.marklie ? 'Checked' : 'Unchecked'"
+            class="features-table__icon"
+          />
+        </td>
+
+        <!-- Looker Studio -->
+        <td class="features-table__cell">
+          <img
+            [src]="
+              feature.lookerStudio
+                ? '/assets/img/icons/checkmark-circle.svg'
+                : '/assets/img/icons/uncheckmark-circle.svg'
+            "
+            [alt]="feature.lookerStudio ? 'Checked' : 'Unchecked'"
+            class="features-table__icon"
+          />
+        </td>
+
+        <!-- Others -->
+        <td class="features-table__cell">
+          <img
+            [src]="
+              feature.others
+                ? '/assets/img/icons/checkmark-circle.svg'
+                : '/assets/img/icons/uncheckmark-circle.svg'
+            "
+            [alt]="feature.others ? 'Checked' : 'Unchecked'"
+            class="features-table__icon"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

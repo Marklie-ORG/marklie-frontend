@@ -1,9 +1,24 @@
+<h1>Graphs</h1>
 
+<div #adAccountsContainer>
+@for (adAccount of adAccountsGraphs(); track adAccount.id) {
 
-<div class="graph-grid" #chartsGridContainer>
-    @for (graph of displayedGraphs; track graph.metric) {
-        <div class="graph-card d-flex justify-center align-center" >
-            <canvas [id]="graph.metric + 'Chart'" ></canvas>
+    @if (adAccount.enabled) {
+        <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
+            <h4 class="mb-2 mt-4">{{ adAccount.name }}</h4>
+
+            <div class="graph-grid" #chartsGridContainer [attr.data-adaccount-id]="adAccount.id" [style.display]="isReorderingAdAccounts() ? 'none' : 'grid'">
+                @for (graph of adAccount.graphs; track graph.metric) {
+                    <div class="graph-card d-flex justify-center align-center"
+                         [attr.data-graph-metric]="graph.metric"
+                         [style.cursor]="isViewMode() ? 'auto' : 'grab'" >
+                        <canvas [id]="'Chart-' + adAccount.id + '-' + graph.metric"></canvas>
+                    </div>
+                }
+            </div>
         </div>
     }
+    
+}
 </div>
+

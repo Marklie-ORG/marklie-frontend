@@ -1,0 +1,10 @@
+<modal-base>
+	<h3>Review messages</h3>
+	<div class="d-flex flex-column gap-3 mt-3">
+		<messages-accordion [(messages)]="messages"></messages-accordion>
+		<div class="d-flex justify-between gap-2 mt-5">
+			<button type="button" (click)="onCancel()">Cancel</button>
+			<button type="button" class="blue" (click)="onSend()" [disabled]="isSubmitting">Send now</button>
+		</div>
+	</div>
+</modal-base> 

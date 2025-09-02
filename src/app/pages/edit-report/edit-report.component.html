@@ -6,46 +6,69 @@
       <a href="/dashboard">
         <img src="../../../favicon.png" alt="logo" width="40px">
       </a>
-      
     </div>
 
     <p *ngIf="changesMade">Unsaved changes made</p>
 
-    <div *ngIf="schedulingOption" class=" d-flex  gap-5">
-      <!-- <div>{{schedulingOption.jobData.time}}, {{schedulingOption.jobData.dayOfWeek}}, {{schedulingOption.jobData.timeZone}}</div> -->
-      <div>Frequency: {{schedulingOption.jobData.frequency | titlecase}} </div>
-      <!-- <div>Review before sending: {{schedulingOption.jobData.reviewNeeded ? 'yes' : 'no'}}</div> -->
-      <div>Next sending<br>{{schedulingOption.nextRun | date:'MMM d, yyyy h:mm'}}</div>
+    <div class="header-meta d-flex gap-5">
+      
     </div>
 
-    <div class="d-flex align-center justify-end">
-      <button (click)="isPreviewMode = !isPreviewMode" class="mr-3">
-        Preview
-      </button>
-      <select [(ngModel)]="selectedDatePreset" class="mr-3" (change)="onDatePresetChange($event)">
-        <option *ngFor="let preset of reportsDataService.DATE_PRESETS" [value]="preset.value">
-          {{ preset.text }}
-        </option>
-      </select>
-      <button (click)="editScheduleConfiguration()">
-        Scheduling configuration
-      </button>
-      <button class="blue ml-3" (click)="saveConfiguration()">Save</button>
+    <div class="d-flex align-center justify-between gap-3 width-100">
+      <div class="d-flex flex-row align-center gap-3 pl-3">
+        <button type="button" routerLink="/dashboard" class="nav-btn">Dashboard</button>
+        <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button>
+        <button type="button" routerLink="/reports-database" class="nav-btn badge-container">Generated Reports</button>
+      </div>
+      
+      <div class="d-flex flex-row align-center gap-3">
+        <div class="meta-item">
+          <div class="meta-label">Frequency</div>
+          <div class="meta-value">{{ frequency | titlecase }}</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Next sending</div>
+          <div class="meta-value">{{ nextRun | date:'MMM d, yyyy h:mm' }}</div>
+        </div>
+        <button (click)="isPreviewMode = !isPreviewMode" >
+          Preview
+        </button>
+        <select [(ngModel)]="selectedDatePreset"(change)="onDatePresetChange($event)">
+          <option *ngFor="let preset of reportsDataService.DATE_PRESETS" [value]="preset.value">
+            {{ preset.text }}
+          </option>
+        </select>
+  
+        <button (click)="editScheduleConfiguration()">
+          Scheduling configuration
+        </button>
+  
+        <button class="blue" (click)="saveConfiguration()">Save</button>
+      </div>
+
+      
     </div>
 
   </div>
+
+  
 
   <div 
   style="display: grid; grid-template-columns: 0% 80% 20%; gap: 0%; background-color: #f9fafb;" 
   [style]="{'grid-template-columns': isPreviewMode ? '10% 80% 10%' : '0% 80% 20%'}">
 
+    
+
     <div></div>
 
     <div class="report-container d-flex flex-column pt-3 pl-5 pr-5">
-    
+
+      <div class="d-flex justify-center">
+        <p class="dummy-data-warning">Right now you are seeing a dummy data. The real data will be loaded when the report is generated.</p>
+      </div>
+          
       <report
-        [reportSections]="reportSections"
-        [data]="mockData"
+        [(reportSections)]="reportSections"
         [selectedDatePresetText]="selectedDatePresetText"
         [reportTitle]="reportTitle"
         [(clientImageUrl)]="clientImageUrl"

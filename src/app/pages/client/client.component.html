@@ -1,14 +1,14 @@
-<div class="container" style="height: 85%;">
-
+<div class="container" style="padding-bottom: 100px;  min-height: 85vh;">
+ 
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
         <div
         class="block"
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
           <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-              <h3>Reports</h3>
+              <h3>Scheduled Reports</h3>
               <button class="blue" (click)="scheduleReport()" >
-                  Add report
+                  New report
               </button>
           </div>
 
@@ -19,20 +19,44 @@
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Frequency</div>
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Last activity</div>
               <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Next activity</div>
-              <div style="width: 20%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
+              <div style="width: 15%; color: #333333cb !important;" class="d-flex align-center justify-center">Status</div>
+              <div style="width: 5%; color: #333333cb !important;" class="d-flex align-center justify-center"></div>
             </div>
 
             <div class="list">
-              <div
-              *ngFor="let scheduleOption of scheduleOptions"
-              (click)="onEditReport(scheduleOption.uuid)"
-              class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
-                <div style="width: 20%;">{{scheduleOption.reportName}}</div>
-                <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
-                <div style="width: 20%;">{{scheduleOption.lastRun}}</div>
-                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
-                <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
-              </div>
+              @for (scheduleOption of scheduleOptions; let i = $index; track i) {
+                <div
+                (click)="onEditReport(scheduleOption.uuid)"
+                [style.border-bottom]="scheduleOptions.length - 1 === i && scheduleOptions.length > 1 ? 'none' : '1px solid #e5e7eb'"
+                class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
+                  <div style="width: 20%;">{{scheduleOption.reportName}}</div>
+                  <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
+                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.lastRun}}</div>
+                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
+                  <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
+                  <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
+                    <button type="button" (click)="toggleActionsMenu(scheduleOption, $event)" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                      <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+                    </button>
+                    <div class="dropdown-menu actions-menu" *ngIf="openActionsForUuid === scheduleOption.uuid">
+                      @if (!scheduleOption.isActive) {
+                        <button type="button" (click)="activateSchedule(scheduleOption.uuid)">
+                          <fa-icon [icon]="faPlay"></fa-icon> Activate
+                        </button>
+                      }
+                      @if (scheduleOption.isActive) {
+                        <button type="button" (click)="pauseSchedule(scheduleOption.uuid)">
+                          <fa-icon [icon]="faPause"></fa-icon> Pause
+                        </button>
+                      }
+                      <button type="button" (click)="deleteSchedule(scheduleOption.uuid)">
+                        <fa-icon [icon]="faTrash"></fa-icon> Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+              
             </div>
           </div>
 
@@ -44,32 +68,26 @@
 
         </div>
 
-        <div class="d-flex flex-column gap-4">
+      <div class="d-flex flex-column gap-4">
+        <div class="block">
+          <div class="block-header">
+            <h3 class="block-header__title">
+              @if (client) {
+                {{ client.name }}
+              }
+            </h3>
 
-            <div class="p-4 block d-flex align-center justify-between">
-                <div>
-                    <h3 *ngIf="client">{{client.name}}</h3>
-                </div>
+            <button class="block-header__button blue" (click)="onEditClient()">
+              Client Settings
+            </button>
+          </div>
+        </div>
 
-                <button class="blue" (click)="onEditClient()">
-                    Client Settings
-                </button>
-            </div>
+        <activity-table 
+        [logs]="activityLogs"
+        ></activity-table>
 
-            <div
-            class="block"
-            style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow); height: 100%;">
-
-            <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-              <h3>Activity</h3>
-            </div>
-
-            <app-activity-log-item
-              [logs]="logs"
-              [formatTimeOrDate]="formatTimeOrDate"
-            ></app-activity-log-item>
-
-    </div>
-    </div>
+        <database-table [reports]="generatedReports"></database-table>
+      </div>
     </div>
 </div>

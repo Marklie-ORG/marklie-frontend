@@ -6,11 +6,12 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { GetAvailableMetricsResponse, ReportService } from 'src/app/services/api/report.service';
+import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import { Data, ReportSection } from '../schedule-report/schedule-report.component';
+import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { SchedulesService } from 'src/app/services/api/schedules.service';
+import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { ReportData } from 'src/app/interfaces/get-report.interfaces';
 
 @Component({
   selector: 'app-pdf-report',
@@ -18,15 +19,10 @@ import { SchedulesService } from 'src/app/services/api/schedules.service';
   styleUrls: ['./pdf-report.component.scss'],
 })
 export class PdfReportComponent implements OnInit {
-  data: Data = {
-    KPIs: {},
-    ads: [],
-    campaigns: [],
-    graphs: []
-  }
 
-  reportId: string | null = null;
-  availableMetrics: GetAvailableMetricsResponse = {};
+  reportUuid: string = '';
+  clientUuid: string = '';
+  availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
 
   isPreviewMode: boolean = false;
@@ -41,42 +37,38 @@ export class PdfReportComponent implements OnInit {
 
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
-
-  //
-  reportData: any[] = [];
-  //
+  
+  providers: ReportData = [];
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
-  private schedulesService = inject(SchedulesService);
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
-      this.reportId = params['id'];
+      this.reportUuid = params['reportUuid'];
       await this.loadReport();
     });
   }
 
   private async loadReport() {
-    if (!this.reportId) return;
+    if (!this.reportUuid) return;
     try {
-      const res = await this.reportService.getReport(this.reportId);
-      this.reportData = res.data;
+      const res = await this.reportService.getReport(this.reportUuid);
+      this.providers = res.data;
 
       this.reportTitle.set(res.metadata.reportName);
       this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
 
-      this.clientImageUrl.set(res.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.images?.organizationLogo || '');
+      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
+      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
-
-      this.availableMetrics = await this.schedulesService.getAvailableMetrics();
-      this.reportSections = this.reportsDataService.MetricsSelectionsToReportSections(res.metadata.metricsSelections, this.availableMetrics, false);
-
+      
+      this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
+      
     } catch (error) {
       console.error('Error loading report:', error);
     }

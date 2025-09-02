@@ -1,9 +1,11 @@
-import { Component, effect, ElementRef, EventEmitter, Input, model, Output, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, inject, Input, model, Output, ViewChild } from '@angular/core';
 import Sortable from 'sortablejs';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { Metric } from 'src/app/interfaces/report-sections.interfaces';
+import { MatDialog } from '@angular/material/dialog';
+import { CopyDefaultMetricsComponent } from '../copy-default-metrics/copy-default-metrics.component';
 
 @Component({
   selector: 'edit-metrics',
@@ -52,6 +54,8 @@ export class EditMetricsComponent {
   bestCampaigns: ReportSection | undefined = undefined;
 
   selectedAdAccountId: string = '';
+
+  private dialog = inject(MatDialog);
 
   constructor(
     public metricsService: MetricsService,
@@ -161,6 +165,19 @@ export class EditMetricsComponent {
 
   getFormattedMetricName(metricName: string): string {
     return this.metricsService.getFormattedMetricName(metricName);
+  }
+
+  openCopyDefaultMetricsDialog() {
+    const dialogRef = this.dialog.open(CopyDefaultMetricsComponent, {
+      width: '800px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+        return;
+      }
+    });
   }
 
 }

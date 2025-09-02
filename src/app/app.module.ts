@@ -75,6 +75,7 @@ import { BillingComponent } from './pages/billing/billing.component';
 import { MessagesAccordionComponent } from "./components/messages-accordion/messages-accordion.component";
 import { ConfirmDialogComponent } from "./components/confirm-dialog/confirm-dialog.component";
 import { FinishReviewDialogComponent } from './components/finish-review-dialog/finish-review-dialog.component';
+import { CopyDefaultMetricsComponent } from './components/copy-default-metrics/copy-default-metrics.component';
 
 
 register();
@@ -140,7 +141,8 @@ register();
   BillingComponent,
   MessagesAccordionComponent,
   ConfirmDialogComponent,
-  FinishReviewDialogComponent
+  FinishReviewDialogComponent,
+  CopyDefaultMetricsComponent
 
   ],
   imports: [

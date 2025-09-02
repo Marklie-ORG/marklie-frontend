@@ -144,7 +144,11 @@
 
             <!-- todo: test reordering before commiting -->
             <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2">
+
               <p class="mt-2">Default metrics</p>
+
+              <button class="blue" (click)="openCopyDefaultMetricsDialog()">Copy default metrics</button>
+
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (!metric.isCustom) {
                   <label class="prevent-select" 

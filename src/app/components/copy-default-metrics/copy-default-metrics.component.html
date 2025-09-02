@@ -1,0 +1,65 @@
+<modal-base>
+    <div class="d-flex flex-column" style="gap: 16px; min-width: 880px;">
+        <h3>Copy default metrics</h3>
+
+        <div class="columns-container">
+            <div class="column-list">
+                <div class="column-item" [class.selected]="selectedClientUuid === ''" (click)="selectClient({uuid: '', name: ''})">
+                    Select client
+                </div>
+                @for (c of clients; track c.uuid) {
+                    <div class="column-item" [class.selected]="selectedClientUuid === c.uuid" (click)="selectClient(c)">
+                        {{ c.name }}
+                    </div>
+                }
+            </div>
+
+            <div class="column-list" *ngIf="selectedClientUuid">
+                <div class="column-item" [class.selected]="selectedScheduleUuid === ''">
+                    Select schedule
+                </div>
+                @for (s of clientSchedules; track s.uuid) {
+                    <div class="column-item" [class.selected]="selectedScheduleUuid === s.uuid" (click)="selectSchedule(s)">
+                        {{ s.reportName }}
+                    </div>
+                }
+            </div>
+
+            <div class="column-list" *ngIf="selectedScheduleUuid">
+                <div class="column-item" [class.selected]="selectedSectionName === ''">
+                    Select section
+                </div>
+                @for (sec of sections; track sec.name) {
+                    <div class="column-item" [class.selected]="selectedSectionName === sec.name" (click)="selectSection(sec)">
+                        {{ formatSectionName(sec.name) }}
+                    </div>
+                }
+            </div>
+
+            <div class="column-list" *ngIf="selectedSectionName">
+                <div class="column-item" [class.selected]="selectedAdAccountId === ''">
+                    Select ad account
+                </div>
+                @for (a of adAccounts; track a.adAccountId) {
+                    <div class="column-item" [class.selected]="selectedAdAccountId === a.adAccountId" (click)="selectAdAccount(a)">
+                        {{ a.adAccountName }}
+                    </div>
+                }
+            </div>
+
+            <div class="metrics-panel" *ngIf="selectedAdAccountId">
+                <h4 style="margin-top: 0;">Metrics</h4>
+                <div class="d-flex flex-wrap" style="gap: 6px;">
+                    @for (m of metrics; track m) {
+                        <span class="badge">{{ m }}</span>
+                    }
+                    @if (metrics.length === 0) {
+                        <span style="color: #999;">No metrics found</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</modal-base>
+

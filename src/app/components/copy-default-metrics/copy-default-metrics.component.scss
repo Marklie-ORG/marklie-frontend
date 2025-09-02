@@ -1,0 +1,62 @@
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #eef4ff;
+  color: #2b5dd1;
+  font-size: 12px;
+}
+
+.disabled {
+  opacity: 0.6;
+}
+
+.opacity-5 {
+  opacity: 0.5;
+}
+
+/* Column layout mirrored from ad-accounts settings */
+.columns-container {
+  display: flex;
+  // gap: 1rem;
+  min-height: 300px;
+  max-height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.column-list {
+  // width: 250px;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  background-color: white;
+}
+
+.column-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #eee;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #e9ecef;
+  }
+
+  &.selected {
+    background-color: #e9ecef;
+    font-weight: 500;
+  }
+}
+
+.metrics-panel {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: white;
+}
+

@@ -8,6 +8,6 @@ import { Component, Input } from '@angular/core';
 export class ItemComponent {
 
   @Input() title: string = '';
-  @Input() hideDrag: boolean = false;
+  @Input() showDrag: boolean = false;
 
 }

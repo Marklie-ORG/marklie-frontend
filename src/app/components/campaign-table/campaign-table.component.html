@@ -14,7 +14,9 @@
           <th class="non-sortable">Campaign</th>
           <ng-container *ngFor="let metric of adAccount.metrics">
             @if (metric.enabled) {
-              <th class="draggable-metric-header" [attr.data-metric-name]="metric.name">
+              <th 
+              [style.cursor]="isViewMode() ? 'auto' : 'grab'"
+              class="draggable-metric-header" [attr.data-metric-name]="metric.name">
                 {{metricsService.getFormattedMetricName(metric.name)}}
               </th>
             }

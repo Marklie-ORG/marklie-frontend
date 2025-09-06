@@ -40,6 +40,9 @@ export class ViewReportComponent implements OnInit {
 
   selectedAdAccountIndex = -1;
   providers: ReportData = [];
+  
+  headerBackgroundColor = signal<string>('#ffffff');
+  reportBackgroundColor = signal<string>('#ffffff');
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
@@ -67,6 +70,8 @@ export class ViewReportComponent implements OnInit {
       this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
+      this.headerBackgroundColor.set(res.metadata.colors?.headerBackgroundColor || '');
+      this.reportBackgroundColor.set(res.metadata.colors?.reportBackgroundColor || '');
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
 

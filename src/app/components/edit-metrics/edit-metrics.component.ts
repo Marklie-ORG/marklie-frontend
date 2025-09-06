@@ -37,6 +37,9 @@ export class EditMetricsComponent {
   @Input() reportTitle: string | undefined = undefined;
   @Output() reportTitleChange = new EventEmitter<string>();
 
+  headerBackgroundColor = model<string>('#ffffff');
+  reportBackgroundColor = model<string>('#ffffff');
+
   toggles: { [key: string]: boolean } = {
     main: true,
     header: false,

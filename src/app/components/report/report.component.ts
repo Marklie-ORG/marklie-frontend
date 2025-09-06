@@ -33,6 +33,9 @@ export class ReportComponent {
 
   availableMetrics: GetAvailableMetricsResponse = [];
 
+  headerBackgroundColor = input<string>('#ffffff');
+  reportBackgroundColor = input<string>('#ffffff');
+
   orderedSections = computed(() => {
     const sections = this.reportSections();
     return [...sections].sort((a, b) => a.order - b.order);

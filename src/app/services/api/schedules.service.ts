@@ -39,9 +39,5 @@ export class SchedulesService {
   async getAvailableMetrics(clientUuid: string): Promise<GetAvailableMetricsResponse> {
     return firstValueFrom(this.http.get<GetAvailableMetricsResponse>(`${this.apiUrl}/available-metrics/${clientUuid}`));
   }
-
-  async updateReportMetricsSelections(uuid: string, metricsSelections: any): Promise<any> {
-    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/report-metrics-selections/${uuid}`, metricsSelections, {headers: this.headers}));
-  }
 }
 

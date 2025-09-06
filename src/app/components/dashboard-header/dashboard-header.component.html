@@ -3,10 +3,10 @@
     <div routerLink="/dashboard" class="logo">
       <img src="../../../favicon.png" alt="logo" width="40px" />
     </div>
-    <button type="button" routerLink="/dashboard" class="nav-btn">Dashboard</button>
-    <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button>
+    <button type="button" routerLink="/dashboard" class="nav-btn">Clients</button>
+    <!-- <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button> -->
     <button type="button" routerLink="/reports-database" class="nav-btn badge-container">
-      Generated Reports
+      Reports Database
       @if (pendingReviewCount > 0) {
         <span class="badge">{{ pendingReviewCount }}</span>
       }

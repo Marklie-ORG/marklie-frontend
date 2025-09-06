@@ -1,20 +1,23 @@
 
-<div class="report-container p-5">
+<div class="report-container" [style.background-color]="reportBackgroundColor()">
 
-  <report-header
-  [reportTitle]="reportTitle"
-  [selectedDatePresetText]="selectedDatePresetText"
-  [(clientImageUrl)]="clientImageUrl"
-  [(clientImageGsUri)]="clientImageGsUri"
-  [(agencyImageUrl)]="agencyImageUrl"
-  [(agencyImageGsUri)]="agencyImageGsUri"
-  [isViewMode]="isViewMode()"
-  ></report-header>
+  <div [style.background-color]="headerBackgroundColor()">
+    <report-header
+    [reportTitle]="reportTitle"
+    [selectedDatePresetText]="selectedDatePresetText"
+    [(clientImageUrl)]="clientImageUrl"
+    [(clientImageGsUri)]="clientImageGsUri"
+    [(agencyImageUrl)]="agencyImageUrl"
+    [(agencyImageGsUri)]="agencyImageGsUri"
+    [isViewMode]="isViewMode()"
+    ></report-header>
+  </div>
 
-  <div class="d-flex flex-column gap-5">
+  <hr>
+  <div class="d-flex flex-column gap-5 p-5">
     @for (section of orderedSections(); track section.key) {
       @if (section.enabled) {
-        <hr>
+        
         @switch (section.key) {
           @case ('kpis') {
             <kpi-grid

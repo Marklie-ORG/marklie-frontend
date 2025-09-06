@@ -21,7 +21,7 @@ import { ReportService } from '../../services/api/report.service.js';
 })
 export class DashboardHeaderComponent implements OnInit {
   isDropdownOpen = false;
-  userName: string = 'Oleksii Konts';
+  userName: string = '';
   email: string = '';
 
   pendingReviewCount: number = 0;

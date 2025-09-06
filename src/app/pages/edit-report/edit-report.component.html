@@ -17,19 +17,19 @@
     <div class="d-flex align-center justify-between gap-3 width-100">
       <div class="d-flex flex-row align-center gap-3 pl-3">
         <button type="button" routerLink="/dashboard" class="nav-btn">Dashboard</button>
-        <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button>
-        <button type="button" routerLink="/reports-database" class="nav-btn badge-container">Generated Reports</button>
+        <!-- <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button> -->
+        <button type="button" routerLink="/reports-database" class="nav-btn badge-container">Reports Database</button>
       </div>
       
       <div class="d-flex flex-row align-center gap-3">
-        <div class="meta-item">
+        <!-- <div class="meta-item">
           <div class="meta-label">Frequency</div>
           <div class="meta-value">{{ frequency | titlecase }}</div>
         </div>
         <div class="meta-item">
           <div class="meta-label">Next sending</div>
           <div class="meta-value">{{ nextRun | date:'MMM d, yyyy h:mm' }}</div>
-        </div>
+        </div> -->
         <button (click)="isPreviewMode = !isPreviewMode" >
           Preview
         </button>
@@ -71,6 +71,8 @@
         [(reportSections)]="reportSections"
         [selectedDatePresetText]="selectedDatePresetText"
         [reportTitle]="reportTitle"
+        [headerBackgroundColor]="headerBackgroundColor()"
+        [reportBackgroundColor]="reportBackgroundColor()"
         [(clientImageUrl)]="clientImageUrl"
         [(agencyImageUrl)]="agencyImageUrl"
         [(clientImageGsUri)]="clientImageGsUri"
@@ -83,6 +85,8 @@
       <edit-metrics
       [(reportSections)]="reportSections"
       [(reportTitle)]="reportTitle"
+      [(headerBackgroundColor)]="headerBackgroundColor"
+      [(reportBackgroundColor)]="reportBackgroundColor"
       ></edit-metrics>
     }
 

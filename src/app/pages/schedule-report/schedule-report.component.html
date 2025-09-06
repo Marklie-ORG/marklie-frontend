@@ -32,6 +32,8 @@
         [selectedDatePresetText]="selectedDatePresetText"
         [(clientImageGsUri)]="clientImageGsUri"
         [(agencyImageGsUri)]="agencyImageGsUri"
+        [headerBackgroundColor]="headerBackgroundColor()"
+        [reportBackgroundColor]="reportBackgroundColor()"
       ></report>
 
     </div>
@@ -39,6 +41,8 @@
     <edit-metrics
       [(reportSections)]="reportSections"
       [(reportTitle)]="reportTitle"
+      [(headerBackgroundColor)]="headerBackgroundColor"
+      [(reportBackgroundColor)]="reportBackgroundColor"
     ></edit-metrics>
       
   </div>

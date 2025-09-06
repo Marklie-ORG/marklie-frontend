@@ -1,6 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages, Colors } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent, ScheduleOptionsMatDialogData } from 'src/app/components/schedule-options/schedule-options.component';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
@@ -34,6 +34,7 @@ export interface SchedulingOption {
 }
 
 interface JobData {
+  colors: Colors
   time: string
   metrics: Metrics
   timeZone: string
@@ -105,6 +106,9 @@ export class EditReportComponent {
 
   changesMade = false;
 
+  headerBackgroundColor = signal<string>('#ffffff');
+  reportBackgroundColor = signal<string>('#ffffff');
+
   clientImageUrl = signal<string>('');
   agencyImageUrl = signal<string>('');
 
@@ -155,6 +159,8 @@ export class EditReportComponent {
     this.agencyImageUrl.set(this.schedulingOption?.images.organizationLogo || '');
     this.clientImageGsUri.set(this.schedulingOption?.jobData.images?.clientLogo || '');
     this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.organizationLogo || '');
+    this.headerBackgroundColor.set(this.schedulingOption?.jobData.colors?.headerBackgroundColor || '');
+    this.reportBackgroundColor.set(this.schedulingOption?.jobData.colors?.reportBackgroundColor || '');
 
     this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnSchedulingOption(this.schedulingOption);
   }
@@ -227,6 +233,10 @@ export class EditReportComponent {
       clientUuid: this.clientUuid,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       messages: this.messages,
+      colors: {
+        headerBackgroundColor: this.headerBackgroundColor(),
+        reportBackgroundColor: this.reportBackgroundColor()
+      }
     };
 
     console.log(payload)

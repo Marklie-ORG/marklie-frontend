@@ -174,4 +174,8 @@ export class ScheduleReportComponent implements OnInit {
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 
+  goBack() {
+    this.router.navigate([`/client/${this.clientUuid}`]);
+  }
+
 }

@@ -38,6 +38,9 @@ export class ReviewReportComponent implements OnInit {
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
 
+  headerBackgroundColor = signal<string>('#ffffff');
+  reportBackgroundColor = signal<string>('#ffffff');
+
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
@@ -69,6 +72,8 @@ export class ReviewReportComponent implements OnInit {
       this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
       this.clientImageGsUri.set(res.metadata.images?.clientLogoGsUri || '');
       this.agencyImageGsUri.set(res.metadata.images?.organizationLogoGsUri || '');
+      this.headerBackgroundColor.set(res.metadata.colors?.headerBackgroundColor || '');
+      this.reportBackgroundColor.set(res.metadata.colors?.reportBackgroundColor || '');
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
@@ -88,11 +93,23 @@ export class ReviewReportComponent implements OnInit {
     try {
       const providers = this.reportsDataService.getProviders(this.reportSections);
       await this.reportService.updateReportData(this.reportUuid, providers);
-      await this.reportService.updateReportImages(this.reportUuid, {
-        clientLogo: this.clientImageGsUri(),
-        organizationLogo: this.agencyImageGsUri()
+      await this.reportService.updateReportMetadata(this.reportUuid, {
+        reportName: this.reportTitle(),
+        images: {
+          clientLogoGsUri: this.clientImageGsUri(),
+          organizationLogoGsUri: this.agencyImageGsUri()
+        },
+        // messages: this.currentMessages,
+        colors: {
+          headerBackgroundColor: this.headerBackgroundColor(),
+          reportBackgroundColor: this.reportBackgroundColor()
+        }
       });
-      await this.reportService.updateReportTitle(this.reportUuid, this.reportTitle());
+      // await this.reportService.updateReportImages(this.reportUuid, {
+      //   clientLogo: this.clientImageGsUri(),
+      //   organizationLogo: this.agencyImageGsUri()
+      // });
+      // await this.reportService.updateReportTitle(this.reportUuid, this.reportTitle());
       this.notificationService.info('Report updated successfully!');
       await this.loadReport();
     } catch (error) {

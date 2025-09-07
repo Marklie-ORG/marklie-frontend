@@ -48,6 +48,7 @@ export interface ScheduleReportRequest {
 
   messages: Messages
   images: Images
+  colors: Colors
 
   providers: Provider[]
   
@@ -93,6 +94,11 @@ export interface Messages {
     title: string,
     body: string,
   }
+}
+
+export interface Colors {
+  headerBackgroundColor: string;
+  reportBackgroundColor: string;
 }
 
 export interface Images {
@@ -192,7 +198,6 @@ export interface Campaign {
 export interface Metadata {
   datePreset: string
   reviewNeeded: boolean
-  metricsSelections: any
   reportName: string
   images?: {
     clientLogo: string
@@ -201,6 +206,7 @@ export interface Metadata {
     organizationLogoGsUri: string
   }
   messages?: Messages
+  colors?: Colors
 }
 
 export interface ReportImages {
@@ -216,4 +222,18 @@ export interface SendAfterReviewRequest {
 export interface SendAfterReviewResponse {
   message: string;
   uuid?: string;
+}
+
+export interface UpdateReportMetadataRequest {
+  // datePreset?: string
+  // reviewNeeded?: boolean
+  reportName?: string
+  images?: {
+    // clientLogo: string
+    // organizationLogo: string
+    clientLogoGsUri: string
+    organizationLogoGsUri: string
+  }
+  messages?: Messages
+  colors?: Colors
 }

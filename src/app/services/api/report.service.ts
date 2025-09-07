@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
-import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse, Messages } from 'src/app/interfaces/interfaces';
+import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse, Messages, Metadata, UpdateReportMetadataRequest } from 'src/app/interfaces/interfaces';
 import { GetReportResponse } from 'src/app/interfaces/get-report.interfaces';
 
 
@@ -47,19 +47,23 @@ export class ReportService {
     return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-data/${uuid}`, data, {headers: this.headers}));
   }
 
-  async updateReportImages(uuid: string, images: ReportImages): Promise<any> {
-    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-images/${uuid}`, images, {headers: this.headers}));
+  async updateReportMetadata(uuid: string, metadata: UpdateReportMetadataRequest): Promise<any> {
+    return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-metadata/${uuid}`, metadata, {headers: this.headers}));
   }
 
-  async updateReportMessages(uuid: string, messages: Messages): Promise<{ message: string }> {
-    return firstValueFrom(
-      this.http.put<{ message: string }>(
-        `${this.apiUrl}/reports/report-messages/${uuid}`,
-        messages,
-        { headers: this.headers }
-      )
-    );
-  }
+  // async updateReportImages(uuid: string, images: ReportImages): Promise<any> {
+  //   return firstValueFrom(this.http.put<any>(`${this.apiUrl}/reports/report-images/${uuid}`, images, {headers: this.headers}));
+  // }
+
+  // async updateReportMessages(uuid: string, messages: Messages): Promise<{ message: string }> {
+  //   return firstValueFrom(
+  //     this.http.put<{ message: string }>(
+  //       `${this.apiUrl}/reports/report-messages/${uuid}`,
+  //       messages,
+  //       { headers: this.headers }
+  //     )
+  //   );
+  // }
 
   async sendAfterReview(data: SendAfterReviewRequest): Promise<SendAfterReviewResponse> {
     return firstValueFrom(
@@ -81,15 +85,15 @@ export class ReportService {
     return res.count;
   }
 
-  async updateReportTitle(uuid: string, reportName: string): Promise<any> {
-    return firstValueFrom(
-      this.http.put<any>(
-        `${this.apiUrl}/reports/report-title/${uuid}`,
-        { reportName },
-        { headers: this.headers }
-      )
-    );
-  }
+  // async updateReportTitle(uuid: string, reportName: string): Promise<any> {
+  //   return firstValueFrom(
+  //     this.http.put<any>(
+  //       `${this.apiUrl}/reports/report-title/${uuid}`,
+  //       { reportName },
+  //       { headers: this.headers }
+  //     )
+  //   );
+  // }
 
   async stopSchedulingOptions(uuids: string[]): Promise<{ message: string }> {
     return firstValueFrom(

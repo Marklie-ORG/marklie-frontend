@@ -59,6 +59,9 @@ export class ScheduleReportComponent implements OnInit {
   clientImageGsUri = signal<string>('');
   agencyImageGsUri = signal<string>('');
 
+  headerBackgroundColor = signal<string>('#ffffff');
+  reportBackgroundColor = signal<string>('#ffffff');
+
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -159,11 +162,19 @@ export class ScheduleReportComponent implements OnInit {
       },
       organizationUuid: '',
       reviewRequired: this.reviewRequired,
-      providers: providers
+      providers: providers,
+      colors: {
+        headerBackgroundColor: this.headerBackgroundColor(),
+        reportBackgroundColor: this.reportBackgroundColor()
+      }
     };
 
     const response = await this.reportService.scheduleReport(payload) as { uuid: string };
     this.notificationService.info('Report scheduled successfully');
+    this.router.navigate([`/client/${this.clientUuid}`]);
+  }
+
+  goBack() {
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 

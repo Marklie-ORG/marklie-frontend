@@ -3,7 +3,7 @@
   @if (toggles.main) {
     <div class="d-flex flex-column gap-3">
       <item
-        [title]="'Header'"
+        [title]="'Settings'"
         (click)="togglePage('header')"
       ></item>
     
@@ -43,6 +43,18 @@
           [(ngModel)]="reportTitle" 
           (keyup)="reportTitleChange.emit(reportTitle)"
         >
+        <div class="d-flex flex-column align-items-center gap-3 mt-2">
+          <label class="d-flex align-items-center gap-2">
+            <span style="width: 16px; height: 16px; border-radius: 3px; border: 1px solid #ccc; display: inline-block;" [style.background-color]="headerBackgroundColor()"></span>
+            <span>Header color</span>
+            <input type="color" [value]="headerBackgroundColor()" (input)="headerBackgroundColor.set(($any($event.target)).value)">
+          </label>
+          <label class="d-flex align-items-center gap-2">
+            <span style="width: 16px; height: 16px; border-radius: 3px; border: 1px solid #ccc; display: inline-block;" [style.background-color]="reportBackgroundColor()"></span>
+            <span>Report color</span>
+            <input type="color" [value]="reportBackgroundColor()" (input)="reportBackgroundColor.set(($any($event.target)).value)">
+          </label>
+        </div>
       </div>
     </div>
   }

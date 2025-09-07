@@ -4,7 +4,16 @@
 @for (adAccount of adAccounts(); track adAccount.id) {
   @if (adAccount.enabled) {
     <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
-      <h4 class="mb-2 mt-4">{{ adAccount.name }}</h4>
+      <div class="ad-account-header mb-2 mt-4 d-flex justify-between align-center">
+        <h4 class="">{{ adAccount.name }}</h4>
+        @if (!isViewMode()) {
+          <metrics-actions-menu
+          [adAccounts]="adAccounts()"
+          [sourceAdAccountId]="'' + adAccount.id"
+          (adAccountsChange)="adAccounts.set($event)"
+          ></metrics-actions-menu>
+        }
+      </div>
 
       <div class="ad-grid" >
         

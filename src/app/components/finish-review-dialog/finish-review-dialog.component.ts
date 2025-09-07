@@ -49,7 +49,9 @@ export class FinishReviewDialogComponent {
 		if (this.isSubmitting) return;
 		this.isSubmitting = true;
 		try {
-			await this.reportService.updateReportMessages(this.data.reportUuid, this.messages);
+			await this.reportService.updateReportMetadata(this.data.reportUuid, {
+				messages: this.messages
+			});
 			const sendAt = this.buildSendAtString();
 			this.reportService.sendAfterReview({ reportUuid: this.data.reportUuid, sendAt });
 			this.notificationService.info('Report was saved and sent to the client');

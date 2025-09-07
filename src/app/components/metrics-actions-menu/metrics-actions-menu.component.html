@@ -1,0 +1,53 @@
+<div class="menu-container">
+  <button
+    type="button"
+    class="icon-only"
+    (click)="toggleDropdown()"
+    (keydown)="onTriggerKeydown($event)"
+    [attr.aria-haspopup]="'menu'"
+    [attr.aria-expanded]="isOpen()"
+    #triggerButton
+  >
+    <fa-icon [icon]="faEllipsis"></fa-icon>
+  </button>
+
+  <div
+    class="dropdown-menu"
+    *ngIf="isOpen()"
+    role="menu"
+    (keydown)="$event.key === 'Escape' && closeDropdown(true)"
+    #menu
+  >
+    <button role="menuitem" tabindex="-1" (click)="onDuplicateClick()">
+      Duplicate metrics to...
+    </button>
+    <button role="menuitem" tabindex="-1" (click)="setMetricsForAll()">
+      Set metrics for all ad accounts
+    </button>
+  </div>
+
+  <div
+    class="duplicate-menu fixed"
+    *ngIf="duplicateOpen()"
+    [style.top.px]="duplicateMenuCoords().top"
+    [style.left.px]="duplicateMenuCoords().left"
+    #duplicateMenu
+  >
+    <div class="dup-list">
+      @for (acc of adAccounts(); track acc.id) {
+        @if (("" + acc.id) !== ("" + sourceAdAccountId())) {
+          <label class="dup-item">
+            <input type="checkbox" [checked]="isTargetSelected('' + acc.id)" (change)="toggleTargetSelection('' + acc.id)">
+            <span>{{ acc.name }}</span>
+          </label>
+        }
+      }
+    </div>
+    <div class="dup-actions">
+      <button type="button" class="btn-secondary" (click)="cancelDuplicate()">Cancel</button>
+      <button type="button" class="btn-primary" (click)="applyDuplicate()">Apply</button>
+    </div>
+  </div>
+</div>
+
+

@@ -1,4 +1,6 @@
 import { Component, ElementRef, HostListener, ViewChild, input, output, signal } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
@@ -20,10 +22,19 @@ export class MetricsActionsMenuComponent {
   duplicateOpen = signal<boolean>(false);
   duplicateSelectedTargets = signal<Set<string>>(new Set());
   duplicateMenuCoords = signal<{ top: number; left: number }>({ top: 0, left: 0 });
+  isReviewRoute = signal<boolean>(false);
 
   @ViewChild('triggerButton') triggerButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('menu') menu?: ElementRef<HTMLElement>;
   @ViewChild('duplicateMenu') duplicateMenu?: ElementRef<HTMLElement>;
+
+  constructor(private router: Router) {
+    // Determine if we're on the review-report route and hide the menu in that case
+    this.isReviewRoute.set((this.router.url || '').includes('review-report'));
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
+      this.isReviewRoute.set((this.router.url || '').includes('review-report'));
+    });
+  }
 
   toggleDropdown() {
     this.isOpen.set(!this.isOpen());

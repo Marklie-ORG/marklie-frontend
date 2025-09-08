@@ -1,38 +1,29 @@
 <div class="d-flex flex-column">
 
-  <div class="report-header d-flex align-center justify-between">
+  <div class="report-header d-flex align-center justify-between gap-3">
 
-    <div routerLink="/dashboard" class="logo d-flex align-center">
-      <a href="/dashboard">
-        <img src="../../../favicon.png" alt="logo" width="40px">
-      </a>
-    </div>
+    <div class="d-flex align-center gap-3">
 
-    <p *ngIf="changesMade">Unsaved changes made</p>
+      <div routerLink="/dashboard" class="logo d-flex align-center">
+        <a href="/dashboard">
+          <img src="../../../favicon.png" alt="logo" width="40px">
+        </a>
+      </div>
 
-    <div class="header-meta d-flex gap-5">
-      
     </div>
 
     <div class="d-flex align-center justify-between gap-3 width-100">
-      <div class="d-flex flex-row align-center gap-3 pl-3">
-        <button type="button" routerLink="/dashboard" class="nav-btn">Dashboard</button>
-        <!-- <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button> -->
-        <button type="button" routerLink="/reports-database" class="nav-btn badge-container">Reports Database</button>
-      </div>
-      
-      <div class="d-flex flex-row align-center gap-3">
-        <!-- <div class="meta-item">
-          <div class="meta-label">Frequency</div>
-          <div class="meta-value">{{ frequency | titlecase }}</div>
-        </div>
-        <div class="meta-item">
-          <div class="meta-label">Next sending</div>
-          <div class="meta-value">{{ nextRun | date:'MMM d, yyyy h:mm' }}</div>
-        </div> -->
+
+      <button (click)="goBack()">
+        <img src="../../../assets/icons/back_arrow.svg" alt="back" width="13px" style="margin-right: 3px;">
+        Back
+      </button>
+
+      <div class="d-flex align-center justify-between gap-3">
         <button (click)="isPreviewMode = !isPreviewMode" >
           Preview
         </button>
+  
         <select [(ngModel)]="selectedDatePreset"(change)="onDatePresetChange($event)">
           <option *ngFor="let preset of reportsDataService.DATE_PRESETS" [value]="preset.value">
             {{ preset.text }}
@@ -45,7 +36,6 @@
   
         <button class="blue" (click)="saveConfiguration()">Save</button>
       </div>
-
       
     </div>
 

@@ -306,12 +306,12 @@ export class ChartsComponent implements OnChanges, OnDestroy {
                 beginAtZero: false,
                 ticks: {
                   callback: (value: any) => config.format(Number(value).toFixed(0)),
-                  font: { family: 'Inter Variable, sans-serif' }
+                  font: { family: 'Inter Variable, sans-serif', size: 10 }
                 },
                 grid: { color: 'rgba(0,0,0,0.05)' }
               },
               x: {
-                ticks: { font: { family: 'Inter Variable, sans-serif' } },
+                ticks: { font: { family: 'Inter Variable, sans-serif', size: 10 }, maxRotation: 0, minRotation: 0 },
                 grid: { color: 'rgba(0,0,0,0.05)' }
               }
             },

@@ -239,9 +239,9 @@ export class ChartsComponent implements OnChanges, OnDestroy {
         const points = config.dataPoints || [];
         const data = points.map(d => d.value);
         const labels = points.map(d => {
-          // Convert 'YYYY-MM-DD' to a more human readable format, e.g. 'Aug 10, 2025'
+          // Convert 'YYYY-MM-DD' to a human readable format without year, e.g. 'Aug 10'
           const dateObj = new Date(d.date);
-          return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         });
 
         // Destroy any existing chart for this canvas

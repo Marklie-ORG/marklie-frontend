@@ -71,9 +71,17 @@ export class EditMetricsComponent {
 
   togglePage(page: string): void {
     if (page === 'main' && this.selectedAdAccountId) {
+      const activeSection = this.getActiveSection();
+      const adAccountsCount = activeSection?.adAccounts?.length ?? 0;
+      // Clear selected account either way
       this.selectedAdAccountId = '';
-      return;
+      // If more than one ad account, stay on the section and show the accounts list
+      if (adAccountsCount > 1) {
+        return;
+      }
+      // If only one ad account, proceed to main (sections list)
     }
+
     this.toggles[page] = !this.toggles[page];
 
     Object.keys(this.toggles).forEach(key => {
@@ -81,6 +89,15 @@ export class EditMetricsComponent {
         this.toggles[key] = false;
       }
     });
+
+    // Auto-open single ad account when entering a section; clear otherwise
+    if (page !== 'main' && page !== 'header') {
+      const targetSection = this.getSectionByKey(page);
+      const accounts = targetSection?.adAccounts ?? [];
+      this.selectedAdAccountId = accounts.length === 1 ? accounts[0].id : '';
+    } else if (page === 'main') {
+      this.selectedAdAccountId = '';
+    }
   }
 
   // toggleAdAccount(adAccount: AdAccount): void {
@@ -164,6 +181,22 @@ export class EditMetricsComponent {
 
   getFormattedMetricName(metricName: string): string {
     return this.metricsService.getFormattedMetricName(metricName);
+  }
+
+  private getActiveSection(): ReportSection | undefined {
+    if (this.toggles.kpis) return this.mainKPIs;
+    if (this.toggles.graphs) return this.graphs;
+    if (this.toggles.ads) return this.bestCreatives;
+    if (this.toggles.campaigns) return this.bestCampaigns;
+    return undefined;
+  }
+
+  private getSectionByKey(key: string): ReportSection | undefined {
+    if (key === 'kpis') return this.mainKPIs;
+    if (key === 'graphs') return this.graphs;
+    if (key === 'ads') return this.bestCreatives;
+    if (key === 'campaigns') return this.bestCampaigns;
+    return undefined;
   }
 
 }

@@ -239,9 +239,9 @@ export class ChartsComponent implements OnChanges, OnDestroy {
         const points = config.dataPoints || [];
         const data = points.map(d => d.value);
         const labels = points.map(d => {
-          // Convert 'YYYY-MM-DD' to a more human readable format, e.g. 'Aug 10, 2025'
+          // Convert 'YYYY-MM-DD' to a human readable format without year, e.g. 'Aug 10'
           const dateObj = new Date(d.date);
-          return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         });
 
         // Destroy any existing chart for this canvas
@@ -306,12 +306,12 @@ export class ChartsComponent implements OnChanges, OnDestroy {
                 beginAtZero: false,
                 ticks: {
                   callback: (value: any) => config.format(Number(value).toFixed(0)),
-                  font: { family: 'Inter Variable, sans-serif' }
+                  font: { family: 'Inter Variable, sans-serif', size: 10 }
                 },
                 grid: { color: 'rgba(0,0,0,0.05)' }
               },
               x: {
-                ticks: { font: { family: 'Inter Variable, sans-serif' } },
+                ticks: { font: { family: 'Inter Variable, sans-serif', size: 10 }, maxRotation: 0, minRotation: 0 },
                 grid: { color: 'rgba(0,0,0,0.05)' }
               }
             },

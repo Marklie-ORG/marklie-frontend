@@ -1,14 +1,17 @@
 <div class="d-flex flex-column">
 
   <div class="report-header d-flex align-center justify-between">
-    <div class="d-flex align-center gap-5">
+    <div class="d-flex align-center gap-3">
       <div routerLink="/dashboard" class="logo d-flex align-center">
         <a href="/dashboard">
           <img src="../../../favicon.png" alt="logo" width="40px">
         </a>
       </div>
     
-      <button (click)="goBack()">Back</button>
+      <button (click)="goBack()">
+        <img src="../../../assets/icons/back_arrow.svg" alt="back" width="13px" style="margin-right: 6px;">
+        Back
+      </button>
     </div>
     <div class="d-flex align-center justify-end">
       <select [(ngModel)]="selectedDatePreset" class="select-default mr-3 " (change)="onDatePresetChange($event)">

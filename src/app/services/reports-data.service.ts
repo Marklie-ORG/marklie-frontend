@@ -538,6 +538,34 @@ export class ReportsDataService {
         // normalize order
         metrics.forEach((m, i) => (m.order = i));
 
+        // For KPIs, enforce default metrics and order
+        if (sectionKey === 'kpis') {
+          const normalizeName = (s: string) => (s || '').toLowerCase().replace(/\s|_/g, '');
+          const desiredOrder = [
+            'spend',
+            'impressions',
+            'cpm',
+            'clicks',
+            'cpc',
+            'ctr',
+            'purchases',
+            'conversionvalue'
+          ];
+
+          const selected: Metric[] = [];
+          for (const key of desiredOrder) {
+            const found = metrics.find(m => normalizeName(m.name) === key);
+            if (found) selected.push(found);
+          }
+
+          const remainder = metrics.filter(m => !selected.includes(m));
+          selected.forEach((m, i) => { m.enabled = true; m.order = i; });
+
+          let orderCounter = selected.length;
+          const updatedRemainder = remainder.map(m => ({ ...m, enabled: false, order: orderCounter++ }));
+          metrics = [...selected, ...updatedRemainder];
+        }
+
         // Ensure 'impressions' is always present and enabled for the 'ads' section
         if (sectionKey === 'ads') {
           const impressions = metrics.find(m => m.name === 'impressions');
@@ -553,6 +581,35 @@ export class ReportsDataService {
               id: ''
             });
           }
+        }
+
+        // Enforce default metric order per section
+        const normalizeName = (s: string) => (s || '').toLowerCase().replace(/\s|_/g, '');
+        const enforceOrder = (desired: string[]) => {
+          const selected: Metric[] = [];
+          for (const key of desired) {
+            const found = key === 'roas'
+              ? metrics.find(m => normalizeName(m.name).includes('roas'))
+              : metrics.find(m => normalizeName(m.name) === key);
+            if (found && !selected.includes(found)) selected.push(found);
+          }
+          const remainder = metrics.filter(m => !selected.includes(m));
+          selected.forEach((m, i) => { m.enabled = true; m.order = i; });
+          let orderCounter = selected.length;
+          const updatedRemainder = remainder.map(m => ({ ...m, enabled: false, order: orderCounter++ }));
+          return [...selected, ...updatedRemainder];
+        };
+
+        if (sectionKey === 'graphs') {
+          metrics = enforceOrder(['spend', 'impressions', 'cpm', 'cpc', 'ctr', 'purchases']);
+        }
+
+        if (sectionKey === 'ads') {
+          metrics = enforceOrder(['spend', 'impressions', 'ctr', 'purchases', 'roas']);
+        }
+
+        if (sectionKey === 'campaigns') {
+          metrics = enforceOrder(['spend', 'impressions', 'purchases', 'conversionvalue']);
         }
 
         const currencySymbol = currencyMap.get(adAccount.adAccountId) ?? '';

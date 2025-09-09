@@ -595,7 +595,10 @@ hr {
 }
 
 button, select {
-  border: 1px solid #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #f1f1f1;
   color: #333;
   padding: 10px 22px;
   font-size: 14px;
@@ -606,6 +609,7 @@ button, select {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   background-color: #fff;
+  
 
   &:active {
     transform: scale(0.98);

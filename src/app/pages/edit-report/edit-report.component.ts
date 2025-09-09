@@ -1,5 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages, Colors } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ScheduleOptionsComponent, ScheduleOptionsMatDialogData } from 'src/app/components/schedule-options/schedule-options.component';
@@ -104,8 +104,6 @@ export class EditReportComponent {
 
   isPreviewMode: boolean = false;
 
-  changesMade = false;
-
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
@@ -120,6 +118,7 @@ export class EditReportComponent {
   public reportsDataService = inject(ReportsDataService);
   private schedulesService = inject(SchedulesService);
   private notificationService = inject(NotificationService);
+  private router = inject(Router);
 
   ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -252,6 +251,10 @@ export class EditReportComponent {
 
   onDatePresetChange(event: any) {
     this.updateSelectedDatePresetText();
+  }
+
+  goBack() {
+    this.router.navigate([`/client/${this.clientUuid}`]);
   }
 
 }

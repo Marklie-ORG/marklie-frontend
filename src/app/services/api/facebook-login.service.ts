@@ -10,7 +10,7 @@ export class FacebookLoginService {
     connectFacebook() {
         const appId = '1042744144657355';
         const redirectUri = environment.facebookLoginCallbackUrl;
-        const scope = 'ads_management,ads_read,business_management,instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement,read_insights';
+        const scope = 'ads_read,business_management,public_profile';
 
         window.location.href = `https://www.facebook.com/v22.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}`;
     }

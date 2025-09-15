@@ -1,4 +1,4 @@
-.menu-container { position: relative; z-index: 10010; }
+.menu-container { position: relative;  }
 .icon-only { background: #ffffff; border: 1px solid #e3e8ef; border-radius: 8px; padding: 6px; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; color: #3d475c; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
 .icon-only:hover, .icon-only:focus-visible { background: #f9fafb; border-color: #d7dee8; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
 .dropdown-menu { position: absolute; top: calc(100% + 8px); right: 0; min-width: 220px; background: #ffffff; border: 1px solid #e3e8ef; border-radius: 12px; box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08); padding: 6px 0; z-index: 1000; animation: dropdown-fade-in 120ms ease-out; overflow: hidden; }

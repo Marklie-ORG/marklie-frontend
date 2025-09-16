@@ -87,7 +87,7 @@
         [logs]="activityLogs"
         ></activity-table>
 
-        <database-table [reports]="generatedReports"></database-table>
+        <database-table [reports]="generatedReports" [clientName]="client?.name || null"></database-table>
       </div>
     </div>
 </div>

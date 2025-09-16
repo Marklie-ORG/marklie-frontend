@@ -1,4 +1,4 @@
-import { Component, inject, model, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, model, OnInit, signal, ViewChild } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import {ActivatedRoute, Router} from "@angular/router";
 import { MatDialog } from '@angular/material/dialog';
@@ -61,6 +61,8 @@ export class ScheduleReportComponent implements OnInit {
 
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
+
+  @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
@@ -176,6 +178,16 @@ export class ScheduleReportComponent implements OnInit {
 
   goBack() {
     this.router.navigate([`/client/${this.clientUuid}`]);
+  }
+
+  onSectionFocus(sectionKey: string) {
+    // Wait a tick to ensure the DOM has the section
+    setTimeout(() => {
+      const target = document.getElementById(`section-${sectionKey}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
 }

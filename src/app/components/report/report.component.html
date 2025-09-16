@@ -17,36 +17,37 @@
   <div class="d-flex flex-column gap-5 p-5">
     @for (section of orderedSections(); track section.key) {
       @if (section.enabled) {
-        
-        @switch (section.key) {
-          @case ('kpis') {
-            <kpi-grid
-            [adAccounts]="kpisSection().adAccounts"
-            (adAccountsChange)="onKpiAdAccountsChange($event)"
-            [isViewMode]="isViewMode()"
-            ></kpi-grid>
+        <div class="report-section" [attr.id]="'section-' + section.key">
+          @switch (section.key) {
+            @case ('kpis') {
+              <kpi-grid
+              [adAccounts]="kpisSection().adAccounts"
+              (adAccountsChange)="onKpiAdAccountsChange($event)"
+              [isViewMode]="isViewMode()"
+              ></kpi-grid>
+            }
+            @case ('graphs') {
+              <charts
+              [adAccounts]="graphsSectionAdAccounts"
+              (adAccountsChange)="onGraphsAdAccountsChange($event)"
+              [isViewMode]="isViewMode()"
+              ></charts>
+            }
+            @case ('ads') {
+              <ad-card
+              [adAccounts]="adsSection().adAccounts"
+              (adAccountsChange)="onAdsAdAccountsChange($event)"
+              [isViewMode]="isViewMode()"
+              ></ad-card>
+            }
+            @case ('campaigns') {
+              <campaign-table
+              [(adAccounts)]="campaignsSection().adAccounts"
+              [isViewMode]="isViewMode()"
+              ></campaign-table>
+            }
           }
-          @case ('graphs') {
-            <charts
-            [adAccounts]="graphsSectionAdAccounts"
-            (adAccountsChange)="onGraphsAdAccountsChange($event)"
-            [isViewMode]="isViewMode()"
-            ></charts>
-          }
-          @case ('ads') {
-            <ad-card
-            [adAccounts]="adsSection().adAccounts"
-            (adAccountsChange)="onAdsAdAccountsChange($event)"
-            [isViewMode]="isViewMode()"
-            ></ad-card>
-          }
-          @case ('campaigns') {
-            <campaign-table
-            [(adAccounts)]="campaignsSection().adAccounts"
-            [isViewMode]="isViewMode()"
-            ></campaign-table>
-          }
-        }
+        </div>
       }
     }
   </div>

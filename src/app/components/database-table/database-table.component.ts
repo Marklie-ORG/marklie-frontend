@@ -14,6 +14,7 @@ export interface DatabaseReportItem {
 })
 export class DatabaseTableComponent implements OnInit, OnChanges {
   @Input() reports: DatabaseReportItem[] = [];
+  @Input() clientName: string | null = null;
   private router = inject(Router);
 
   reportsToRender: DatabaseReportItem[] = [];

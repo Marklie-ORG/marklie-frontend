@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ReportService } from '../../services/api/report.service.js';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 interface DatabaseRow {
   uuid: string;
@@ -19,14 +20,39 @@ interface DatabaseRow {
 export class ReportsDatabasePageComponent implements OnInit {
   private reportService = inject(ReportService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   rows: DatabaseRow[] = [];
   searchQuery: string = '';
   loading = true;
   pageSize = 12;
   currentPage = 1;
+  isFilterOpen = false;
+  selectedClients: string[] = [];
+  uniqueClients: string[] = [];
+  @ViewChild('filterMenu') filterMenu?: ElementRef<HTMLElement>;
+  @ViewChild('filterTrigger') filterTrigger?: ElementRef<HTMLElement>;
 
   async ngOnInit() {
+    // Initialize from query params (supports repeated ?client=A&client=B or comma-separated)
+    const initialClients = this.route.snapshot.queryParamMap.getAll('client');
+    const single = this.route.snapshot.queryParamMap.get('client');
+    const parsedSingle = single && initialClients.length === 0 ? single.split(',').map(s => s.trim()).filter(Boolean) : [];
+    this.selectedClients = Array.from(new Set([...(initialClients || []), ...parsedSingle]));
+
+    // Keep state in sync if URL changes externally
+    this.route.queryParamMap.subscribe(map => {
+      const all = map.getAll('client');
+      const one = map.get('client');
+      const parsed = all.length > 0 ? all : (one ? one.split(',').map(s => s.trim()).filter(Boolean) : []);
+      const normalized = Array.from(new Set(parsed));
+      const changed = normalized.length !== this.selectedClients.length || normalized.some(c => !this.selectedClients.includes(c));
+      if (changed) {
+        this.selectedClients = normalized;
+        this.currentPage = 1;
+      }
+    });
+
     const reports: any[] = await this.reportService.getReports();
     this.rows = (reports || []).map((r: any) => ({
       uuid: r.uuid,
@@ -37,17 +63,25 @@ export class ReportsDatabasePageComponent implements OnInit {
       reviewedAt: r.reviewedAt
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    this.uniqueClients = Array.from(new Set(this.rows.map(r => r.clientName).filter(Boolean))).sort();
     // this.rows = [...this.rows, ...this.rows, ...this.rows, ...this.rows]
     this.loading = false;
   }
 
   get filteredRows(): DatabaseRow[] {
     const q = this.searchQuery.trim().toLowerCase();
-    if (!q) return this.rows;
-    return this.rows.filter(r =>
-      r.reportName?.toLowerCase().includes(q) ||
-      r.clientName?.toLowerCase().includes(q)
-    );
+    let rows = this.rows;
+    if (q) {
+      rows = rows.filter(r =>
+        r.reportName?.toLowerCase().includes(q) ||
+        r.clientName?.toLowerCase().includes(q)
+      );
+    }
+    if (this.selectedClients.length > 0) {
+      const set = new Set(this.selectedClients);
+      rows = rows.filter(r => set.has(r.clientName));
+    }
+    return rows;
   }
 
   get totalItems(): number {
@@ -76,6 +110,24 @@ export class ReportsDatabasePageComponent implements OnInit {
   onSearchChange(value: string): void {
     this.searchQuery = value ?? '';
     this.currentPage = 1;
+  }
+
+  toggleFilter(): void {
+    this.isFilterOpen = !this.isFilterOpen;
+  }
+
+  onToggleClient(client: string, checked: boolean): void {
+    const set = new Set(this.selectedClients);
+    if (checked) set.add(client); else set.delete(client);
+    this.selectedClients = Array.from(set);
+    this.currentPage = 1;
+    this.updateClientQueryParam(this.selectedClients);
+  }
+
+  clearClientFilter(): void {
+    this.selectedClients = [];
+    this.currentPage = 1;
+    this.updateClientQueryParam(this.selectedClients);
   }
 
   goToPage(page: number): void {
@@ -125,5 +177,30 @@ export class ReportsDatabasePageComponent implements OnInit {
 
   reviewReport(uuid: string): void {
     this.router.navigate(['/review-report', uuid]);
+  }
+
+  protected readonly faFilter = faFilter;
+
+  isClientSelected(client: string): boolean {
+    return this.selectedClients.includes(client);
+  }
+
+  private updateClientQueryParam(clients: string[]): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { client: clients.length > 0 ? clients : null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.isFilterOpen) return;
+    const target = event.target as Node;
+    const insideTrigger = this.filterTrigger?.nativeElement.contains(target);
+    const insideMenu = this.filterMenu?.nativeElement.contains(target);
+    if (!insideTrigger && !insideMenu) {
+      this.isFilterOpen = false;
+    }
   }
 } 

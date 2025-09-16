@@ -36,6 +36,7 @@ export class EditMetricsComponent {
   // @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
   @Input() reportTitle: string | undefined = undefined;
   @Output() reportTitleChange = new EventEmitter<string>();
+  @Output() sectionFocus = new EventEmitter<string>();
 
   headerBackgroundColor = model<string>('#ffffff');
   reportBackgroundColor = model<string>('#ffffff');
@@ -95,6 +96,10 @@ export class EditMetricsComponent {
       const targetSection = this.getSectionByKey(page);
       const accounts = targetSection?.adAccounts ?? [];
       this.selectedAdAccountId = accounts.length === 1 ? accounts[0].id : '';
+      // Emit section focus only when opening the section
+      if (this.toggles[page]) {
+        this.sectionFocus.emit(page);
+      }
     } else if (page === 'main') {
       this.selectedAdAccountId = '';
     }

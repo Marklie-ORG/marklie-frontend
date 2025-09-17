@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReportService} from 'src/app/services/api/report.service';
 import {GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
@@ -40,6 +40,8 @@ export class ReviewReportComponent implements OnInit {
 
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
+
+  @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
@@ -171,4 +173,21 @@ export class ReviewReportComponent implements OnInit {
     }
   }
 
+  onSectionFocus(sectionKey: string) {
+    const container = this.reportContainerRef?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    const target = container.querySelector(`#section-${sectionKey}`) as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const targetTopWithinContainer = targetRect.top - containerRect.top + container.scrollTop;
+
+    container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
+  }
 }

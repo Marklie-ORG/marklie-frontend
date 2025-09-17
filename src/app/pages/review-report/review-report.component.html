@@ -29,7 +29,7 @@
 
   <div style="display: grid; grid-template-columns: 80% 20%; gap: 0%;">
 
-    <div class="report-container d-flex flex-column pt-3 pl-5 pr-5">
+    <div #reportContainer class="report-container d-flex flex-column pt-3 pl-5 pr-5">
 
       <loom-link-editor
         [link]="loomUrlInput"
@@ -55,6 +55,7 @@
       [(reportTitle)]="reportTitle"
       [(headerBackgroundColor)]="headerBackgroundColor"
       [(reportBackgroundColor)]="reportBackgroundColor"
+      (sectionFocus)="onSectionFocus($event)"
     ></edit-metrics>
 
   </div>

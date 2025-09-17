@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, computed, effect, inject, input, Input, model, signal, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, inject, input, Input, model, signal } from '@angular/core';
 import { SchedulesService } from 'src/app/services/api/schedules.service';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
@@ -35,6 +35,8 @@ export class ReportComponent {
 
   headerBackgroundColor = input<string>('#ffffff');
   reportBackgroundColor = input<string>('#ffffff');
+
+  loomLink = input<string>('');
 
   orderedSections = computed(() => {
     const sections = this.reportSections();
@@ -109,9 +111,6 @@ export class ReportComponent {
       return { ...section, adAccounts: [...updatedAdAccounts] } as ReportSection;
     });
     this.reportSections.set(updatedSections);
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
   }
 
 }

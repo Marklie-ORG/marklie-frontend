@@ -207,6 +207,7 @@ export interface Metadata {
   }
   messages?: Messages
   colors?: Colors
+  loomLink?: string
 }
 
 export interface ReportImages {
@@ -236,4 +237,5 @@ export interface UpdateReportMetadataRequest {
   }
   messages?: Messages
   colors?: Colors
+  loomLink?: string
 }

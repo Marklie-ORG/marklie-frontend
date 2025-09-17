@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReportService} from 'src/app/services/api/report.service';
 import {GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
@@ -41,6 +41,8 @@ export class ReviewReportComponent implements OnInit {
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
+  @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
+
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
@@ -51,6 +53,10 @@ export class ReviewReportComponent implements OnInit {
   private router = inject(Router);
 
   private currentMessages: Messages = { whatsapp: '', slack: '', email: { title: '', body: '' } };
+
+  // Loom popover state
+  loomPopoverOpen: boolean = false;
+  loomUrlInput: string = '';
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -78,6 +84,9 @@ export class ReviewReportComponent implements OnInit {
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
       this.currentMessages = (res.metadata as any)?.messages || this.currentMessages;
+
+      // Initialize Loom URL input if present
+      this.loomUrlInput = (res.metadata as any)?.loomLink || '';
 
     } catch (error) {
       console.error('Error loading report:', error);
@@ -133,6 +142,25 @@ export class ReviewReportComponent implements OnInit {
     });
   }
 
+  openLoomPopover() {
+    this.loomPopoverOpen = true;
+  }
+
+  closeLoomPopover() {
+    this.loomPopoverOpen = false;
+  }
+
+  async saveLoomUrl() {
+    if (!this.reportUuid) return;
+    try {
+      await this.reportService.updateReportMetadata(this.reportUuid, { loomLink: this.loomUrlInput });
+      this.notificationService.info('Loom link saved');
+      this.closeLoomPopover();
+    } catch (error) {
+      console.error('Error saving Loom URL:', error);
+    }
+  }
+
   async sendAfterReview() {
     // Kept for backward compatibility if used elsewhere, but prefer openFinishReviewDialog()
     if (!this.reportUuid) return;
@@ -145,4 +173,21 @@ export class ReviewReportComponent implements OnInit {
     }
   }
 
+  onSectionFocus(sectionKey: string) {
+    const container = this.reportContainerRef?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    const target = container.querySelector(`#section-${sectionKey}`) as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const targetTopWithinContainer = targetRect.top - containerRect.top + container.scrollTop;
+
+    container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
+  }
 }

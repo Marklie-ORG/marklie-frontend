@@ -52,6 +52,10 @@ export class ReviewReportComponent implements OnInit {
 
   private currentMessages: Messages = { whatsapp: '', slack: '', email: { title: '', body: '' } };
 
+  // Loom popover state
+  loomPopoverOpen: boolean = false;
+  loomUrlInput: string = '';
+
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       this.reportUuid = params['reportUuid'];
@@ -78,6 +82,9 @@ export class ReviewReportComponent implements OnInit {
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
       
       this.currentMessages = (res.metadata as any)?.messages || this.currentMessages;
+
+      // Initialize Loom URL input if present
+      this.loomUrlInput = (res.metadata as any)?.loomLink || '';
 
     } catch (error) {
       console.error('Error loading report:', error);
@@ -131,6 +138,25 @@ export class ReviewReportComponent implements OnInit {
         this.router.navigate(['/reports-database']);
       }
     });
+  }
+
+  openLoomPopover() {
+    this.loomPopoverOpen = true;
+  }
+
+  closeLoomPopover() {
+    this.loomPopoverOpen = false;
+  }
+
+  async saveLoomUrl() {
+    if (!this.reportUuid) return;
+    try {
+      await this.reportService.updateReportMetadata(this.reportUuid, { loomLink: this.loomUrlInput });
+      this.notificationService.info('Loom link saved');
+      this.closeLoomPopover();
+    } catch (error) {
+      console.error('Error saving Loom URL:', error);
+    }
   }
 
   async sendAfterReview() {

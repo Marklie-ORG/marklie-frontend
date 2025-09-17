@@ -13,6 +13,17 @@
     ></report-header>
   </div>
 
+  
+
+  @if (loomLink()) {
+    <hr>
+    <div class="p-5 d-flex justify-center">
+      <div style="width: 60%;">
+        <loom-embed [loomLink]="loomLink()"></loom-embed>
+      </div>
+    </div>
+  }
+
   <hr>
   <div class="d-flex flex-column gap-5 p-5">
     @for (section of orderedSections(); track section.key) {

@@ -1,0 +1,24 @@
+<div class="d-flex justify-center pos-relative">
+  <button class="loom-button" type="button" (click)="open()">{{ buttonLabel }}</button>
+
+  <div class="loom-popover" *ngIf="isOpen()">
+    <div class="loom-popover__header d-flex align-center justify-between">
+      <span>Add Loom link</span>
+      <button type="button" class="icon-btn" (click)="close()">✕</button>
+    </div>
+    <div class="loom-popover__body">
+      <input
+        type="text"
+        placeholder="https://www.loom.com/share/..."
+        [ngModel]="value()"
+        (ngModelChange)="value.set($event)"
+      />
+    </div>
+    <div class="loom-popover__actions d-flex justify-end gap-2">
+      <button type="button" class="btn" (click)="close()">Cancel</button>
+      <button type="button" class="blue" (click)="onSave()">Save</button>
+    </div>
+  </div>
+</div>
+
+

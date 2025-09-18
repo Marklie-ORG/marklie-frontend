@@ -102,7 +102,7 @@ export class ReviewReportComponent implements OnInit {
       this.currentMessages = res.messaging ?? this.currentMessages;
 
       // Initialize Loom URL input if present
-      this.loomUrlInput = (res.metadata as any)?.loomLink || '';
+      this.loomUrlInput = res.review.loomUrl || '';
 
     } catch (error) {
       console.error('Error loading report:', error);

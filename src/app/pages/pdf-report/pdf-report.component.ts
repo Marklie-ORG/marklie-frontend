@@ -37,7 +37,7 @@ export class PdfReportComponent implements OnInit {
 
   reportTitle = signal<string>('');
   selectedDatePresetText = signal<string>('');
-  
+
   providers: ReportData = [];
 
   headerBackgroundColor = signal<string>('#ffffff');
@@ -60,20 +60,33 @@ export class PdfReportComponent implements OnInit {
     if (!this.reportUuid) return;
     try {
       const res = await this.reportService.getReport(this.reportUuid);
+
       this.providers = res.data;
 
-      this.reportTitle.set(res.metadata.reportName);
-      this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
+      // title
+      this.reportTitle.set(res.customization?.title ?? '');
 
-      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
-      this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
-      this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
-      this.headerBackgroundColor.set(res.metadata.colors?.headerBackgroundColor || '');
-      this.reportBackgroundColor.set(res.metadata.colors?.reportBackgroundColor || '');
-            
+      const preset = res.schedule?.datePreset ?? '';
+      this.selectedDatePresetText.set(
+        this.reportsDataService.DATE_PRESETS.find(p => p.value === preset)?.text || ''
+      );
+
+      const orgLogo = res.customization?.logos?.org ?? {};
+      const clientLogo = res.customization?.logos?.client ?? {};
+      this.agencyImageUrl.set(orgLogo.url ?? '');
+      this.clientImageUrl.set(clientLogo.url ?? '');
+      this.agencyImageGsUri.set(orgLogo.gcsUri ?? '');
+      this.clientImageGsUri.set(clientLogo.gcsUri ?? '');
+
+      const colors = res.customization?.colors ?? {};
+      this.headerBackgroundColor.set(
+        (colors as any).headerBackgroundColor ?? (colors as any).headerBg ?? '#ffffff'
+      );
+      this.reportBackgroundColor.set(
+        (colors as any).reportBackgroundColor ?? (colors as any).reportBg ?? '#ffffff'
+      );
+
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
-      
     } catch (error) {
       console.error('Error loading report:', error);
     }

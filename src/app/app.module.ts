@@ -76,6 +76,8 @@ import { MessagesAccordionComponent } from "./components/messages-accordion/mess
 import { ConfirmDialogComponent } from "./components/confirm-dialog/confirm-dialog.component";
 import { FinishReviewDialogComponent } from './components/finish-review-dialog/finish-review-dialog.component';
 import { MetricsActionsMenuComponent } from './components/metrics-actions-menu/metrics-actions-menu.component';
+import { LoomEmbedComponent } from './components/loom-embed/loom-embed.component';
+import { LoomLinkEditorComponent } from './components/loom-link-editor/loom-link-editor.component';
 
 
 register();
@@ -142,7 +144,9 @@ register();
   MessagesAccordionComponent,
   ConfirmDialogComponent,
   FinishReviewDialogComponent,
-  MetricsActionsMenuComponent
+  MetricsActionsMenuComponent,
+  LoomEmbedComponent,
+  LoomLinkEditorComponent
 
   ],
   imports: [

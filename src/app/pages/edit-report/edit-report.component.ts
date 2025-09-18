@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages, Colors } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
@@ -112,6 +112,8 @@ export class EditReportComponent {
 
   clientImageGsUri = signal<string>('');
   agencyImageGsUri = signal<string>('');
+
+  @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
@@ -257,5 +259,22 @@ export class EditReportComponent {
     this.router.navigate([`/client/${this.clientUuid}`]);
   }
 
+  onSectionFocus(sectionKey: string) {
+    const container = this.reportContainerRef?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    const target = container.querySelector(`#section-${sectionKey}`) as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const targetTopWithinContainer = targetRect.top - containerRect.top + container.scrollTop;
+
+    container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
+  }
 }
 

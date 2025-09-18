@@ -181,13 +181,21 @@ export class ScheduleReportComponent implements OnInit {
   }
 
   onSectionFocus(sectionKey: string) {
-    // Wait a tick to ensure the DOM has the section
-    setTimeout(() => {
-      const target = document.getElementById(`section-${sectionKey}`);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
+    const container = this.reportContainerRef?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    const target = container.querySelector(`#section-${sectionKey}`) as HTMLElement | null;
+    if (!target) {
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const targetTopWithinContainer = targetRect.top - containerRect.top + container.scrollTop;
+
+    container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
   }
 
 }

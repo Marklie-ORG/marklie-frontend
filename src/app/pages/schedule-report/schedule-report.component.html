@@ -7,7 +7,7 @@
           <img src="../../../favicon.png" alt="logo" width="40px">
         </a>
       </div>
-    
+
       <button (click)="goBack()">
         <img src="../../../assets/icons/back_arrow.svg" alt="back" width="13px" style="margin-right: 6px;">
         Back
@@ -32,7 +32,7 @@
       <div class="d-flex justify-center">
         <p class="dummy-data-warning">Right now you are seeing a dummy data. The real data will be loaded when the report is generated.</p>
       </div>
-        
+
       <report
         [(reportSections)]="reportSections"
         [reportTitle]="reportTitle"
@@ -52,7 +52,7 @@
       [(reportBackgroundColor)]="reportBackgroundColor"
       (sectionFocus)="onSectionFocus($event)"
     ></edit-metrics>
-      
+
   </div>
 
 </div>

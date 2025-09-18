@@ -2,20 +2,79 @@ import { SchedulingOption } from "../pages/edit-report/edit-report.component"
 import { Metadata, SectionKey } from "./interfaces"
 
 export interface GetReportResponse {
-    uuid: string
-    createdAt: string
-    updatedAt: string
-    organization: string
-    client: string
-    reportType: string
-    gcsUrl: string
-    data: ReportData
-    metadata: Metadata
-    images?: {
-      clientLogo: string
-      organizationLogo: string
-    }
-    schedulingOption: SchedulingOption
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+
+  organization: {
+    uuid: string;
+    createdAt: string;
+    updatedAt: string;
+    name: string;
+  };
+
+  client: {
+    uuid: string;
+    createdAt: string;
+    updatedAt: string;
+    name: string;
+    organization: string;
+    deletedAt: string | null;
+  };
+
+  schedulingOption: string; // FK UUID
+
+  review: {
+    reviewedAt: string | null;
+    loomUrl: string;
+  };
+
+  storage: {
+    pdfGcsUri: string;
+  };
+
+  schedule: {
+    timezone: string;
+    lastRun: string | null;
+    nextRun: string | null;
+    jobId: string | null;
+    datePreset: string;
+  };
+
+  customization: {
+    colors: {
+      headerBackgroundColor: string;
+      reportBackgroundColor: string;
+    };
+    logos: {
+      org: {
+        url: string;
+        gcsUri: string;
+      };
+      client: {
+        url: string;
+        gcsUri: string;
+      };
+    };
+    title: string;
+  };
+
+  messaging: {
+    email: {
+      body: string;
+      title: string;
+    };
+    slack: string;
+    whatsapp: string;
+    pdfFilename: string;
+  };
+
+  data: ProviderReportResponse[]
+
+  extras: {
+    aiGeneratedContent: string;
+    userReportDescription: string;
+  };
   }
 
   export type ReportData = ProviderReportResponse[]

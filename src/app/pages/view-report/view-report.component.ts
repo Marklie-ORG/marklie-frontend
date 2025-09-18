@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
-import { ReportService } from '../../services/api/report.service.js';
-import { ReportsDataService } from '../../services/reports-data.service.js';
+import { ReportService } from '@services/api/report.service.js';
+import { ReportsDataService } from '@services/reports-data.service.js';
 import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
@@ -40,7 +40,7 @@ export class ViewReportComponent implements OnInit {
 
   selectedAdAccountIndex = -1;
   providers: ReportData = [];
-  
+
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
@@ -59,19 +59,40 @@ export class ViewReportComponent implements OnInit {
 
   private async loadReport() {
     if (!this.reportId) return;
+
     try {
       const res = await this.reportService.getReport(this.reportId);
-      this.providers = res.data;
 
-      this.reportTitle.set(res.metadata.reportName);
-      this.selectedDatePresetText.set(this.reportsDataService.DATE_PRESETS.find(preset => preset.value === res.metadata?.datePreset)?.text || '');
+      this.providers = res.data as ReportData;
 
-      this.clientImageUrl.set(res.metadata.images?.clientLogo || '');
-      this.agencyImageUrl.set(res.metadata.images?.organizationLogo || '');
-      this.clientImageGsUri.set(res.metadata.images?.clientLogo || '');
-      this.agencyImageGsUri.set(res.metadata.images?.organizationLogo || '');
-      this.headerBackgroundColor.set(res.metadata.colors?.headerBackgroundColor || '');
-      this.reportBackgroundColor.set(res.metadata.colors?.reportBackgroundColor || '');
+      this.reportTitle.set(res.customization?.title ?? '');
+
+      const preset = res.schedule?.datePreset ?? '';
+      this.selectedDatePresetText.set(
+        this.reportsDataService.DATE_PRESETS.find(p => p.value === preset)?.text || ''
+      );
+
+      const orgLogo = res.customization?.logos?.org ?? {};
+      const clientLogo = res.customization?.logos?.client ?? {};
+
+      this.agencyImageUrl.set(orgLogo.url ?? '');
+      this.clientImageUrl.set(clientLogo.url ?? '');
+
+      this.agencyImageGsUri.set(orgLogo.gcsUri ?? '');
+      this.clientImageGsUri.set(clientLogo.gcsUri ?? '');
+
+      const colors = res.customization?.colors ?? {};
+      const headerBg =
+        (colors as any).headerBackgroundColor ??
+        (colors as any).headerBg ??
+        '#ffffff';
+      const reportBg =
+        (colors as any).reportBackgroundColor ??
+        (colors as any).reportBg ??
+        '#ffffff';
+
+      this.headerBackgroundColor.set(headerBg);
+      this.reportBackgroundColor.set(reportBg);
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
 

@@ -74,6 +74,9 @@ dependencies:
   jwt-decode:
     specifier: ^4.0.0
     version: 4.0.0
+  libphonenumber-js:
+    specifier: ^1.12.12
+    version: 1.12.14
   rxjs:
     specifier: ~7.8.0
     version: 7.8.2
@@ -5859,6 +5862,10 @@ packages:
       needle: 3.3.1
       source-map: 0.6.1
     dev: true
+
+  /libphonenumber-js@1.12.14:
+    resolution: {integrity: sha512-HBAMAV7f3yGYy7ZZN5FxQ1tXJTwC77G5/96Yn/SH/HPyKX2EMLGFuCIYUmdLU7CxxJlQcvJymP/PGLzyapurhQ==}
+    dev: false
 
   /license-webpack-plugin@4.0.2(webpack@5.94.0):
     resolution: {integrity: sha512-771TFWFD70G1wLTC4oU2Cw4qvtmNrIw+wRvBtn+okgHl7slJVi7zfNcdmqDL72BojM30VNJ2UHylr1o77U37Jw==}

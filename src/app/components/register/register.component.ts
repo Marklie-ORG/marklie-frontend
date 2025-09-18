@@ -62,13 +62,20 @@ export class RegisterComponent {
     } catch (err) {
       if (err instanceof HttpErrorResponse) {
         const backendMessage = typeof err.error === 'string' ? err.error : err.error?.message;
-        if (backendMessage) {
-          if (/already/i.test(backendMessage)) {
-            this.emailError = backendMessage;
-            this.formError = '';
-          } else {
-            this.formError = backendMessage;
+        if (backendMessage && /already/i.test(backendMessage)) {
+          // If user already exists, try to sign them in automatically
+          try {
+            const loginRes = await this.authService.login(this.email, this.password);
+            this.authService.setToken(loginRes.accessToken);
+            this.formService.clearFormData();
+            this.router.navigate(['/onboarding']);
+            return;
+          } catch (loginErr) {
+            this.emailError = 'User already exists';
+            this.formError = 'Sign-in failed. Please check your password.';
           }
+        } else if (backendMessage) {
+          this.formError = backendMessage;
         } else {
           this.formError = 'Registration failed. Please try again.';
         }

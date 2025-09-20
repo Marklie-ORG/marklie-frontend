@@ -98,4 +98,10 @@ export class UserService {
     );
   }
 
+  async impersonate(email: string) {
+    return firstValueFrom(
+      this.http.post<{ message: string }>(`${this.apiUrl}/impersonate`, { email }, { observe: 'response', withCredentials: true })
+    );
+  }
+
 }

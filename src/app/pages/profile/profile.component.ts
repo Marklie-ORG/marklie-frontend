@@ -18,6 +18,8 @@ export class ProfileComponent {
   newPasswordRepeated: string = ''
   changePasswordPassword: string = ''
   isOwner: boolean = false;
+  isAdmin: boolean = false;
+  impersonateEmail: string = '';
 
   inviteCodes: OrganizationInvite[] = [];
   loadingInviteCodes: boolean = false;
@@ -43,6 +45,7 @@ export class ProfileComponent {
   ngOnInit(): void {
     this.getEmail();
     this.checkOwnershipAndLoadInvites();
+    this.isAdmin = this.authService.isAdmin();
   }
 
   async getEmail() {
@@ -154,6 +157,21 @@ export class ProfileComponent {
       alert('Failed to change password');
     }
 
+  }
+
+  async impersonate() {
+    try {
+      const response = await this.userService.impersonate(this.impersonateEmail);
+      if ((response as any)?.status === 200) {
+        await this.authService.refreshAndReplaceToken();
+        alert('Impersonation refresh token set. Access token refreshed.');
+      } else {
+        alert('Failed to impersonate');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Failed to impersonate');
+    }
   }
 
 }

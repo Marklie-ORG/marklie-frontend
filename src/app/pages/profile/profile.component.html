@@ -109,6 +109,20 @@
                 </div>
             </div>
         }
+
+        @if (isAdmin) {
+            <hr class="mt-4 mb-4">
+            <div>
+                <h3>Admin: Impersonate User</h3>
+                <div class="d-flex gap-4 mt-3">
+                    <div class="d-flex flex-column gap-2" style="width: 280px;">
+                        <label for="impersonateEmail">User Email</label>
+                        <input id="impersonateEmail" type="text" class="text" [(ngModel)]="impersonateEmail" placeholder="user@example.com">
+                    </div>
+                </div>
+                <button (click)="impersonate()" class="mt-3">Impersonate</button>
+            </div>
+        }
  
     </div>
 </div>

@@ -6,10 +6,19 @@
         class="block"
         style="background: var(--block-color); border-radius: 20px; box-shadow: var(--box-shadow)">
           <div class="d-flex align-center justify-between mb-4 pl-4 pt-4 pr-4 pb-3">
-              <h3>Scheduled Reports</h3>
-              <button class="blue" (click)="scheduleReport()" >
+              <h3>
+                @if (client) {
+                  {{ client.name }}
+                }</h3>
+              <div class="d-flex gap-3">
+                <button class="blue" (click)="scheduleReport()" >
                   New report
-              </button>
+                </button>
+                <button (click)="onEditClient()">
+                  ⚙️ Client Settings
+                </button>
+              </div>
+              
           </div>
 
           <div class="table">
@@ -35,9 +44,9 @@
                   <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
                   <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
                   <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
-                    <button type="button" (click)="toggleActionsMenu(scheduleOption, $event)" style="width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <div (click)="toggleActionsMenu(scheduleOption, $event)" style="display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
                       <fa-icon [icon]="faEllipsisVertical"></fa-icon>
-                    </button>
+                    </div>
                     <div class="dropdown-menu actions-menu" *ngIf="openActionsForUuid === scheduleOption.uuid">
                       @if (!scheduleOption.isActive) {
                         <button type="button" (click)="activateSchedule(scheduleOption.uuid)">
@@ -69,7 +78,7 @@
         </div>
 
       <div class="d-flex flex-column gap-4">
-        <div class="block">
+        <!-- <div class="block">
           <div class="block-header">
             <h3 class="block-header__title">
               @if (client) {
@@ -77,11 +86,9 @@
               }
             </h3>
 
-            <button class="block-header__button blue" (click)="onEditClient()">
-              Client Settings
-            </button>
+            
           </div>
-        </div>
+        </div> -->
 
         <activity-table 
         [logs]="activityLogs"

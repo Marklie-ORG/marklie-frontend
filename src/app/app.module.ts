@@ -78,6 +78,8 @@ import { FinishReviewDialogComponent } from './components/finish-review-dialog/f
 import { MetricsActionsMenuComponent } from './components/metrics-actions-menu/metrics-actions-menu.component';
 import { LoomEmbedComponent } from './components/loom-embed/loom-embed.component';
 import { LoomLinkEditorComponent } from './components/loom-link-editor/loom-link-editor.component';
+import {CheckoutComponent} from "./pages/billing/checkout/checkout.component.js";
+import {CompleteComponent} from "./pages/billing/complete/complete.component.js";
 
 
 register();
@@ -124,6 +126,8 @@ register();
     AdCardComponent,
     CampaignTableComponent,
     ChartsComponent,
+    CheckoutComponent,
+    CompleteComponent,
 
     ActivityTableComponent,
     ScheduledReportsPageComponent,

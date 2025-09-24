@@ -10,7 +10,7 @@ input {
 
 .accordion-header {
 	background-color: #fff;
-	cursor: pointer;
+	// cursor: pointer;
 	display: flex;
 	align-items: center;
 	border-radius: 20px;
@@ -44,7 +44,7 @@ input {
 
 .accordion-content.show {
 	max-height: 200px;
-	padding: 15px 20px;
+	// padding: 15px 20px;
 }
 
 .accordion-content p {

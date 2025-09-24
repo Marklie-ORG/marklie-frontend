@@ -10,12 +10,6 @@ export class MessagesAccordionComponent {
 	@Input() messages!: Messages;
 	@Output() messagesChange = new EventEmitter<Messages>();
 
-	accordion: { whatsapp: boolean; slack: boolean; email: boolean } = {
-		whatsapp: true,
-		slack: true,
-		email: true
-	};
-
 	onWhatsappChange(value: string): void {
 		this.messages.whatsapp = value;
 		this.messagesChange.emit(this.messages);

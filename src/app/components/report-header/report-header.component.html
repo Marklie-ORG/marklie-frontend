@@ -21,9 +21,16 @@
       <div class="text-center">
         <h2>{{reportTitle()}}</h2>
       </div>
-      <div class="text-center" *ngIf="selectedDatePresetText()">
-        <h4 >{{selectedDatePresetText()}}</h4>
-      </div>
+      <!-- @if (selectedDatePresetText()) {
+        <div class="text-center">
+          <h4 >{{selectedDatePresetText()}}</h4>
+        </div>
+      } -->
+      @if (dateRangeText()) {
+        <div class="text-center" style="margin-top: 5px">
+          <p>{{dateRangeText()}}</p>
+        </div>
+      }
     </div>
     <div class="d-flex">
       @if (agencyImageUrl()) {

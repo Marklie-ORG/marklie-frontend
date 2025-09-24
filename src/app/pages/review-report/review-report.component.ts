@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReportService} from 'src/app/services/api/report.service';
-import {GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
+import {FACEBOOK_DATE_PRESETS, GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
 import {MetricsService} from 'src/app/services/metrics.service';
 import {ReportsDataService} from 'src/app/services/reports-data.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
@@ -41,6 +41,10 @@ export class ReviewReportComponent implements OnInit {
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
+  dateRangeText = signal<string>('');
+  datePreset = signal<string>('');
+  reportCreatedAt = signal<string>('');
+
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private route = inject(ActivatedRoute);
@@ -74,10 +78,14 @@ export class ReviewReportComponent implements OnInit {
 
       this.reportTitle.set(res.customization?.title ?? '');
 
-      const preset = res.schedule?.datePreset ?? '';
+      this.datePreset.set(res.schedule?.datePreset ?? '');
       this.selectedDatePresetText.set(
-        this.reportsDataService.DATE_PRESETS.find(p => p.value === preset)?.text || ''
+        this.reportsDataService.DATE_PRESETS.find(p => p.value === this.datePreset())?.text || ''
       );
+
+      this.reportCreatedAt.set(res.createdAt ?? '');
+
+      this.updateDateRangeText();
 
       const orgLogo = res.customization?.logos?.org ?? {};
       const clientLogo = res.customization?.logos?.client ?? {};
@@ -205,5 +213,9 @@ export class ReviewReportComponent implements OnInit {
     const targetTopWithinContainer = targetRect.top - containerRect.top + container.scrollTop;
 
     container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
+  }
+
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
   }
 }

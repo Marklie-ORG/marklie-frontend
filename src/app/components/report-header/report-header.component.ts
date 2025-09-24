@@ -10,6 +10,7 @@ export class ReportHeaderComponent {
 
   reportTitle = input<string>('');
   selectedDatePresetText = input<string>('');
+  dateRangeText = input<string>('');
   isViewMode = input<boolean>(false);
 
   clientImageUrl = model<string>('');

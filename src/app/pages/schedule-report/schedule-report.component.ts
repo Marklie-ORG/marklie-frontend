@@ -62,6 +62,8 @@ export class ScheduleReportComponent implements OnInit {
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
+  dateRangeText = signal<string>('');
+
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private dialog = inject(MatDialog);
@@ -73,10 +75,12 @@ export class ScheduleReportComponent implements OnInit {
 
   constructor() {
     this.updateSelectedDatePresetText();
+    this.updateDateRangeText();
   }
 
   onDatePresetChange(event: any) {
     this.updateSelectedDatePresetText();
+    this.updateDateRangeText();
   }
 
   async ngOnInit() {
@@ -94,6 +98,7 @@ export class ScheduleReportComponent implements OnInit {
     }
     if (this.selectedDatePreset) {
       this.updateSelectedDatePresetText();
+      this.updateDateRangeText();
     }
   }
 
@@ -101,6 +106,10 @@ export class ScheduleReportComponent implements OnInit {
     if (this.selectedDatePreset) {
       this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.selectedDatePreset)?.text || '';
     }
+  }
+
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.selectedDatePreset));
   }
 
   editScheduleConfiguration() {
@@ -197,5 +206,7 @@ export class ScheduleReportComponent implements OnInit {
 
     container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
   }
+
+  
 
 }

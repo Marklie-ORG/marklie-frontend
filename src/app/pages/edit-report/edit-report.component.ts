@@ -113,6 +113,8 @@ export class EditReportComponent {
   clientImageGsUri = signal<string>('');
   agencyImageGsUri = signal<string>('');
 
+  dateRangeText = signal<string>('');
+
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private route = inject(ActivatedRoute);
@@ -149,6 +151,7 @@ export class EditReportComponent {
       this.nextRun = this.schedulingOption?.nextRun || '';
 
       this.updateSelectedDatePresetText();
+      this.updateDateRangeText();
     });
   }
 
@@ -253,6 +256,7 @@ export class EditReportComponent {
 
   onDatePresetChange(event: any) {
     this.updateSelectedDatePresetText();
+    this.updateDateRangeText();
   }
 
   goBack() {
@@ -275,6 +279,10 @@ export class EditReportComponent {
     const targetTopWithinContainer = targetRect.top - containerRect.top + container.scrollTop;
 
     container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
+  }
+
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.selectedDatePreset as FACEBOOK_DATE_PRESETS, new Date(this.nextRun)));
   }
 }
 

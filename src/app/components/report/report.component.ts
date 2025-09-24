@@ -28,6 +28,7 @@ export class ReportComponent {
   agencyImageGsUri = model<string>('');
 
   isViewMode = input<boolean>(false);
+  dateRangeText = input<string>('');
 
   schedulesService = inject(SchedulesService);
 

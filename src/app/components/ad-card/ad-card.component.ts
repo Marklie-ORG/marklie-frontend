@@ -1,5 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnDestroy, QueryList, ViewChildren, input, model, ViewChild } from '@angular/core';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { ReportsDataService } from 'src/app/services/reports-data.service';
 import { AdAccount, Metric } from 'src/app/interfaces/report-sections.interfaces';
 import Sortable from 'sortablejs';
 import { NgZone, inject } from '@angular/core';
@@ -21,8 +22,11 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   
   adAccounts = model<AdAccount[]>([]);
   isViewMode = input<boolean>(false);
+  isReviewMode = input<boolean>(false);
 
-  constructor(public metricsService: MetricsService) {}
+  private readonly defaultCreativesLimit = 10;
+
+  constructor(public metricsService: MetricsService, private reportsDataService: ReportsDataService) {}
 
   private ngZone = inject(NgZone);
   private notificationService = inject(NotificationService);
@@ -202,7 +206,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   }
 
   getOrderedCreativePoints(adAccount: AdAccount, creative: AdsAdAccountDataCreative): AdsAdAccountDataPoint[] {
-    const metrics = [...(adAccount.metrics ?? [])].sort((a, b) => a.order - b.order);
+    const metrics = [...(adAccount.metrics ?? [])].sort((a, b) => a.order - b.order).filter(m => m.name !== 'ad_name');
     const dataByName = new Map<string, AdsAdAccountDataPoint>();
     for (const p of creative.data ?? []) {
       dataByName.set(p.name, p);
@@ -256,5 +260,75 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     if (success) {
       this.notificationService.info('Ad name copied to clipboard');
     }
+  }
+
+  getCreativesLimit(adAccount: AdAccount): number {
+    return adAccount.adsSettings?.numberOfAds ?? this.defaultCreativesLimit;
+  }
+
+  onCreativesLimitChange(adAccountId: string, value: string | number): void {
+    const parsed = typeof value === 'number' ? value : parseInt(value, 10);
+    if (Number.isNaN(parsed)) return;
+
+    const current = [...this.adAccounts()];
+
+    current.forEach(a => {
+      if (a.id === adAccountId) {
+        a.adsSettings = {
+          numberOfAds: parsed,
+          sortAdsBy: a.adsSettings?.sortAdsBy ?? ''
+        };
+      }
+    });
+
+    this.adAccounts.set(current);
+  }
+
+  getAccountEnabledMetrics(adAccount: AdAccount): Metric[] {
+    const metrics = adAccount.metrics ?? [];
+    return [...metrics].filter(m => Boolean(m.enabled)).sort((a, b) => a.order - b.order);
+  }
+
+  getAdAccountSortOptions(adAccount: AdAccount): { value: string; label: string }[] {
+    return this.getAccountEnabledMetrics(adAccount)
+      .filter(m => m.name !== 'ad_name')
+      .filter(m => !m.isCustom)
+      .map(m => ({ value: m.name, label: this.metricsService.getFormattedMetricName(m.name) }))
+      
+  }
+
+  getCreativesSortMetric(adAccount: AdAccount): string | null {
+    return adAccount.adsSettings?.sortAdsBy ?? null;
+  }
+
+  onCreativesSortMetricChange(adAccountId: string, metricName: string): void {
+    if (!metricName) return;
+
+    const current = [...this.adAccounts()];
+
+    current.forEach(a => {
+      if (a.id === adAccountId) {
+        a.adsSettings = {
+          numberOfAds: a.adsSettings?.numberOfAds ?? 10,
+          sortAdsBy: metricName
+        };
+      }
+    });
+
+    this.adAccounts.set(current);
+  }
+
+  getSortedCreatives(adAccount: AdAccount): AdsAdAccountDataCreative[] {
+    const creatives = [...(adAccount.creativesData ?? [])];
+    return creatives;
+    // const metricName = this.getCreativesSortMetric(adAccount);
+    // if (!metricName) return creatives;
+    // return creatives.sort((a, b) => {
+    //   const aVal = this.getCreativeMetricValue(a, metricName);
+    //   const bVal = this.getCreativeMetricValue(b, metricName);
+    //   const aScore = (aVal === undefined || aVal === null) ? Number.NEGATIVE_INFINITY : aVal;
+    //   const bScore = (bVal === undefined || bVal === null) ? Number.NEGATIVE_INFINITY : bVal;
+    //   return bScore - aScore; // Descending: best first
+    // });
   }
 }

@@ -173,17 +173,17 @@ export class ReportsDataService {
 
     const randomFor = (metricName: string): number => {
       const name = (metricName || '').toLowerCase();
-      if (name.includes('roas')) return +(Math.random() * 4 + 0.5).toFixed(2);
-      if (name.includes('ctr') || name.includes('rate')) return +(Math.random() * 5).toFixed(2);
-      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return +(Math.random() * 3 + 0.2).toFixed(2) as unknown as number;
-      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return +(Math.random() * 1500).toFixed(2) as unknown as number;
-      if (name.includes('impressions') || name.includes('reach')) return Math.floor(Math.random() * 50000 + 1000);
-      if (name.includes('click')) return Math.floor(Math.random() * 2000 + 50);
-      if (name.includes('purchase') || name.includes('purchases')) return Math.floor(Math.random() * 120);
-      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return Math.floor(Math.random() * 200);
-      if (name.includes('checkout')) return Math.floor(Math.random() * 150);
-      if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
-      return +(Math.random() * 100).toFixed(2) as unknown as number;
+      if (name.includes('roas')) return 9;
+      if (name.includes('ctr') || name.includes('rate')) return 9;
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return 9;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return 999;
+      if (name.includes('impressions') || name.includes('reach')) return 999;
+      if (name.includes('click')) return 9999;
+      if (name.includes('purchase') || name.includes('purchases')) return 999;
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return 999;
+      if (name.includes('checkout')) return 9999;
+      if (name.includes('engagement')) return 9999;
+      return 9;
     };
 
     for (let section of facebookProvider?.sections || []) {
@@ -286,7 +286,7 @@ export class ReportsDataService {
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
-          adAccountObj.creativesData = Array.from({ length: 5 }).map((_, i) => ({
+          adAccountObj.creativesData = Array.from({ length: 10 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
             ad_name: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
@@ -294,6 +294,11 @@ export class ReportsDataService {
             thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
             data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           })) as any;
+
+          adAccountObj.adsSettings = {
+            numberOfAds: adAccount.adsSettings?.numberOfAds ?? 10,
+            sortAdsBy: adAccount.adsSettings?.sortAdsBy ?? metricsForCreative[0]?.name
+          };
         } else if (section.name === 'campaigns') {
           sectionTitle = 'Best campaigns'
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
@@ -590,17 +595,17 @@ export class ReportsDataService {
 
     const randomFor = (metricName: string): number => {
       const name = (metricName || '').toLowerCase();
-      if (name.includes('roas')) return +(Math.random() * 4 + 0.5).toFixed(2);
-      if (name.includes('ctr') || name.includes('rate')) return +(Math.random() * 5).toFixed(2);
-      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return +(Math.random() * 3 + 0.2).toFixed(2) as unknown as number;
-      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return +(Math.random() * 1500).toFixed(2) as unknown as number;
-      if (name.includes('impressions') || name.includes('reach')) return Math.floor(Math.random() * 50000 + 1000);
-      if (name.includes('click')) return Math.floor(Math.random() * 2000 + 50);
-      if (name.includes('purchase') || name.includes('purchases')) return Math.floor(Math.random() * 120);
-      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return Math.floor(Math.random() * 200);
-      if (name.includes('checkout')) return Math.floor(Math.random() * 150);
-      if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
-      return +(Math.random() * 100).toFixed(2) as unknown as number;
+      if (name.includes('roas')) return 9;
+      if (name.includes('ctr') || name.includes('rate')) return 9;
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return 9;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return 999;
+      if (name.includes('impressions') || name.includes('reach')) return 999;
+      if (name.includes('click')) return 9999;
+      if (name.includes('purchase') || name.includes('purchases')) return 999;
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return 999;
+      if (name.includes('checkout')) return 9999;
+      if (name.includes('engagement')) return 9999;
+      return 9;
     };
 
     const currencyMap = new Map<string, string>();
@@ -655,23 +660,6 @@ export class ReportsDataService {
           metrics = [...selected, ...updatedRemainder];
         }
 
-        // Ensure 'impressions' is always present and enabled for the 'ads' section
-        if (sectionKey === 'ads') {
-          const impressions = metrics.find(m => m.name === 'impressions');
-          metrics = metrics.filter(m => m.name !== 'ad_name');
-          if (impressions) {
-            impressions.enabled = true;
-          } else {
-            metrics.push({
-              name: 'impressions',
-              order: metrics.length,
-              enabled: true,
-              isCustom: false,
-              id: ''
-            });
-          }
-        }
-
         // Enforce default metric order per section
         const normalizeName = (s: string) => (s || '').toLowerCase().replace(/\s|_/g, '');
         const enforceOrder = (desired: string[]) => {
@@ -712,6 +700,13 @@ export class ReportsDataService {
           currency: currencySymbol
         };
 
+        if (sectionKey === 'ads') {
+          adAccountObj.adsSettings = {
+            numberOfAds: 10,
+            sortAdsBy: adAccountObj.metrics[0]?.name || ''
+          };
+        }
+
         // attach lightweight preview data per section so UI can render something meaningful
         if (sectionKey === 'kpis') {
           adAccountObj.metrics = adAccountObj.metrics.map(m => ({ ...m, value: randomFor(m.name) }));
@@ -725,7 +720,7 @@ export class ReportsDataService {
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
-          const creatives = Array.from({ length: 5 }).map((_, i) => ({
+          const creatives = Array.from({ length: 10 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
             ad_name: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
@@ -803,13 +798,9 @@ export class ReportsDataService {
 
     for (const [sectionIndex, section] of reportSections.entries()) {
 
-      // if (!section.enabled) continue; // dont add section if its disabled
-
       let adAccounts: AdAccountScheduleReportRequest[] = [];
 
       for (const [adAccountIndex, adAccount] of section.adAccounts.entries()) {
-
-        // if (!adAccount.enabled) continue; // dont add ad account if its disabled
 
         let metrics: MetricScheduleReportRequest[] = [];
         let customMetrics: CustomMetricScheduleReportRequest[] = [];
@@ -848,7 +839,8 @@ export class ReportsDataService {
           enabled: adAccount.enabled,
           metrics: metrics,
           customMetrics: customMetrics,
-          currency: adAccount.currency
+          currency: adAccount.currency,
+          ...(adAccount.adsSettings ? { adsSettings: adAccount.adsSettings } : {})
         })
 
       }

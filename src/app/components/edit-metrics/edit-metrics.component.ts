@@ -59,7 +59,6 @@ export class EditMetricsComponent {
 
   constructor(
     public metricsService: MetricsService,
-    private notificationService: NotificationService
   ) {
     effect(() => {
       // console.log(this.reportSections())
@@ -130,14 +129,6 @@ export class EditMetricsComponent {
     });
 
     this.reportSections.set(updatedSections);
-  }
-
-  onObligatoryMetricClick(event: MouseEvent, sectionKey: string, metric: Metric): void {
-    if (sectionKey === 'ads' && metric.name === 'impressions') {
-      event.preventDefault();
-      event.stopPropagation();
-      this.notificationService.info('This metric is necessary for the report to get generated. You cannot remove it.');
-    }
   }
 
   // ngOnChanges(): void {

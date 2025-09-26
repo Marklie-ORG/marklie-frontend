@@ -18,6 +18,10 @@ export interface ReportSection {
     campaignsData?: CampaignData[]
     creativesData?: AdsAdAccountDataCreative[]
     currency: string;
+    adsSettings?: {
+      numberOfAds: number;
+      sortAdsBy: string
+    }
   }
   
   export interface Metric {

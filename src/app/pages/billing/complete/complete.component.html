@@ -1,0 +1,7 @@
+<!-- src/app/complete/complete.component.html -->
+<section class="wrap">
+  <h2>Finalizing…</h2>
+  <p *ngIf="state === 'loading'">We’re finalizing your subscription…</p>
+  <p *ngIf="state === 'ok'">✅ Subscription active (status: {{ status }})</p>
+  <p *ngIf="state === 'err'">❌ {{ error }}</p>
+</section>

@@ -62,6 +62,9 @@ dependencies:
   '@ng-select/ng-select':
     specifier: ^14.7.0
     version: 14.9.0(@angular/common@17.3.12)(@angular/core@17.3.12)(@angular/forms@17.3.12)
+  '@stripe/stripe-js':
+    specifier: ^7.9.0
+    version: 7.9.0
   '@types/facebook-js-sdk':
     specifier: ^3.3.12
     version: 3.3.12
@@ -3319,6 +3322,11 @@ packages:
   /@socket.io/component-emitter@3.1.2:
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
     dev: true
+
+  /@stripe/stripe-js@7.9.0:
+    resolution: {integrity: sha512-ggs5k+/0FUJcIgNY08aZTqpBTtbExkJMYMLSMwyucrhtWexVOEY1KJmhBsxf+E/Q15f5rbwBpj+t0t2AW2oCsQ==}
+    engines: {node: '>=12.16'}
+    dev: false
 
   /@tufjs/canonical-json@2.0.0:
     resolution: {integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==}

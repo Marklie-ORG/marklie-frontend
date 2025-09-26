@@ -1,84 +1,111 @@
 <div class="billing-page container mt-4">
-	<h3>Plans & Billing</h3>
-	<!-- <p class="subtitle">Manage your plans and billing history here.</p> -->
+  <h3>Plans & Billing</h3>
 
-	<div class="toggle-row mt-4">
-		<div class="period-toggle" role="tablist" aria-label="Billing period">
-			<div class="segmented" aria-hidden="false">
-				<button [class.active]="period()==='yearly'" (click)="setPeriod('yearly')">Pay yearly</button>
-				<button [class.active]="period()==='monthly'" (click)="setPeriod('monthly')">Pay monthly</button>
-			</div>
-			<a class="save-hint" href="javascript:void(0)">Save up to 20% with yearly</a>
-		</div>
-	</div>
+  <div class="toggle-row mt-4">
+    <div class="period-toggle" role="tablist" aria-label="Billing period">
+      <div class="segmented">
+        <button class="active" disabled>Pay monthly</button>
+        <a class="save-hint" href="javascript:void(0)">Save up to 20% with yearly</a>
+      </div>
+    </div>
+  </div>
 
-	<div class="plans-grid">
-		@for (plan of plans(); track plan.id) {
-			<div class="plan-card" [class.current]="plan.id===currentPlanId()" [class.popular]="plan.isMostPopular">
-				<div class="plan-header">
-					<div class="title">{{ plan.title }}</div>
-					<!-- <div class="badge" *ngIf="plan.isMostPopular">Most popular</div> -->
-				</div>
-				@if (plan.priceMonthly !== undefined) {
-					<div class="price">
-						<span class="value">{{ (period()==='monthly' ? plan.priceMonthly : plan.priceYearly) || plan.priceMonthly }}$</span>
-						<span class="per">/mo</span>
-					</div>
-				} @else {
-					<div class="price">
-						<span class="value">Custom</span>
-					</div>
-				}
+  <div class="current-plan-actions" *ngIf="currentPlanId()">
+    <h4>Manage current plan</h4>
 
-				@if (plan.id===currentPlanId()) {
-					<div class="cta">
-						<div class="current">
-							<div class="label">Current Plan</div>
-							<div class="renew">{{ renewalDateLabel() }}</div>
-						</div>
-					</div>
-				} @else if (plan.id!=='business') {
-					<div class="cta">
-						<button class="primary">{{ plan.id==='start' ? 'Downgrade' : 'Upgrade' }}</button>
-						<div class="trial" *ngIf="plan.id!=='start'">Start Free 7-Days Trial</div>
-					</div>
-				} @else {
-					<div class="cta">
-						<button class="secondary">Contact Sales</button>
-						<div class="trial">Start Free 7-Days Trial</div>
-					</div>
-				}
+    <div class="current-plan-row">
+      <div class="label">Plan</div>
+      <div class="value">{{ getCurrentPlan()?.name || '—' }}</div>
+    </div>
 
-				<ul class="features">
-					@for (f of plan.features; track f.text) {
-						<li>
-							<fa-icon [icon]="faCheck"></fa-icon>
-							{{ f.text }}
-						</li>
-					}
-				</ul>
-			</div>
-		}
-	</div>
+    <div class="current-plan-row">
+      <div class="label">Status</div>
+      <div class="value">{{ renewalDateLabel() }}</div>
+    </div>
 
-	<div class="invoices">
-		<div class="invoices-header">
-			<h3>Previous invoices</h3>
-		</div>
-		@for (inv of invoices(); track inv.id) {
-			<div class="invoice-row">
-				<div class="name">{{ inv.name }}</div>
-				<div class="date">{{ inv.date }}</div>
-				<div class="plan">{{ inv.plan }}</div>
-				<div class="amount">{{ inv.amount }}</div>
-				@if (inv.canDownload) {
-					<div class="actions">
-						<button class="icon">
-							<fa-icon [icon]="faDownload"></fa-icon>
-						</button>
-					</div>
-				}
-			</div>
-		}
-	</div>
-</div> 
+    <div class="actions">
+      <button class="btn outline" (click)="cancelAtEnd()" [disabled]="cancellingLater() || cancellingNow() || resuming()">
+        {{ cancellingLater() ? 'Scheduling…' : 'Cancel at period end' }}
+      </button>
+
+      <button class="btn danger" (click)="cancelNow()" [disabled]="cancellingNow() || cancellingLater() || resuming()">
+        {{ cancellingNow() ? 'Cancelling…' : 'Cancel immediately' }}
+      </button>
+
+      <button class="btn primary" *ngIf="cancelAtPeriodEnd()" (click)="resumeIfScheduled()"
+              [disabled]="resuming() || cancellingLater() || cancellingNow()">
+        {{ resuming() ? 'Resuming…' : 'Resume subscription' }}
+      </button>
+
+      <span class="hint">“Cancel at period end” keeps access until the current cycle ends. “Cancel immediately” stops access now.</span>
+    </div>
+  </div>
+
+  <div class="plans-grid">
+    @for (p of plans(); track p.id) {
+      <div class="plan-card" [class.current]="isCurrent(p)">
+        <div class="plan-header">
+          <div class="title">{{ p.name }}</div>
+        </div>
+
+        <div class="price" *ngIf="!isCustom(p); else customPrice">
+          <span class="value">{{ p.price | currency:'USD' }}</span>
+          <span class="per">/{{ p.interval }}</span>
+        </div>
+        <ng-template #customPrice>
+          <div class="price"><span class="value">Custom</span></div>
+        </ng-template>
+
+        <div class="cta" *ngIf="isCurrent(p); else changeCta">
+          <div class="current">
+            <div class="label">Current Plan</div>
+            <div class="renew">{{ renewalDateLabel() }}</div>
+          </div>
+        </div>
+
+        <ng-template #changeCta>
+          <div class="cta">
+            <button class="primary"
+                    *ngIf="p.price > 0; else contactSales"
+                    [disabled]="!canChangeTo(p)"
+                    (click)="goToCheckout(p.id)">
+              {{ getActionLabel(p) }}
+            </button>
+            <ng-template #contactSales>
+              <button class="secondary" disabled>Contact Sales</button>
+            </ng-template>
+          </div>
+        </ng-template>
+
+        <ul class="features">
+          <li><fa-icon [icon]="faCheck"></fa-icon> {{ clientRange(p) }}</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> {{ teamRange(p) }}</li>
+          <li><fa-icon [icon]="faCheck"></fa-icon> {{ refreshLabel(p) }}</li>
+
+          <li *ngIf="p.features.customization"><fa-icon [icon]="faCheck"></fa-icon> Report customization</li>
+          <li *ngIf="p.features.metaIntegration"><fa-icon [icon]="faCheck"></fa-icon> Meta integration</li>
+          <li *ngIf="p.features.tiktokIntegration"><fa-icon [icon]="faCheck"></fa-icon> Tiktok integration</li>
+          <li *ngIf="p.features.publishedLinks"><fa-icon [icon]="faCheck"></fa-icon> Published links</li>
+          <li *ngIf="p.features.loomIntegration"><fa-icon [icon]="faCheck"></fa-icon> Loom integration</li>
+          <li *ngIf="p.features.aiDescription"><fa-icon [icon]="faCheck"></fa-icon> AI description</li>
+          <li *ngIf="p.features.marklyBadge"><fa-icon [icon]="faCheck"></fa-icon> Markly badge</li>
+        </ul>
+      </div>
+    }
+  </div>
+
+  <div class="invoices">
+    <div class="invoices-header"><h3>Previous invoices</h3></div>
+    @for (inv of invoices(); track inv.id) {
+      <div class="invoice-row">
+        <div class="name">{{ inv.name }}</div>
+        <div class="date">{{ inv.date }}</div>
+        <div class="plan">{{ inv.plan }}</div>
+        <div class="amount">{{ inv.amount }}</div>
+        <div class="actions" *ngIf="inv.canDownload">
+          <button class="icon"><fa-icon [icon]="faDownload"></fa-icon></button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

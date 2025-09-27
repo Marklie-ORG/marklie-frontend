@@ -145,6 +145,10 @@ export class BillingComponent implements OnInit {
   }
   isCurrent(p: SubscriptionPlan) { return this.currentPlanId() === p.id; }
 
+  openCalendly() {
+    window.open("https://calendly.com/markly-team/marklie-business-pricing-call", '_blank');
+  }
+
   // Icons
   protected readonly faCheck = faCheck;
   protected readonly faStar = faStar;

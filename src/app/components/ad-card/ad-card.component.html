@@ -6,18 +6,35 @@
     <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
       <div class="ad-account-header mb-2 mt-4 d-flex justify-between align-center">
         <h4 class="">{{ adAccount.name }}</h4>
-        @if (!isViewMode() && adAccounts().length > 1) {
-          <metrics-actions-menu
-          [adAccounts]="adAccounts()"
-          [sourceAdAccountId]="'' + adAccount.id"
-          (adAccountsChange)="adAccounts.set($event)"
-          ></metrics-actions-menu>
-        }
+        <div class="d-flex align-center">
+
+          @if (!isViewMode() && !isReviewMode()) {
+            <label class="mr-2">Show:</label>
+            <select class="select-default mr-3" value="{{getCreativesLimit(adAccount)}}" (change)="onCreativesLimitChange(adAccount.id, $any($event.target).value)">
+                <option value="3">{{ 3 }}</option>
+                <option value="5">{{ 5 }}</option>
+                <option value="10">{{ 10 }}</option>
+            </select>
+            <label class="mr-2">Best creatives by:</label>
+            <select class="select-default mr-3" [ngModel]="getCreativesSortMetric(adAccount)"  (change)="onCreativesSortMetricChange(adAccount.id, $any($event.target).value)">
+              @for (opt of getAdAccountSortOptions(adAccount); track opt.value) {
+                <option [value]="opt.value + ''">{{ opt.label }}</option>
+              }
+            </select>
+          }
+          
+          @if (!isViewMode() && adAccounts().length > 1) {
+            <metrics-actions-menu
+            [adAccounts]="adAccounts()"
+            [sourceAdAccountId]="'' + adAccount.id"
+            (adAccountsChange)="adAccounts.set($event)"
+            ></metrics-actions-menu>
+          }
+        </div>
       </div>
 
       <div class="ad-grid" >
-        
-        <div class="ad-card" *ngFor="let creative of (adAccount.creativesData || []); let i = index">
+        <div class="ad-card" *ngFor="let creative of ((getSortedCreatives(adAccount)) | slice:0:getCreativesLimit(adAccount)); let i = index">
           <div class="ad-image-container cursor-pointer " (click)="openAd(creative.sourceUrl)">
             <img class="ad-media" [src]="creative.thumbnailUrl || '../../../assets/img/2025-03-19%2013.02.21.jpg'"/>
           </div>

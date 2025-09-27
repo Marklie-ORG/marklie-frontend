@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ReportService} from 'src/app/services/api/report.service';
-import {GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
+import {FACEBOOK_DATE_PRESETS, GetAvailableMetricsResponse} from 'src/app/interfaces/interfaces';
 import {MetricsService} from 'src/app/services/metrics.service';
 import {ReportsDataService} from 'src/app/services/reports-data.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
@@ -10,6 +10,7 @@ import { NotificationService } from '@services/notification.service';
 import { SendAfterReviewRequest, SendAfterReviewResponse, Messages } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { FinishReviewDialogComponent } from 'src/app/components/finish-review-dialog/finish-review-dialog.component';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-review-report',
@@ -17,6 +18,8 @@ import { FinishReviewDialogComponent } from 'src/app/components/finish-review-di
   styleUrl: './review-report.component.scss'
 })
 export class ReviewReportComponent implements OnInit {
+
+  protected readonly faDownload = faDownload;
 
   reportUuid: string = '';
   clientUuid: string = '';
@@ -40,6 +43,12 @@ export class ReviewReportComponent implements OnInit {
 
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
+
+  dateRangeText = signal<string>('');
+  datePreset = signal<string>('');
+  reportCreatedAt = signal<string>('');
+
+  pdfFilename = signal<string>('report.pdf');
 
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
@@ -74,10 +83,16 @@ export class ReviewReportComponent implements OnInit {
 
       this.reportTitle.set(res.customization?.title ?? '');
 
-      const preset = res.schedule?.datePreset ?? '';
+      this.datePreset.set(res.schedule?.datePreset ?? '');
       this.selectedDatePresetText.set(
-        this.reportsDataService.DATE_PRESETS.find(p => p.value === preset)?.text || ''
+        this.reportsDataService.DATE_PRESETS.find(p => p.value === this.datePreset())?.text || ''
       );
+
+      this.reportCreatedAt.set(res.createdAt ?? '');
+
+      this.pdfFilename.set((res.messaging?.pdfFilename || res.customization?.title || 'report') + (/(\.pdf)$/i.test(res.messaging?.pdfFilename || '') ? '' : '.pdf'));
+
+      this.updateDateRangeText();
 
       const orgLogo = res.customization?.logos?.org ?? {};
       const clientLogo = res.customization?.logos?.client ?? {};
@@ -206,4 +221,15 @@ export class ReviewReportComponent implements OnInit {
 
     container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
   }
+
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
+  }
+
+  async downloadPdf() {
+    console.log('downloadPdf', this.reportUuid, this.pdfFilename());
+    if (!this.reportUuid) return;
+    this.reportsDataService.downloadPdf(this.reportUuid, this.pdfFilename());
+  }
+
 }

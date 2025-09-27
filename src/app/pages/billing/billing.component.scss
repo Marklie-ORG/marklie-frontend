@@ -1,129 +1,381 @@
+.plans-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== Root Billing Page ===== */
 .billing-page {
+  h2 {
+    margin: 0 0 4px 0;
+    font-size: 22px;
+  }
 
-	h2 {
-		margin: 0 0 4px 0;
-		font-size: 22px;
-	}
-	.subtitle {
-		margin: 0 0 20px 0;
-		color: #707579;
-	}
+  /* ===== Plans Compare Table ===== */
+  .plans-compare {
+    width: 95%;
+    overflow-x: auto;
+    margin-bottom: 16px;
 
-	.toggle-row {
-		margin-bottom: 16px;
-	}
-	.period-toggle {
-		display: flex;
-		gap: 14px;
-		align-items: center;
-		.segmented {
-			background: #f6f8fb;
-			border: 1px solid #e8edf5;
-			border-radius: 24px;
-			padding: 4px;
-			display: inline-flex;
-			gap: 4px;
-			button {
-				border: 0;
-				background: transparent;
-				padding: 8px 14px;
-				border-radius: 18px;
-				cursor: pointer;
-				color: #6b7280;
-				font-weight: 600;
-			}
-			button.active {
-				background: #fff;
-				box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-				color: #111827;
-			}
-		}
-		.save-hint {
-			margin-left: 4px;
-			font-size: 14px;
-			color: #2563eb;
-			text-decoration: none;
-		}
-	}
+    .comparison-table {
+      width: 100%;
+      min-width: 820px;
+      border-collapse: separate;
+      border-spacing: 0;
 
-	.plans-grid {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		gap: 16px;
-		margin-bottom: 24px;
-	}
+      thead {
+        th {
+          text-align: center;
+          padding: 12px 14px;
+          background: #f6f8fb;
+          color: #374151;
+          font-weight: 600;
+          border-bottom: 1px solid #e5e7eb;
 
-	.plan-card {
-		border: 1px solid #e5e7eb;
-		border-radius: 14px;
-		padding: 16px;
-		background: #fff;
-		position: relative;
+          &.current {
+            color: var(--blue-primary);
+            box-shadow: inset 0 -2px 0 var(--blue-primary);
+          }
 
-		&.popular::after {
-			content: 'Most popular';
-			position: absolute;
-			top: 8px;
-			right: 12px;
-			font-size: 11px;
-			color: #2563eb;
-			background: #e0ecff;
-			padding: 2px 6px;
-			border-radius: 6px;
-		}
-	}
+          &:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background: #f6f8fb;
+            z-index: 1;
+          }
+        }
+      }
 
-	.plan-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		.title { font-weight: 600; }
-	}
-	.price {
-		margin-top: 6px;
-		.value { font-size: 22px; font-weight: 700; }
-		.per { color: #6b7280; margin-left: 4px; }
-	}
+      tbody {
+        tr {
+          td {
+            text-align: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
 
-	.cta {
-		margin-top: 10px;
-		.current {
-			border: 1px dashed #e5e7eb;
-			border-radius: 10px;
-			padding: 10px;
-			.label { font-weight: 600; }
-			.renew { color: #6b7280; font-size: 12px; margin-top: 2px; }
-		}
-		.primary, .secondary {
-			padding: 8px 12px;
-			border-radius: 10px;
-			border: none;
-			cursor: pointer;
-		}
-		.primary { background: #111827; color: #fff; }
-		.secondary { background: #e5e7eb; }
-		.trial { margin-top: 6px; font-size: 12px; color: #6b7280; text-align: center; }
-	}
+            &:first-child {
+              text-align: left;
+              font-weight: 600;
+              color: #374151;
+              position: sticky;
+              left: 0;
+              background: #fff;
+              z-index: 1;
+              width: 220px;
+              max-width: 260px;
+            }
 
-	.features {
-		margin: 12px 0 0 0;
-		padding: 0;
-		list-style: none;
-		display: grid;
-		gap: 8px;
-		li { display: flex; align-items: center; gap: 8px; color: #111827; }
-	}
+            img {
+              height: 16px;
+            }
 
-	.invoices {
-		margin-top: 12px;
-		.invoices-header { margin-bottom: 8px; }
-		.invoice-row {
-			display: grid;
-			grid-template-columns: 1fr 140px 120px 120px 40px;
-			align-items: center;
-			padding: 10px 8px;
-			border-top: 1px solid #e5e7eb;
-		}
-		.icon { border: none; background: transparent; cursor: pointer; }
-	}
-} 
+            .value { font-weight: 600; color: #111827; }
+            .per { color: #6b7280; margin-left: 4px; font-weight: 500; font-size: 14px; }
+
+            .current {
+              display: inline-block;
+              border: 1px dashed #e5e7eb;
+              background: #f9fafb;
+              border-radius: 10px;
+              padding: 6px 10px;
+              font-weight: 600;
+              color: #111827;
+            }
+          }
+
+          &:hover td:not(:first-child) {
+            background: #fafafa;
+          }
+        }
+      }
+    }
+  }
+
+  .subtitle {
+    margin: 0 0 20px 0;
+    color: #707579;
+  }
+
+  .toggle-row {
+    margin-bottom: 16px;
+    width: 95%;
+  }
+
+  .period-toggle {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+
+    .segmented {
+      background: #f6f8fb;
+      border: 1px solid #e8edf5;
+      border-radius: 24px;
+      padding: 4px;
+      display: inline-flex;
+      gap: 4px;
+
+      button {
+        border: 0;
+        background: transparent;
+        padding: 8px 14px;
+        border-radius: 18px;
+        cursor: pointer;
+        color: #6b7280;
+        font-weight: 600;
+        transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
+
+        &.active {
+          background: #fff;
+          box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+          color: #111827;
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, .35);
+        }
+      }
+    }
+
+    .save-hint {
+      margin-left: 4px;
+      font-size: 14px;
+      color: #2563eb;
+      text-decoration: none;
+    }
+  }
+
+  /* ===== Plans Grid ===== */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    margin-bottom: 24px;
+    width: 95%;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .plan-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px 24px;
+    background: #fff;
+    position: relative;
+    transition: box-shadow .15s ease, border-color .15s ease;
+
+    &.popular::after {
+      content: 'Most popular';
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 11px;
+      color: #2563eb;
+      background: #e0ecff;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    /* Highlight current plan */
+    &.current {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    }
+
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #111827;
+      }
+    }
+
+    .price {
+      margin-top: 6px;
+
+      .value {
+        font-size: 16px;
+        font-weight: 500;
+        color: #111827;
+      }
+
+      .per {
+        color: #6b7280;
+        margin-left: 4px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+    }
+
+    /* Unified CTA styles */
+    .cta {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+
+      .current {
+        border: 1px dashed #e5e7eb;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f9fafb;
+
+        .label { font-weight: 600; color: #111827; }
+        .renew { color: #6b7280; font-size: 12px; margin-top: 2px; }
+      }
+
+      button {
+        justify-content: center;
+      }
+
+    }
+
+    .features {
+      margin: 24px 0 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #111827;
+      }
+    }
+  }
+
+  /* ===== Invoices ===== */
+  .invoices {
+    margin-top: 12px;
+
+    .invoices-header {
+      margin-bottom: 8px;
+    }
+
+    .invoice-row {
+      display: grid;
+      grid-template-columns: 1fr 140px 120px 120px 40px;
+      align-items: center;
+      padding: 10px 8px;
+      border-top: 1px solid #e5e7eb;
+
+      @media (max-width: 720px) {
+        grid-template-columns: 1fr 120px 100px;
+        gap: 8px;
+
+        .plan, .amount, .actions { justify-self: end; }
+      }
+    }
+
+    .icon {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, .35);
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
+/* ===== Manage Current Plan (Cancellation Section) ===== */
+.current-plan-actions {
+  margin: 16px 0 20px;
+  padding: 16px;
+  width: 95%;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+
+  // border: 1px solid #e5e7eb;
+  //   border-radius: 14px;
+  //   padding: 16px 24px;
+  //   background: #fff;
+  //   position: relative;
+  //   transition: box-shadow .15s ease, border-color .15s ease;
+
+  h4 {
+    font-size: 1.05rem;
+    margin: 0 0 12px;
+    color: #374151;
+  }
+
+  .current-plan-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: .75rem;
+    margin-bottom: .5rem;
+
+    .label {
+      color: #6b7280;
+      font-size: .9rem;
+    }
+    .value {
+      color: #111827;
+      font-weight: 600;
+    }
+  }
+
+  .actions {
+    margin-top: .75rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+
+    .btn {
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, .25);
+      }
+
+      &.danger {
+        background-color: #dc2626;
+        color: #fff;
+        border: none;
+
+        &:hover { background-color: #b91c1c; }
+        &:disabled { opacity: .7; cursor: not-allowed; }
+      }
+
+      &.outline {
+        background: none;
+        border: 1px solid #9ca3af;
+        color: #374151;
+
+        &:hover { background-color: #f3f4f6; }
+      }
+    }
+
+    .hint {
+      font-size: .85rem;
+      color: #6b7280;
+    }
+  }
+}

@@ -23,6 +23,8 @@ import { SuggestedFeaturesComponent } from './pages/suggested-features/suggested
 import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-suggestion.component';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
 import { BillingComponent } from './pages/billing/billing.component';
+import {CheckoutComponent} from "./pages/billing/checkout/checkout.component.js";
+import {CompleteComponent} from "./pages/billing/complete/complete.component.js";
 
 const routes: Routes = [
   {
@@ -128,9 +130,20 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'checkout',
+    component: CheckoutComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'complete',
+    component: CompleteComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/dashboard'
-  }
+  },
+
 ];
 
 @NgModule({

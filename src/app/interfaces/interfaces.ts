@@ -74,6 +74,10 @@ export interface AdAccountScheduleReportRequest {
   metrics: MetricScheduleReportRequest[];
   customMetrics: CustomMetricScheduleReportRequest[];
   currency: string;
+  adsSettings?: {
+    numberOfAds: number;
+    sortAdsBy: string
+  }
 }
 
 export interface MetricScheduleReportRequest {

@@ -1,74 +1,72 @@
-import {Component, ElementRef, inject, signal, ViewChild} from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ScheduleReportRequest, Metrics, Provider, Frequency, FACEBOOK_DATE_PRESETS, Messages, Colors } from 'src/app/interfaces/interfaces';
+import {
+  ScheduleReportRequest,
+  Metrics,
+  Provider,
+  Frequency,
+  FACEBOOK_DATE_PRESETS,
+  Messages,
+  Colors,
+} from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
-import { ScheduleOptionsComponent, ScheduleOptionsMatDialogData } from 'src/app/components/schedule-options/schedule-options.component';
+import {
+  ScheduleOptionsComponent,
+  ScheduleOptionsMatDialogData,
+} from 'src/app/components/schedule-options/schedule-options.component';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import {SchedulesService} from "../../services/api/schedules.service.js";
+import { SchedulesService } from '../../services/api/schedules.service.js';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { NotificationService } from '@services/notification.service.js';
 
 export interface SchedulingOption {
-  uuid: string
-  createdAt: string
-  updatedAt: string
-  reportName: string
-  cronExpression: string
-  datePreset: string
-  isActive: boolean
-  reportType: string
-  jobData: JobData
-  timezone: string
-  reviewRequired: boolean
-  lastRun: any
-  nextRun: string
-  bullJobId: string
-  client: {
-    uuid: string
-    name: string
-  }
-  images: {
-    clientLogo: string
-    organizationLogo: string
-  }
-}
+  uuid: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  reportName?: string;
 
-interface JobData {
-  colors: Colors
-  time: string
-  metrics: Metrics
-  timeZone: string
-  dayOfWeek: string
-  frequency: string
-  clientUuid: string
-  datePreset: string
-  dayOfMonth: number
-  intervalDays: number
-  reviewNeeded: boolean
-  cronExpression: string
-  organizationUuid: string,
-  messages: {
-    whatsapp: string,
-    slack: string,
-    email: {
-      title: string,
-      body: string,
-    }
-  }
-  images: {
-    clientLogo: string
-    organizationLogo: string
-  }
-  providers: Provider[]
+  // embedded blocks (server model)
+  review?: { required: boolean };
+  schedule: {
+    timezone: string;
+    lastRun?: string;
+    nextRun?: string;
+    jobId?: string;
+    datePreset: FACEBOOK_DATE_PRESETS | string;
+    cronExpression: string;
+  };
+  customization?: {
+    colors?: { headerBg?: string; reportBg?: string };
+    logos?: {
+      client?: { url?: string; gcsUri?: string };
+      org?: { url?: string; gcsUri?: string };
+    };
+    title?: string;
+  };
+  messaging?: {
+    email?: { title?: string; body?: string };
+    slack?: string;
+    whatsapp?: string;
+    pdfFilename?: string;
+  };
+  providers?: Provider[];
+
+  client: {uuid: string}
+
+  images?: { clientLogo?: string; organizationLogo?: string };
+
+  nextRun?: string;
+  lastRun?: string;
+  frequency?: string;
 }
 
 @Component({
   selector: 'app-edit-report',
   templateUrl: './edit-report.component.html',
-  styleUrl: './edit-report.component.scss'
+  styleUrl: './edit-report.component.scss',
 })
 export class EditReportComponent {
-
   frequency: Frequency = 'weekly';
   time: string = '09:00';
   dayOfWeek: string = 'Monday';
@@ -83,25 +81,18 @@ export class EditReportComponent {
   messages: Messages = {
     whatsapp: '',
     slack: '',
-    email: {
-      title: '',
-      body: ''
-    }
-  }
+    email: { title: '', body: '' },
+  };
 
   metricsGraphConfig: any[] = [];
-
   schedulingOptionId: string | null = null;
-
   schedulingOption: SchedulingOption | null = null;
-
-  reportSections: ReportSection[] = []
+  reportSections: ReportSection[] = [];
 
   selectedDatePreset: string = '';
   selectedDatePresetText: string = '';
 
   reportTitle: string = '';
-
   isPreviewMode: boolean = false;
 
   headerBackgroundColor = signal<string>('#ffffff');
@@ -110,8 +101,11 @@ export class EditReportComponent {
   clientImageUrl = signal<string>('');
   agencyImageUrl = signal<string>('');
 
+  // store GCS URIs to send back to server (from customization.logos)
   clientImageGsUri = signal<string>('');
   agencyImageGsUri = signal<string>('');
+
+  dateRangeText = signal<string>('');
 
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
@@ -123,51 +117,67 @@ export class EditReportComponent {
   private router = inject(Router);
 
   ngOnInit() {
-    this.route.params.subscribe(async params => {
+    this.route.params.subscribe(async (params) => {
       this.schedulingOptionId = params['schedulingOptionId'];
       this.clientUuid = params['clientUuid'];
 
       await this.loadReport();
 
-      this.reportTitle = this.schedulingOption?.reportName || '';
-      this.selectedDatePreset = this.schedulingOption?.datePreset || '';
-      this.frequency = this.schedulingOption?.jobData.frequency as Frequency;
-      this.time = this.schedulingOption?.jobData.time || '';
-      this.dayOfWeek = this.schedulingOption?.jobData.dayOfWeek || '';
-      this.dayOfMonth = this.schedulingOption?.jobData.dayOfMonth || 1;
-      this.intervalDays = this.schedulingOption?.jobData.intervalDays || 1;
-      this.cronExpression = this.schedulingOption?.cronExpression || '';
-      this.reviewRequired = this.schedulingOption?.reviewRequired || false;
-      this.messages = this.schedulingOption?.jobData.messages || {
-        whatsapp: '',
-        slack: '',
+      // map from new model
+      this.reportTitle = this.schedulingOption?.customization?.title || this.schedulingOption?.reportName || '';
+      this.selectedDatePreset = (this.schedulingOption?.schedule?.datePreset as string) || '';
+      this.cronExpression = this.schedulingOption?.schedule?.cronExpression || '';
+      this.reviewRequired = !!this.schedulingOption?.review?.required;
+      this.messages = {
+        whatsapp: this.schedulingOption?.messaging?.whatsapp || '',
+        slack: this.schedulingOption?.messaging?.slack || '',
         email: {
-          title: '',
-          body: ''
-        }
+          title: this.schedulingOption?.messaging?.email?.title || '',
+          body: this.schedulingOption?.messaging?.email?.body || '',
+        },
+      };
+      this.nextRun =
+        this.schedulingOption?.nextRun ||
+        this.schedulingOption?.schedule?.nextRun ||
+        '';
+
+      // If backend also returns a derived frequency, use it; otherwise stay on 'cron'
+      if (this.schedulingOption?.frequency) {
+        this.frequency = (this.schedulingOption.frequency.toLowerCase() as Frequency) || 'cron';
+      } else if (this.cronExpression) {
+        this.frequency = 'cron';
       }
-      this.nextRun = this.schedulingOption?.nextRun || '';
+
+      // colors
+      this.headerBackgroundColor.set(this.schedulingOption?.customization?.colors?.headerBg || '');
+      this.reportBackgroundColor.set(this.schedulingOption?.customization?.colors?.reportBg || '');
+
+      // display URLs
+      this.clientImageUrl.set(this.schedulingOption?.images?.clientLogo || '');
+      this.agencyImageUrl.set(this.schedulingOption?.images?.organizationLogo || '');
+
+      // original GCS URIs (for saving)
+      this.clientImageGsUri.set(this.schedulingOption?.customization?.logos?.client?.gcsUri || '');
+      this.agencyImageGsUri.set(this.schedulingOption?.customization?.logos?.org?.gcsUri || '');
 
       this.updateSelectedDatePresetText();
+      this.updateDateRangeText();
     });
   }
 
   private async loadReport() {
     if (!this.schedulingOptionId) return;
 
-    this.schedulingOption = await this.schedulesService.getSchedulingOption(this.schedulingOptionId) as SchedulingOption;
-    this.clientImageUrl.set(this.schedulingOption?.images.clientLogo || '');
-    this.agencyImageUrl.set(this.schedulingOption?.images.organizationLogo || '');
-    this.clientImageGsUri.set(this.schedulingOption?.jobData.images?.clientLogo || '');
-    this.agencyImageGsUri.set(this.schedulingOption?.jobData.images?.organizationLogo || '');
-    this.headerBackgroundColor.set(this.schedulingOption?.jobData.colors?.headerBackgroundColor || '');
-    this.reportBackgroundColor.set(this.schedulingOption?.jobData.colors?.reportBackgroundColor || '');
+    this.schedulingOption = (await this.schedulesService.getSchedulingOption(
+      this.schedulingOptionId,
+    )) as SchedulingOption;
 
-    this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnSchedulingOption(this.schedulingOption);
+    // sections based on new model (providers now live at root)
+    this.reportSections =
+      await this.reportsDataService.getReportsSectionsBasedOnSchedulingOption(this.schedulingOption);
   }
 
   editScheduleConfiguration() {
-
     const data: ScheduleOptionsMatDialogData = {
       frequency: this.frequency,
       time: this.time,
@@ -176,12 +186,12 @@ export class EditReportComponent {
       intervalDays: this.intervalDays,
       cronExpression: this.cronExpression,
       reviewRequired: this.reviewRequired,
-      messages: this.messages
-    }
+      messages: this.messages,
+    };
 
     const dialogRef = this.dialog.open(ScheduleOptionsComponent, {
       width: '800px',
-      data: data
+      data,
     });
 
     dialogRef.afterClosed().subscribe((result: ScheduleOptionsMatDialogData) => {
@@ -194,27 +204,25 @@ export class EditReportComponent {
       this.cronExpression = result.cronExpression;
       this.reviewRequired = result.reviewRequired;
       this.messages = result.messages;
-      
+
       this.saveConfiguration();
     });
   }
 
   updateSelectedDatePresetText() {
     if (this.selectedDatePreset) {
-      this.selectedDatePresetText = this.reportsDataService.DATE_PRESETS.find(preset => preset.value === this.selectedDatePreset)?.text || '';
+      this.selectedDatePresetText =
+        this.reportsDataService.DATE_PRESETS.find((p) => p.value === this.selectedDatePreset)?.text ||
+        '';
     }
   }
 
   async saveConfiguration() {
-
-    if (!this.reportSections) {
-      return;
-    }
+    if (!this.reportSections) return;
 
     const providers = this.reportsDataService.getProviders(this.reportSections);
 
     const payload: ScheduleReportRequest = {
-
       reportName: this.reportTitle,
       frequency: this.frequency,
       time: this.time,
@@ -222,37 +230,39 @@ export class EditReportComponent {
       dayOfMonth: this.dayOfMonth,
       intervalDays: this.intervalDays,
       cronExpression: this.cronExpression,
+
       images: {
         clientLogo: this.clientImageGsUri(),
-        organizationLogo: this.agencyImageGsUri()
+        organizationLogo: this.agencyImageGsUri(),
       },
-      organizationUuid: '',
+
+      organizationUuid: '', // backend derives from client
       reviewRequired: this.reviewRequired,
-      providers: providers,
-      
+      providers,
+
       datePreset: this.selectedDatePreset as FACEBOOK_DATE_PRESETS,
       clientUuid: this.clientUuid,
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      timeZone:
+        this.schedulingOption?.schedule?.timezone ||
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+
       messages: this.messages,
       colors: {
         headerBackgroundColor: this.headerBackgroundColor(),
-        reportBackgroundColor: this.reportBackgroundColor()
-      }
+        reportBackgroundColor: this.reportBackgroundColor(),
+      },
     };
 
-    console.log(payload)
-
-    if (!this.schedulingOptionId) {
-      return
-    }
+    if (!this.schedulingOptionId) return;
 
     await this.schedulesService.updateSchedulingOption(this.schedulingOptionId, payload);
     await this.loadReport();
     this.notificationService.info('Scheduled report updated');
   }
 
-  onDatePresetChange(event: any) {
+  onDatePresetChange(_: any) {
     this.updateSelectedDatePresetText();
+    this.updateDateRangeText();
   }
 
   goBack() {
@@ -261,14 +271,10 @@ export class EditReportComponent {
 
   onSectionFocus(sectionKey: string) {
     const container = this.reportContainerRef?.nativeElement;
-    if (!container) {
-      return;
-    }
+    if (!container) return;
 
     const target = container.querySelector(`#section-${sectionKey}`) as HTMLElement | null;
-    if (!target) {
-      return;
-    }
+    if (!target) return;
 
     const containerRect = container.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
@@ -276,5 +282,8 @@ export class EditReportComponent {
 
     container.scrollTo({ top: targetTopWithinContainer, behavior: 'smooth' });
   }
-}
 
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.selectedDatePreset as FACEBOOK_DATE_PRESETS, new Date(this.nextRun)));
+  }
+}

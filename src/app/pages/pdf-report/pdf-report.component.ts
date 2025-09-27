@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { ReportService } from 'src/app/services/api/report.service';
 import { ReportsDataService } from 'src/app/services/reports-data.service';
-import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
+import { FACEBOOK_DATE_PRESETS, GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces';
@@ -43,6 +43,10 @@ export class PdfReportComponent implements OnInit {
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
+  dateRangeText = signal<string>('');
+  datePreset = signal<string>('');
+  reportCreatedAt = signal<string>('');
+
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
@@ -66,10 +70,14 @@ export class PdfReportComponent implements OnInit {
       // title
       this.reportTitle.set(res.customization?.title ?? '');
 
-      const preset = res.schedule?.datePreset ?? '';
+      this.datePreset.set(res.schedule?.datePreset ?? '');
       this.selectedDatePresetText.set(
-        this.reportsDataService.DATE_PRESETS.find(p => p.value === preset)?.text || ''
+        this.reportsDataService.DATE_PRESETS.find(p => p.value === this.datePreset())?.text || ''
       );
+
+      this.reportCreatedAt.set(res.createdAt ?? '');
+
+      this.updateDateRangeText();
 
       const orgLogo = res.customization?.logos?.org ?? {};
       const clientLogo = res.customization?.logos?.client ?? {};
@@ -94,6 +102,10 @@ export class PdfReportComponent implements OnInit {
 
   openAd(url: string): void {
     window.open(url, '_blank');
+  }
+
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
   }
 
 }

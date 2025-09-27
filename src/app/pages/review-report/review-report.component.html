@@ -1,5 +1,3 @@
-
-
 <div class="d-flex flex-column">
 
   <div class="report-header d-flex align-center justify-between">
@@ -36,6 +34,13 @@
         (save)="loomUrlInput = $event; saveLoomUrl()"
       ></loom-link-editor> -->
 
+      <div class="d-flex justify-end pb-2">
+        <button type="button" class="btn btn-primary" (click)="downloadPdf()">
+          <fa-icon [icon]="faDownload"></fa-icon>
+          <span style="margin-left: 8px;">Download PDF</span>
+        </button>
+      </div>
+
       <report
         [(reportSections)]="reportSections"
         [selectedDatePresetText]="selectedDatePresetText()"
@@ -47,6 +52,8 @@
         [(agencyImageUrl)]="agencyImageUrl"
         [(clientImageGsUri)]="clientImageGsUri"
         [(agencyImageGsUri)]="agencyImageGsUri"
+        [dateRangeText]="dateRangeText()"
+        [isReviewMode]="true"
       ></report>
     </div>
 

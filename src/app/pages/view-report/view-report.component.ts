@@ -9,9 +9,10 @@ import { ActivatedRoute } from '@angular/router';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportService } from '@services/api/report.service.js';
 import { ReportsDataService } from '@services/reports-data.service.js';
-import { GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
+import { FACEBOOK_DATE_PRESETS, GetAvailableMetricsResponse } from 'src/app/interfaces/interfaces.js';
 import { MetricsService } from 'src/app/services/metrics.service.js';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -20,6 +21,8 @@ import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
   styleUrls: ['./view-report.component.scss'],
 })
 export class ViewReportComponent implements OnInit {
+
+  protected readonly faDownload = faDownload;
 
   reportId: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = [];
@@ -44,6 +47,12 @@ export class ViewReportComponent implements OnInit {
   headerBackgroundColor = signal<string>('#ffffff');
   reportBackgroundColor = signal<string>('#ffffff');
 
+  dateRangeText = signal<string>('');
+  datePreset = signal<string>('');
+  reportCreatedAt = signal<string>('');
+  
+  pdfFilename = signal<string>('report.pdf');
+
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
@@ -67,10 +76,16 @@ export class ViewReportComponent implements OnInit {
 
       this.reportTitle.set(res.customization?.title ?? '');
 
-      const preset = res.schedule?.datePreset ?? '';
+      this.datePreset.set(res.schedule?.datePreset ?? '');
       this.selectedDatePresetText.set(
-        this.reportsDataService.DATE_PRESETS.find(p => p.value === preset)?.text || ''
+        this.reportsDataService.DATE_PRESETS.find(p => p.value === this.datePreset())?.text || ''
       );
+
+      this.reportCreatedAt.set(res.createdAt ?? '');
+      
+      this.pdfFilename.set((res.messaging?.pdfFilename || res.customization?.title || 'report') + (/(\.pdf)$/i.test(res.messaging?.pdfFilename || '') ? '' : '.pdf'));
+
+      this.updateDateRangeText();
 
       const orgLogo = res.customization?.logos?.org ?? {};
       const clientLogo = res.customization?.logos?.client ?? {};
@@ -103,6 +118,17 @@ export class ViewReportComponent implements OnInit {
 
   openAd(url: string): void {
     window.open(url, '_blank');
+  }
+
+  private updateDateRangeText() {
+    this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
+  }
+
+  
+
+  async downloadPdf() {
+    if (!this.reportId) return;
+    this.reportsDataService.downloadPdf(this.reportId, this.pdfFilename());
   }
 
 }

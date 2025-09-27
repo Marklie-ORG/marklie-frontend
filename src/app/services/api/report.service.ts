@@ -124,5 +124,11 @@ export class ReportService {
       )
     );
   }
+
+  async downloadReportPdf(uuid: string): Promise<Blob> {
+    return firstValueFrom(
+      this.http.get(`${this.apiUrl}/reports/${uuid}/pdf`, { headers: this.headers, responseType: 'blob' })
+    );
+  }
 }
 

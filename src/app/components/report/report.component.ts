@@ -28,6 +28,8 @@ export class ReportComponent {
   agencyImageGsUri = model<string>('');
 
   isViewMode = input<boolean>(false);
+  isReviewMode = input<boolean>(false);
+  dateRangeText = input<string>('');
 
   schedulesService = inject(SchedulesService);
 
@@ -71,7 +73,7 @@ export class ReportComponent {
 
     effect(() => {
 
-      // console.log("Report sections changed:", this.reportSections());
+      console.log("Report sections changed:", this.reportSections());
 
       this.checkIfAllAdAccountsDisabled();
       

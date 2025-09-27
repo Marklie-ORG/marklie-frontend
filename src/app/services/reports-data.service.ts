@@ -1,13 +1,14 @@
 import {inject, Injectable} from '@angular/core';
 import { SchedulingOption } from '../pages/edit-report/edit-report.component';
-import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest} from '../interfaces/interfaces';
+import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest, FACEBOOK_DATE_PRESETS} from '../interfaces/interfaces';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { SchedulesService } from "./api/schedules.service.js";
 import { ReportData, KpiAdAccountData, GraphsAdAccountData, AdsAdAccountData, TableAdAccountData, AdsAdAccountDataCreative } from '../interfaces/get-report.interfaces';
 import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces/report-sections.interfaces';
 import { AdAccountsService } from './api/ad-accounts.service.js';
-import { UserService } from './api/user.service.js';
+import { ReportService } from './api/report.service';
+import { NotificationService } from './notification.service';
 
 
 @Injectable({
@@ -16,7 +17,9 @@ import { UserService } from './api/user.service.js';
 export class ReportsDataService {
   private schedulesService = inject(SchedulesService);
   private adAccountsService = inject(AdAccountsService);
-  private userService = inject(UserService);
+  private reportService = inject(ReportService);
+  private notificationService = inject(NotificationService);
+
   readonly chartConfigs = [
     { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
     { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
@@ -61,14 +64,105 @@ export class ReportsDataService {
     return this.chartConfigs;
   }
 
+  getDateRangeForPreset(preset: FACEBOOK_DATE_PRESETS, baseDate?: Date): { start: Date; end: Date } {
+    const today = baseDate ? new Date(baseDate) : new Date();
+    const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const addDays = (d: Date, days: number) => {
+      const nd = new Date(d);
+      nd.setDate(nd.getDate() + days);
+      return nd;
+    };
+
+    const endYesterday = startOfDay(addDays(today, -1));
+
+    const rangeForLastNDays = (n: number) => {
+      const end = endYesterday;
+      const start = addDays(end, -(n - 1));
+      return { start, end };
+    };
+
+    switch (preset) {
+      case FACEBOOK_DATE_PRESETS.TODAY: {
+        const d = startOfDay(today);
+        return { start: d, end: d };
+      }
+      case FACEBOOK_DATE_PRESETS.YESTERDAY: {
+        const d = endYesterday;
+        return { start: d, end: d };
+      }
+      case FACEBOOK_DATE_PRESETS.LAST_3D:
+        return rangeForLastNDays(3);
+      case FACEBOOK_DATE_PRESETS.LAST_7D:
+        return rangeForLastNDays(7);
+      case FACEBOOK_DATE_PRESETS.LAST_14D:
+        return rangeForLastNDays(14);
+      case FACEBOOK_DATE_PRESETS.LAST_28D:
+        return rangeForLastNDays(28);
+      case FACEBOOK_DATE_PRESETS.LAST_30D:
+        return rangeForLastNDays(30);
+      case FACEBOOK_DATE_PRESETS.LAST_90D:
+        return rangeForLastNDays(90);
+      case FACEBOOK_DATE_PRESETS.THIS_MONTH: {
+        const start = new Date(today.getFullYear(), today.getMonth(), 1);
+        const end = endYesterday;
+        return { start, end };
+      }
+      case FACEBOOK_DATE_PRESETS.LAST_MONTH: {
+        const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        const end = new Date(today.getFullYear(), today.getMonth(), 0);
+        return { start, end };
+      }
+      case FACEBOOK_DATE_PRESETS.THIS_QUARTER: {
+        const quarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
+        const start = new Date(today.getFullYear(), quarterStartMonth, 1);
+        const end = endYesterday;
+        return { start, end };
+      }
+      case FACEBOOK_DATE_PRESETS.LAST_QUARTER: {
+        const thisQuarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
+        const start = new Date(today.getFullYear(), thisQuarterStartMonth - 3, 1);
+        const end = new Date(today.getFullYear(), thisQuarterStartMonth, 0);
+        return { start, end };
+      }
+      case FACEBOOK_DATE_PRESETS.THIS_YEAR: {
+        const start = new Date(today.getFullYear(), 0, 1);
+        const end = endYesterday;
+        return { start, end };
+      }
+      case FACEBOOK_DATE_PRESETS.LAST_YEAR: {
+        const start = new Date(today.getFullYear() - 1, 0, 1);
+        const end = new Date(today.getFullYear() - 1, 11, 31);
+        return { start, end };
+      }
+      case FACEBOOK_DATE_PRESETS.MAXIMUM:
+      default: {
+        return rangeForLastNDays(7);
+      }
+    }
+  }
+
+  private formatDateShort(d: Date): string {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${dd}.${mm}.${yy}`;
+  }
+
+  getDateRangeTextForPreset(preset: FACEBOOK_DATE_PRESETS, baseDate?: Date): string {
+    const { start, end } = this.getDateRangeForPreset(preset, baseDate);
+    return `${this.formatDateShort(start)} - ${this.formatDateShort(end)}`;
+  }
+
   async getReportsSectionsBasedOnSchedulingOption(schedulingOption: SchedulingOption): Promise<ReportSection[]> {
 
     let reportSections: ReportSection[] = [];
 
+    console.log(schedulingOption.client)
     const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid);
+    console.log(availableMetrics)
 
-    const providers = schedulingOption.jobData.providers;
-    const facebookProvider = providers.find(p => p.provider === 'facebook');
+    const providers = schedulingOption.providers;
+    const facebookProvider = providers!.find(p => p.provider === 'facebook');
 
     // helpers to generate lightweight preview data (keep scoped to this method)
     const generateDateSeries = (days: number = 10) => {
@@ -84,17 +178,17 @@ export class ReportsDataService {
 
     const randomFor = (metricName: string): number => {
       const name = (metricName || '').toLowerCase();
-      if (name.includes('roas')) return +(Math.random() * 4 + 0.5).toFixed(2);
-      if (name.includes('ctr') || name.includes('rate')) return +(Math.random() * 5).toFixed(2);
-      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return +(Math.random() * 3 + 0.2).toFixed(2) as unknown as number;
-      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return +(Math.random() * 1500).toFixed(2) as unknown as number;
-      if (name.includes('impressions') || name.includes('reach')) return Math.floor(Math.random() * 50000 + 1000);
-      if (name.includes('click')) return Math.floor(Math.random() * 2000 + 50);
-      if (name.includes('purchase') || name.includes('purchases')) return Math.floor(Math.random() * 120);
-      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return Math.floor(Math.random() * 200);
-      if (name.includes('checkout')) return Math.floor(Math.random() * 150);
-      if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
-      return +(Math.random() * 100).toFixed(2) as unknown as number;
+      if (name.includes('roas')) return 9;
+      if (name.includes('ctr') || name.includes('rate')) return 9;
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return 9;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return 999;
+      if (name.includes('impressions') || name.includes('reach')) return 999;
+      if (name.includes('click')) return 9999;
+      if (name.includes('purchase') || name.includes('purchases')) return 999;
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return 999;
+      if (name.includes('checkout')) return 9999;
+      if (name.includes('engagement')) return 9999;
+      return 9;
     };
 
     for (let section of facebookProvider?.sections || []) {
@@ -105,6 +199,7 @@ export class ReportsDataService {
       for (let adAccount of section.adAccounts) {
 
         const adAccountId = adAccount.adAccountId;
+
 
         const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
         const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
@@ -197,7 +292,7 @@ export class ReportsDataService {
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
-          adAccountObj.creativesData = Array.from({ length: 5 }).map((_, i) => ({
+          adAccountObj.creativesData = Array.from({ length: 10 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
             ad_name: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
@@ -205,6 +300,11 @@ export class ReportsDataService {
             thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
             data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           })) as any;
+
+          adAccountObj.adsSettings = {
+            numberOfAds: adAccount.adsSettings?.numberOfAds ?? 10,
+            sortAdsBy: adAccount.adsSettings?.sortAdsBy ?? metricsForCreative[0]?.name
+          };
         } else if (section.name === 'campaigns') {
           sectionTitle = 'Best campaigns'
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
@@ -501,17 +601,17 @@ export class ReportsDataService {
 
     const randomFor = (metricName: string): number => {
       const name = (metricName || '').toLowerCase();
-      if (name.includes('roas')) return +(Math.random() * 4 + 0.5).toFixed(2);
-      if (name.includes('ctr') || name.includes('rate')) return +(Math.random() * 5).toFixed(2);
-      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return +(Math.random() * 3 + 0.2).toFixed(2) as unknown as number;
-      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return +(Math.random() * 1500).toFixed(2) as unknown as number;
-      if (name.includes('impressions') || name.includes('reach')) return Math.floor(Math.random() * 50000 + 1000);
-      if (name.includes('click')) return Math.floor(Math.random() * 2000 + 50);
-      if (name.includes('purchase') || name.includes('purchases')) return Math.floor(Math.random() * 120);
-      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return Math.floor(Math.random() * 200);
-      if (name.includes('checkout')) return Math.floor(Math.random() * 150);
-      if (name.includes('engagement')) return Math.floor(Math.random() * 1000);
-      return +(Math.random() * 100).toFixed(2) as unknown as number;
+      if (name.includes('roas')) return 9;
+      if (name.includes('ctr') || name.includes('rate')) return 9;
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return 9;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return 999;
+      if (name.includes('impressions') || name.includes('reach')) return 999;
+      if (name.includes('click')) return 9999;
+      if (name.includes('purchase') || name.includes('purchases')) return 999;
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return 999;
+      if (name.includes('checkout')) return 9999;
+      if (name.includes('engagement')) return 9999;
+      return 9;
     };
 
     const currencyMap = new Map<string, string>();
@@ -566,23 +666,6 @@ export class ReportsDataService {
           metrics = [...selected, ...updatedRemainder];
         }
 
-        // Ensure 'impressions' is always present and enabled for the 'ads' section
-        if (sectionKey === 'ads') {
-          const impressions = metrics.find(m => m.name === 'impressions');
-          metrics = metrics.filter(m => m.name !== 'ad_name');
-          if (impressions) {
-            impressions.enabled = true;
-          } else {
-            metrics.push({
-              name: 'impressions',
-              order: metrics.length,
-              enabled: true,
-              isCustom: false,
-              id: ''
-            });
-          }
-        }
-
         // Enforce default metric order per section
         const normalizeName = (s: string) => (s || '').toLowerCase().replace(/\s|_/g, '');
         const enforceOrder = (desired: string[]) => {
@@ -623,6 +706,13 @@ export class ReportsDataService {
           currency: currencySymbol
         };
 
+        if (sectionKey === 'ads') {
+          adAccountObj.adsSettings = {
+            numberOfAds: 10,
+            sortAdsBy: adAccountObj.metrics[0]?.name || ''
+          };
+        }
+
         // attach lightweight preview data per section so UI can render something meaningful
         if (sectionKey === 'kpis') {
           adAccountObj.metrics = adAccountObj.metrics.map(m => ({ ...m, value: randomFor(m.name) }));
@@ -636,7 +726,7 @@ export class ReportsDataService {
           const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
           const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
 
-          const creatives = Array.from({ length: 5 }).map((_, i) => ({
+          const creatives = Array.from({ length: 10 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
             ad_name: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
@@ -714,13 +804,9 @@ export class ReportsDataService {
 
     for (const [sectionIndex, section] of reportSections.entries()) {
 
-      // if (!section.enabled) continue; // dont add section if its disabled
-
       let adAccounts: AdAccountScheduleReportRequest[] = [];
 
       for (const [adAccountIndex, adAccount] of section.adAccounts.entries()) {
-
-        // if (!adAccount.enabled) continue; // dont add ad account if its disabled
 
         let metrics: MetricScheduleReportRequest[] = [];
         let customMetrics: CustomMetricScheduleReportRequest[] = [];
@@ -759,11 +845,12 @@ export class ReportsDataService {
           enabled: adAccount.enabled,
           metrics: metrics,
           customMetrics: customMetrics,
-          currency: adAccount.currency
+          currency: adAccount.currency,
+          ...(adAccount.adsSettings ? { adsSettings: adAccount.adsSettings } : {})
         })
 
       }
-      
+
       sections.push({
         name: section.key,
         order: section.order,
@@ -999,6 +1086,26 @@ export class ReportsDataService {
         plugins: [ChartDataLabels]
       });
     }
+  }
+
+
+  async downloadPdf(reportId: string, pdfFilename: string) {
+    this.notificationService.info('Downloading PDF…');
+    try {
+      const blob = await this.reportService.downloadReportPdf(reportId);
+      const url = window.URL.createObjectURL(blob instanceof Blob ? blob : new Blob([blob], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = pdfFilename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+    catch(e) {
+      this.notificationService.info('Failed to download PDF');
+    }
+
   }
 
 }

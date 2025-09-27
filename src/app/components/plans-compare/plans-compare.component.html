@@ -1,0 +1,124 @@
+<div class="plans-compare">
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Compare plans</th>
+        @for (p of plans; track p.id) {
+          <th [class.current]="isCurrent(p)">{{ p.name }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Price</td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (!isCustom(p)) {
+              <span class="value">{{ p.price | currency:'USD' }}</span>
+              <span class="per">/ {{ p.interval }}</span>
+            }
+            @else {
+              <span>Custom pricing</span>
+            }
+          </td>
+        }
+      </tr>
+      <tr>
+        <td></td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (!isCurrent(p)) {
+              @if (p.price > 0) {
+                <button class="blue" [disabled]="!canChangeTo(p)" (click)="selectPlan.emit(p.id)">{{ getActionLabel(p) }}</button>
+              } @else {
+                <button class="blue" disabled>Contact Sales</button>
+              }
+            } @else {
+              <span class="current">Current</span>
+            }
+          </td>
+        }
+      </tr>
+      <tr>
+        <td>Clients</td>
+        @for (p of plans; track p.id) {
+          <td>{{ clientRange(p) }}</td>
+        }
+      </tr>
+      <tr>
+        <td>Team members</td>
+        @for (p of plans; track p.id) {
+          <td>{{ teamRange(p) }}</td>
+        }
+      </tr>
+      <tr>
+        <td>Data refresh</td>
+        @for (p of plans; track p.id) {
+          <td>{{ refreshLabel(p) }}</td>
+        }
+      </tr>
+      <tr>
+        <td>Report customization</td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (p.features.customization) {
+              <img src="assets/img/billing_blue_checkmark.svg" alt="included" />
+            } @else {
+              <span>—</span>
+            }
+          </td>
+        }
+      </tr>
+      <tr>
+        <td>Meta integration</td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (p.features.metaIntegration) {
+              <img src="assets/img/billing_blue_checkmark.svg" alt="included" />
+            } @else {
+              <span>—</span>
+            }
+          </td>
+        }
+      </tr>
+      <tr>
+        <td>Tiktok integration</td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (p.features.tiktokIntegration) {
+              <img src="assets/img/billing_blue_checkmark.svg" alt="included" />
+            } @else {
+              <span>—</span>
+            }
+          </td>
+        }
+      </tr>
+      <tr>
+        <td>Loom integration</td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (p.features.loomIntegration) {
+              <img src="assets/img/billing_blue_checkmark.svg" alt="included" />
+            } @else {
+              <span>—</span>
+            }
+          </td>
+        }
+      </tr>
+      <tr>
+        <td>Published links</td>
+        @for (p of plans; track p.id) {
+          <td>
+            @if (p.features.publishedLinks) {
+              <img src="assets/img/billing_blue_checkmark.svg" alt="included" />
+            } @else {
+              <span>—</span>
+            }
+          </td>
+        }
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+

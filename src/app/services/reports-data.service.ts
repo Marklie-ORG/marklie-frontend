@@ -157,10 +157,12 @@ export class ReportsDataService {
 
     let reportSections: ReportSection[] = [];
 
+    console.log(schedulingOption.client)
     const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid);
+    console.log(availableMetrics)
 
-    const providers = schedulingOption.jobData.providers;
-    const facebookProvider = providers.find(p => p.provider === 'facebook');
+    const providers = schedulingOption.providers;
+    const facebookProvider = providers!.find(p => p.provider === 'facebook');
 
     // helpers to generate lightweight preview data (keep scoped to this method)
     const generateDateSeries = (days: number = 10) => {
@@ -197,6 +199,7 @@ export class ReportsDataService {
       for (let adAccount of section.adAccounts) {
 
         const adAccountId = adAccount.adAccountId;
+
 
         const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
         const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
@@ -847,7 +850,7 @@ export class ReportsDataService {
         })
 
       }
-      
+
       sections.push({
         name: section.key,
         order: section.order,
@@ -1085,7 +1088,7 @@ export class ReportsDataService {
     }
   }
 
-  
+
   async downloadPdf(reportId: string, pdfFilename: string) {
     this.notificationService.info('Downloading PDF…');
     try {
@@ -1102,7 +1105,7 @@ export class ReportsDataService {
     catch(e) {
       this.notificationService.info('Failed to download PDF');
     }
-    
+
   }
 
 }

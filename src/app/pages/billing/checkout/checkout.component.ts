@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { loadStripe, Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
 import { SubscriptionService } from '@services/api/subscription.service';
 
@@ -33,6 +33,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   proration: Proration = 'create_prorations';
 
   private setupClientSecret: string | null = null;
+
+  private router = inject(Router);
 
   async ngOnInit() {
     // 1) chosen plan
@@ -127,6 +129,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this.success = true;
         this.notice = 'Payment method updated.';
       }
+
+      if (this.success) {
+        this.router.navigate(['/complete'], { queryParams: { session_id: setupIntent?.id } });
+      }
+
     } catch (e: any) {
       this.cardError = e?.error?.message || e?.message || 'Something went wrong';
     } finally {

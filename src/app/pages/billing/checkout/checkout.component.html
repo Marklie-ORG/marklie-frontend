@@ -7,15 +7,15 @@
   <section class="summary" *ngIf="plan">
     <div class="summary__left">
       <h2 class="summary__title">{{ plan.name }}</h2>
-      <ul class="summary__features" *ngIf="plan.limits as l">
+      <!-- <ul class="summary__features" *ngIf="plan.limits as l">
         <li>Up to {{ l.clients.max }} clients</li>
         <li>Up to {{ l.teamMembers.max }} team members</li>
-      </ul>
+      </ul> -->
     </div>
     <div class="summary__right">
       <div class="price">
         <span class="price__amount">{{ plan.price | currency:'USD' }}</span>
-        <span class="price__interval">/{{ plan.interval }}</span>
+        <span class="price__interval">/ {{ plan.interval }}</span>
       </div>
     </div>
   </section>
@@ -35,9 +35,12 @@
 
     <!-- Payment Element -->
     <div class="field field--full">
-      <span class="field__label">Payment details</span>
+      <!-- <span class="field__label">Payment details</span> -->
       <div id="payment-element"></div>
-      <div class="error" *ngIf="cardError">{{ cardError }}</div>
+      @if (cardError) {
+        <div class="error" >{{ cardError }}</div>
+      }
+      
     </div>
 
     <button class="btn" type="submit" [disabled]="submitting || !ready">
@@ -45,9 +48,12 @@
     </button>
   </form>
 
-  <div class="success" *ngIf="success">
-    <div class="success__icon">✓</div>
-    <h3>All set!</h3>
-    <p>Payment method saved and subscription created.</p>
-  </div>
+  @if (success) {
+    <div class="success">
+      <div class="success__icon">✓</div>
+      <h3>All set!</h3>
+      <p>Payment method saved and subscription created.</p>
+    </div>
+  }
+  
 </div>

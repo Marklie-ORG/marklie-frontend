@@ -73,6 +73,7 @@ import { DatabaseTableComponent } from './components/database-table/database-tab
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
 import { BillingComponent } from './pages/billing/billing.component';
 import { MessagesAccordionComponent } from "./components/messages-accordion/messages-accordion.component";
+import { PlansCompareComponent } from './components/plans-compare/plans-compare.component';
 import { ConfirmDialogComponent } from "./components/confirm-dialog/confirm-dialog.component";
 import { FinishReviewDialogComponent } from './components/finish-review-dialog/finish-review-dialog.component';
 import { MetricsActionsMenuComponent } from './components/metrics-actions-menu/metrics-actions-menu.component';
@@ -148,6 +149,7 @@ register();
   MessagesAccordionComponent,
   ConfirmDialogComponent,
   FinishReviewDialogComponent,
+  PlansCompareComponent,
   MetricsActionsMenuComponent,
   LoomEmbedComponent,
   LoomLinkEditorComponent

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {firstValueFrom, Observable} from "rxjs";
 import {environment} from "@env/environment.js";
-import {SubscriptionPlan, SubscriptionResponse} from "../../pages/billing/billing.component.js";
+import {SubscriptionPlan, SubscriptionResponse} from "../../pages/billing/billing.interfaces.js";
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionService {
@@ -38,6 +38,6 @@ export class SubscriptionService {
   }
 
   finalize(sessionId: string) {
-    return this.http.get(`/api/subscriptions/finalize`, { params: { session_id: sessionId } }).toPromise();
+    return this.http.get(`${this.apiUrl}/subscriptions/finalize`, { params: { session_id: sessionId } }).toPromise();
   }
 }

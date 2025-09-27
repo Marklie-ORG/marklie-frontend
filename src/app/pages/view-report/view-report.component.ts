@@ -22,6 +22,8 @@ import { faDownload } from '@fortawesome/free-solid-svg-icons';
 })
 export class ViewReportComponent implements OnInit {
 
+  protected readonly faDownload = faDownload;
+
   reportId: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = [];
   reportSections: ReportSection[] = []
@@ -122,23 +124,11 @@ export class ViewReportComponent implements OnInit {
     this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
   }
 
-  protected readonly faDownload = faDownload;
+  
 
   async downloadPdf() {
     if (!this.reportId) return;
-    try {
-      const blob = await this.reportService.downloadReportPdf(this.reportId);
-      const url = window.URL.createObjectURL(blob instanceof Blob ? blob : new Blob([blob], { type: 'application/pdf' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = this.pdfFilename();
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error('Failed to download PDF', e);
-    }
+    this.reportsDataService.downloadPdf(this.reportId, this.pdfFilename());
   }
 
 }

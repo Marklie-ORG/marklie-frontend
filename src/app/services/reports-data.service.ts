@@ -7,7 +7,8 @@ import { SchedulesService } from "./api/schedules.service.js";
 import { ReportData, KpiAdAccountData, GraphsAdAccountData, AdsAdAccountData, TableAdAccountData, AdsAdAccountDataCreative } from '../interfaces/get-report.interfaces';
 import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces/report-sections.interfaces';
 import { AdAccountsService } from './api/ad-accounts.service.js';
-import { UserService } from './api/user.service.js';
+import { ReportService } from './api/report.service';
+import { NotificationService } from './notification.service';
 
 
 @Injectable({
@@ -16,7 +17,9 @@ import { UserService } from './api/user.service.js';
 export class ReportsDataService {
   private schedulesService = inject(SchedulesService);
   private adAccountsService = inject(AdAccountsService);
-  private userService = inject(UserService);
+  private reportService = inject(ReportService);
+  private notificationService = inject(NotificationService);
+
   readonly chartConfigs = [
     { key: 'spend', label: 'Daily Spend', color: '#1F8DED', format: (v: any) => `$${v}` },
     { key: 'purchaseRoas', label: 'ROAS', color: '#2ecc71', format: (v: any) => `${v}x` },
@@ -1083,5 +1086,23 @@ export class ReportsDataService {
   }
 
   
+  async downloadPdf(reportId: string, pdfFilename: string) {
+    this.notificationService.info('Downloading PDF…');
+    try {
+      const blob = await this.reportService.downloadReportPdf(reportId);
+      const url = window.URL.createObjectURL(blob instanceof Blob ? blob : new Blob([blob], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = pdfFilename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+    catch(e) {
+      this.notificationService.info('Failed to download PDF');
+    }
+    
+  }
 
 }

@@ -10,6 +10,7 @@ import { NotificationService } from '@services/notification.service';
 import { SendAfterReviewRequest, SendAfterReviewResponse, Messages } from 'src/app/interfaces/interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { FinishReviewDialogComponent } from 'src/app/components/finish-review-dialog/finish-review-dialog.component';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-review-report',
@@ -17,6 +18,8 @@ import { FinishReviewDialogComponent } from 'src/app/components/finish-review-di
   styleUrl: './review-report.component.scss'
 })
 export class ReviewReportComponent implements OnInit {
+
+  protected readonly faDownload = faDownload;
 
   reportUuid: string = '';
   clientUuid: string = '';
@@ -44,6 +47,8 @@ export class ReviewReportComponent implements OnInit {
   dateRangeText = signal<string>('');
   datePreset = signal<string>('');
   reportCreatedAt = signal<string>('');
+
+  pdfFilename = signal<string>('report.pdf');
 
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
@@ -84,6 +89,8 @@ export class ReviewReportComponent implements OnInit {
       );
 
       this.reportCreatedAt.set(res.createdAt ?? '');
+
+      this.pdfFilename.set((res.messaging?.pdfFilename || res.customization?.title || 'report') + (/(\.pdf)$/i.test(res.messaging?.pdfFilename || '') ? '' : '.pdf'));
 
       this.updateDateRangeText();
 
@@ -218,4 +225,11 @@ export class ReviewReportComponent implements OnInit {
   private updateDateRangeText() {
     this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
   }
+
+  async downloadPdf() {
+    console.log('downloadPdf', this.reportUuid, this.pdfFilename());
+    if (!this.reportUuid) return;
+    this.reportsDataService.downloadPdf(this.reportUuid, this.pdfFilename());
+  }
+
 }

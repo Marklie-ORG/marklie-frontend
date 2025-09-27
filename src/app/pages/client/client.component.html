@@ -1,5 +1,5 @@
 <div class="container" style="padding-bottom: 100px;  min-height: 85vh;">
- 
+
     <div style="display: grid; grid-template-columns: 59% 39%; gap: 2%; height: 100%;" class="mt-4">
 
         <div
@@ -18,7 +18,7 @@
                   ⚙️ Client Settings
                 </button>
               </div>
-              
+
           </div>
 
           <div class="table">
@@ -38,10 +38,10 @@
                 (click)="onEditReport(scheduleOption.uuid)"
                 [style.border-bottom]="scheduleOptions.length - 1 === i && scheduleOptions.length > 1 ? 'none' : '1px solid #e5e7eb'"
                 class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4">
-                  <div style="width: 20%;">{{scheduleOption.reportName}}</div>
+                  <div style="width: 20%;">{{scheduleOption.customization.title}}</div>
                   <div style="width: 20%;" class="text-center">{{scheduleOption.frequency}}</div>
-                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.lastRun}}</div>
-                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.nextRun}}</div>
+                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.schedule.lastRun}}</div>
+                  <div style="width: 20%;" class="d-flex align-center justify-center">{{scheduleOption.schedule.nextRun}}</div>
                   <div style="width: 15%;" class="d-flex align-center justify-center">{{scheduleOption.isActive ? "Active" : "Inactive"}}</div>
                   <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
                     <div (click)="toggleActionsMenu(scheduleOption, $event)" style="display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -65,7 +65,7 @@
                   </div>
                 </div>
               }
-              
+
             </div>
           </div>
 
@@ -86,11 +86,11 @@
               }
             </h3>
 
-            
+
           </div>
         </div> -->
 
-        <activity-table 
+        <activity-table
         [logs]="activityLogs"
         ></activity-table>
 

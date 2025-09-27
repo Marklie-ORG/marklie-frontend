@@ -32,6 +32,9 @@ export interface SchedulingOption {
     timezone: string;
     lastRun?: string;
     nextRun?: string;
+    frequency?: string;
+    dayOfWeek?: string;
+    time?: string;
     jobId?: string;
     datePreset: FACEBOOK_DATE_PRESETS | string;
     cronExpression: string;
@@ -127,6 +130,8 @@ export class EditReportComponent {
       this.reportTitle = this.schedulingOption?.customization?.title || this.schedulingOption?.reportName || '';
       this.selectedDatePreset = (this.schedulingOption?.schedule?.datePreset as string) || '';
       this.cronExpression = this.schedulingOption?.schedule?.cronExpression || '';
+      this.time = this.schedulingOption?.schedule?.time || "";
+      this.dayOfWeek = this.schedulingOption?.schedule?.dayOfWeek || "";
       this.reviewRequired = !!this.schedulingOption?.review?.required;
       this.messages = {
         whatsapp: this.schedulingOption?.messaging?.whatsapp || '',
@@ -142,8 +147,9 @@ export class EditReportComponent {
         '';
 
       // If backend also returns a derived frequency, use it; otherwise stay on 'cron'
-      if (this.schedulingOption?.frequency) {
-        this.frequency = (this.schedulingOption.frequency.toLowerCase() as Frequency) || 'cron';
+
+      if (this.schedulingOption?.schedule.frequency) {
+        this.frequency = (this.schedulingOption?.schedule.frequency.toLowerCase() as Frequency) || 'weekly';
       } else if (this.cronExpression) {
         this.frequency = 'cron';
       }
@@ -172,6 +178,7 @@ export class EditReportComponent {
       this.schedulingOptionId,
     )) as SchedulingOption;
 
+    console.log(this.schedulingOption)
     // sections based on new model (providers now live at root)
     this.reportSections =
       await this.reportsDataService.getReportsSectionsBasedOnSchedulingOption(this.schedulingOption);

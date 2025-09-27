@@ -20,7 +20,7 @@ export interface AvailableMetricsAdAccountCustomMetric {
   name: string
   id: string
 }
-  
+
 export interface Report {
   uuid:	string
   cronExpression:	string
@@ -29,7 +29,7 @@ export interface Report {
   dataPreset:	string
   reviewNeeded:	boolean
 }
-  
+
 export interface ScheduleReportRequest {
 
   frequency: string
@@ -51,7 +51,7 @@ export interface ScheduleReportRequest {
   colors: Colors
 
   providers: Provider[]
-  
+
 }
 
 export interface Provider {
@@ -110,7 +110,7 @@ export interface Images {
   organizationLogo: string
 }
 
-export type Frequency = 'weekly' | 'biweekly' | 'monthly' | 'custom' | 'cron';
+export type Frequency = 'cron' | 'biweekly' | 'monthly' | 'custom' | 'weekly';
 
 export enum FACEBOOK_DATE_PRESETS {
   TODAY = "today",
@@ -129,14 +129,14 @@ export enum FACEBOOK_DATE_PRESETS {
   LAST_90D = "last_90d",
   MAXIMUM = "maximum"
 }
-  
+
 export interface Metrics {
   [key: string]: {
     metrics: Metric[],
     order: number
   }
 }
-  
+
 export interface Daum {
   ads: Ad[]
   KPIs: Kpis
@@ -144,7 +144,7 @@ export interface Daum {
   campaigns: Campaign[]
   adAccountId: string
 }
-  
+
 export interface Ad {
   adId: string
   adCreativeId: string
@@ -170,7 +170,7 @@ export interface Kpis {
   costPerAddToCart: number
   initiatedCheckouts: string
 }
-  
+
 export interface Graph {
   spend: string
   impressions: number

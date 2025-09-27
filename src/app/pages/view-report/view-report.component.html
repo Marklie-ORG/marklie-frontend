@@ -1,6 +1,12 @@
 <div class="report-container d-flex flex-column align-center pt-3 pl-5 pr-5">
 
   <div style="width: 80%;">
+    <div class="d-flex justify-end pb-2">
+      <button type="button" class="btn btn-primary" (click)="downloadPdf()">
+        <fa-icon [icon]="faDownload"></fa-icon>
+        <span style="margin-left: 8px;">Download PDF</span>
+      </button>
+    </div>
    
     <report
       [reportSections]="reportSections"

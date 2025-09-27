@@ -157,8 +157,8 @@ export class ReportsDataService {
 
     let reportSections: ReportSection[] = [];
 
-    console.log(schedulingOption.client)
-    const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid);
+    console.log(schedulingOption)
+    const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid ?? schedulingOption.client);
     console.log(availableMetrics)
 
     const providers = schedulingOption.providers;

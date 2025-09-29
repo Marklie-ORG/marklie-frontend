@@ -251,21 +251,21 @@ export class ReportsDataService {
           }
         }
 
-        // Ensure 'impressions' is always present and enabled for the 'ads' section
-        if (section.name === 'ads') {
-          const impressions = metrics.find(m => m.name === 'impressions');
-          if (impressions) {
-            impressions.enabled = true;
-          } else {
-            metrics.push({
-              name: 'impressions',
-              order: metrics.length,
-              enabled: true,
-              isCustom: false,
-              id: ''
-            });
-          }
-        }
+        // // Ensure 'impressions' is always present and enabled for the 'ads' section
+        // if (section.name === 'ads') {
+        //   const impressions = metrics.find(m => m.name === 'impressions');
+        //   if (impressions) {
+        //     impressions.enabled = true;
+        //   } else {
+        //     metrics.push({
+        //       name: 'impressions',
+        //       order: metrics.length,
+        //       enabled: true,
+        //       isCustom: false,
+        //       id: ''
+        //     });
+        //   }
+        // }
 
         // Build ad account object and attach preview data per section
         const adAccountObj: AdAccount = {
@@ -422,13 +422,13 @@ export class ReportsDataService {
           metrics = Array.from(metricMap.entries())
             .map(([name, v]) => ({ name, order: v.order, enabled: v.enabled }))
             .sort((a, b) => a.order - b.order);
-          // Ensure 'impressions' is always included and enabled
-          const impressions = metrics.find(m => m.name === 'impressions');
-          if (impressions) {
-            impressions.enabled = true;
-          } else {
-            metrics.push({ name: 'impressions', order: metrics.length, enabled: true });
-          }
+          // // Ensure 'impressions' is always included and enabled
+          // const impressions = metrics.find(m => m.name === 'impressions');
+          // if (impressions) {
+          //   impressions.enabled = true;
+          // } else {
+          //   metrics.push({ name: 'impressions', order: metrics.length, enabled: true });
+          // }
 
         } else if (section.name === 'campaigns') {
             sectionTitle = 'Best campaigns'

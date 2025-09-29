@@ -22,7 +22,7 @@ export class SubscriptionService {
   }
 
   resume() {
-    return firstValueFrom(this.http.get(`${this.apiUrl}/subscriptions/resume`));
+    return firstValueFrom(this.http.post(`${this.apiUrl}/subscriptions/resume`, {}));
   }
 
   getPlans() {

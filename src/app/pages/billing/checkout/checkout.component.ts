@@ -113,6 +113,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         });
         this.success = true;
         this.notice = 'Subscription created successfully.';
+        this.router.navigate(['/complete'], { queryParams: { session_id: setupIntent?.id } });
         return;
       }
 
@@ -130,9 +131,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         this.notice = 'Payment method updated.';
       }
 
-      if (this.success) {
-        this.router.navigate(['/complete'], { queryParams: { session_id: setupIntent?.id } });
-      }
+      this.router.navigate(['/complete'], { queryParams: { session_id: setupIntent?.id } });
 
     } catch (e: any) {
       this.cardError = e?.error?.message || e?.message || 'Something went wrong';

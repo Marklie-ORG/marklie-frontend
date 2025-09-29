@@ -188,7 +188,8 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
     if ((point as any).currency) {
       const num = typeof point.value === 'number' ? point.value : parseFloat(String(point.value));
       const formatted = isNaN(num) ? String(point.value ?? '') : num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-      return `${formatted} ${(point as any).currency}${point?.symbol ?? ''}`;
+      const symbolOrCurrency = (point as any).symbol || (point as any).currency;
+      return `${symbolOrCurrency} ${formatted}`;
     }
     const formatted = this.metricsService.formatMetricValue(metricName, point?.value);
     return `${formatted}${point?.symbol ?? ''}`;

@@ -17,20 +17,20 @@
       </div>
   
       <div class="actions">
-        <button class="btn outline" (click)="cancelAtEnd()" [disabled]="cancellingLater() || cancellingNow() || resuming()">
-          {{ cancellingLater() ? 'Scheduling…' : 'Cancel at period end' }}
+        <button class="btn" (click)="cancelAtEnd()" [disabled]="cancellingLater() || cancellingNow() || resuming()">
+          {{ cancellingLater() ? 'Scheduling…' : 'Cancel subscription' }}
         </button>
   
-        <button class="btn danger" (click)="cancelNow()" [disabled]="cancellingNow() || cancellingLater() || resuming()">
+        <!-- <button class="btn danger" (click)="cancelNow()" [disabled]="cancellingNow() || cancellingLater() || resuming()">
           {{ cancellingNow() ? 'Cancelling…' : 'Cancel immediately' }}
-        </button>
+        </button> -->
   
         <button class="btn primary" *ngIf="cancelAtPeriodEnd()" (click)="resumeIfScheduled()"
                 [disabled]="resuming() || cancellingLater() || cancellingNow()">
           {{ resuming() ? 'Resuming…' : 'Resume subscription' }}
         </button>
   
-        <span class="hint">“Cancel at period end” keeps access until the current cycle ends. “Cancel immediately” stops access now.</span>
+        <!-- <span class="hint">“Cancel at period end” keeps access until the current cycle ends. “Cancel immediately” stops access now.</span> -->
       </div>
     </div>
     

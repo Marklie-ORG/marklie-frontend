@@ -317,7 +317,6 @@
   h4 {
     font-size: 1.05rem;
     margin: 0 0 12px;
-    color: #374151;
   }
 
   .current-plan-row {
@@ -327,11 +326,11 @@
     margin-bottom: .5rem;
 
     .label {
-      color: #6b7280;
+      // color: #6b7280;
       font-size: .9rem;
     }
     .value {
-      color: #111827;
+      // color: #111827;
       font-weight: 600;
     }
   }
@@ -364,13 +363,13 @@
         &:disabled { opacity: .7; cursor: not-allowed; }
       }
 
-      &.outline {
-        background: none;
-        border: 1px solid #9ca3af;
-        color: #374151;
+      // &.outline {
+      //   background: none;
+      //   // border: 1px solid #9ca3af;
+      //   // color: #374151;
 
-        &:hover { background-color: #f3f4f6; }
-      }
+      //   &:hover { background-color: #f3f4f6; }
+      // }
     }
 
     .hint {

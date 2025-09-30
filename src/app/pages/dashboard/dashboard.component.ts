@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -44,18 +44,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   faTrash = faTrash;
   openActionsForClientUuid: string | null = null;
 
-  constructor(
-    private router: Router,
-    private onboardingService: OnboardingService,
-    private clientService: ClientService,
-    private organizationService: OrganizationService,
-    private dialog: MatDialog,
-    private facebookLoginService: FacebookLoginService,
-    private userService: UserService,
-    private notificationService: NotificationService
-  ) {
-    // this.showAddClientModal()
-  }
+  pageLoaded = signal(false);
+
+  private router = inject(Router);
+  private onboardingService = inject(OnboardingService);
+  private clientService = inject(ClientService);
+  private organizationService = inject(OrganizationService);
+  private dialog = inject(MatDialog);
+  private facebookLoginService = inject(FacebookLoginService);
+  private userService = inject(UserService);
+  private notificationService = inject(NotificationService);
+
+  constructor() {}
 
   async ngOnInit(): Promise<void> {
     try {
@@ -76,6 +76,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       this.isFacebookConnected = !!onboardingSteps.facebookConnected;
       document.body.classList.toggle('no-scroll', !this.isFacebookConnected);
+
+      this.pageLoaded.set(true);
 
     } catch {
       await this.router.navigate(['/']);

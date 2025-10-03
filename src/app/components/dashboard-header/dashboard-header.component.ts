@@ -20,6 +20,18 @@ import { ReportService } from '../../services/api/report.service.js';
   styleUrl: './dashboard-header.component.scss',
 })
 export class DashboardHeaderComponent implements OnInit {
+
+  protected readonly faCoffee = faCoffee;
+  protected readonly faUser = faUser;
+  protected readonly faComment = faComment;
+  protected readonly faBell = faBell;
+  protected readonly faChevronDown = faChevronDown;
+  protected readonly faCreditCard = faCreditCard;
+  protected readonly faCommentDots = faCommentDots;
+  protected readonly faArrowRightFromBracket = faArrowRightFromBracket;
+  protected readonly faCommentAlt = faCommentAlt;
+  protected readonly faCommentDollar = faCommentDollar;
+  
   isDropdownOpen = false;
   userName: string = '';
   email: string = '';
@@ -45,6 +57,11 @@ export class DashboardHeaderComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    const decodedToken = this.authService.getDecodedAccessTokenInfo();
+    console.log(decodedToken);
+    if (decodedToken.isClientAccessToken) {
+      return
+    }
     const userInfo = await this.userService.me()
     console.log(userInfo);
     this.email = userInfo.email;
@@ -217,16 +234,5 @@ export class DashboardHeaderComponent implements OnInit {
     this.authService.clearTokens();
     this.router.navigate(['/']);
   }
-
-
-  protected readonly faCoffee = faCoffee;
-  protected readonly faUser = faUser;
-  protected readonly faComment = faComment;
-  protected readonly faBell = faBell;
-  protected readonly faChevronDown = faChevronDown;
-  protected readonly faCreditCard = faCreditCard;
-  protected readonly faCommentDots = faCommentDots;
-  protected readonly faArrowRightFromBracket = faArrowRightFromBracket;
-  protected readonly faCommentAlt = faCommentAlt;
-  protected readonly faCommentDollar = faCommentDollar;
+  
 }

@@ -55,4 +55,20 @@ export class OrganizationService {
     );
   }
 
+  async shareClientDatabase(clientUuid: string, emails: string[]) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/share-client-database`, { clientUuid, emails }, { observe: 'response' })
+    );
+  }
+
+  async verifyClientAccess(token: string) {
+    return firstValueFrom(
+      this.http.post<{
+        refreshToken: string;
+      }>(`${this.apiUrl}/verify-client-access`, { token }, { observe: 'response' })
+    );
+  }
+
 }

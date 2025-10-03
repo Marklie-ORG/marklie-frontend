@@ -1,10 +1,14 @@
 <div class="block" style="height: 100%;">
   <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3">
     <h3>Generated Reports</h3>
-    <a [routerLink]="['/reports-database']" [queryParams]="clientName ? { client: clientName } : null" class="d-flex align-center" style="gap: 6px; color: var(--blue-color); text-decoration: none; font-size: 14px;">
-      See reports database
-      <span style="display:inline-block;">↗</span>
-    </a>
+    <div class="header-buttons">
+      <button class="blue" (click)="openShareModal()">
+        Share reports
+      </button>
+      <button (click)="openReportsDatabase()">
+        See all reports
+      </button>
+    </div>
   </div>
 
   <div class="table">

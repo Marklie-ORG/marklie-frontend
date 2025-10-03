@@ -1,6 +1,9 @@
 :host {
-  min-height: 100vh;
+  // min-height: 100vh;
   // overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .connect-facebook {
@@ -103,4 +106,9 @@
 .actions-menu {
   top: calc(100% + 8px);
   right: 0;
+}
+
+.container {
+  flex: 1;
+  padding: 20px 4%;
 }

@@ -573,8 +573,8 @@ hr {
 }
 
 .container {
-  max-width: 90%;
-  margin: 0 auto;
+  flex: 1;
+  padding: 20px 4%;
 }
 
 .landing-container {
@@ -684,12 +684,12 @@ textarea {
     font-size: 1rem;
     padding: 7px 26px 7px 10px;
     width: calc(100% - 28px);
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1.5px solid #bfbfbf;
     transition: all 0.2s ease-in-out;
     &:focus {
       outline: none;
-      border-color: #82baff !important;
+      border-color: #82baff5e !important;
       box-shadow: 0 0 0px 3px #62a9ff47;
     }
   }

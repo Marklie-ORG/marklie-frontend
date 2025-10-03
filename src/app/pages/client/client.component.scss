@@ -1,7 +1,7 @@
 
-:host {
-  min-height: 100vh;
-}
+// :host {
+//   min-height: 100vh;
+// }
 
 .text-muted {
   color: #999;
@@ -296,5 +296,9 @@
 }
 
 activity-table {
-  height: 100%;
+  flex: 1;
+}
+
+database-table {
+  flex: 1;
 }

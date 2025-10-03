@@ -71,6 +71,7 @@ import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-s
 import { PhoneInputComponent } from './components/phone-input/phone-input.component';
 import { DatabaseTableComponent } from './components/database-table/database-table.component';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { ReportsDatabaseListComponent } from './components/reports-database-list/reports-database-list.component';
 import { BillingComponent } from './pages/billing/billing.component';
 import { MessagesAccordionComponent } from "./components/messages-accordion/messages-accordion.component";
 import { PlansCompareComponent } from './components/plans-compare/plans-compare.component';
@@ -81,6 +82,9 @@ import { LoomEmbedComponent } from './components/loom-embed/loom-embed.component
 import { LoomLinkEditorComponent } from './components/loom-link-editor/loom-link-editor.component';
 import {CheckoutComponent} from "./pages/billing/checkout/checkout.component.js";
 import {CompleteComponent} from "./pages/billing/complete/complete.component.js";
+import { ClientDatabaseComponent } from './pages/client-database/client-database.component';
+import { ShareClientDatabaseComponent } from './components/share-client-database/share-client-database.component';
+import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
 
 
 register();
@@ -145,6 +149,7 @@ register();
     PhoneInputComponent,
   DatabaseTableComponent,
   ReportsDatabasePageComponent,
+  ReportsDatabaseListComponent,
   BillingComponent,
   MessagesAccordionComponent,
   ConfirmDialogComponent,
@@ -152,7 +157,10 @@ register();
   PlansCompareComponent,
   MetricsActionsMenuComponent,
   LoomEmbedComponent,
-  LoomLinkEditorComponent
+  LoomLinkEditorComponent,
+  ClientDatabaseComponent,
+  ShareClientDatabaseComponent,
+  ActivateClientAccessComponent
 
   ],
   imports: [

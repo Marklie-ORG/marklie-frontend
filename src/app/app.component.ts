@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component,inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { AuthService } from './services/api/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,8 @@ export class AppComponent {
   showDashboardHeader = false;
   showLandingHeader = true;
 
+  private authService = inject(AuthService);
+
   constructor(private router: Router) {
     router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -23,15 +26,17 @@ export class AppComponent {
         this.showLandingHeader = !hasToken && url === '/';
         this.showHeader = hasToken && url === '/';
 
+        const decodedToken = this.authService.getDecodedAccessTokenInfo();
+
         this.showDashboardHeader =
-          url === '/dashboard' ||
-          url.startsWith('/client/') ||
+          (url === '/dashboard' || //
+          url.startsWith('/client/') || //
           url === '/profile' ||
           url.startsWith('/view-report/') ||
           url.startsWith('/scheduled-reports') ||
           url.startsWith('/reports-database') ||
           url.startsWith('/suggested-features') ||
-          url.startsWith('/billing');
+          url.startsWith('/billing')) && !decodedToken.isClientAccessToken;
       }
     });
   }

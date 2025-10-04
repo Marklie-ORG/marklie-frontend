@@ -184,6 +184,14 @@
                   </label>
                 }
               }
+
+              <!-- <button
+                type="button"
+                class="create-custom-metric-btn mt-3"
+                (click)="openCustomMetricBuilder(adAccount, sectionKey)"
+              >
+                Create custom metric
+              </button> -->
               
             </div>
           </div>
@@ -192,3 +200,12 @@
     </div>
   </div>
 </ng-template>
+
+@if (isCustomMetricBuilderOpen()) {
+  <custom-metric-builder
+    [metrics]="customMetricBuilderMetrics"
+    [adAccountName]="customMetricBuilderAccountName"
+    (cancel)="closeCustomMetricBuilder()"
+    (save)="handleCustomMetricSave($event)"
+  ></custom-metric-builder>
+}

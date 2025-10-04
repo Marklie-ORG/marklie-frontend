@@ -1,9 +1,7 @@
 import { Component, effect, ElementRef, EventEmitter, Input, model, Output, ViewChild } from '@angular/core';
 import Sortable from 'sortablejs';
-import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { NotificationService } from 'src/app/services/notification.service';
-import { Metric } from 'src/app/interfaces/report-sections.interfaces';
 
 @Component({
   selector: 'edit-metrics',
@@ -13,6 +11,8 @@ import { Metric } from 'src/app/interfaces/report-sections.interfaces';
 export class EditMetricsComponent {
 
   private sectionsSortable: Sortable | null = null;
+
+  private customMetricBuilderContext: { sectionKey: string; adAccount: AdAccount } | null = null;
 
   @ViewChild('sectionsContainer', { static: false }) set sectionsContainer(el: ElementRef | undefined) {
     if (this.sectionsSortable) {
@@ -193,6 +193,43 @@ export class EditMetricsComponent {
     if (key === 'ads') return this.bestCreatives;
     if (key === 'campaigns') return this.bestCampaigns;
     return undefined;
+  }
+
+  isCustomMetricBuilderOpen(): boolean {
+    return !!this.customMetricBuilderContext;
+  }
+
+  get customMetricBuilderMetrics(): AdAccount['metrics'] {
+    return this.customMetricBuilderContext?.adAccount.metrics ?? [];
+  }
+
+  get customMetricBuilderAccountName(): string {
+    return this.customMetricBuilderContext?.adAccount.name ?? '';
+  }
+
+  openCustomMetricBuilder(adAccount: AdAccount, sectionKey: string): void {
+    this.customMetricBuilderContext = { adAccount, sectionKey };
+  }
+
+  closeCustomMetricBuilder(): void {
+    this.customMetricBuilderContext = null;
+  }
+
+  handleCustomMetricSave(formula: string): void {
+    const context = this.customMetricBuilderContext;
+
+    if (context) {
+      console.log('Custom metric formula saved:', {
+        formula,
+        adAccountId: context.adAccount.id,
+        adAccountName: context.adAccount.name,
+        sectionKey: context.sectionKey,
+      });
+    } else {
+      console.log('Custom metric formula saved:', formula);
+    }
+
+    this.closeCustomMetricBuilder();
   }
 
 }

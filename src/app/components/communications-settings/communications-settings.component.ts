@@ -34,7 +34,6 @@ export class CommunicationsSettingsComponent {
     effect(async () => {
 
       this.selectedConversationId = this.slackConversationId() || null;
-      // console.log(this.slackConversationId())
 
       if (this.clientUuid()) {
         await this.getWorkspaces();
@@ -58,13 +57,6 @@ export class CommunicationsSettingsComponent {
       }
 
     })
-
-    // effect(async () => {
-    //   this.emails = this.clientEmails() ?
-    //     this.clientEmails().map(email => ({email: email})) : [];
-    //   this.phoneNumbers = this.clientPhoneNumbers() ?
-    //     this.clientPhoneNumbers().map(phoneNumber => ({phoneNumber: phoneNumber})) : [];
-    // })
   }
 
   async ngOnInit() {}
@@ -114,21 +106,10 @@ export class CommunicationsSettingsComponent {
 
   addEmail(email: string = '') {
     this.clientEmails.set([...this.clientEmails(), email]);
-
-    console.log(this.clientEmails)
-
-    // this.propagateChanges();  
   }
-
-  // propagateChanges() {
-  //   this.clientEmails.set(this.emails.map(email => email.email));
-  //   this.clientPhoneNumbers.set(this.phoneNumbers.map(phoneNumber => phoneNumber.phoneNumber));
-  // }
 
   removeEmail(index: number) {
     this.clientEmails.set(this.clientEmails().filter((_, i) => i !== index));
-
-    // this.propagateChanges();
   }
 
   addPhoneNumber(phoneNumber: string = '') {

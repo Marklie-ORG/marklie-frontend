@@ -9,24 +9,25 @@
   </div>
 </div>
 
-<div class="container" *ngIf="isFacebookConnected === true"
-style="padding-bottom: 100px; min-height: 85vh;"
->
+<!-- <div style="height: 100%; display: flex; flex-direction: column;"> -->
+  
+<!-- <app-dashboard-header></app-dashboard-header> -->
 
-  <div class="dashboard-container mt-4">
-    <div
-    class="block"
-    style=" min-height: 85vh;"
-    >
+<div class="container">
+
+  <div class="dashboard-container">
+    
+    <div class="block">
       <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
-        <button class="blue" (click)="showAddClientModal()" *ngIf="clients.length > 0">
-          New client
-        </button>
+        @if ((pageLoaded() && clients.length > 0) || !pageLoaded()) {
+          <button class="blue" (click)="showAddClientModal()">
+            New client
+          </button>
+        }
       </div>
-
-
-      <div class="table">
+      
+      <div class="table" >
 
         <div class="header d-flex align-center justify-center d-flex pb-3 pl-4 pr-4">
           <div style="width: 20%; color: #333333cb !important;">Client name</div>
@@ -37,60 +38,66 @@ style="padding-bottom: 100px; min-height: 85vh;"
           <div style="width: 5%; color: #333333cb !important;" class="d-flex align-center justify-center"></div>
         </div>
 
-        <div class="list">
-          @for (client of clients; let i = $index; track i) {
-            <div
-            (click)="openClient(client.uuid); $event.stopPropagation()"
-            [style.border-bottom]="clients.length - 1 === i && clients.length > 1 ? 'none' : '1px solid #e5e7eb'"
-            class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" >
-              <div style="width: 20%;">{{client.name}}</div>
-              <div style="width: 20%;">
-                <div class="d-flex align-center gap-2 justify-center">
-                  <img src="../../../assets/img/meta_icon.png" alt="Meta Platform">
+        <!-- style="flex: 1;" -->
+        <div class="list-parent">
+          <div class="list">
+            @for (client of clients; let i = $index; track i) {
+              <div
+              (click)="openClient(client.uuid); $event.stopPropagation()"
+              [style.border-bottom]="clients.length - 1 === i && clients.length > 1 ? 'none' : '1px solid #e5e7eb'"
+              class="row d-flex align-center justify-center pt-3 pb-3 pl-4 pr-4" >
+                <div style="width: 20%;">{{client.name}}</div>
+                <div style="width: 20%;">
+                  <div class="d-flex align-center gap-2 justify-center">
+                    <img src="../../../assets/img/meta_icon.png" alt="Meta Platform">
+                  </div>
+                </div>
+                <div style="width: 20%;">
+                  <div class="d-flex align-center gap-2 justify-center">
+                    @if (client.channels.length > 0) {
+                      @if (client.channels.includes('email')) {
+                        <img src="../../../assets/img/emai_icon.png" alt="Email icon">
+                      }
+                      @if (client.channels.includes('whatsapp')) {
+                        <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon">
+                      }
+                      @if (client.channels.includes('slack')) {
+                        <img src="../../../assets/img/slack_icon.png" alt="Slack icon">
+                      }
+                    }
+                    @else {
+                      -
+                    }
+                    
+                  </div>
+                </div>
+                <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulesCount}}</div>
+                <div style="width: 15%;" class="d-flex align-center justify-center">{{ client.lastActivity ? (client.lastActivity | date:'MMM d, yyyy') : '-' }}</div>
+                <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
+                  <div (click)="toggleClientActionsMenu(client, $event)" style="display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <fa-icon [icon]="faEllipsisVertical"></fa-icon>
+                  </div>
+                  <div class="dropdown-menu actions-menu" *ngIf="openActionsForClientUuid === client.uuid">
+                    <button type="button" (click)="deleteClient(client, $event)">
+                      <fa-icon [icon]="faTrash"></fa-icon> Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div style="width: 20%;">
-                <div class="d-flex align-center gap-2 justify-center">
-                  @if (client.channels.length > 0) {
-                    @if (client.channels.includes('email')) {
-                      <img src="../../../assets/img/emai_icon.png" alt="Email icon">
-                    }
-                    @if (client.channels.includes('whatsapp')) {
-                      <img src="../../../assets/img/whatsapp_icon.png" alt="WhatsApp icon">
-                    }
-                    @if (client.channels.includes('slack')) {
-                      <img src="../../../assets/img/slack_icon.png" alt="Slack icon">
-                    }
-                  }
-                  @else {
-                    -
-                  }
-                  
-                </div>
-              </div>
-              <div style="width: 20%;" class="d-flex align-center justify-center">{{client.schedulesCount}}</div>
-              <div style="width: 15%;" class="d-flex align-center justify-center">{{ client.lastActivity ? (client.lastActivity | date:'MMM d, yyyy') : '-' }}</div>
-              <div style="width: 5%;" class="d-flex align-center justify-center actions-dropdown-container" (click)="$event.stopPropagation()">
-                <div (click)="toggleClientActionsMenu(client, $event)" style="display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
-                  <fa-icon [icon]="faEllipsisVertical"></fa-icon>
-                </div>
-                <div class="dropdown-menu actions-menu" *ngIf="openActionsForClientUuid === client.uuid">
-                  <button type="button" (click)="deleteClient(client, $event)">
-                    <fa-icon [icon]="faTrash"></fa-icon> Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          }
-          
+            }
+            
+          </div>
         </div>
+        
       </div>
 
-      <div *ngIf="clients.length === 0" class="d-flex align-center justify-center mt-4">
-        <button class="blue" (click)="showAddClientModal()">
-          Add your first client!
-        </button>
-      </div>
+      @if ((pageLoaded() && clients.length === 0)) {
+        <div class="d-flex align-center justify-center mt-4">
+          <button class="blue" (click)="showAddClientModal()">
+            Add your first client!
+          </button>
+        </div>
+      }
     </div>
 
     
@@ -98,5 +105,12 @@ style="padding-bottom: 100px; min-height: 85vh;"
     [logs]="activityLogs"
     [level]="'organization'"
     ></activity-table>
+  </div>
 </div>
-</div>
+
+<!-- </div> -->
+
+
+
+
+

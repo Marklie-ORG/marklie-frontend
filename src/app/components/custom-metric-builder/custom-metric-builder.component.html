@@ -1,0 +1,96 @@
+<div class="builder-card">
+  <div class="builder-header">
+    <div>
+      <h3>Create custom metric</h3>
+      @if (adAccountName) {
+        <p class="builder-subtitle">Ad account: {{ adAccountName }}</p>
+      }
+    </div>
+    <button type="button" class="builder-close" (click)="onCancel()">×</button>
+  </div>
+
+  <div class="builder-body">
+    <div class="builder-column">
+      <h4>Metrics</h4>
+      <div
+        cdkDropList
+        id="metricsList"
+        [cdkDropListData]="metrics"
+        [cdkDropListConnectedTo]="['formulaList']"
+        [cdkDropListEnterPredicate]="disallowDrop"
+        cdkDropListSortingDisabled
+        class="palette"
+      >
+        @if (!metrics.length) {
+          <p class="empty-state">No metrics available.</p>
+        } @else {
+          @for (metric of metrics; track metric.name) {
+            <div cdkDrag class="palette-item">
+              <span class="palette-item-label">{{ metricsService.getFormattedMetricName(metric.name) }}</span>
+              <span class="palette-item-tag">{{ metric.isCustom ? 'Custom' : 'Default' }}</span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="builder-column">
+      <h4>Operations</h4>
+      <div
+        cdkDropList
+        id="operationsList"
+        [cdkDropListData]="mathOperations"
+        [cdkDropListConnectedTo]="['formulaList']"
+        [cdkDropListEnterPredicate]="disallowDrop"
+        cdkDropListSortingDisabled
+        class="palette"
+      >
+        @for (operation of mathOperations; track operation) {
+          <div cdkDrag class="palette-item palette-operation">
+            {{ operation }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="builder-column formula-column">
+      <h4>Formula</h4>
+      <div
+        cdkDropList
+        id="formulaList"
+        [cdkDropListData]="formulaTokens"
+        [cdkDropListConnectedTo]="['metricsList', 'operationsList']"
+        class="formula-dropzone"
+        (cdkDropListDropped)="onFormulaDrop($event)"
+      >
+        @if (!formulaTokens.length) {
+          <p class="empty-state">Drag metrics and operations here</p>
+        }
+        @for (token of formulaTokens; track $index) {
+          <div cdkDrag class="formula-token">
+            <span>{{ token.label }}</span>
+            <button type="button" class="token-remove" (click)="removeToken($index)">×</button>
+          </div>
+        }
+      </div>
+
+      <label class="formula-label" for="formulaDisplay">Formula preview</label>
+      <textarea
+        id="formulaDisplay"
+        class="formula-preview"
+        rows="3"
+        [value]="formulaDisplay"
+        readonly
+      ></textarea>
+
+      @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+      }
+
+      <div class="builder-actions">
+        <button type="button" class="secondary" (click)="clearFormula()">Clear</button>
+        <button type="button" class="primary" (click)="onSave()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>

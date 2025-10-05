@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 export class AuthInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private readonly retryHeader = 'x-auth-retry';
 
   constructor(
     private authService: AuthService,
@@ -20,16 +21,29 @@ export class AuthInterceptor implements HttpInterceptor {
     // Log cookies before request
     // console.log('Cookies before request:', document.cookie);
 
+    const headers = req.headers
+      .set('ngrok-skip-browser-warning', 'true')
+      .set('Authorization', accessToken ? `Bearer ${accessToken}` : '');
+
     const modifiedReq = req.clone({
-      headers: req.headers
-        .set('ngrok-skip-browser-warning', 'true')
-        .set('Authorization', accessToken ? `Bearer ${accessToken}` : ''),
+      headers,
       withCredentials: true
     });
 
     return next.handle(modifiedReq).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
+          if (!accessToken) {
+            return throwError(() => error);
+          }
+          if (req.url.includes('/auth/refresh')) {
+            this.authService.clearTokens();
+            this.router.navigate(['/']);
+            return throwError(() => error);
+          }
+          if (req.headers.has(this.retryHeader)) {
+            return throwError(() => error);
+          }
           return this.handle401Error(req, next);
         }
         return throwError(() => error);
@@ -48,7 +62,7 @@ export class AuthInterceptor implements HttpInterceptor {
           this.refreshTokenSubject.next(data.accessToken);
           this.authService.setToken(data.accessToken);
 
-          return next.handle(this.addTokenToRequest(request, data.accessToken));
+          return next.handle(this.addTokenToRequest(request, data.accessToken, true));
         }),
         catchError((err) => {
           this.isRefreshing = false;
@@ -62,14 +76,21 @@ export class AuthInterceptor implements HttpInterceptor {
     return this.refreshTokenSubject.pipe(
       filter(token => token !== null),
       take(1),
-      switchMap(token => next.handle(this.addTokenToRequest(request, token)))
+      switchMap(token => next.handle(this.addTokenToRequest(request, token, true)))
     );
   }
 
-  private addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {
+  private addTokenToRequest(request: HttpRequest<any>, token: string, markRetry = false): HttpRequest<any> {
+    let headers = request.headers
+      .set('Authorization', `Bearer ${token}`)
+      .set('ngrok-skip-browser-warning', 'true');
+
+    if (markRetry) {
+      headers = headers.set(this.retryHeader, 'true');
+    }
+
     return request.clone({
-      headers: request.headers
-        .set('Authorization', `Bearer ${token}`),
+      headers,
       withCredentials: true
     });
   }

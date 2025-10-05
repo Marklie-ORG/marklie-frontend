@@ -25,6 +25,9 @@ import { ReportsDatabasePageComponent } from './pages/reports-database/reports-d
 import { BillingComponent } from './pages/billing/billing.component';
 import {CheckoutComponent} from "./pages/billing/checkout/checkout.component.js";
 import {CompleteComponent} from "./pages/billing/complete/complete.component.js";
+import { ClientDatabaseComponent } from './pages/client-database/client-database.component';
+import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
+import { AccessRequestsComponent } from './pages/access-requests/access-requests.component';
 
 const routes: Routes = [
   {
@@ -92,6 +95,11 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'client-database/:clientUuid',
+    component: ClientDatabaseComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'pdf-report/:reportUuid',
     component: PdfReportComponent
   },
@@ -120,6 +128,11 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'access-requests',
+    component: AccessRequestsComponent,
+    canActivate: [authGuard]
+  },
+  {
     path: 'suggested-features/:uuid',
     component: FeatureSuggestionComponent,
     canActivate: [authGuard]
@@ -140,9 +153,14 @@ const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'activate-client-access',
+    component: ActivateClientAccessComponent
+  },
+  {
     path: '**',
     redirectTo: '/dashboard'
   },
+  
 
 ];
 

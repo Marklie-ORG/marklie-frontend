@@ -1,0 +1,28 @@
+<modal-base>
+    <div class="share-reports-container">
+        <p>Enter the emails of the client,<br>and we will send them an email with access to the reports</p>
+        <div class="email-list">
+            
+                <div class="email-row" *ngFor="let email of clientEmails(); let i = index; trackBy: trackByIndex">
+                    <input
+                        class="text"
+                        type="email"
+                        placeholder="Enter email address"
+                        [ngModel]="email"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="onEmailChange(i, $event)"
+                    >
+                    <button type="button" (click)="removeEmail(i)">Remove</button>
+                </div>
+        
+            <button class="add-email-button" type="button" (click)="addEmail()">Add email</button>
+        </div>
+        
+        <div class="actions">
+            <button class="blue" (click)="share()">Share</button>
+        </div>
+
+        
+    </div>
+    
+</modal-base>

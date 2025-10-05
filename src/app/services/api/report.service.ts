@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 import { ScheduledReport } from 'src/app/pages/client/client.component';
 import { ScheduleReportRequest, ReportImages, Provider, SendAfterReviewRequest, SendAfterReviewResponse, Messages, Metadata, UpdateReportMetadataRequest } from 'src/app/interfaces/interfaces';
+import { RequestReportAccessPayload, RequestReportAccessResponse } from 'src/app/interfaces/report-access.interfaces';
 import { GetReportResponse } from 'src/app/interfaces/get-report.interfaces';
 
 
@@ -131,4 +132,3 @@ export class ReportService {
     );
   }
 }
-

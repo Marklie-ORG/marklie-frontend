@@ -86,6 +86,7 @@ import {CompleteComponent} from "./pages/billing/complete/complete.component.js"
 import { ClientDatabaseComponent } from './pages/client-database/client-database.component';
 import { ShareClientDatabaseComponent } from './components/share-client-database/share-client-database.component';
 import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
+import { AccessRequestsComponent } from './pages/access-requests/access-requests.component';
 
 
 register();
@@ -162,7 +163,8 @@ register();
   ClientDatabaseComponent,
   ShareClientDatabaseComponent,
   ActivateClientAccessComponent,
-  CustomMetricBuilderComponent
+  CustomMetricBuilderComponent,
+  AccessRequestsComponent
 
   ],
   imports: [

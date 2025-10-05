@@ -36,6 +36,7 @@ export class AppComponent {
           url.startsWith('/scheduled-reports') ||
           url.startsWith('/reports-database') ||
           url.startsWith('/suggested-features') ||
+          url.startsWith('/access-requests') ||
           url.startsWith('/billing')) && !decodedToken.isClientAccessToken;
       }
     });

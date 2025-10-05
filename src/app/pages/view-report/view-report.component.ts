@@ -5,6 +5,7 @@ import {
   signal,
   inject,
 } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { ReportService } from '@services/api/report.service.js';
@@ -13,6 +14,8 @@ import { FACEBOOK_DATE_PRESETS, GetAvailableMetricsResponse } from 'src/app/inte
 import { MetricsService } from 'src/app/services/metrics.service.js';
 import { ReportData } from 'src/app/interfaces/get-report.interfaces.js';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
+import { FormBuilder, Validators } from '@angular/forms';
+import { OrganizationService } from '@services/api/organization.service';
 
 
 @Component({
@@ -26,7 +29,7 @@ export class ViewReportComponent implements OnInit {
 
   reportId: string | null = null;
   availableMetrics: GetAvailableMetricsResponse = [];
-  reportSections: ReportSection[] = []
+  reportSections: ReportSection[] = [];
 
   isPreviewMode: boolean = false;
 
@@ -53,11 +56,25 @@ export class ViewReportComponent implements OnInit {
   
   pdfFilename = signal<string>('report.pdf');
 
+  isLoadingReport = signal<boolean>(false);
+  loadErrorMessage = signal<string>('');
+  showRequestAccessForm = signal<boolean>(false);
+
+  requestAccessSubmitting = signal<boolean>(false);
+  requestAccessSuccess = signal<boolean>(false);
+  requestAccessErrorMessage = signal<string>('');
+
   private route = inject(ActivatedRoute);
   private reportService = inject(ReportService);
   public metricsService = inject(MetricsService);
   public ref = inject(ChangeDetectorRef);
   private reportsDataService = inject(ReportsDataService);
+  private formBuilder = inject(FormBuilder);
+  private organizationService = inject(OrganizationService);
+
+  requestAccessForm = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]]
+  });
 
   async ngOnInit() {
     this.route.params.subscribe(async params => {
@@ -68,6 +85,13 @@ export class ViewReportComponent implements OnInit {
 
   private async loadReport() {
     if (!this.reportId) return;
+
+    this.isLoadingReport.set(true);
+    this.loadErrorMessage.set('');
+    this.showRequestAccessForm.set(false);
+    this.requestAccessSuccess.set(false);
+    this.requestAccessErrorMessage.set('');
+    this.reportSections = [];
 
     try {
       const res = await this.reportService.getReport(this.reportId);
@@ -112,7 +136,14 @@ export class ViewReportComponent implements OnInit {
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
 
     } catch (error) {
-      console.error('Error loading report:', error);
+      const err = error as HttpErrorResponse;
+      if (err?.status === 401) {
+        this.showRequestAccessForm.set(true);
+      } else {
+        this.loadErrorMessage.set('Unable to load this report right now. Please try again later.');
+      }
+    } finally {
+      this.isLoadingReport.set(false);
     }
   }
 
@@ -124,7 +155,37 @@ export class ViewReportComponent implements OnInit {
     this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
   }
 
-  
+  async submitAccessRequest() {
+    if (!this.reportId) return;
+
+    if (this.requestAccessForm.invalid) {
+      this.requestAccessForm.markAllAsTouched();
+      return;
+    }
+
+    this.requestAccessSubmitting.set(true);
+    this.requestAccessSuccess.set(false);
+    this.requestAccessErrorMessage.set('');
+
+    const { email } = this.requestAccessForm.value;
+
+    try {
+      await this.organizationService.requestClientAccess({
+        email: email ?? '',
+        reportUuid: this.reportId,
+      });
+      this.requestAccessSuccess.set(true);
+      this.requestAccessForm.reset({ email: '' });
+    } catch (error) {
+      const err = error as HttpErrorResponse;
+      const backendMessage = (err?.error && typeof err.error === 'object' && 'message' in err.error)
+        ? String((err.error as { message?: unknown }).message ?? '')
+        : '';
+      this.requestAccessErrorMessage.set(backendMessage || 'Could not submit your request. Please try again later.');
+    } finally {
+      this.requestAccessSubmitting.set(false);
+    }
+  }
 
   async downloadPdf() {
     if (!this.reportId) return;

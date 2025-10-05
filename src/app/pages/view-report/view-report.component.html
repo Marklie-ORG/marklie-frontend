@@ -1,26 +1,86 @@
-<div class="report-container d-flex flex-column align-center pt-3 pl-5 pr-5">
+@if (showRequestAccessForm()) {
+  <div class=" d-flex flex-column align-center pt-3 pl-5 pr-5 mt-5">
+    <div class="block p-4"
+    style="width: 80%; max-width: 560px;">
+      <h2 class="mb-3">Request Access</h2>
+      <p class="mb-4">It looks like you don't have access to this report yet.<br>Your marketing agency will be able to grant you access after you request it.</p>
 
-  <div style="width: 80%;">
-    <div class="d-flex justify-end pb-2">
-      <button type="button" class="btn btn-primary" (click)="downloadPdf()">
-        <fa-icon [icon]="faDownload"></fa-icon>
-        <span style="margin-left: 8px;">Download PDF</span>
-      </button>
+      <form [formGroup]="requestAccessForm" (ngSubmit)="submitAccessRequest()">
+
+        <div class="form-group mb-3">
+          <label for="requestAccessEmail">Email</label>
+          <input
+            id="requestAccessEmail"
+            type="email"
+            class="form-control text"
+            formControlName="email"
+            [class.is-invalid]="requestAccessForm.get('email')?.invalid && requestAccessForm.get('email')?.touched"
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+          <div class="invalid-feedback" *ngIf="requestAccessForm.get('email')?.invalid && requestAccessForm.get('email')?.touched">
+            Enter a valid email address.
+          </div>
+        </div>
+
+        <div class="d-flex align-center" style="gap: 12px;">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="requestAccessSubmitting()"
+          >
+            <span *ngIf="!requestAccessSubmitting(); else submitting">Request access</span>
+          </button>
+          <ng-template #submitting>
+            <span>Sending...</span>
+          </ng-template>
+        </div>
+      </form>
+
+      <div class="alert alert-success mt-3" *ngIf="requestAccessSuccess()">
+        Thanks! Your request has been sent. We'll be in touch soon.
+      </div>
+      <div class="alert alert-danger mt-3" *ngIf="requestAccessErrorMessage()">
+        {{ requestAccessErrorMessage() }}
+      </div>
     </div>
-   
-    <report
-      [reportSections]="reportSections"
-      [selectedDatePresetText]="selectedDatePresetText()"
-      [reportTitle]="reportTitle()"
-      [(clientImageUrl)]="clientImageUrl"
-      [(agencyImageUrl)]="agencyImageUrl"
-      [(clientImageGsUri)]="clientImageGsUri"
-      [(agencyImageGsUri)]="agencyImageGsUri"
-      [isViewMode]="true"
-      [headerBackgroundColor]="headerBackgroundColor()"
-      [reportBackgroundColor]="reportBackgroundColor()"
-      [dateRangeText]="dateRangeText()"
-    ></report>
   </div>
-  
-</div>
+}
+@else {
+  <div class="report-container d-flex flex-column align-center pt-3 pl-5 pr-5">
+    <ng-container *ngIf="isLoadingReport(); else reportLoaded">
+      <p>Loading report...</p>
+    </ng-container>
+
+    <ng-template #reportLoaded>
+      <ng-container *ngIf="!loadErrorMessage(); else reportError">
+        <div style="width: 80%;">
+          <div class="d-flex justify-end pb-2">
+            <button type="button" class="btn btn-primary" (click)="downloadPdf()">
+              <fa-icon [icon]="faDownload"></fa-icon>
+              <span style="margin-left: 8px;">Download PDF</span>
+            </button>
+          </div>
+        
+          <report
+            [reportSections]="reportSections"
+            [selectedDatePresetText]="selectedDatePresetText()"
+            [reportTitle]="reportTitle()"
+            [(clientImageUrl)]="clientImageUrl"
+            [(agencyImageUrl)]="agencyImageUrl"
+            [(clientImageGsUri)]="clientImageGsUri"
+            [(agencyImageGsUri)]="agencyImageGsUri"
+            [isViewMode]="true"
+            [headerBackgroundColor]="headerBackgroundColor()"
+            [reportBackgroundColor]="reportBackgroundColor()"
+            [dateRangeText]="dateRangeText()"
+          ></report>
+        </div>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #reportError>
+      <div class="alert alert-danger" role="alert">{{ loadErrorMessage() }}</div>
+    </ng-template>
+  </div>
+}

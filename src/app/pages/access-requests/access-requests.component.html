@@ -1,0 +1,53 @@
+<section class="access-requests">
+  <h1>Client access requests</h1>
+
+  <p *ngIf="isLoading" class="state-text">Loading requests…</p>
+  <p *ngIf="!isLoading && error" class="state-text error">{{ error }}</p>
+
+  <ng-container *ngIf="!isLoading && !error">
+    <div *ngIf="requests.length > 0; else emptyState" class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Client</th>
+            <th>Status</th>
+            <th>Requested</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of requests">
+            <td>{{ request.email }}</td>
+            <td>{{ request.organizationClient?.name || '—' }}</td>
+            <td>
+              <span
+                class="status"
+                [class.status--granted]="request.isGranted"
+              >
+                {{ request.isGranted ? 'Granted' : 'Pending' }}
+              </span>
+            </td>
+            <td>{{ formatDate(request.createdAt) }}</td>
+            <td>
+              <button
+                class="share-button"
+                (click)="shareAccess(request)"
+                [disabled]="
+                  sharingRequestUuid === request.uuid ||
+                  !request.organizationClient?.uuid
+                "
+              >
+                {{ sharingRequestUuid === request.uuid ? 'Sharing…' : 'Share access' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <p class="state-text">No access requests yet.</p>
+  </ng-template>
+</section>

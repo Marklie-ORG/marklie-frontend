@@ -27,6 +27,7 @@ import {CheckoutComponent} from "./pages/billing/checkout/checkout.component.js"
 import {CompleteComponent} from "./pages/billing/complete/complete.component.js";
 import { ClientDatabaseComponent } from './pages/client-database/client-database.component';
 import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
+import { AccessRequestsComponent } from './pages/access-requests/access-requests.component';
 
 const routes: Routes = [
   {
@@ -124,6 +125,11 @@ const routes: Routes = [
   {
     path: 'suggested-features',
     component: SuggestedFeaturesComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'access-requests',
+    component: AccessRequestsComponent,
     canActivate: [authGuard]
   },
   {

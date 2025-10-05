@@ -3,6 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '@env/environment.js';
 
+export interface ClientAccessRequest {
+  uuid: string;
+  email: string;
+  isGranted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  organizationClient?: {
+    uuid: string;
+    name: string;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -52,6 +64,44 @@ export class OrganizationService {
       }>(`${this.apiUrl}/invite-code`, {
         code: code
       }, { observe: 'response' })
+    );
+  }
+
+  async shareClientDatabase(clientUuid: string, emails: string[]) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(`${this.apiUrl}/share-client-database`, { clientUuid, emails }, { observe: 'response' })
+    );
+  }
+
+  async getClientAccessRequests(): Promise<ClientAccessRequest[]> {
+    return firstValueFrom(
+      this.http.get<ClientAccessRequest[]>(`${this.apiUrl}/client-access-requests`)
+    );
+  }
+
+  async verifyClientAccess(token: string) {
+    return firstValueFrom(
+      this.http.post<{
+        refreshToken: string;
+      }>(`${this.apiUrl}/verify-client-access`, { token }, { observe: 'response' })
+    );
+  }
+
+  async requestClientAccess(payload: {
+    email: string;
+    reportUuid?: string;
+    clientUuid?: string;
+  }) {
+    return firstValueFrom(
+      this.http.post<{
+        message: string;
+      }>(
+        `${this.apiUrl}/request-client-access`,
+        payload,
+        { observe: 'response' }
+      )
     );
   }
 

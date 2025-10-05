@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { ShareClientDatabaseComponent } from '../share-client-database/share-client-database.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface DatabaseReportItem {
   uuid: string;
@@ -15,7 +17,10 @@ export interface DatabaseReportItem {
 export class DatabaseTableComponent implements OnInit, OnChanges {
   @Input() reports: DatabaseReportItem[] = [];
   @Input() clientName: string | null = null;
+  @Input() clientUuid: string | null = null;
+  
   private router = inject(Router);
+  private dialog = inject(MatDialog)
 
   reportsToRender: DatabaseReportItem[] = [];
 
@@ -68,4 +73,19 @@ export class DatabaseTableComponent implements OnInit, OnChanges {
   openReport(uuid: string): void {
     this.router.navigate(['/view-report', uuid]);
   }
+
+  openReportsDatabase(): void {
+    this.router.navigate(['/client-database/', this.clientUuid]);
+  }
+
+  openShareModal() {
+    this.dialog.open(ShareClientDatabaseComponent, {
+      data: {
+        clientUuid: this.clientUuid
+      },
+      width: '800px',
+      // minHeight: '400px',
+    })
+  }
+  
 } 

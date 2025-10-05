@@ -64,6 +64,7 @@ import { LandingNewComponent } from "./pages/landing-new/landing-new.component";
 import {HeaderComponent} from "./components/header/header.component.js";
 import { CommunicationsSettingsComponent } from './components/communications-settings/communications-settings.component';
 import { AdAccountsSettingsComponent } from './components/ad-accounts-settings/ad-accounts-settings.component';
+import { CustomMetricBuilderComponent } from './components/custom-metric-builder/custom-metric-builder.component';
 
 import { SuggestedFeaturesComponent } from './pages/suggested-features/suggested-features.component';
 import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-suggestion.component';
@@ -71,6 +72,7 @@ import { FeatureSuggestionComponent } from './pages/feature-suggestion/feature-s
 import { PhoneInputComponent } from './components/phone-input/phone-input.component';
 import { DatabaseTableComponent } from './components/database-table/database-table.component';
 import { ReportsDatabasePageComponent } from './pages/reports-database/reports-database-page.component';
+import { ReportsDatabaseListComponent } from './components/reports-database-list/reports-database-list.component';
 import { BillingComponent } from './pages/billing/billing.component';
 import { MessagesAccordionComponent } from "./components/messages-accordion/messages-accordion.component";
 import { PlansCompareComponent } from './components/plans-compare/plans-compare.component';
@@ -81,6 +83,10 @@ import { LoomEmbedComponent } from './components/loom-embed/loom-embed.component
 import { LoomLinkEditorComponent } from './components/loom-link-editor/loom-link-editor.component';
 import {CheckoutComponent} from "./pages/billing/checkout/checkout.component.js";
 import {CompleteComponent} from "./pages/billing/complete/complete.component.js";
+import { ClientDatabaseComponent } from './pages/client-database/client-database.component';
+import { ShareClientDatabaseComponent } from './components/share-client-database/share-client-database.component';
+import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
+import { AccessRequestsComponent } from './pages/access-requests/access-requests.component';
 
 
 register();
@@ -145,6 +151,7 @@ register();
     PhoneInputComponent,
   DatabaseTableComponent,
   ReportsDatabasePageComponent,
+  ReportsDatabaseListComponent,
   BillingComponent,
   MessagesAccordionComponent,
   ConfirmDialogComponent,
@@ -152,7 +159,12 @@ register();
   PlansCompareComponent,
   MetricsActionsMenuComponent,
   LoomEmbedComponent,
-  LoomLinkEditorComponent
+  LoomLinkEditorComponent,
+  ClientDatabaseComponent,
+  ShareClientDatabaseComponent,
+  ActivateClientAccessComponent,
+  CustomMetricBuilderComponent,
+  AccessRequestsComponent
 
   ],
   imports: [

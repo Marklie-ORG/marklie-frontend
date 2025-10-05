@@ -1,0 +1,25 @@
+.email-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.email-row {
+    display: flex;
+    gap: 10px;
+}
+
+.share-reports-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.add-email-button {
+    width: max-content
+}

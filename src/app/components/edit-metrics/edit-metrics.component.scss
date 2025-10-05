@@ -246,3 +246,19 @@ input:checked + .slider::before {
   overflow-y: auto;
 }
 
+.create-custom-metric-btn {
+  width: fit-content;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #1d4ed8;
+  }
+}

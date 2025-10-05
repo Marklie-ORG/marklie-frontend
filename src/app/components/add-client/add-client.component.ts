@@ -32,9 +32,9 @@ export class AddClientComponent {
       // facebookAdAccounts: [[], Validators.required],
     });
 
-    effect(() => {
-      console.log(this.facebookAdAccounts())
-    })
+    // effect(() => {
+    //   console.log(this.facebookAdAccounts())
+    // })
     
   }
 

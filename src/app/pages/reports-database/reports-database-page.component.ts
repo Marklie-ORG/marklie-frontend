@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ReportService } from '../../services/api/report.service.js';
 import { ActivatedRoute, Router } from '@angular/router';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -29,11 +29,7 @@ export class ReportsDatabasePageComponent implements OnInit {
   loading = true;
   pageSize = 12;
   currentPage = 1;
-  isFilterOpen = false;
   selectedClients: string[] = [];
-  uniqueClients: string[] = [];
-  @ViewChild('filterMenu') filterMenu?: ElementRef<HTMLElement>;
-  @ViewChild('filterTrigger') filterTrigger?: ElementRef<HTMLElement>;
 
   async ngOnInit() {
     // Initialize from query params (supports repeated ?client=A&client=B or comma-separated)
@@ -67,18 +63,16 @@ export class ReportsDatabasePageComponent implements OnInit {
       }
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    this.uniqueClients = Array.from(new Set(this.rows.map(r => r.clientName).filter(Boolean))).sort();
-    // this.rows = [...this.rows, ...this.rows, ...this.rows, ...this.rows]
     this.loading = false;
   }
 
   get filteredRows(): DatabaseRow[] {
-    const q = this.searchQuery.trim().toLowerCase();
+    const query = this.searchQuery.trim().toLowerCase();
     let rows = this.rows;
-    if (q) {
+    if (query) {
       rows = rows.filter(r =>
-        r.reportName?.toLowerCase().includes(q) ||
-        r.clientName?.toLowerCase().includes(q)
+        r.reportName?.toLowerCase().includes(query) ||
+        r.clientName?.toLowerCase().includes(query)
       );
     }
     if (this.selectedClients.length > 0) {
@@ -116,20 +110,8 @@ export class ReportsDatabasePageComponent implements OnInit {
     this.currentPage = 1;
   }
 
-  toggleFilter(): void {
-    this.isFilterOpen = !this.isFilterOpen;
-  }
-
-  onToggleClient(client: string, checked: boolean): void {
-    const set = new Set(this.selectedClients);
-    if (checked) set.add(client); else set.delete(client);
-    this.selectedClients = Array.from(set);
-    this.currentPage = 1;
-    this.updateClientQueryParam(this.selectedClients);
-  }
-
-  clearClientFilter(): void {
-    this.selectedClients = [];
+  onSelectedClientsChange(clients: string[]): void {
+    this.selectedClients = clients || [];
     this.currentPage = 1;
     this.updateClientQueryParam(this.selectedClients);
   }
@@ -197,14 +179,5 @@ export class ReportsDatabasePageComponent implements OnInit {
     });
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    if (!this.isFilterOpen) return;
-    const target = event.target as Node;
-    const insideTrigger = this.filterTrigger?.nativeElement.contains(target);
-    const insideMenu = this.filterMenu?.nativeElement.contains(target);
-    if (!insideTrigger && !insideMenu) {
-      this.isFilterOpen = false;
-    }
-  }
+  // No host click handling needed; handled inside the reusable component
 } 

@@ -1,0 +1,98 @@
+
+<div class="block" style="height: 100%;">
+  <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3" style="gap: 12px;">
+    <h3>Reports Database</h3>
+    <div class="d-flex align-center" style="gap: 8px;">
+      <div class="d-flex align-center" style="flex: 1; border: 1px solid #E6E6E6; border-radius: 8px; padding: 8px 12px;">
+        <input
+          type="text"
+          [ngModel]="searchQuery"
+          (ngModelChange)="onSearchChange($event)"
+          placeholder="Search"
+          style="border: none; outline: none; width: 100%; background: transparent;"
+        />
+      </div>
+
+      @if (!clientUsageMode) {
+        <button #filterTrigger (click)="toggleFilter()" aria-label="Toggle filters" title="Filter by client" style="display: inline-flex; align-items: center; gap: 6px; border: 1px solid #E6E6E6; border-radius: 8px; height: 36px; padding: 0 12px; background: white; position: relative;"
+                [style.background]="selectedClients.length ? '#1f8ded' : 'white'"
+                [style.borderColor]="selectedClients.length ? '#1f8ded' : '#E6E6E6'"
+                [style.color]="selectedClients.length ? 'white' : 'inherit'">
+          <fa-icon [icon]="faFilter"></fa-icon>
+          <span>Filter</span>
+          @if (selectedClients.length > 0) {
+            <span aria-hidden="true" style="border: 1px solid #1f8ded; color: black; position: absolute; top: -6px; right: -6px; background: #fff; color: '#1f8ded'; border: 1px solid '#1f8ded'; border-radius: 999px; min-width: 18px; height: 18px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1;">
+              {{ selectedClients.length }}
+            </span>
+          }
+        </button>
+      }
+      @if (clientUsageMode && !accessedByClient) {
+        <button class="blue" (click)="openShareModal()">Share with client</button>
+      }
+
+      @if (isFilterOpen) {
+        <div #filterMenu style="position: absolute; right: 0; top: 48px; background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 12px; width: 260px; z-index: 10;">
+          <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">Filter</div>
+          <label style="display: block; font-size: 12px; color: #666; margin-bottom: 6px;">Client</label>
+          <div style="max-height: 220px; overflow: auto; border-radius: 6px; padding: 6px;">
+            @for (client of uniqueClients; track client) {
+              <label class="d-flex align-center" style="gap: 8px; margin: 6px 0;">
+                <input type="checkbox" [checked]="isClientSelected(client)" (change)="onToggleClient(client, $any($event.target).checked)" />
+                <span>{{ client }}</span>
+              </label>
+            }
+          </div>
+          @if (selectedClients.length > 0) {
+            <div style="margin-top: 8px;" class="d-flex align-center justify-end">
+              <button class="blue" (click)="clearClientFilter()">Clear</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="table">
+    <div class="header d-flex align-center d-flex pb-3 pl-4 pr-4">
+      <div [style.width]="effectiveWidths.time">Generated at</div>
+      @if (!clientUsageMode) {
+        <div [style.width]="effectiveWidths.client">Client</div>
+      }
+      <div [style.width]="effectiveWidths.report">Report name</div>
+      <div [style.width]="effectiveWidths.action" class="d-flex align-center justify-center">Action</div>
+    </div>
+
+    <div class="list">
+      @for (item of paginatedRows; track item.uuid) {
+        <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4" (click)="onOpen(item.uuid)">
+          <div [style.width]="effectiveWidths.time">{{ formatTimeOrDate(item.createdAt) }}</div>
+          @if (!clientUsageMode) {
+            <div [style.width]="effectiveWidths.client">{{ item.clientName }}</div>
+          }
+          <div [style.width]="effectiveWidths.report">{{ item.reportName }}</div>
+          <div [style.width]="effectiveWidths.action" class="d-flex align-center justify-center gap-2">
+            @if (item.review.required && !item.review.reviewedAt && !clientUsageMode) {
+              <button class="blue" (click)="onReview(item.uuid)">Review</button>
+            }
+            <!-- <button (click)="onOpen(item.uuid)">Open</button> -->
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="d-flex align-center justify-between pl-4 pr-4 pt-3 pb-3">
+      <div style="color: #666; font-size: 13px;">Showing {{ pageStart }}–{{ pageEnd }} of {{ totalItems }}</div>
+      <div class="d-flex align-center" style="gap: 8px;">
+        @if (currentPage > 1) {
+          <button class="blue" (click)="prevPage()">Previous</button>
+        }
+        @if (currentPage < totalPages) {
+          <button class="blue" (click)="nextPage()">Next</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+

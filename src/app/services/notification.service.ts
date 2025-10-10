@@ -102,19 +102,8 @@ export class NotificationService {
     }, 500);
   }
 
-  success(message: string, duration: number = 3000) {
-    this.show({ message, type: 'success', duration });
-  }
-
-  error(message: string, duration: number = 3000) {
-    this.show({ message, type: 'error', duration });
-  }
-
   info(message: string, duration: number = 3000) {
     this.show({ message, type: 'info', duration });
   }
-
-  warning(message: string, duration: number = 3000) {
-    this.show({ message, type: 'warning', duration });
-  }
+  
 }

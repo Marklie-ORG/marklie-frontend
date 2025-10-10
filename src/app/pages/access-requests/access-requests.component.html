@@ -1,53 +1,53 @@
-<section class="access-requests">
-  <h1>Client access requests</h1>
-
-  <p *ngIf="isLoading" class="state-text">Loading requests…</p>
-  <p *ngIf="!isLoading && error" class="state-text error">{{ error }}</p>
-
-  <ng-container *ngIf="!isLoading && !error">
-    <div *ngIf="requests.length > 0; else emptyState" class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Client</th>
-            <th>Status</th>
-            <th>Requested</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let request of requests">
-            <td>{{ request.email }}</td>
-            <td>{{ request.organizationClient?.name || '—' }}</td>
-            <td>
-              <span
-                class="status"
-                [class.status--granted]="request.isGranted"
-              >
-                {{ request.isGranted ? 'Granted' : 'Pending' }}
-              </span>
-            </td>
-            <td>{{ formatDate(request.createdAt) }}</td>
-            <td>
-              <button
-                class="share-button"
-                (click)="shareAccess(request)"
-                [disabled]="
-                  sharingRequestUuid === request.uuid ||
-                  !request.organizationClient?.uuid
-                "
-              >
-                {{ sharingRequestUuid === request.uuid ? 'Sharing…' : 'Share access' }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<div class="container">
+  <div class="block" style="height: 100%;">
+    <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3">
+      <h3>Client access requests</h3>
     </div>
-  </ng-container>
+  
+    @if (isLoading()) {
+      <p class="state-text pl-4 pr-4 pb-4">Loading requests…</p>
+    } @else if (error()) {
+      <p class="state-text error pl-4 pr-4 pb-4">{{ error() }}</p>
+    } @else if (canShowTable()) {
+      <div class="table">
+        <div class="header d-flex align-center pb-3 pl-4 pr-4">
+          <div [style.width]="columnWidths.email">Email</div>
+          <div [style.width]="columnWidths.client">Client</div>
+          <div [style.width]="columnWidths.status" class="d-flex align-center">Status</div>
+          <div [style.width]="columnWidths.requested">Requested</div>
+          <div [style.width]="columnWidths.actions" class="d-flex align-center justify-center">Actions</div>
+        </div>
+  
+        <div class="list">
+          @for (request of requests(); track request.uuid) {
+            <div class="row d-flex align-center pt-3 pb-3 pl-4 pr-4">
+              <div [style.width]="columnWidths.email">{{ request.email }}</div>
+              <div [style.width]="columnWidths.client">{{ request.organizationClient?.name || '—' }}</div>
+              <div [style.width]="columnWidths.status">
+                <span class="status" [class.status--granted]="request.isGranted">
+                  {{ request.isGranted ? 'Access granted' : 'Pending' }}
+                </span>
+              </div>
+              <div [style.width]="columnWidths.requested">{{ formatDate(request.createdAt) }}</div>
+              <div [style.width]="columnWidths.actions" class="d-flex align-center justify-center">
+                @if (!request.isGranted) {
+                  <button
+                    class="blue"
+                    type="button"
+                    (click)="shareAccess(request)"
+                    [disabled]="isActionDisabled(request)"
+                  >
+                    {{ isSharingRequest(request) ? 'Sharing…' : 'Share access' }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else if (showEmptyState()) {
+      <p class="state-text pl-4 pr-4 pb-4">No access requests yet.</p>
+    }
+  </div>
+</div>
 
-  <ng-template #emptyState>
-    <p class="state-text">No access requests yet.</p>
-  </ng-template>
-</section>

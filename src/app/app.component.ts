@@ -26,6 +26,10 @@ export class AppComponent {
         this.showLandingHeader = !hasToken && url === '/';
         this.showHeader = hasToken && url === '/';
 
+        if (!hasToken) {
+          return
+        }
+
         const decodedToken = this.authService.getDecodedAccessTokenInfo();
 
         this.showDashboardHeader =

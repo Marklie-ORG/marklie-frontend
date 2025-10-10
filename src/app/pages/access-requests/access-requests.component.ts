@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
   ClientAccessRequest,
   OrganizationService,
@@ -11,22 +11,39 @@ import { NotificationService } from '@services/notification.service';
   styleUrl: './access-requests.component.scss'
 })
 export class AccessRequestsComponent implements OnInit {
-  requests: ClientAccessRequest[] = [];
-  isLoading = true;
-  error: string | null = null;
-  sharingRequestUuid: string | null = null;
+  readonly requests = signal<ClientAccessRequest[]>([]);
+  readonly isLoading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly sharingRequestUuid = signal<string | null>(null);
+
+  readonly hasRequests = computed(() => this.requests().length > 0);
+  readonly canShowTable = computed(
+    () => !this.isLoading() && !this.error() && this.hasRequests()
+  );
+  readonly showEmptyState = computed(
+    () => !this.isLoading() && !this.error() && !this.hasRequests()
+  );
+
+  readonly columnWidths = {
+    email: '26%',
+    client: '22%',
+    status: '16%',
+    requested: '20%',
+    actions: '16%',
+  };
 
   private organizationService = inject(OrganizationService);
   private notificationService = inject(NotificationService);
 
   async ngOnInit(): Promise<void> {
     try {
-      this.requests = await this.organizationService.getClientAccessRequests();
+      const requests = await this.organizationService.getClientAccessRequests();
+      this.requests.set(requests);
     } catch (err) {
       console.error('Failed to load client access requests', err);
-      this.error = 'Unable to load access requests right now. Please try again later.';
+      this.error.set('Unable to load access requests right now. Please try again later.');
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
@@ -47,11 +64,11 @@ export class AccessRequestsComponent implements OnInit {
 
   async shareAccess(request: ClientAccessRequest): Promise<void> {
     if (!request.organizationClient?.uuid) {
-      this.notificationService.error('Client information is missing for this request.');
+      this.notificationService.info('Client information is missing for this request.');
       return;
     }
 
-    this.sharingRequestUuid = request.uuid;
+    this.sharingRequestUuid.set(request.uuid);
 
     try {
       await this.organizationService.shareClientDatabase(
@@ -59,13 +76,21 @@ export class AccessRequestsComponent implements OnInit {
         [request.email],
       );
 
-      this.notificationService.success('Access email sent successfully.');
+      this.notificationService.info('Access email sent successfully.');
     } catch (err) {
       console.error('Failed to share client access', err);
-      this.notificationService.error('Failed to share access. Please try again.');
+      this.notificationService.info('Failed to share access. Please try again.');
     } finally {
-      this.sharingRequestUuid = null;
+      this.sharingRequestUuid.set(null);
     }
+  }
+
+  isSharingRequest(request: ClientAccessRequest): boolean {
+    return this.sharingRequestUuid() === request.uuid;
+  }
+
+  isActionDisabled(request: ClientAccessRequest): boolean {
+    return this.isSharingRequest(request) || !request.organizationClient?.uuid;
   }
 
 }

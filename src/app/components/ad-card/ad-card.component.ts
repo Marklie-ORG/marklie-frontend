@@ -292,7 +292,6 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   getAdAccountSortOptions(adAccount: AdAccount): { value: string; label: string }[] {
     return this.getAccountEnabledMetrics(adAccount)
       .filter(m => m.name !== 'ad_name')
-      .filter(m => !m.isCustom)
       .map(m => ({ value: m.name, label: this.metricsService.getFormattedMetricName(m.name) }))
       
   }

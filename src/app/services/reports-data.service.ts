@@ -302,8 +302,8 @@ export class ReportsDataService {
           })) as any;
 
           adAccountObj.adsSettings = {
-            numberOfAds: adAccount.adsSettings?.numberOfAds ?? 10,
-            sortAdsBy: adAccount.adsSettings?.sortAdsBy ?? metricsForCreative[0]?.name
+            maxAds: adAccount.adsSettings?.maxAds ?? 10,
+            sortBy: adAccount.adsSettings?.sortBy ?? metricsForCreative[0]?.name
           };
         } else if (section.name === 'campaigns') {
           sectionTitle = 'Best campaigns'
@@ -315,6 +315,10 @@ export class ReportsDataService {
             campaign_name: `Campaign ${i + 1}`,
             data: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           })) as any;
+          adAccountObj.campaignsSettings = {
+            maxCampaigns: adAccount.campaignsSettings?.maxCampaigns ?? 10,
+            sortBy: adAccount.campaignsSettings?.sortBy ?? enabledMetrics[0]?.name
+          };
         }
 
         adAccounts.push(adAccountObj)
@@ -708,8 +712,8 @@ export class ReportsDataService {
 
         if (sectionKey === 'ads') {
           adAccountObj.adsSettings = {
-            numberOfAds: 10,
-            sortAdsBy: adAccountObj.metrics[0]?.name || ''
+            maxAds: 10,
+            sortBy: adAccountObj.metrics[0]?.name || ''
           };
         }
 
@@ -846,7 +850,8 @@ export class ReportsDataService {
           metrics: metrics,
           customMetrics: customMetrics,
           currency: adAccount.currency,
-          ...(adAccount.adsSettings ? { adsSettings: adAccount.adsSettings } : {})
+          adsSettings: adAccount.adsSettings,
+          campaignsSettings: adAccount.campaignsSettings,
         })
 
       }

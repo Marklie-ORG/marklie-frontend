@@ -11,13 +11,15 @@ import { CampaignData } from 'src/app/interfaces/get-report.interfaces';
   styleUrl: './campaign-table.component.scss'
 })
 export class CampaignTableComponent implements AfterViewInit, OnDestroy {
-  
+
   private sortables: Sortable[] = [];
   private adAccountsSortable: Sortable | null = null;
 
   @ViewChildren('campaignsHeaderContainer') headerContainers!: QueryList<ElementRef>;
   @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
-  
+  private readonly defaultCampaignsLimit = 15;
+  private readonly defaultCampaignsSortBy = 'spend';
+
   adAccounts = model<AdAccount[]>([]);
   isViewMode = input<boolean>(false);
 
@@ -193,5 +195,89 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
     }
     const formatted = this.metricsService.formatMetricValue(metricName, point?.value);
     return `${formatted}${point?.symbol ?? ''}`;
+  }
+
+  getCampaignsLimit(adAccount: AdAccount): number {
+    return adAccount.campaignsSettings?.maxCampaigns ?? this.defaultCampaignsLimit;
+  }
+
+  onCampaignsLimitChange(adAccountId: string, value: string | number): void {
+    const parsed = typeof value === 'number' ? value : parseInt(value, 10);
+    if (Number.isNaN(parsed)) return;
+
+    const current = [...this.adAccounts()];
+    this.adAccounts.set(
+      current.map(a => {
+        if (a.id !== adAccountId) return a;
+        const prev = a.campaignsSettings;
+        return {
+          ...a,
+          settings: {
+            ...(a.campaignsSettings ?? {}),
+            campaigns: { ...prev, maxCampaigns: parsed, sortBy: prev?.sortBy ?? '' }
+          }
+        };
+      })
+    );
+  }
+
+
+  getCampaignsSortMetric(adAccount: AdAccount): string {
+    return (
+      adAccount.campaignsSettings?.sortBy ??
+      this.getCampaignSortOptions(adAccount)[0]?.value ?? // first enabled metric
+      this.defaultCampaignsSortBy
+    );
+  }
+
+  onCampaignsSortMetricChange(adAccountId: string, metricName: string): void {
+    if (!metricName) return;
+    const current = [...this.adAccounts()];
+    this.adAccounts.set(
+      current.map(a => {
+        if (a.id !== adAccountId) return a;
+        if (!a.campaignsSettings){
+          a.campaignsSettings = {
+            maxCampaigns: 15,
+            sortBy: ''
+          }
+        }
+        const prev = a.campaignsSettings;
+        return {
+          ...a,
+          campaignsSettings: {
+            sortBy: metricName,
+            maxCampaigns: prev.maxCampaigns,
+          }
+        };
+      })
+    );
+  }
+
+  getCampaignSortOptions(adAccount: AdAccount): { value: string; label: string }[] {
+    return (adAccount.metrics ?? [])
+      .filter(m => m.enabled && m.name !== 'campaign_name')
+      .sort((a, b) => a.order - b.order)
+      .map(m => ({ value: m.name, label: this.metricsService.getFormattedMetricName(m.name) }));
+  }
+
+  private getCampaignMetricNumberValue(c: CampaignData, metricName: string): number | undefined {
+    const point = c?.data?.find(d => d.name === metricName);
+    if (!point) return undefined;
+    const n = typeof point.value === 'number' ? point.value : Number(point.value);
+    return Number.isFinite(n) ? n : undefined;
+  }
+
+  getSortedCampaigns(adAccount: AdAccount): CampaignData[] {
+    const items = [...(adAccount.campaignsData ?? [])];
+    const metric = this.getCampaignsSortMetric(adAccount);
+    if (!metric) return items;
+    return items.sort((a, b) => {
+      const av = this.getCampaignMetricNumberValue(a, metric);
+      const bv = this.getCampaignMetricNumberValue(b, metric);
+      const ascore = av ?? Number.NEGATIVE_INFINITY;
+      const bscore = bv ?? Number.NEGATIVE_INFINITY;
+      return bscore - ascore; // descending
+    });
   }
 }

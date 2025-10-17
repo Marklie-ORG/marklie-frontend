@@ -8,7 +8,7 @@ export interface ReportSection {
     adAccounts: AdAccount[];
     order: number;
   }
-  
+
   export interface AdAccount {
     id: string
     order: number
@@ -19,11 +19,15 @@ export interface ReportSection {
     creativesData?: AdsAdAccountDataCreative[]
     currency: string;
     adsSettings?: {
-      numberOfAds: number;
-      sortAdsBy: string
+      maxAds: number;
+      sortBy: string
+    }
+    campaignsSettings?: {
+      maxCampaigns: number;
+      sortBy: string
     }
   }
-  
+
   export interface Metric {
     name: string
     order: number

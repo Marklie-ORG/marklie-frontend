@@ -6,13 +6,36 @@
     <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
       <div class="ad-account-header mb-2 mt-4 d-flex justify-between align-center">
         <h4 class="">{{ adAccount.name }}</h4>
-        @if (!isViewMode() && adAccounts().length > 1) {
-          <metrics-actions-menu
-          [adAccounts]="adAccounts()"
-          [sourceAdAccountId]="'' + adAccount.id"
-          (adAccountsChange)="adAccounts.set($event)"
-          ></metrics-actions-menu>
-        }
+        <div class="d-flex align-center">
+          @if (!isViewMode()) {
+            <label class="mr-2">Show:</label>
+            <select class="select-default mr-3"
+                    [ngModel]="getCampaignsLimit(adAccount)"
+                    (ngModelChange)="onCampaignsLimitChange(adAccount.id, $event)">
+              <option [value]="5">5</option>
+              <option [value]="10">10</option>
+              <option [value]="15">15</option>
+              <option [value]="25">25</option>
+            </select>
+
+            <label class="mr-2">Best campaigns by:</label>
+            <select class="select-default mr-3"
+                    [ngModel]="getCampaignsSortMetric(adAccount)"
+                    (ngModelChange)="onCampaignsSortMetricChange(adAccount.id, $event)">
+              @for (opt of getCampaignSortOptions(adAccount); track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          }
+
+          @if (!isViewMode() && adAccounts().length > 1) {
+            <metrics-actions-menu
+              [adAccounts]="adAccounts()"
+              [sourceAdAccountId]="'' + adAccount.id"
+              (adAccountsChange)="adAccounts.set($event)">
+            </metrics-actions-menu>
+          }
+        </div>
       </div>
 
   <div class="table-container">
@@ -23,7 +46,7 @@
           <th class="non-sortable">Campaign</th>
           <ng-container *ngFor="let metric of adAccount.metrics">
             @if (metric.enabled) {
-              <th 
+              <th
               [style.cursor]="isViewMode() ? 'auto' : 'grab'"
               class="draggable-metric-header" [attr.data-metric-name]="metric.name">
                 {{metricsService.getFormattedMetricName(metric.name)}}
@@ -51,6 +74,6 @@
   </div>
     </div>
   }
-  
+
 }
 </div>

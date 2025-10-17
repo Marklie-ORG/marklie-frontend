@@ -19,7 +19,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
 
   @ViewChildren('adsGridContainer') gridContainers!: QueryList<ElementRef>;
   @ViewChild('adAccountsContainer', { static: false }) adAccountsContainer?: ElementRef<HTMLElement>;
-  
+
   adAccounts = model<AdAccount[]>([]);
   isViewMode = input<boolean>(false);
   isReviewMode = input<boolean>(false);
@@ -263,7 +263,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   }
 
   getCreativesLimit(adAccount: AdAccount): number {
-    return adAccount.adsSettings?.numberOfAds ?? this.defaultCreativesLimit;
+    return adAccount.adsSettings?.maxAds ?? this.defaultCreativesLimit;
   }
 
   onCreativesLimitChange(adAccountId: string, value: string | number): void {
@@ -275,8 +275,8 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     current.forEach(a => {
       if (a.id === adAccountId) {
         a.adsSettings = {
-          numberOfAds: parsed,
-          sortAdsBy: a.adsSettings?.sortAdsBy ?? ''
+          maxAds: parsed,
+          sortBy: a.adsSettings?.sortBy ?? ''
         };
       }
     });
@@ -293,11 +293,11 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     return this.getAccountEnabledMetrics(adAccount)
       .filter(m => m.name !== 'ad_name')
       .map(m => ({ value: m.name, label: this.metricsService.getFormattedMetricName(m.name) }))
-      
+
   }
 
   getCreativesSortMetric(adAccount: AdAccount): string | null {
-    return adAccount.adsSettings?.sortAdsBy ?? null;
+    return adAccount.adsSettings?.sortBy ?? null;
   }
 
   onCreativesSortMetricChange(adAccountId: string, metricName: string): void {
@@ -308,8 +308,8 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
     current.forEach(a => {
       if (a.id === adAccountId) {
         a.adsSettings = {
-          numberOfAds: a.adsSettings?.numberOfAds ?? 10,
-          sortAdsBy: metricName
+          maxAds: a.adsSettings?.maxAds ?? 10,
+          sortBy: metricName
         };
       }
     });

@@ -205,59 +205,45 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
     const parsed = typeof value === 'number' ? value : parseInt(value, 10);
     if (Number.isNaN(parsed)) return;
 
-    const current = [...this.adAccounts()];
-    this.adAccounts.set(
-      current.map(a => {
-        if (a.id !== adAccountId) return a;
-        if (!a.campaignsSettings){
-          a.campaignsSettings = {
-            maxCampaigns: 15,
-            sortBy: ''
-          }
-        }
-        const prev = a.campaignsSettings;
-        return {
-          ...a,
-          campaignsSettings: {
-            sortBy: prev.sortBy,
-            maxCampaigns: parsed,
-          }
-        };
-      })
-    );
-  }
+    const current = this.adAccounts().map(a => {
+      if (a.id !== adAccountId) return a;
+      const prev = a.campaignsSettings ?? {
+        maxCampaigns: this.defaultCampaignsLimit,
+        sortBy: this.defaultCampaignsSortBy,
+      };
+      return {
+        ...a,
+        campaignsSettings: { ...prev, maxCampaigns: parsed }, // preserve others
+      };
+    });
 
+    this.adAccounts.set(current);
+  }
 
   getCampaignsSortMetric(adAccount: AdAccount): string {
     return (
       adAccount.campaignsSettings?.sortBy ??
-      this.getCampaignSortOptions(adAccount)[0]?.value ?? // first enabled metric
+      this.getCampaignSortOptions(adAccount)[0]?.value ??
       this.defaultCampaignsSortBy
     );
   }
 
   onCampaignsSortMetricChange(adAccountId: string, metricName: string): void {
     if (!metricName) return;
-    const current = [...this.adAccounts()];
-    this.adAccounts.set(
-      current.map(a => {
-        if (a.id !== adAccountId) return a;
-        if (!a.campaignsSettings){
-          a.campaignsSettings = {
-            maxCampaigns: 15,
-            sortBy: ''
-          }
-        }
-        const prev = a.campaignsSettings;
-        return {
-          ...a,
-          campaignsSettings: {
-            sortBy: metricName,
-            maxCampaigns: prev.maxCampaigns,
-          }
-        };
-      })
-    );
+
+    const current = this.adAccounts().map(a => {
+      if (a.id !== adAccountId) return a;
+      const prev = a.campaignsSettings ?? {
+        maxCampaigns: this.defaultCampaignsLimit,
+        sortBy: this.defaultCampaignsSortBy,
+      };
+      return {
+        ...a,
+        campaignsSettings: { ...prev, sortBy: metricName }, // preserve others
+      };
+    });
+
+    this.adAccounts.set(current);
   }
 
   getCampaignSortOptions(adAccount: AdAccount): { value: string; label: string }[] {

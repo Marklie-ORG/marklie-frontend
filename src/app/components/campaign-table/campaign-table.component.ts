@@ -209,12 +209,18 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
     this.adAccounts.set(
       current.map(a => {
         if (a.id !== adAccountId) return a;
+        if (!a.campaignsSettings){
+          a.campaignsSettings = {
+            maxCampaigns: 15,
+            sortBy: ''
+          }
+        }
         const prev = a.campaignsSettings;
         return {
           ...a,
-          settings: {
-            ...(a.campaignsSettings ?? {}),
-            campaigns: { ...prev, maxCampaigns: parsed, sortBy: prev?.sortBy ?? '' }
+          campaignsSettings: {
+            sortBy: prev.sortBy,
+            maxCampaigns: parsed,
           }
         };
       })

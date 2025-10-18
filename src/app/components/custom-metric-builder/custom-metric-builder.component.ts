@@ -88,7 +88,8 @@ export class CustomMetricBuilderComponent {
     return {
       type: 'metric',
       label: this.metricsService.getFormattedMetricName(metric.name),
-      value: metric.name
+      // value: metric.name.replaceAll(" ", "_")
+      value: metric.isCustom ? "custom_metric_" + metric.id : metric.name
     };
   }
 
@@ -103,6 +104,7 @@ export class CustomMetricBuilderComponent {
   }
 
   private updateFormulaDisplay(): void {
+    console.log('this.formulaTokens', this.formulaTokens);
     this.formulaDisplay = this.formulaTokens.map(token => token.value).join(' ');
   }
 

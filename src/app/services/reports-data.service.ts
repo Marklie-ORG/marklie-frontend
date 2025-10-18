@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import { SchedulingOption } from '../pages/edit-report/edit-report.component';
-import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest, FACEBOOK_DATE_PRESETS} from '../interfaces/interfaces';
+import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest, FACEBOOK_DATE_PRESETS, CustomFormulaScheduleReportRequest, AvailableMetricsAdAccountCustomFormula} from '../interfaces/interfaces';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { SchedulesService } from "./api/schedules.service.js";
@@ -204,6 +204,7 @@ export class ReportsDataService {
         const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
         const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
         const customAdAccountAvailableMetrics = adAccountAvailableMetrics.customMetrics;
+        const customFormulasAdAccountAvailableMetrics = adAccountAvailableMetrics.customFormulas;
 
         let metrics: Metric[] = [];
 
@@ -224,6 +225,21 @@ export class ReportsDataService {
             isCustom: true,
             id: metric.id
           })
+        }
+        
+        console.log(adAccount.customFormulas)
+
+        if (adAccount.customFormulas) {
+          for (let formula of adAccount.customFormulas) {
+            metrics.push({
+              name: formula.name,
+              order: formula.order,
+              enabled: true,
+              isCustom: false,
+              isCustomFormula: true,
+              customFormulaUuid: formula.uuid
+            })
+          }
         }
 
         metrics.sort((a, b) => a.order - b.order);
@@ -251,21 +267,18 @@ export class ReportsDataService {
           }
         }
 
-        // // Ensure 'impressions' is always present and enabled for the 'ads' section
-        // if (section.name === 'ads') {
-        //   const impressions = metrics.find(m => m.name === 'impressions');
-        //   if (impressions) {
-        //     impressions.enabled = true;
-        //   } else {
-        //     metrics.push({
-        //       name: 'impressions',
-        //       order: metrics.length,
-        //       enabled: true,
-        //       isCustom: false,
-        //       id: ''
-        //     });
-        //   }
-        // }
+        for (let formula of customFormulasAdAccountAvailableMetrics) {
+          if (!metrics.find(m => m.name === formula.name)) {
+          metrics.push({
+              name: formula.name,
+              order: -1,
+              enabled: false,
+              isCustom: false,
+              isCustomFormula: true,
+              customFormulaUuid: formula.uuid
+            })
+          }
+        }
 
         // Build ad account object and attach preview data per section
         const adAccountObj: AdAccount = {
@@ -632,9 +645,10 @@ export class ReportsDataService {
         const availableMetricsAdAccount = adAccount.adAccountMetrics;
         const sectionMetrics = availableMetricsAdAccount[sectionKey];
         const customMetrics = availableMetricsAdAccount.customMetrics;
+        const customFormulas = availableMetricsAdAccount.customFormulas;
 
         // base metrics for this ad account and section
-        let metrics = this.getMetrics(sectionMetrics, customMetrics);
+        let metrics = this.getMetrics(sectionMetrics, customMetrics, customFormulas);
         // normalize order
         metrics.forEach((m, i) => (m.order = i));
 
@@ -758,7 +772,7 @@ export class ReportsDataService {
     return this.appendPercentForSpecificMetrics(reportSections)
   }
 
-  getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[]): Metric[] {
+  getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[], customFormulas: AvailableMetricsAdAccountCustomFormula[]): Metric[] {
 
     const metricsToReturn = [
       ...metrics.map((metric, index) => ({
@@ -774,6 +788,14 @@ export class ReportsDataService {
         enabled: false,
         isCustom: true,
         id: metric.id
+      })).sort((a, b) => a.name.localeCompare(b.name)),
+      ...customFormulas.map((formula, index) => ({
+        name: formula.name,
+        order: index,
+        enabled: false,
+        isCustom: false,
+        isCustomFormula: true,
+        customFormulaUuid: formula.uuid
       })).sort((a, b) => a.name.localeCompare(b.name))
     ]
 
@@ -810,7 +832,8 @@ export class ReportsDataService {
 
         let metrics: MetricScheduleReportRequest[] = [];
         let customMetrics: CustomMetricScheduleReportRequest[] = [];
-
+        let customFormulas: CustomFormulaScheduleReportRequest[] = [];
+        
         for (const metric of adAccount.metrics) {
           if (!metric.enabled) continue;
 
@@ -819,6 +842,12 @@ export class ReportsDataService {
               name: metric.name,
               order: metric.order,
               id: metric.id!
+            })
+          } else if (metric.isCustomFormula) {
+            customFormulas.push({
+              name: metric.name,
+              order: metric.order,
+              uuid: metric.customFormulaUuid!
             })
           } else {
             metrics.push({
@@ -845,6 +874,7 @@ export class ReportsDataService {
           enabled: adAccount.enabled,
           metrics: metrics,
           customMetrics: customMetrics,
+          customFormulas: customFormulas,
           currency: adAccount.currency,
           ...(adAccount.adsSettings ? { adsSettings: adAccount.adsSettings } : {})
         })

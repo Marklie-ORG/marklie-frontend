@@ -71,8 +71,7 @@
   font-weight: 600;
 }
 
-.palette,
-.formula-dropzone {
+.palette {
   background: #f8fafc;
   border-radius: 12px;
   padding: 12px;
@@ -83,10 +82,36 @@
   gap: 8px;
 }
 
+.formula-dropzone {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px dashed rgba(15, 23, 42, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
 .palette {
   overflow: hidden;
     height: 100%;
     overflow-y: scroll;
+}
+
+.operations {
+  overflow: hidden;
+    /* height: 100%; */
+    /* overflow-y: scroll; */
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 12px;
+    /* min-height: 200px; */
+    border: 1px dashed rgba(15, 23, 42, 0.12);
+    /* flex-direction: column; */
+    gap: 8px;
+    display: grid;
+        grid-template-columns: repeat(4, 1fr);
 }
 
 .palette-item {
@@ -125,19 +150,15 @@
   flex: 1.4;
 }
 
-.formula-dropzone {
-  min-height: 220px;
-  position: relative;
-}
-
 .formula-token {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
   border-radius: 9999px;
-  background: #2563eb;
-  color: #ffffff;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 10px;
   font-size: 14px;
   cursor: grab;
 }
@@ -147,9 +168,12 @@
 }
 
 .token-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  color: #000000;
   border-radius: 50%;
   width: 20px;
   height: 20px;

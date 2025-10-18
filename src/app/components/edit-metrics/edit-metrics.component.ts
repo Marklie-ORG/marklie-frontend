@@ -1,4 +1,5 @@
-import { Component, effect, ElementRef, EventEmitter, Input, model, Output, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, inject, Input, model, Output, ViewChild } from '@angular/core';
+import { CustomFormulasService } from '@services/api/custom-formulas.service';
 import Sortable from 'sortablejs';
 import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
@@ -9,6 +10,8 @@ import { MetricsService } from 'src/app/services/metrics.service';
   styleUrl: './edit-metrics.component.scss'
 })
 export class EditMetricsComponent {
+
+  private customFormulasService: CustomFormulasService = inject(CustomFormulasService);
 
   private sectionsSortable: Sortable | null = null;
 
@@ -200,7 +203,7 @@ export class EditMetricsComponent {
   }
 
   get customMetricBuilderMetrics(): AdAccount['metrics'] {
-    return this.customMetricBuilderContext?.adAccount.metrics ?? [];
+    return this.customMetricBuilderContext?.adAccount.metrics.filter(metric => !metric.isCustomFormula) ?? [];
   }
 
   get customMetricBuilderAccountName(): string {
@@ -219,12 +222,21 @@ export class EditMetricsComponent {
     const context = this.customMetricBuilderContext;
 
     if (context) {
-      console.log('Custom metric formula saved:', {
+
+      this.customFormulasService.createCustomFormula({
+        name: formula,
         formula,
+        format: 'number',
+        description: '',
         adAccountId: context.adAccount.id,
-        adAccountName: context.adAccount.name,
-        sectionKey: context.sectionKey,
       });
+
+      // console.log('Custom metric formula saved:', {
+      //   formula,
+      //   adAccountId: context.adAccount.id,
+      //   adAccountName: context.adAccount.name,
+      //   sectionKey: context.sectionKey,
+      // });
     } else {
       console.log('Custom metric formula saved:', formula);
     }

@@ -158,7 +158,7 @@
             <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2">
               <p class="mt-2">Default metrics</p>
               @for (metric of adAccount.metrics; track metric.name) {
-                @if (!metric.isCustom) {
+                @if (!metric.isCustom && !metric.isCustomFormula) {
                   <label class="prevent-select">
                     <input 
                     type="checkbox" 
@@ -185,13 +185,28 @@
                 }
               }
 
-              <!-- <button
+              <p class="mt-2">Custom formulas</p>
+              @for (metric of adAccount.metrics; track metric.name) {
+                @if (metric.isCustomFormula) {
+                  <label class="prevent-select">
+                    <input 
+                    type="checkbox" 
+                    [(ngModel)]="metric.enabled" 
+                    (change)="onMetricsChange(data, sectionKey)"
+                    />
+                    <span class="checkmark"></span>
+                    {{ getFormattedMetricName(metric.name) }}
+                  </label>
+                }
+              }
+
+              <button
                 type="button"
                 class="create-custom-metric-btn mt-3"
                 (click)="openCustomMetricBuilder(adAccount, sectionKey)"
               >
                 Create custom metric
-              </button> -->
+              </button>
               
             </div>
           </div>

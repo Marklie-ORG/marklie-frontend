@@ -13,7 +13,19 @@ export interface GetAvailableMetricsAdAccount {
     ads: string[];
     campaigns: string[];
     customMetrics: { id: string; name: string }[];
+    customFormulas: AvailableMetricsAdAccountCustomFormula[];
   }
+}
+
+export interface AvailableMetricsAdAccountCustomFormula {
+  uuid: string
+  createdAt: string
+  updatedAt: string
+  name: string
+  formula: string
+  format: string
+  description: string
+  adAccount: any
 }
 
 export interface AvailableMetricsAdAccountCustomMetric {
@@ -73,6 +85,7 @@ export interface AdAccountScheduleReportRequest {
   enabled: boolean;
   metrics: MetricScheduleReportRequest[];
   customMetrics: CustomMetricScheduleReportRequest[];
+  customFormulas: CustomFormulaScheduleReportRequest[];
   currency: string;
   adsSettings?: {
     maxAds: number;
@@ -93,6 +106,12 @@ export interface CustomMetricScheduleReportRequest {
   name: string;
   order: number;
   id: string;
+}
+
+export interface CustomFormulaScheduleReportRequest {
+  name: string;
+  order: number;
+  uuid: string;
 }
 
 export interface Messages {
@@ -246,4 +265,19 @@ export interface UpdateReportMetadataRequest {
   messages?: Messages
   colors?: Colors
   loomLink?: string
+}
+
+export interface CreateAdAccountCustomFormulaRequest {
+  name: string;
+  formula: string;
+  format: string;
+  description: string;
+  adAccountId: string;
+}
+
+export interface UpdateAdAccountCustomFormulaRequest {
+  name: string;
+  formula: string;
+  format: string;
+  description: string;
 }

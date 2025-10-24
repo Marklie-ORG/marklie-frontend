@@ -1,20 +1,18 @@
 <div class="dashboard-header flex-row justify-between align-center">
   <div class="d-flex flex-row align-center gap-3">
-    <div routerLink="/dashboard" class="logo">
+    <a href="/dashboard" class="logo">
       <img src="../../../favicon.png" alt="logo" width="40px" />
-    </div>
-    <button type="button" routerLink="/dashboard" class="nav-btn">Clients</button>
-    <!-- <button type="button" routerLink="/scheduled-reports" class="nav-btn">Scheduled Reports</button> -->
-    <a routerLink="/reports-database">
-      <button type="button" routerLink="/reports-database" class="nav-btn badge-container">
-        Reports Database
-        @if (pendingReviewCount > 0) {
-          <span class="badge">{{ pendingReviewCount }}</span>
-        }
-      </button>
     </a>
-    <button type="button" routerLink="/suggested-features" class="nav-btn">Request Feature</button>
-    <button type="button" routerLink="/access-requests" class="nav-btn">Access Requests</button>
+    <a href="/dashboard" class="nav-btn">Clients</a>
+    <!-- <a href="/scheduled-reports" class="nav-btn">Scheduled Reports</a> -->
+    <a href="/reports-database" class="nav-btn badge-container">
+      Reports Database
+      @if (pendingReviewCount > 0) {
+        <span class="badge">{{ pendingReviewCount }}</span>
+      }
+    </a>
+    <a href="/suggested-features" class="nav-btn">Request Feature</a>
+    <a href="/access-requests" class="nav-btn">Access Requests</a>
   </div>
 
   <div class="d-flex flex-row align-center gap-3">
@@ -66,16 +64,16 @@
         (keydown)="onMenuKeydown($event)"
         #menu
       >
-        <a routerLink="/profile" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
+        <a href="/profile" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
           <fa-icon [icon]="faUser"></fa-icon> Profile
         </a>
-        <a routerLink="/billing" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
+        <a href="/billing" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
           <fa-icon [icon]="faCreditCard"></fa-icon> Billing
         </a>
-        <!-- <a routerLink="/support" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
+        <!-- <a href="/support" role="menuitem" tabindex="-1" #menuItem (click)="onMenuItemClick()">
           <fa-icon [icon]="faCommentDots"></fa-icon> Support
         </a> -->
-        <a routerLink="/support" role="menuitem" tabindex="-1" #menuItem (click)="signOut()">
+        <a href="/" role="menuitem" tabindex="-1" #menuItem (click)="signOut($event)">
           <fa-icon [icon]="faArrowRightFromBracket"></fa-icon> Logout
         </a>
       </div>

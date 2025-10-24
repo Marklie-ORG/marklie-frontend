@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, signal, effect } from '@angular/core';
+import { Component, OnInit, Inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Business } from 'src/app/services/api/ad-accounts.service';
 import { AdAccount } from 'src/app/services/api/ad-accounts.service';

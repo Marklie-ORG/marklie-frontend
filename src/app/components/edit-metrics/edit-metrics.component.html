@@ -190,15 +190,28 @@
               <div class="metrics-section-title">Marklie Custom Formulas</div>
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (metric.isCustomFormula) {
-                  <label class="prevent-select">
-                    <input 
-                    type="checkbox" 
-                    [(ngModel)]="metric.enabled" 
-                    (change)="onMetricsChange(data, sectionKey)"
-                    />
-                    <span class="checkmark"></span>
-                    {{ getFormattedMetricName(metric.name) }}
-                  </label>
+                  <div class="custom-formula-row">
+                    <label class="prevent-select">
+                      <input 
+                      type="checkbox" 
+                      [(ngModel)]="metric.enabled" 
+                      (change)="onMetricsChange(data, sectionKey)"
+                      />
+                      <span class="checkmark"></span>
+                      <span class="custom-formula-name">
+                        {{ getFormattedMetricName(metric.name) }}
+                      </span>
+                    </label>
+                    <div class="custom-formula-actions">
+                      <button
+                        type="button"
+                        class="link-button"
+                        (click)="editCustomFormula(metric, adAccount, sectionKey, $event)"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </div>
                 }
               }
 

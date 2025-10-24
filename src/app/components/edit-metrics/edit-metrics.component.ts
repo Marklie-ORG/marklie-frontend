@@ -3,8 +3,9 @@ import { CustomFormulasService } from '@services/api/custom-formulas.service';
 import Sortable from 'sortablejs';
 import { AdAccount, Metric, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
-import { CustomMetricBuilderComponent } from '../custom-metric-builder/custom-metric-builder.component';
+import { CustomMetricBuilderComponent, CustomMetricBuilderResult } from '../custom-metric-builder/custom-metric-builder.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'edit-metrics',
@@ -15,7 +16,7 @@ export class EditMetricsComponent {
 
   private customFormulasService: CustomFormulasService = inject(CustomFormulasService);
   private dialog = inject(MatDialog);
-  private metricsService = inject(MetricsService);
+  public metricsService = inject(MetricsService);
 
   private sectionsSortable: Sortable | null = null;
 
@@ -170,37 +171,89 @@ export class EditMetricsComponent {
     return undefined;
   }
 
-  showCreateCustomFormulaModal(adAccount: AdAccount, sectionKey: string) {
-
+  showCreateCustomFormulaModal(adAccount: AdAccount, sectionKey: string): void {
     const metrics = adAccount.metrics.filter(metric => !metric.isCustomFormula);
     const dialogRef = this.dialog.open(CustomMetricBuilderComponent, {
+      width: '800px',
       data: {
         metrics,
         adAccountName: adAccount.name,
+        mode: 'create',
       }
     });
 
-    dialogRef.afterClosed().subscribe(formula => {
-      if (!formula) {
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
         return;
       }
-      void this.handleCustomMetricSave(formula, adAccount, sectionKey);
+      const payload = result as CustomMetricBuilderResult;
+      if (!payload?.formula || !payload?.name) {
+        return;
+      }
+      void this.handleCustomMetricSave(payload, adAccount, sectionKey);
     });
   }
 
-  private async handleCustomMetricSave(formula: string, adAccount: AdAccount, sectionKey: string): Promise<void> {
+  editCustomFormula(metric: Metric, adAccount: AdAccount, sectionKey: string, event?: Event): void {
+    event?.stopPropagation();
+
+    if (!metric.customFormulaUuid) {
+      return;
+    }
+
+    const availableMetrics = adAccount.metrics.filter(item => !item.isCustomFormula || item.customFormulaUuid === metric.customFormulaUuid);
+
+    void this.customFormulasService.getCustomFormula(metric.customFormulaUuid)
+      .then(formula => {
+        const dialogRef = this.dialog.open(CustomMetricBuilderComponent, {
+          width: '800px',
+          data: {
+            metrics: availableMetrics,
+            adAccountName: adAccount.name,
+            mode: 'edit',
+            initial: {
+              name: formula?.name ?? metric.name,
+              description: formula?.description ?? '',
+              format: (formula?.format as any) ?? 'number',
+              formula: formula?.formula ?? '',
+            }
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (!result) {
+            return;
+          }
+          const payload = result as CustomMetricBuilderResult;
+          if (payload.delete) {
+            this.confirmDeleteCustomFormula(metric, adAccount, sectionKey, payload.name || metric.name);
+            return;
+          }
+          if (!payload?.formula || !payload?.name) {
+            return;
+          }
+          void this.handleCustomMetricUpdate(payload, metric, adAccount, sectionKey);
+        });
+      })
+      .catch(error => {
+        console.error('Failed to load custom formula', error);
+      });
+  }
+
+  private async handleCustomMetricSave(result: CustomMetricBuilderResult, adAccount: AdAccount, sectionKey: string): Promise<void> {
     try {
+      const description = result.description?.trim() ?? '';
       const created = await this.customFormulasService.createCustomFormula({
-        name: formula,
-        formula,
-        format: 'number',
-        description: '',
+        name: result.name,
+        formula: result.formula,
+        format: result.format ?? 'number',
+        description,
         adAccountId: adAccount.id,
       });
 
       const nextOrder = adAccount.metrics.reduce((max, metric) => Math.max(max, metric.order ?? -1), -1) + 1;
       const newMetric: Metric = {
-        name: created?.name ?? formula,
+        name: created?.name ?? result.name,
         order: created?.order ?? nextOrder,
         enabled: true,
         isCustomFormula: true,
@@ -210,6 +263,75 @@ export class EditMetricsComponent {
       this.updateReportSectionsWithNewMetric(sectionKey, adAccount.id, newMetric);
     } catch (error) {
       console.error('Failed to create custom formula', error);
+    }
+  }
+
+  private async handleCustomMetricUpdate(result: CustomMetricBuilderResult, metric: Metric, adAccount: AdAccount, sectionKey: string): Promise<void> {
+    if (!metric.customFormulaUuid) {
+      return;
+    }
+
+    try {
+      const description = result.description?.trim() ?? '';
+      const updated = await this.customFormulasService.updateCustomFormula(metric.customFormulaUuid, {
+        name: result.name,
+        formula: result.formula,
+        format: result.format ?? 'number',
+        description
+      });
+
+      const updates: Partial<Metric> = {
+        name: updated?.name ?? result.name,
+        order: updated?.order ?? metric.order,
+        enabled: metric.enabled,
+        isCustomFormula: true,
+        customFormulaUuid: metric.customFormulaUuid,
+      };
+
+      this.updateMetricInReportSections(sectionKey, adAccount.id, metric.customFormulaUuid, updates);
+    } catch (error) {
+      console.error('Failed to update custom formula', error);
+    }
+  }
+
+  confirmDeleteCustomFormula(metric: Metric, adAccount: AdAccount, sectionKey: string, displayName?: string): void {
+    if (!metric.customFormulaUuid) {
+      return;
+    }
+
+    const nameForDisplay = displayName ?? metric.name;
+
+    const data: ConfirmDialogData = {
+      title: 'Delete custom metric',
+      message: `Are you sure you want to delete custom metric "${this.getFormattedMetricName(nameForDisplay)}"?`,
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    };
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '420px',
+      data
+    });
+
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (!confirmed) {
+        return;
+      }
+
+      await this.deleteCustomFormula(metric, adAccount, sectionKey);
+    });
+  }
+
+  private async deleteCustomFormula(metric: Metric, adAccount: AdAccount, sectionKey: string): Promise<void> {
+    if (!metric.customFormulaUuid) {
+      return;
+    }
+
+    try {
+      await this.customFormulasService.deleteCustomFormula(metric.customFormulaUuid);
+      this.removeMetricFromReportSections(sectionKey, adAccount.id, metric.customFormulaUuid);
+    } catch (error) {
+      console.error('Failed to delete custom formula', error);
     }
   }
 
@@ -240,6 +362,70 @@ export class EditMetricsComponent {
         return {
           ...account,
           metrics: updatedMetrics,
+        };
+      });
+
+      return {
+        ...section,
+        adAccounts: updatedAdAccounts,
+      };
+    });
+
+    this.reportSections.set(updatedSections);
+  }
+
+  private updateMetricInReportSections(sectionKey: string, adAccountId: string, customFormulaUuid: string, updates: Partial<Metric>): void {
+    const currentSections = this.reportSections();
+    const updatedSections = currentSections.map(section => {
+      if (section.key !== sectionKey) {
+        return section;
+      }
+
+      const updatedAdAccounts = section.adAccounts.map(account => {
+        if (account.id !== adAccountId) {
+          return account;
+        }
+
+        const updatedMetrics = account.metrics.map(metric => {
+          if (metric.customFormulaUuid !== customFormulaUuid) {
+            return metric;
+          }
+
+          return { ...metric, ...updates };
+        });
+
+        return {
+          ...account,
+          metrics: updatedMetrics,
+        };
+      });
+
+      return {
+        ...section,
+        adAccounts: updatedAdAccounts,
+      };
+    });
+
+    this.reportSections.set(updatedSections);
+  }
+
+  private removeMetricFromReportSections(sectionKey: string, adAccountId: string, customFormulaUuid: string): void {
+    const currentSections = this.reportSections();
+    const updatedSections = currentSections.map(section => {
+      if (section.key !== sectionKey) {
+        return section;
+      }
+
+      const updatedAdAccounts = section.adAccounts.map(account => {
+        if (account.id !== adAccountId) {
+          return account;
+        }
+
+        const filteredMetrics = account.metrics.filter(metric => metric.customFormulaUuid !== customFormulaUuid);
+
+        return {
+          ...account,
+          metrics: filteredMetrics,
         };
       });
 

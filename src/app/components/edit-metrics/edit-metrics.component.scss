@@ -230,6 +230,45 @@ input:checked + .slider::before {
     background-position: center;
   }
 
+  .custom-formula-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .custom-formula-name {
+    margin-left: 8px;
+  }
+
+  .custom-formula-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .link-button {
+    background: transparent;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    text-decoration: underline;
+  }
+
+  .link-button:hover {
+    color: #1d4ed8;
+  }
+
+  .link-button.danger {
+    color: #dc2626;
+  }
+
+  .link-button.danger:hover {
+    color: #b91c1c;
+  }
+
   
 }
 

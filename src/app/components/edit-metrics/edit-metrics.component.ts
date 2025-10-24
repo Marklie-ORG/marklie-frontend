@@ -1,8 +1,10 @@
 import { Component, effect, ElementRef, EventEmitter, inject, Input, model, Output, ViewChild } from '@angular/core';
 import { CustomFormulasService } from '@services/api/custom-formulas.service';
 import Sortable from 'sortablejs';
-import { AdAccount, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
+import { AdAccount, Metric, ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { MetricsService } from 'src/app/services/metrics.service';
+import { CustomMetricBuilderComponent } from '../custom-metric-builder/custom-metric-builder.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'edit-metrics',
@@ -12,10 +14,10 @@ import { MetricsService } from 'src/app/services/metrics.service';
 export class EditMetricsComponent {
 
   private customFormulasService: CustomFormulasService = inject(CustomFormulasService);
+  private dialog = inject(MatDialog);
+  private metricsService = inject(MetricsService);
 
   private sectionsSortable: Sortable | null = null;
-
-  private customMetricBuilderContext: { sectionKey: string; adAccount: AdAccount } | null = null;
 
   @ViewChild('sectionsContainer', { static: false }) set sectionsContainer(el: ElementRef | undefined) {
     if (this.sectionsSortable) {
@@ -35,8 +37,7 @@ export class EditMetricsComponent {
   }
 
   reportSections = model<ReportSection[]>([]);
-  // @Input() reportSections: ReportSection[] = [];
-  // @Output() reportSectionsChange = new EventEmitter<ReportSection[]>();
+  
   @Input() reportTitle: string | undefined = undefined;
   @Output() reportTitleChange = new EventEmitter<string>();
   @Output() sectionFocus = new EventEmitter<string>();
@@ -60,16 +61,15 @@ export class EditMetricsComponent {
 
   selectedAdAccountId: string = '';
 
-  constructor(
-    public metricsService: MetricsService,
-  ) {
+  constructor() {
+
     effect(() => {
-      // console.log(this.reportSections())
       this.mainKPIs = this.reportSections().find(section => section.key === 'kpis');
       this.graphs = this.reportSections().find(section => section.key === 'graphs');
       this.bestCreatives = this.reportSections().find(section => section.key === 'ads');
       this.bestCampaigns = this.reportSections().find(section => section.key === 'campaigns');
     })
+    
   }
 
   togglePage(page: string): void {
@@ -107,10 +107,6 @@ export class EditMetricsComponent {
     }
   }
 
-  // toggleAdAccount(adAccount: AdAccount): void {
-  //   adAccount.enabled = !adAccount.enabled;
-  // }
-
   toggleSelectedAdAccount(adAccountId: string): void {
     this.selectedAdAccountId = adAccountId;
   }
@@ -133,30 +129,6 @@ export class EditMetricsComponent {
 
     this.reportSections.set(updatedSections);
   }
-
-  // ngOnChanges(): void {
-  //   if (this.reportSections) {
-  //     this.mainKPIs = this.reportSections().find(section => section.key === 'kpis');
-  //     this.graphs = this.reportSections().find(section => section.key === 'graphs');
-  //     this.bestCreatives = this.reportSections().find(section => section.key === 'ads');
-  //     this.bestCampaigns = this.reportSections().find(section => section.key === 'campaigns');
-  //   }
-  // }
-
-  // onMetricsChange(): void {
-  //   if (!this.reportSections.length) return;
-
-
-  //   // this.reportSections.forEach(section => {
-  //   //   if (!section.metrics.map((metric: any) => metric.enabled).includes(true)) section.enabled = false; // if all metrics are disabled, disable the section
-  //   //   else if (!section.enabled && section.metrics.map((metric: any) => metric.enabled).includes(true)) section.enabled = true; // if any metric is enabled, enable the section
-  //   // });
-
-  //   const reportSections: ReportSection[] = [ // explicitly copy the object so that it triggers changes in paremt component
-  //     ...this.reportSections
-  //   ];
-  //   this.reportSectionsChange.emit(reportSections);
-  // }
 
   reorderSections(event: Sortable.SortableEvent) {
     // Get the current value of reportSections
@@ -198,50 +170,86 @@ export class EditMetricsComponent {
     return undefined;
   }
 
-  isCustomMetricBuilderOpen(): boolean {
-    return !!this.customMetricBuilderContext;
+  showCreateCustomFormulaModal(adAccount: AdAccount, sectionKey: string) {
+
+    const metrics = adAccount.metrics.filter(metric => !metric.isCustomFormula);
+    const dialogRef = this.dialog.open(CustomMetricBuilderComponent, {
+      data: {
+        metrics,
+        adAccountName: adAccount.name,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(formula => {
+      if (!formula) {
+        return;
+      }
+      void this.handleCustomMetricSave(formula, adAccount, sectionKey);
+    });
   }
 
-  get customMetricBuilderMetrics(): AdAccount['metrics'] {
-    return this.customMetricBuilderContext?.adAccount.metrics.filter(metric => !metric.isCustomFormula) ?? [];
-  }
-
-  get customMetricBuilderAccountName(): string {
-    return this.customMetricBuilderContext?.adAccount.name ?? '';
-  }
-
-  openCustomMetricBuilder(adAccount: AdAccount, sectionKey: string): void {
-    this.customMetricBuilderContext = { adAccount, sectionKey };
-  }
-
-  closeCustomMetricBuilder(): void {
-    this.customMetricBuilderContext = null;
-  }
-
-  handleCustomMetricSave(formula: string): void {
-    const context = this.customMetricBuilderContext;
-
-    if (context) {
-
-      this.customFormulasService.createCustomFormula({
+  private async handleCustomMetricSave(formula: string, adAccount: AdAccount, sectionKey: string): Promise<void> {
+    try {
+      const created = await this.customFormulasService.createCustomFormula({
         name: formula,
         formula,
         format: 'number',
         description: '',
-        adAccountId: context.adAccount.id,
+        adAccountId: adAccount.id,
       });
 
-      // console.log('Custom metric formula saved:', {
-      //   formula,
-      //   adAccountId: context.adAccount.id,
-      //   adAccountName: context.adAccount.name,
-      //   sectionKey: context.sectionKey,
-      // });
-    } else {
-      console.log('Custom metric formula saved:', formula);
-    }
+      const nextOrder = adAccount.metrics.reduce((max, metric) => Math.max(max, metric.order ?? -1), -1) + 1;
+      const newMetric: Metric = {
+        name: created?.name ?? formula,
+        order: created?.order ?? nextOrder,
+        enabled: true,
+        isCustomFormula: true,
+        customFormulaUuid: created?.uuid ?? created?.customFormulaUuid,
+      };
 
-    this.closeCustomMetricBuilder();
+      this.updateReportSectionsWithNewMetric(sectionKey, adAccount.id, newMetric);
+    } catch (error) {
+      console.error('Failed to create custom formula', error);
+    }
+  }
+
+  private updateReportSectionsWithNewMetric(sectionKey: string, adAccountId: string, metric: Metric): void {
+    const currentSections = this.reportSections();
+    const updatedSections = currentSections.map(section => {
+      if (section.key !== sectionKey) {
+        return section;
+      }
+
+      const updatedAdAccounts = section.adAccounts.map(account => {
+        if (account.id !== adAccountId) {
+          return account;
+        }
+
+        const nextOrder = metric.order ?? account.metrics.reduce((max, current) => Math.max(max, current.order ?? -1), -1) + 1;
+        const metricToInsert: Metric = {
+          ...metric,
+          order: nextOrder,
+        };
+
+        const baseMetrics = metricToInsert.customFormulaUuid
+          ? account.metrics.filter(existing => existing.customFormulaUuid !== metricToInsert.customFormulaUuid)
+          : account.metrics;
+
+        const updatedMetrics = [...baseMetrics, metricToInsert].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        return {
+          ...account,
+          metrics: updatedMetrics,
+        };
+      });
+
+      return {
+        ...section,
+        adAccounts: updatedAdAccounts,
+      };
+    });
+
+    this.reportSections.set(updatedSections);
   }
 
 }

@@ -1,13 +1,4 @@
-<div class="builder-card">
-  <div class="builder-header">
-    <div>
-      <h3>Create custom metric</h3>
-      @if (adAccountName) {
-        <p class="builder-subtitle">Ad account: {{ adAccountName }}</p>
-      }
-    </div>
-    <button type="button" class="builder-close" (click)="onCancel()">×</button>
-  </div>
+<modal-base>
 
   <div class="builder-body">
     <div class="builder-column">
@@ -32,10 +23,11 @@
           }
         }
       </div>
+          
     </div>
-
+        
     <div class="builder-column">
-        <h4>Operations</h4>
+      <h4>Operations</h4>
         <div
           cdkDropList
           id="operationsList"
@@ -83,16 +75,16 @@
         @if (errorMessage) {
           <p class="error-message">{{ errorMessage }}</p>
         }
-
-        <div class="builder-actions">
-          <button type="button" class="secondary" (click)="clearFormula()">Clear</button>
-          <button type="button" class="primary" (click)="onSave()">Save</button>
-        </div>
-      
+    
+      <div class="builder-actions">
+        <button type="button" class="secondary" (click)="clearFormula()">Clear</button>
+        <button type="button" class="primary" (click)="onSave()">Save</button>
+      </div>
     </div>
-
-    <!-- <div class="builder-column formula-column">
+    
       
-    </div> -->
+        
+      
   </div>
-</div>
+</modal-base>
+

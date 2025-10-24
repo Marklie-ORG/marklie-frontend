@@ -1,14 +1,4 @@
-:host {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1050;
-  padding: 24px;
-  box-sizing: border-box;
-}
+
 
 .builder-card {
   background: #ffffff;
@@ -51,7 +41,8 @@
 }
 
 .builder-body {
-  padding: 24px 28px 32px;
+  height: 100%;
+  // padding: 24px 28px 32px;
   display: flex;
   gap: 20px;
   overflow: auto;
@@ -73,10 +64,10 @@
 
 .palette {
   background: #f8fafc;
-  border-radius: 12px;
-  padding: 12px;
+  // border-radius: 12px;
+  // padding: 12px;
   min-height: 200px;
-  border: 1px dashed rgba(15, 23, 42, 0.12);
+  // border: 1px dashed rgba(15, 23, 42, 0.12);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -101,17 +92,13 @@
 
 .operations {
   overflow: hidden;
-    /* height: 100%; */
-    /* overflow-y: scroll; */
     background: #f8fafc;
     border-radius: 12px;
     padding: 12px;
-    /* min-height: 200px; */
     border: 1px dashed rgba(15, 23, 42, 0.12);
-    /* flex-direction: column; */
     gap: 8px;
     display: grid;
-        grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 }
 
 .palette-item {
@@ -241,14 +228,4 @@
 .builder-actions .primary:disabled {
   opacity: 0.6;
   cursor: default;
-}
-
-@media (max-width: 960px) {
-  .builder-body {
-    flex-direction: column;
-  }
-
-  .formula-column {
-    flex: 1;
-  }
 }

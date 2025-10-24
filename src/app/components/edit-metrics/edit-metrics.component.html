@@ -110,7 +110,7 @@
           src="../../../assets/img/icons/arrow_left.svg" 
           alt="Back to main" 
         >
-        <p class="ml-2">{{ title }}</p>
+        <div class="section-title">{{ title }}</div>
       </div>
       
       <div>
@@ -142,21 +142,24 @@
       @for (adAccount of data.adAccounts; track adAccount.id) {
         @if (selectedAdAccountId === adAccount.id) {
           <div>
-            <h4 class="mb-2 mt-2">{{ adAccount.name }}</h4>
+            <h4 class="mb-2 mt-2 text-center">{{ adAccount.name }}</h4>
 
-            <label class="switch">
-              <input 
-                type="checkbox" 
-                [(ngModel)]="adAccount.enabled" 
-                (change)="onMetricsChange(data, sectionKey)"
-                (click)="$event.stopPropagation()"
-              />
-              <span class="slider round"></span>
-            </label>
+            @if (data.adAccounts.length > 1) {
+              <label class="switch">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="adAccount.enabled" 
+                  (change)="onMetricsChange(data, sectionKey)"
+                  (click)="$event.stopPropagation()"
+                />
+                <span class="slider round"></span>
+              </label>
+            }
+            
 
             <!-- todo: test reordering before commiting -->
             <div class="metric-group mt-2 pt-2 d-flex flex-column gap-2">
-              <p class="mt-2">Default metrics</p>
+              <div class="metrics-section-title">Facebook Default metrics</div>
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (!metric.isCustom && !metric.isCustomFormula) {
                   <label class="prevent-select">
@@ -170,7 +173,7 @@
                   </label>
                 }
               }
-              <p class="mt-2">Custom metrics</p>
+              <div class="metrics-section-title">Facebook Custom metrics</div>
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (metric.isCustom) {
                   <label class="prevent-select">
@@ -184,8 +187,7 @@
                   </label>
                 }
               }
-
-              <p class="mt-2">Custom formulas</p>
+              <div class="metrics-section-title">Marklie Custom Formulas</div>
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (metric.isCustomFormula) {
                   <label class="prevent-select">
@@ -203,7 +205,7 @@
               <button
                 type="button"
                 class="create-custom-metric-btn mt-3"
-                (click)="openCustomMetricBuilder(adAccount, sectionKey)"
+                (click)="showCreateCustomFormulaModal(adAccount, sectionKey)"
               >
                 Create custom metric
               </button>
@@ -215,12 +217,3 @@
     </div>
   </div>
 </ng-template>
-
-@if (isCustomMetricBuilderOpen()) {
-  <custom-metric-builder
-    [metrics]="customMetricBuilderMetrics"
-    [adAccountName]="customMetricBuilderAccountName"
-    (cancel)="closeCustomMetricBuilder()"
-    (save)="handleCustomMetricSave($event)"
-  ></custom-metric-builder>
-}

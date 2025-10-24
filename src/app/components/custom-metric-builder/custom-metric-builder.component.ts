@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MetricsService } from 'src/app/services/metrics.service';
 import { Metric } from 'src/app/interfaces/report-sections.interfaces';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 type BuilderTokenType = 'metric' | 'operator' | 'paren';
 
@@ -11,17 +12,24 @@ interface BuilderToken {
   value: string;
 }
 
+interface CustomMetricBuilderDialogData {
+  metrics: Metric[];
+  adAccountName: string;
+}
+
 @Component({
   selector: 'custom-metric-builder',
   templateUrl: './custom-metric-builder.component.html',
   styleUrl: './custom-metric-builder.component.scss'
 })
 export class CustomMetricBuilderComponent {
-  @Input() metrics: Metric[] = [];
-  @Input() adAccountName = '';
 
-  @Output() cancel = new EventEmitter<void>();
-  @Output() save = new EventEmitter<string>();
+  private readonly dialogRef = inject(MatDialogRef<CustomMetricBuilderComponent>);
+  private readonly dialogData = inject(MAT_DIALOG_DATA) as CustomMetricBuilderDialogData;
+  public readonly metricsService = inject(MetricsService);
+
+  metrics: Metric[] = this.dialogData.metrics ?? [];
+  adAccountName = this.dialogData.adAccountName ?? '';
 
   mathOperations: string[] = ['+', '-', '/', '*', '(', ')'];
   formulaTokens: BuilderToken[] = [];
@@ -29,8 +37,6 @@ export class CustomMetricBuilderComponent {
   errorMessage: string | null = null;
 
   readonly disallowDrop: (drag: CdkDrag<any>, drop: CdkDropList<any>) => boolean = () => false;
-
-  constructor(public metricsService: MetricsService) {}
 
   onFormulaDrop(event: CdkDragDrop<any>) {
     if (event.previousContainer === event.container) {
@@ -65,13 +71,13 @@ export class CustomMetricBuilderComponent {
   }
 
   clearFormula(): void {
-    this.formulaTokens = [];
-    this.formulaDisplay = '';
-    this.errorMessage = null;
+   this.formulaTokens = [];
+   this.formulaDisplay = '';
+   this.errorMessage = null;
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.dialogRef.close();
   }
 
   onSave(): void {
@@ -81,7 +87,7 @@ export class CustomMetricBuilderComponent {
       return;
     }
 
-    this.save.emit(this.formulaDisplay);
+    this.dialogRef.close(this.formulaDisplay);
   }
 
   private createMetricToken(metric: Metric): BuilderToken {

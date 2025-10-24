@@ -14,6 +14,8 @@ import { NotificationService } from 'src/app/services/notification.service';
 })
 export class AdCardComponent implements AfterViewInit, OnDestroy {
 
+  public metricsService = inject(MetricsService);
+
   private sortables: Sortable[] = [];
   private adAccountsSortable: Sortable | null = null;
 
@@ -25,8 +27,6 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   isReviewMode = input<boolean>(false);
 
   private readonly defaultCreativesLimit = 10;
-
-  constructor(public metricsService: MetricsService, private reportsDataService: ReportsDataService) {}
 
   private ngZone = inject(NgZone);
   private notificationService = inject(NotificationService);
@@ -112,7 +112,7 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   }
 
   getCreativeMetricValue(creative: AdsAdAccountDataCreative, metricName: string): number | undefined {
-    const point = creative?.data?.find(p => p.name === metricName);
+    const point = creative?.metrics?.find(metric => metric.name === metricName);
     return point?.value;
   }
 
@@ -208,8 +208,8 @@ export class AdCardComponent implements AfterViewInit, OnDestroy {
   getOrderedCreativePoints(adAccount: AdAccount, creative: AdsAdAccountDataCreative): AdsAdAccountDataPoint[] {
     const metrics = [...(adAccount.metrics ?? [])].sort((a, b) => a.order - b.order).filter(m => m.name !== 'ad_name');
     const dataByName = new Map<string, AdsAdAccountDataPoint>();
-    for (const p of creative.data ?? []) {
-      dataByName.set(p.name, p);
+    for (const metric of creative.metrics ?? []) {
+      dataByName.set(metric.name, metric);
     }
 
     const enabledMetrics = metrics.filter(m => Boolean(m.enabled));

@@ -215,7 +215,7 @@ export interface Graph {
 
 export interface Campaign {
   index: number
-  campaign_name: string
+  campaignName: string
   spend: string
   purchases: number
   conversionRate: string

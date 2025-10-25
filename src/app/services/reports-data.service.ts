@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import { SchedulingOption } from '../pages/edit-report/edit-report.component';
-import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest, FACEBOOK_DATE_PRESETS} from '../interfaces/interfaces';
+import { GetAvailableMetricsResponse, AvailableMetricsAdAccountCustomMetric, Provider, AdAccountScheduleReportRequest, SectionScheduleReportRequest, MetricScheduleReportRequest, CustomMetricScheduleReportRequest, FACEBOOK_DATE_PRESETS, CustomFormulaScheduleReportRequest, AvailableMetricsAdAccountCustomFormula} from '../interfaces/interfaces';
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { SchedulesService } from "./api/schedules.service.js";
@@ -157,9 +157,7 @@ export class ReportsDataService {
 
     let reportSections: ReportSection[] = [];
 
-    console.log(schedulingOption)
     const availableMetrics = await this.schedulesService.getAvailableMetrics(schedulingOption.client.uuid ?? schedulingOption.client);
-    console.log(availableMetrics)
 
     const providers = schedulingOption.providers;
     const facebookProvider = providers!.find(p => p.provider === 'facebook');
@@ -204,6 +202,7 @@ export class ReportsDataService {
         const adAccountAvailableMetrics = availableMetrics.find(adAccountAvailableMetrics => adAccountAvailableMetrics.adAccountId === adAccountId)!.adAccountMetrics;
         const sectionAdAccountAvailableMetrics = adAccountAvailableMetrics[section.name];
         const customAdAccountAvailableMetrics = adAccountAvailableMetrics.customMetrics;
+        const customFormulasAdAccountAvailableMetrics = adAccountAvailableMetrics.customFormulas;
 
         let metrics: Metric[] = [];
 
@@ -224,6 +223,20 @@ export class ReportsDataService {
             isCustom: true,
             id: metric.id
           })
+        }
+        
+
+        if (adAccount.customFormulas) {
+          for (let formula of adAccount.customFormulas) {
+            metrics.push({
+              name: formula.name,
+              order: formula.order,
+              enabled: true,
+              isCustom: false,
+              isCustomFormula: true,
+              customFormulaUuid: formula.uuid
+            })
+          }
         }
 
         metrics.sort((a, b) => a.order - b.order);
@@ -251,21 +264,18 @@ export class ReportsDataService {
           }
         }
 
-        // // Ensure 'impressions' is always present and enabled for the 'ads' section
-        // if (section.name === 'ads') {
-        //   const impressions = metrics.find(m => m.name === 'impressions');
-        //   if (impressions) {
-        //     impressions.enabled = true;
-        //   } else {
-        //     metrics.push({
-        //       name: 'impressions',
-        //       order: metrics.length,
-        //       enabled: true,
-        //       isCustom: false,
-        //       id: ''
-        //     });
-        //   }
-        // }
+        for (let formula of customFormulasAdAccountAvailableMetrics) {
+          if (!metrics.find(m => m.name === formula.name)) {
+          metrics.push({
+              name: formula.name,
+              order: -1,
+              enabled: false,
+              isCustom: false,
+              isCustomFormula: true,
+              customFormulaUuid: formula.uuid
+            })
+          }
+        }
 
         // Build ad account object and attach preview data per section
         const adAccountObj: AdAccount = {
@@ -294,11 +304,11 @@ export class ReportsDataService {
 
           adAccountObj.creativesData = Array.from({ length: 10 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
-            ad_name: `Ad ${i + 1}`,
+            adName: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
             sourceUrl: `https://facebook.com/ads/${i + 1}`,
             thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
-            data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+            metrics: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           })) as any;
 
           adAccountObj.adsSettings = {
@@ -312,8 +322,8 @@ export class ReportsDataService {
 
           adAccountObj.campaignsData = Array.from({ length: 3 }).map((_, i) => ({
             index: i,
-            campaign_name: `Campaign ${i + 1}`,
-            data: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+            campaignName: `Campaign ${i + 1}`,
+            metrics: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           })) as any;
           adAccountObj.campaignsSettings = {
             maxCampaigns: adAccount.campaignsSettings?.maxCampaigns ?? 10,
@@ -341,6 +351,7 @@ export class ReportsDataService {
 
   async getReportsSectionsBasedOnReportData(providers: ReportData): Promise<ReportSection[]> {
 
+
     let reportSections: ReportSection[] = [];
 
     const facebookProvider = providers.find(p => p.provider === 'facebook');
@@ -356,7 +367,7 @@ export class ReportsDataService {
         let campaignsDataVar: TableAdAccountData | undefined;
         let creativesDataVar: AdsAdAccountDataCreative[] | undefined;
 
-        if (section.name === 'kpis') {
+        if (section.key === 'kpis') {
           sectionTitle = 'Main KPIs'
           const kpiData = adAccount.data as KpiAdAccountData;
           metrics = kpiData.map(m => ({
@@ -365,35 +376,43 @@ export class ReportsDataService {
             enabled: m.enabled === undefined ? true : m.enabled,
             value: m.value
           }));
-        } else if (section.name === 'graphs') {
+        } 
+        else if (section.key === 'graphs') {
           sectionTitle = 'Graphs'
           let metricsList: {name: string, order: number, enabled: boolean}[] = []
 
           for (let point of adAccount.data as GraphsAdAccountData) {
-            for (let dataPoint of point.data) {
-              if (!metricsList.find(m => m.name === dataPoint.name)) {
+            for (let metric of point.metrics) {
+              if (!metricsList.find(m => m.name === metric.name)) {
                 metricsList.push({
-                  name: dataPoint.name,
-                  order: dataPoint.order,
-                  enabled: dataPoint.enabled === undefined ? true : dataPoint.enabled
+                  name: metric.name,
+                  order: metric.order,
+                  enabled: metric.enabled === undefined ? true : metric.enabled
                 });
               }
             }
           }
 
+          console.log(metricsList)
+          console.log(adAccount)  
+
           for (let metric of metricsList) {
             let dataPoints: MetricDataPoint[] = [];
 
+            
+
             for (let point of adAccount.data as GraphsAdAccountData) {
-              for (let dataPoint of point.data) {
-                if (dataPoint.name === metric.name) {
+              for (let p of point.metrics) {
+                if (metric.name === p.name) {
                   dataPoints.push({
-                    value: dataPoint.value,
+                    value: p.value,
                     date: point.date_start
                   })
                 }
               }
             }
+
+            console.log(dataPoints)
 
             metrics.push({
               name: metric.name,
@@ -403,7 +422,8 @@ export class ReportsDataService {
             })
           }
 
-        } else if (section.name === 'ads') {
+        } 
+        else if (section.key === 'ads') {
 
           sectionTitle = 'Best creatives'
           creativesDataVar = adAccount.data as AdsAdAccountData;
@@ -412,13 +432,13 @@ export class ReportsDataService {
           const metricMap = new Map<string, { order: number; enabled: boolean }>();
           if (Array.isArray(creativesDataVar)) {
             for (const creative of creativesDataVar) {
-              for (const point of creative.data) {
-                const current = metricMap.get(point.name);
-                const pointEnabled = point.enabled === undefined ? true : point.enabled;
+              for (const metric of creative.metrics) {
+                const current = metricMap.get(metric.name);
+                const pointEnabled = metric.enabled === undefined ? true : metric.enabled;
                 if (!current) {
-                  metricMap.set(point.name, { order: point.order, enabled: pointEnabled });
+                  metricMap.set(metric.name, { order: metric.order, enabled: pointEnabled });
                 } else {
-                  metricMap.set(point.name, { order: Math.min(current.order, point.order), enabled: current.enabled || pointEnabled });
+                  metricMap.set(metric.name, { order: Math.min(current.order, metric.order), enabled: current.enabled || pointEnabled });
                 }
               }
             }
@@ -426,20 +446,15 @@ export class ReportsDataService {
           metrics = Array.from(metricMap.entries())
             .map(([name, v]) => ({ name, order: v.order, enabled: v.enabled }))
             .sort((a, b) => a.order - b.order);
-          // // Ensure 'impressions' is always included and enabled
-          // const impressions = metrics.find(m => m.name === 'impressions');
-          // if (impressions) {
-          //   impressions.enabled = true;
-          // } else {
-          //   metrics.push({ name: 'impressions', order: metrics.length, enabled: true });
-          // }
 
-        } else if (section.name === 'campaigns') {
+        } 
+        else if (section.key === 'campaigns') {
+
             sectionTitle = 'Best campaigns'
            const tableData = adAccount.data as TableAdAccountData;
            const metricMap = new Map<string, { order: number; enabled: boolean }>();
            for (const campaign of tableData) {
-             for (const point of campaign.data) {
+             for (const point of campaign.metrics) {
                const current = metricMap.get(point.name);
                const pointEnabled = point.enabled === undefined ? true : point.enabled;
                if (!current) {
@@ -474,7 +489,7 @@ export class ReportsDataService {
       }
 
       reportSections.push({
-        key: section.name,
+        key: section.key,
         title: sectionTitle,
         enabled: section.enabled === undefined ? true : section.enabled,
         adAccounts: adAccounts,
@@ -524,7 +539,7 @@ export class ReportsDataService {
         const roundedCampaigns = adAccount.campaignsData
           ? adAccount.campaignsData.map(c => ({
               ...c,
-              data: c.data.map(point => ({
+              metrics: c.metrics.map(point => ({
                 ...point,
                 value: roundIfDecimal(point.value)
               }))
@@ -534,9 +549,9 @@ export class ReportsDataService {
         const roundedCreatives = adAccount.creativesData
           ? adAccount.creativesData.map(creative => ({
               ...creative,
-              data: creative.data.map(point => ({
-                ...point,
-                value: roundIfDecimal(point.value)
+              metrics: creative.metrics.map(metric => ({
+                ...metric,
+                value: roundIfDecimal(metric.value)
               }))
             }))
           : undefined;
@@ -636,9 +651,10 @@ export class ReportsDataService {
         const availableMetricsAdAccount = adAccount.adAccountMetrics;
         const sectionMetrics = availableMetricsAdAccount[sectionKey];
         const customMetrics = availableMetricsAdAccount.customMetrics;
+        const customFormulas = availableMetricsAdAccount.customFormulas;
 
         // base metrics for this ad account and section
-        let metrics = this.getMetrics(sectionMetrics, customMetrics);
+        let metrics = this.getMetrics(sectionMetrics, customMetrics, customFormulas);
         // normalize order
         metrics.forEach((m, i) => (m.order = i));
 
@@ -732,11 +748,11 @@ export class ReportsDataService {
 
           const creatives = Array.from({ length: 10 }).map((_, i) => ({
             adId: `${adAccount.adAccountId}-ad-${i + 1}`,
-            ad_name: `Ad ${i + 1}`,
+            adName: `Ad ${i + 1}`,
             adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
             sourceUrl: `https://facebook.com/ads/${i + 1}`,
             thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
-            data: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+            metrics: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           }));
 
           adAccountObj.creativesData = creatives as any;
@@ -746,8 +762,8 @@ export class ReportsDataService {
 
           const campaigns = Array.from({ length: 3 }).map((_, i) => ({
             index: i,
-            campaign_name: `Campaign ${i + 1}`,
-            data: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+            campaignName: `Campaign ${i + 1}`,
+            metrics: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
           }));
 
           adAccountObj.campaignsData = campaigns as any;
@@ -762,7 +778,7 @@ export class ReportsDataService {
     return this.appendPercentForSpecificMetrics(reportSections)
   }
 
-  getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[]): Metric[] {
+  getMetrics(metrics: string[], customMetrics: AvailableMetricsAdAccountCustomMetric[], customFormulas: AvailableMetricsAdAccountCustomFormula[]): Metric[] {
 
     const metricsToReturn = [
       ...metrics.map((metric, index) => ({
@@ -778,6 +794,14 @@ export class ReportsDataService {
         enabled: false,
         isCustom: true,
         id: metric.id
+      })).sort((a, b) => a.name.localeCompare(b.name)),
+      ...customFormulas.map((formula, index) => ({
+        name: formula.name,
+        order: index,
+        enabled: false,
+        isCustom: false,
+        isCustomFormula: true,
+        customFormulaUuid: formula.uuid
       })).sort((a, b) => a.name.localeCompare(b.name))
     ]
 
@@ -814,7 +838,8 @@ export class ReportsDataService {
 
         let metrics: MetricScheduleReportRequest[] = [];
         let customMetrics: CustomMetricScheduleReportRequest[] = [];
-
+        let customFormulas: CustomFormulaScheduleReportRequest[] = [];
+        
         for (const metric of adAccount.metrics) {
           if (!metric.enabled) continue;
 
@@ -823,6 +848,12 @@ export class ReportsDataService {
               name: metric.name,
               order: metric.order,
               id: metric.id!
+            })
+          } else if (metric.isCustomFormula) {
+            customFormulas.push({
+              name: metric.name,
+              order: metric.order,
+              uuid: metric.customFormulaUuid!
             })
           } else {
             metrics.push({
@@ -849,6 +880,7 @@ export class ReportsDataService {
           enabled: adAccount.enabled,
           metrics: metrics,
           customMetrics: customMetrics,
+          customFormulas: customFormulas,
           currency: adAccount.currency,
           adsSettings: adAccount.adsSettings,
           campaignsSettings: adAccount.campaignsSettings,
@@ -929,6 +961,7 @@ export class ReportsDataService {
   }
 
   private appendPercentForSpecificMetrics(reportSections: ReportSection[]): ReportSection[] {
+
     const shouldAppendPercent = (metricName: string): boolean => {
       if (!metricName) return false;
       const name = metricName.toLowerCase();
@@ -952,16 +985,16 @@ export class ReportsDataService {
         }),
         campaignsData: adAccount.campaignsData?.map(c => ({
           ...c,
-          data: c.data.map(point => ({
+          data: c.metrics.map(point => ({
             ...point,
             symbol: shouldAppendPercent(point.name) ? '%' : point.symbol
           }))
         })),
         creativesData: adAccount.creativesData?.map(creative => ({
           ...creative,
-          data: creative.data.map(point => ({
-            ...point,
-            symbol: shouldAppendPercent(point.name) ? '%' : point.symbol
+          data: creative.metrics.map(metric => ({
+            ...metric,
+            symbol: shouldAppendPercent(metric.name) ? '%' : metric.symbol
           }))
         }))
       }))
@@ -1001,7 +1034,7 @@ export class ReportsDataService {
 
           const campaignsData = adAccount.campaignsData?.map(c => ({
             ...c,
-            data: c.data.map(point => this.isCurrencyMetric(point.name)
+            metrics: c.metrics.map(point => this.isCurrencyMetric(point.name)
               ? ({ ...point, currency })
               : point
             )
@@ -1009,9 +1042,9 @@ export class ReportsDataService {
 
           const creativesData = adAccount.creativesData?.map(creative => ({
             ...creative,
-            data: creative.data.map(point => this.isCurrencyMetric(point.name)
-              ? ({ ...point, currency })
-              : point
+            metrics: creative.metrics.map(metric => this.isCurrencyMetric(metric.name)
+              ? ({ ...metric, currency })
+              : metric
             )
           }));
 

@@ -19,12 +19,6 @@ export class HeaderComponent {
     public formService: AuthFormService
   ) {}
 
-  showSignUpModal() {
-    this.dialog.open(AuthDialogComponent, {
-      width: '400px'
-    });
-  }
-
   navigateLogin() {
     this.formService.saveFormData({
       email: '',

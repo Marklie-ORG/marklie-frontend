@@ -59,7 +59,7 @@
           @for (campaign of adAccount.campaignsData ?? []; track campaign.index; let k = $index) {
             <tr>
               <td>{{ k + 1 }}</td>
-              <td>{{ campaign.campaign_name }}</td>
+              <td>{{ campaign.campaignName }}</td>
               @for (metric of adAccount.metrics; track metric.name) {
                 @if (metric.enabled) {
                   <td>

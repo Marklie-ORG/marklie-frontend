@@ -18,24 +18,15 @@ export class AddClientComponent {
   phoneNumbers = signal<string[]>([]);
   facebookAdAccounts = signal<FacebookAdAccount[]>([]);
 
-  // FacebookAdAccount
-
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddClientComponent>,
     private clientService: ClientService,
     private notificationService: NotificationService
   ) {
-    
     this.clientForm = this.fb.group({
       name: ['', Validators.required],
-      // facebookAdAccounts: [[], Validators.required],
     });
-
-    // effect(() => {
-    //   console.log(this.facebookAdAccounts())
-    // })
-    
   }
 
   async onSubmit() {

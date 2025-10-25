@@ -70,7 +70,7 @@ export class MockReportService {
     return Array.from({ length: 3 }).map((_, i) => {
       const base = {
         campaign_id: `camp-${i + 1}`,
-        campaign_name: `Campaign ${i + 1}`
+        campaignName: `Campaign ${i + 1}`
       };
 
       const availableMetrics = [

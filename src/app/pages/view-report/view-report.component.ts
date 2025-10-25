@@ -135,7 +135,10 @@ export class ViewReportComponent implements OnInit {
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
 
+      console.log(this.reportSections)
+
     } catch (error) {
+      console.error('Error loading report:', error);
       const err = error as HttpErrorResponse;
       if (err?.status === 401) {
         this.showRequestAccessForm.set(true);

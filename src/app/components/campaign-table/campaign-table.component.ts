@@ -185,7 +185,7 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
   }
 
   getCampaignMetricValue(campaign: CampaignData, metricName: string): string {
-    const point = campaign?.data?.find(d => d.name === metricName);
+    const point = campaign?.metrics?.find(d => d.name === metricName);
     if (!point) return '';
     if ((point as any).currency) {
       const num = typeof point.value === 'number' ? point.value : parseFloat(String(point.value));
@@ -254,7 +254,7 @@ export class CampaignTableComponent implements AfterViewInit, OnDestroy {
   }
 
   private getCampaignMetricNumberValue(c: CampaignData, metricName: string): number | undefined {
-    const point = c?.data?.find(d => d.name === metricName);
+    const point = c?.metrics?.find(d => d.name === metricName);
     if (!point) return undefined;
     const n = typeof point.value === 'number' ? point.value : Number(point.value);
     return Number.isFinite(n) ? n : undefined;

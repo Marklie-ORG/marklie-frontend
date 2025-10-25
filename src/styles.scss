@@ -726,3 +726,8 @@ body.no-scroll {
   width: 100%;
   height: 100%;
 }
+
+
+.mat-mdc-dialog-surface {
+  overflow: hidden !important;
+}

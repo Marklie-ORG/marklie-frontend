@@ -85,7 +85,7 @@ export interface GetReportResponse {
   }
 
   export interface SectionReportResponse {
-    name: SectionKey
+    key: SectionKey
     order: number
     adAccounts: AdAccountReportResponse[]
     enabled?: boolean
@@ -116,7 +116,7 @@ export interface GetReportResponse {
   export type GraphsAdAccountData = GraphData[]
 
   export interface GraphData {
-    data: GraphDataPoint[]
+    metrics: GraphDataPoint[]
     date_start: string
     date_end: string
   }
@@ -133,8 +133,8 @@ export interface GetReportResponse {
 
   export interface AdsAdAccountDataCreative {
     adId: string
-    data: AdsAdAccountDataPoint[]
-    ad_name: string
+    metrics: AdsAdAccountDataPoint[]
+    adName: string
     sourceUrl: string
     adCreativeId: string
     thumbnailUrl?: string
@@ -153,9 +153,9 @@ export interface GetReportResponse {
   export type TableAdAccountData = CampaignData[]
 
   export interface CampaignData {
-    data: CampaignDataPoint[]
+    campaignName: string
+    metrics: CampaignDataPoint[]
     index: number
-    campaign_name: string
   }
 
   export interface CampaignDataPoint {

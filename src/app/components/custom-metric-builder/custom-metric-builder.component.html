@@ -1,15 +1,41 @@
-<div class="builder-card">
-  <div class="builder-header">
-    <div>
-      <h3>Create custom metric</h3>
-      @if (adAccountName) {
-        <p class="builder-subtitle">Ad account: {{ adAccountName }}</p>
-      }
-    </div>
-    <button type="button" class="builder-close" (click)="onCancel()">×</button>
-  </div>
-
+<modal-base>
   <div class="builder-body">
+    <div class="builder-column builder-column--details">
+      <h4>Details</h4>
+      <div class="builder-form">
+        <label class="builder-field">
+          <span class="builder-field-label">Formula name</span>
+          <input
+            type="text"
+            [(ngModel)]="formulaName"
+            (input)="onNameInput()"
+            placeholder="Enter formula name"
+          />
+          @if (formulaNameError) {
+            <span class="field-error">{{ formulaNameError }}</span>
+          }
+        </label>
+
+        <label class="builder-field">
+          <span class="builder-field-label">Description (optional)</span>
+          <textarea
+            rows="3"
+            [(ngModel)]="formulaDescription"
+            placeholder="Describe what this formula does"
+          ></textarea>
+        </label>
+
+        <label class="builder-field">
+          <span class="builder-field-label">Format</span>
+          <select [(ngModel)]="selectedFormat">
+            @for (option of formatOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </label>
+      </div>
+    </div>
+
     <div class="builder-column">
       <h4>Metrics</h4>
       <div
@@ -25,16 +51,18 @@
           <p class="empty-state">No metrics available.</p>
         } @else {
           @for (metric of metrics; track metric.name) {
-            <div cdkDrag class="palette-item">
+            <div
+              cdkDrag
+              class="palette-item"
+              (click)="onMetricClick(metric)"
+            >
               <span class="palette-item-label">{{ metricsService.getFormattedMetricName(metric.name) }}</span>
               <span class="palette-item-tag">{{ metric.isCustom ? 'Custom' : 'Default' }}</span>
             </div>
           }
         }
       </div>
-    </div>
 
-    <div class="builder-column">
       <h4>Operations</h4>
       <div
         cdkDropList
@@ -43,10 +71,14 @@
         [cdkDropListConnectedTo]="['formulaList']"
         [cdkDropListEnterPredicate]="disallowDrop"
         cdkDropListSortingDisabled
-        class="palette"
+        class="operations"
       >
         @for (operation of mathOperations; track operation) {
-          <div cdkDrag class="palette-item palette-operation">
+          <div
+            cdkDrag
+            class="palette-item palette-operation"
+            (click)="onOperationClick(operation)"
+          >
             {{ operation }}
           </div>
         }
@@ -54,7 +86,7 @@
     </div>
 
     <div class="builder-column formula-column">
-      <h4>Formula</h4>
+      <h4>Formula builder</h4>
       <div
         cdkDropList
         id="formulaList"
@@ -64,7 +96,7 @@
         (cdkDropListDropped)="onFormulaDrop($event)"
       >
         @if (!formulaTokens.length) {
-          <p class="empty-state">Drag metrics and operations here</p>
+          <p class="empty-state">Drag or click metrics and operations to add them</p>
         }
         @for (token of formulaTokens; track $index) {
           <div cdkDrag class="formula-token">
@@ -74,7 +106,7 @@
         }
       </div>
 
-      <label class="formula-label" for="formulaDisplay">Formula preview</label>
+      <h4>Formula preview</h4>
       <textarea
         id="formulaDisplay"
         class="formula-preview"
@@ -88,9 +120,12 @@
       }
 
       <div class="builder-actions">
+        @if (showDeleteButton) {
+          <button type="button" class="danger" (click)="onDelete()">Delete</button>
+        }
         <button type="button" class="secondary" (click)="clearFormula()">Clear</button>
-        <button type="button" class="primary" (click)="onSave()">Save</button>
+        <button type="button" class="primary" (click)="onSave()">{{ actionButtonLabel }}</button>
       </div>
     </div>
   </div>
-</div>
+</modal-base>

@@ -230,7 +230,8 @@ export class DashboardHeaderComponent implements OnInit {
     this.closeDropdown(true);
   }
 
-  signOut() {
+  signOut(event?: Event) {
+    event?.preventDefault();
     this.authService.clearTokens();
     this.router.navigate(['/']);
   }

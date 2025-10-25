@@ -56,7 +56,7 @@ export class PasswordRecoveryComponent {
         isForgotPasswordMode: false
       });
 
-      this.router.navigate(['/'], { queryParams: { showLogin: "true" } });
+      this.router.navigate(['/auth']);
     } catch (err) {
       if (err instanceof HttpErrorResponse) {
         // this.formError = "Wrong credentials";

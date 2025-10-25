@@ -33,7 +33,9 @@ export interface ReportSection {
     order: number
     enabled?: boolean
     isCustom?: boolean
+    isCustomFormula?: boolean
     id?: string
+    customFormulaUuid?: string
     value?: number
     currency?: string
     symbol?: string

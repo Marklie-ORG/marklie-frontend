@@ -95,6 +95,7 @@ export class PdfReportComponent implements OnInit {
       );
 
       this.reportSections = await this.reportsDataService.getReportsSectionsBasedOnReportData(this.providers);
+      (document.body as any).dataset.reportReady = "true";
     } catch (error) {
       console.error('Error loading report:', error);
     }

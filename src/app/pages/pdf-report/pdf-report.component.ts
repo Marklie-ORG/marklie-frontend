@@ -98,6 +98,7 @@ export class PdfReportComponent implements OnInit {
       (document.body as any).dataset.reportReady = "true";
     } catch (error) {
       console.error('Error loading report:', error);
+      this.retryOnFailure();
     }
   }
 
@@ -108,5 +109,18 @@ export class PdfReportComponent implements OnInit {
   private updateDateRangeText() {
     this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.datePreset() as FACEBOOK_DATE_PRESETS, new Date(this.reportCreatedAt())));
   }
+
+  private retryOnFailure() {
+    try {
+      setTimeout(() => {
+        this.loadReport();
+      }, 3000);
+    } catch (error) {
+      this.retryOnFailure();
+      console.error('Error retrying on failure:', error);
+    }
+    
+  }
+
 
 }

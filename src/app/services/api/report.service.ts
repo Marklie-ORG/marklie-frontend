@@ -131,4 +131,10 @@ export class ReportService {
       this.http.get(`${this.apiUrl}/reports/${uuid}/pdf`, { headers: this.headers, responseType: 'blob' })
     );
   }
+
+  async generateReport(scheduleUuid: string): Promise<{ reportUuid: string, message: string, scheduleUuid: string }> {
+    return firstValueFrom(
+      this.http.post<{ reportUuid: string, message: string, scheduleUuid: string }>(`${this.apiUrl}/reports/generate`, { scheduleUuid }, { headers: this.headers })
+    );
+  }
 }

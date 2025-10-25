@@ -19,6 +19,22 @@ a {
   color: inherit;
 }
 
+.nav-btn {
+  font-size: 14px;
+  border: 1px solid #e3e8ef;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #3d475c;
+  font-weight: 500;
+}
+
+.nav-btn:hover,
+.nav-btn:focus-visible {
+  background: #f9fafb;
+  border-color: #d7dee8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
 .feedback-container {
   position: relative;
 }

@@ -85,7 +85,7 @@ export interface GetReportResponse {
   }
 
   export interface SectionReportResponse {
-    key: SectionKey
+    name: SectionKey
     order: number
     adAccounts: AdAccountReportResponse[]
     enabled?: boolean

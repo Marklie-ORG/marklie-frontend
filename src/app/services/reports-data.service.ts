@@ -367,7 +367,7 @@ export class ReportsDataService {
         let campaignsDataVar: TableAdAccountData | undefined;
         let creativesDataVar: AdsAdAccountDataCreative[] | undefined;
 
-        if (section.key === 'kpis') {
+        if (section.name === 'kpis') {
           sectionTitle = 'Main KPIs'
           const kpiData = adAccount.data as KpiAdAccountData;
           metrics = kpiData.map(m => ({
@@ -377,7 +377,7 @@ export class ReportsDataService {
             value: m.value
           }));
         } 
-        else if (section.key === 'graphs') {
+        else if (section.name === 'graphs') {
           sectionTitle = 'Graphs'
           let metricsList: {name: string, order: number, enabled: boolean}[] = []
 
@@ -423,7 +423,7 @@ export class ReportsDataService {
           }
 
         } 
-        else if (section.key === 'ads') {
+        else if (section.name === 'ads') {
 
           sectionTitle = 'Best creatives'
           creativesDataVar = adAccount.data as AdsAdAccountData;
@@ -448,7 +448,7 @@ export class ReportsDataService {
             .sort((a, b) => a.order - b.order);
 
         } 
-        else if (section.key === 'campaigns') {
+        else if (section.name === 'campaigns') {
 
             sectionTitle = 'Best campaigns'
            const tableData = adAccount.data as TableAdAccountData;
@@ -489,7 +489,7 @@ export class ReportsDataService {
       }
 
       reportSections.push({
-        key: section.key,
+        key: section.name,
         title: sectionTitle,
         enabled: section.enabled === undefined ? true : section.enabled,
         adAccounts: adAccounts,

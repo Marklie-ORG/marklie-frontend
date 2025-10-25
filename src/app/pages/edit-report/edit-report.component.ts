@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ScheduleReportRequest,
@@ -18,6 +18,7 @@ import { ReportsDataService } from 'src/app/services/reports-data.service';
 import { SchedulesService } from '../../services/api/schedules.service.js';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { NotificationService } from '@services/notification.service.js';
+import { ReportService } from '@services/api/report.service.js';
 
 export interface SchedulingOption {
   uuid: string;
@@ -110,6 +111,8 @@ export class EditReportComponent {
 
   dateRangeText = signal<string>('');
 
+  private isGeneratingReport = signal<boolean>(false);
+
   @ViewChild('reportContainer', { static: false }) reportContainerRef?: ElementRef<HTMLElement>;
 
   private route = inject(ActivatedRoute);
@@ -118,6 +121,7 @@ export class EditReportComponent {
   private schedulesService = inject(SchedulesService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
+  private reportService = inject(ReportService);
 
   ngOnInit() {
     this.route.params.subscribe(async (params) => {
@@ -292,5 +296,33 @@ export class EditReportComponent {
 
   private updateDateRangeText() {
     this.dateRangeText.set(this.reportsDataService.getDateRangeTextForPreset(this.selectedDatePreset as FACEBOOK_DATE_PRESETS, new Date(this.nextRun)));
+  }
+
+  async generateReport() {
+    if (!this.schedulingOptionId || this.isGeneratingReport()) return;
+
+    this.isGeneratingReport.set(true);
+
+    try {
+      const {reportUuid} =await this.reportService.generateReport(this.schedulingOptionId);
+      this.isGeneratingReport.set(false);
+      await this.router.navigate(['/view-report', reportUuid]);
+    } catch (error) {
+      console.error('Failed to generate report', error);
+      this.isGeneratingReport.set(false);
+      this.notificationService.info('Failed to generate report. Please try again.');
+    }
+  }
+
+  isReportGenerationInProgress(): boolean {
+    return this.isGeneratingReport();
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  handleBeforeUnload(event: BeforeUnloadEvent) {
+    if (this.isGeneratingReport()) {
+      event.preventDefault();
+      event.returnValue = 'Are you sure you want to leave the page? Your report is still getting generated.';
+    }
   }
 }

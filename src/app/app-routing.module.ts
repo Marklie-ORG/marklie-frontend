@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { PendingReportGenerationGuard } from './guards/pending-report-generation.guard';
 import { LandingNewComponent } from './pages/landing-new/landing-new.component';
 import { FbLoginCallbackComponent } from './pages/fb-login-callback/fb-login-callback.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
@@ -107,6 +108,7 @@ const routes: Routes = [
     path: 'edit-report/:clientUuid/:schedulingOptionId',
     component: EditReportComponent,
     canActivate: [authGuard],
+    canDeactivate: [PendingReportGenerationGuard],
   },
   {
     path: 'review-report/:reportUuid',

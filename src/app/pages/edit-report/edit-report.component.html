@@ -20,6 +20,8 @@
       </button>
 
       <div class="d-flex align-center justify-between gap-3">
+        <button class="blue" (click)="generateReport()" [disabled]="isReportGenerationInProgress()">Generate report now</button>
+
         <button (click)="isPreviewMode = !isPreviewMode" >
           Preview
         </button>
@@ -84,6 +86,15 @@
     }
 
   </div>
-  
+
 </div>
+
+@if (isReportGenerationInProgress()) {
+  <div class="report-loading-overlay">
+    <div class="report-loading-content">
+      <div class="report-loading-spinner" aria-hidden="true"></div>
+      <p>Generating your report&hellip;</p>
+    </div>
+  </div>
+}
   

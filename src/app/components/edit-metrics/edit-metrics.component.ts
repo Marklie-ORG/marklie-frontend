@@ -6,6 +6,7 @@ import { MetricsService } from 'src/app/services/metrics.service';
 import { CustomMetricBuilderComponent, CustomMetricBuilderResult } from '../custom-metric-builder/custom-metric-builder.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../confirm-dialog/confirm-dialog.component';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'edit-metrics',
@@ -17,6 +18,7 @@ export class EditMetricsComponent {
   private customFormulasService: CustomFormulasService = inject(CustomFormulasService);
   private dialog = inject(MatDialog);
   public metricsService = inject(MetricsService);
+  private ngZone = inject(NgZone);
 
   private sectionsSortable: Sortable | null = null;
 
@@ -27,13 +29,16 @@ export class EditMetricsComponent {
     }
 
     if (el) {
-      this.sectionsSortable = Sortable.create(el.nativeElement, {
-        animation: 200,
+      this.sectionsSortable = this.ngZone.runOutsideAngular(() => Sortable.create(el.nativeElement, {
+        animation: 150,
         easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
-        onEnd: (event) => this.reorderSections(event),
-      });
+        handle: '.handle',
+        delay: 0,
+        delayOnTouchOnly: true,
+        onEnd: (event) => this.ngZone.run(() => this.reorderSections(event)),
+      }));
     }
   }
 

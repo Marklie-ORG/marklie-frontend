@@ -318,3 +318,20 @@ input:checked + .slider::before {
     background: #1d4ed8;
   }
 }
+
+/* Drag and drop animations */
+.sortable-drag {
+  opacity: 0.8;
+  z-index: 1000;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  cursor: grabbing;
+}
+
+/* The placeholder where the item would go */
+.sortable-ghost {
+  opacity: 0.3;
+  background-color: #e9e9e9;
+  transition: all 0.2s ease-in-out;
+  border-radius: 12px;
+}

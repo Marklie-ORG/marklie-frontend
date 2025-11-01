@@ -1,9 +1,4 @@
-.section-title {
-  font-weight: 600;
-  font-size: 24px;
-  color: #000000;
-  margin-bottom: 16px;
-}
+
 .graph-grid {
   display: grid;
   width: 100%;
@@ -43,16 +38,7 @@
     cursor: grabbing;
   }
 
-.graph-card canvas {
-  // width: 100% !important;
-  // height: auto !important;
-}
-
 @media (max-width: 768px) {
-  .section-title {
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
 
   .graph-card {
     padding: 8px;

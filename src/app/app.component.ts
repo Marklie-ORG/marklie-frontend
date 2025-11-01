@@ -11,7 +11,7 @@ import { AuthService } from './services/api/auth.service';
 })
 export class AppComponent {
 
-  showHeader = true;
+  // showHeader = true;
   showDashboardHeader = false;
   showLandingHeader = true;
 
@@ -23,8 +23,8 @@ export class AppComponent {
         const url = event.urlAfterRedirects.split('?')[0];
         const hasToken = !!localStorage.getItem('accessToken');
 
-        this.showLandingHeader = !hasToken && url === '/';
-        this.showHeader = hasToken && url === '/';
+        this.showLandingHeader = url === '/';
+        // this.showHeader = hasToken && url === '/';
 
         if (!hasToken) {
           return

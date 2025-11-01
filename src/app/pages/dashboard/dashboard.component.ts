@@ -12,6 +12,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../components/conf
 import { NotificationService } from '@services/notification.service';
 import { User, UserService } from 'src/app/services/api/user.service.js';
 import {OrganizationService} from "../../services/api/organization.service.js";
+import { MarkieButtonComponent } from '../../ui/marklie-button/marklie-button.component';
 
 interface ActivityLog {
   uuid: string;

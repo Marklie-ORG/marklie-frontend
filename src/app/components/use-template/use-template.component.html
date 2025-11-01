@@ -1,0 +1,41 @@
+<modal-base>
+  <form [formGroup]="useTemplateForm" (ngSubmit)="onSubmit()">
+    <div class="form-group mt-3">
+      <label for="client">Select Client</label>
+      
+      @if (loading()) {
+        <div class="loading-spinner">Loading clients...</div>
+      } @else if (clients().length === 0) {
+        <div class="no-clients">
+          <p>No clients available. Please create a client first.</p>
+        </div>
+      } @else {
+        <div class="clients-list-container">
+          <div class="clients-list">
+            @for (client of clients(); track client.uuid) {
+              <div 
+                class="client-item"
+                [class.selected]="useTemplateForm.get('clientUuid')?.value === client.uuid"
+                (click)="useTemplateForm.get('clientUuid')?.setValue(client.uuid)">
+                <div class="client-name">{{ client.name }}</div>
+                @if (client.schedulesCount !== undefined) {
+                  <div class="client-meta">{{ client.schedulesCount }} active reports</div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="modal-actions mt-4">
+      <button type="button" (click)="dialogRef.close()">Cancel</button>
+      <button 
+        type="submit" 
+        class="blue" 
+        [disabled]="!useTemplateForm.valid || submitting() || clients().length === 0">
+        {{ submitting() ? 'Applying...' : 'Apply Template' }}
+      </button>
+    </div>
+  </form>
+</modal-base>

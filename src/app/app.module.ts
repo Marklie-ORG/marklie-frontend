@@ -87,6 +87,11 @@ import { ClientDatabaseComponent } from './pages/client-database/client-database
 import { ShareClientDatabaseComponent } from './components/share-client-database/share-client-database.component';
 import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
 import { AccessRequestsComponent } from './pages/access-requests/access-requests.component';
+import { TemplatesComponent } from './pages/templates/templates.component';
+import { UseTemplateComponent } from './components/use-template/use-template.component';
+import { TemplateComponent } from './pages/template/template.component';
+import { SaveTemplateComponent } from "./components/save-template/save-template.component";
+import { MarkieButtonComponent } from './ui/marklie-button/marklie-button.component';
 
 
 register();
@@ -164,7 +169,11 @@ register();
   ShareClientDatabaseComponent,
   ActivateClientAccessComponent,
   CustomMetricBuilderComponent,
-  AccessRequestsComponent
+  AccessRequestsComponent,
+  TemplatesComponent,
+  UseTemplateComponent,
+  TemplateComponent,
+  SaveTemplateComponent
 
   ],
   imports: [
@@ -180,7 +189,8 @@ register();
     FaIconComponent,
     FontAwesomeModule,
     LandingNewComponent,
-    HeaderNewComponent
+    HeaderNewComponent,
+    MarkieButtonComponent
   ],
   providers: [
     provideAnimationsAsync(),

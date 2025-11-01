@@ -1,0 +1,50 @@
+<app-dashboard-header></app-dashboard-header>
+
+<div class="template-container">
+
+  <div 
+  style="display: grid; grid-template-columns: 10% 80% 10%; gap: 0%; background-color: #f9fafb;">
+
+    <div></div>
+
+
+    
+
+    <div #reportContainer class="report-container d-flex flex-column pt-3 pl-5 pr-5">
+
+      <!-- <div class="d-flex justify-center">
+        <p class="dummy-data-warning">Right now you are seeing a dummy data. The real data will be loaded when the report is generated.</p>
+      </div> -->
+
+      @if (template()) {
+        <div class="template-actions">
+          <button class="back-btn" (click)="goBack()">
+            <fa-icon [icon]="faArrowLeft"></fa-icon>
+            Back to Templates
+          </button>
+
+          <!-- <marklie-button color="blue" (click)="useTemplate()">
+            Use Template
+          </marklie-button> -->
+
+          <button class="btn-use-template blue" (click)="useTemplate()">
+            Use Template
+          </button>
+        </div>
+      }
+      
+      @if (template()) {
+        <report
+        [(reportSections)]="reportSections"
+        [reportTitle]="template()!.name"
+        [isViewMode]="true"
+        ></report>
+      }
+      
+
+    </div>
+
+    <div></div>
+
+  </div>
+</div>

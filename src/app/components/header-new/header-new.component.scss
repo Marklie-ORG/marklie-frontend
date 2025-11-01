@@ -11,6 +11,12 @@
     gap: 1rem;
     margin: 0 auto;
     padding: 0 1rem;
+    height: 58px;
+
+    * > {
+      height: 100%;
+      display: flex;
+    }
 
     @include from-tablet {
       padding: 0;
@@ -49,6 +55,47 @@
           font-size: 1.6rem;
         }
       }
+    }
+
+    &-left {
+      height: 100%;
+      display: flex;
+    }
+
+    &-middle {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      // flex: 1;
+      justify-content: center;
+      border: $border-primary;
+      border-radius: 1.25rem;
+      height: 100%;
+      padding: 0 20px;
+
+      @include mobile {
+        display: none;
+      }
+
+      .nav-link {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        // opacity: 0.65;
+        cursor: pointer;
+        text-decoration: none;
+        transition: opacity 0.2s ease, color 0.2s ease;
+
+        &:hover {
+          opacity: 1;
+          color: var(--blue-primary);
+        }
+      }
+    }
+
+    &-right {
+      height: 100%;
+      display: flex;
     }
 
     .desktop-buttons {
@@ -94,6 +141,17 @@
         border: $border-primary;
         border-radius: 0.75rem;
         cursor: pointer;
+        background: transparent;
+        padding: 0;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        &.active {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
 
         img {
           width: 2rem;
@@ -101,5 +159,71 @@
         }
       }
     }
+  }
+
+  .mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.2s ease;
+
+    @include from-tablet {
+      display: none;
+    }
+  }
+
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--background-color, #ffffff);
+    border-left: $border-primary;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+
+    .mobile-nav-link {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: var(--text-color);
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        color: var(--blue-primary);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
   }
 }

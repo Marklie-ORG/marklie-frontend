@@ -1,0 +1,25 @@
+<button
+  [type]="type"
+  [disabled]="disabled || loading"
+  [ngClass]="buttonClasses"
+  (click)="onButtonClick()"
+  [attr.aria-label]="ariaLabel"
+  class="marklie-button">
+
+  @if (loading) {
+    <span class="btn-spinner"></span>
+  }
+
+  @if (icon && iconPosition === 'left') {
+    <fa-icon [icon]="icon" class="btn-icon btn-icon-left"></fa-icon>
+  }
+
+  <span class="btn-text">
+    <ng-content></ng-content>
+  </span>
+
+  @if (icon && iconPosition === 'right') {
+    <fa-icon [icon]="icon" class="btn-icon btn-icon-right"></fa-icon>
+  }
+
+</button>

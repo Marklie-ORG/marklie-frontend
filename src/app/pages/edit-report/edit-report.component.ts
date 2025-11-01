@@ -19,6 +19,8 @@ import { SchedulesService } from '../../services/api/schedules.service.js';
 import { ReportSection } from 'src/app/interfaces/report-sections.interfaces';
 import { NotificationService } from '@services/notification.service.js';
 import { ReportService } from '@services/api/report.service.js';
+import { SchedulesTemplatesService } from '@services/api/schedules-templates.service.js';
+import { SaveTemplateComponent } from '../../components/save-template/save-template.component';
 
 export interface SchedulingOption {
   uuid: string;
@@ -122,6 +124,7 @@ export class EditReportComponent {
   private notificationService = inject(NotificationService);
   private router = inject(Router);
   private reportService = inject(ReportService);
+  private schedulesTemplatesService = inject(SchedulesTemplatesService);
 
   ngOnInit() {
     this.route.params.subscribe(async (params) => {
@@ -316,6 +319,23 @@ export class EditReportComponent {
 
   isReportGenerationInProgress(): boolean {
     return this.isGeneratingReport();
+  }
+
+  async createTemplateFromOption(): Promise<void> {
+    if (!this.schedulingOptionId) return;
+
+    const dialogRef = this.dialog.open(SaveTemplateComponent, {
+      width: '600px',
+    });
+
+    const component = dialogRef.componentInstance;
+    component.schedulingOptionUuid = this.schedulingOptionId;
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Template was successfully saved
+      }
+    });
   }
 
   @HostListener('window:beforeunload', ['$event'])

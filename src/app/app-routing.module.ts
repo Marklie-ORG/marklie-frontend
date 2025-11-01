@@ -29,6 +29,8 @@ import {CompleteComponent} from "./pages/billing/complete/complete.component.js"
 import { ClientDatabaseComponent } from './pages/client-database/client-database.component';
 import { ActivateClientAccessComponent } from './pages/activate-client-access/activate-client-access.component';
 import { AccessRequestsComponent } from './pages/access-requests/access-requests.component';
+import { TemplatesComponent } from './pages/templates/templates.component';
+import { TemplateComponent } from './pages/template/template.component';
 
 const routes: Routes = [
   {
@@ -157,6 +159,16 @@ const routes: Routes = [
   {
     path: 'activate-client-access',
     component: ActivateClientAccessComponent
+  },
+  {
+    path: 'templates',
+    component: TemplatesComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'template/:templateUuid',
+    component: TemplateComponent,
+    canActivate: [authGuard]
   },
   {
     path: '**',

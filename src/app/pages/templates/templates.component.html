@@ -1,0 +1,68 @@
+<app-dashboard-header></app-dashboard-header>
+
+
+<div class="templates-container">
+@if (loading()) {
+    <div class="loading-state">
+    <fa-icon [icon]="faSpinner" class="spinner"></fa-icon>
+    <p>Loading templates...</p>
+    </div>
+} @else if (error()) {
+    <div class="error-state">
+    <p>{{ error() }}</p>
+    <button class="btn-retry" (click)="loadTemplates()">Try Again</button>
+    </div>
+} 
+<!-- @else if (templates().length === 0) { -->
+    <!-- <h3>My Templates</h3>
+    <div class="empty-state">
+     <div class="templates-header block">
+       <div class="header-content">
+         <fa-icon [icon]="faSpinner" class="create-icon"></fa-icon>
+         <h2>Create your first template</h2>
+         <p>You do not have any templates yet. Click on the button below to create one.</p>
+         <button class="btn-create" (click)="createTemplate()">Create</button>
+       </div>
+     </div>
+    </div> -->
+<!-- } @else { -->
+    <h3>Templates Library</h3>
+    <div class="templates-grid">
+    @for (template of templates(); track template.uuid) {
+        <div class="template-card" (click)="previewTemplate(template.uuid)">
+            <div class="template-card-header">
+                <h3>{{ template.name }}</h3>
+                @if (template.origin) {
+                <!-- <span class="badge" [class.system]="template.origin === 'system'">
+                    {{ template.origin }}
+                </span> -->
+                }
+            </div>
+
+            @if (template.description) {
+                <p class="template-description">{{ template.description }}</p>
+            }
+
+            <div class="template-meta">
+                <div class="platform">
+                    <img src="../../../assets/img/icons/meta.svg" alt="Meta Platform" width="20px" height="20px">
+                </div>
+                
+                <!-- <span class="meta-item">
+                <strong>Created:</strong> {{ getFormattedDate(template.createdAt) }}
+                </span> -->
+                <!-- @if (template.visibility) {
+                <span class="meta-item">
+                    <strong>Visibility:</strong> {{ template.visibility }}
+                </span>
+                } -->
+            </div>
+
+            <!-- <button class="btn-use-template" (click)="useTemplate(template.uuid)">
+                Use Template
+            </button> -->
+        </div>
+    }
+    </div>
+<!-- } -->
+</div>

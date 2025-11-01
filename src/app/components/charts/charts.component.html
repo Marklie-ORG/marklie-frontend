@@ -1,4 +1,4 @@
-<h1>Graphs</h1>
+<div class="header-text">Graphs</div>
 
 <div #adAccountsContainer>
 @for (adAccount of adAccountsGraphs(); track adAccount.id) {
@@ -6,7 +6,7 @@
     @if (adAccount.enabled) {
         <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
             <div class="ad-account-header mb-2 mt-4 d-flex justify-between align-center">
-              <h4 class="">{{ adAccount.name }}</h4>
+              <div class="ad-account-name">{{ adAccount.name }}</div>
               @if (!isViewMode() && adAccounts.length > 1) {
                 <metrics-actions-menu
                     [adAccounts]="adAccounts"

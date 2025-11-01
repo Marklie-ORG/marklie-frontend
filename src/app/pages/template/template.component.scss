@@ -1,0 +1,234 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.template-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px 4%;
+
+  .template-actions {
+    display: flex;
+    gap: 12px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+
+    .btn-use-template {
+      padding: 10px 20px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: #357abd;
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  // .template-header {
+  //   margin-bottom: 20px;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: space-between;
+  //   gap: 12px;
+
+  //   .back-btn {
+  //     display: flex;
+  //     align-items: center;
+  //     gap: 8px;
+  //     padding: 8px 16px;
+  //     background: #f0f0f0;
+  //     border: none;
+  //     border-radius: 4px;
+  //     cursor: pointer;
+  //     font-size: 0.95rem;
+  //     color: #333;
+  //     transition: background 0.3s ease;
+
+  //     &:hover {
+  //       background: #e0e0e0;
+  //     }
+
+  //     fa-icon {
+  //       font-size: 0.9rem;
+  //     }
+  //   }
+  // }
+
+  .loading-state,
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+
+    .spinner {
+      font-size: 2.5rem;
+      color: #4a90e2;
+      margin-bottom: 16px;
+      animation: spin 1s linear infinite;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #666;
+      margin: 0;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
+  .error-state {
+    background: #fee;
+    color: #c33;
+
+    .btn-retry {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: #357abd;
+      }
+    }
+  }
+
+  .template-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .detail-card {
+      background: white;
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .template-header-section {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #eee;
+
+        .header-title {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+
+          h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0;
+          }
+
+          .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: #e8f0fe;
+            color: #1967d2;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+
+            &.system {
+              background: #f3e5f5;
+              color: #7b1fa2;
+            }
+          }
+        }
+      }
+
+      .template-section {
+        margin-bottom: 24px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 0 0 12px;
+        }
+
+        .description-text {
+          font-size: 0.95rem;
+          color: #666;
+          line-height: 1.6;
+          margin: 0;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
+
+        .details-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 16px;
+
+          .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+
+            .label {
+              font-size: 0.85rem;
+              font-weight: 600;
+              color: #666;
+              text-transform: uppercase;
+            }
+
+            .value {
+              font-size: 0.95rem;
+              color: #1a1a1a;
+              word-break: break-word;
+
+              &.template-id {
+                font-family: 'Courier New', monospace;
+                font-size: 0.85rem;
+                color: #666;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

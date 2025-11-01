@@ -1,0 +1,43 @@
+<modal-base>
+  <form [formGroup]="saveTemplateForm" (ngSubmit)="onSubmit()">
+    <div class="form-group mt-3">
+      <label for="name">Template Name</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        class="form-control"
+        placeholder="Enter template name"
+        class="text">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        placeholder="Enter template description (optional)"
+        rows="3"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="visibility">Visibility</label>
+      <select
+        id="visibility"
+        formControlName="visibility"
+        class="form-control">
+        @for (option of visibilityOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="modal-actions mt-4">
+      <button type="button" (click)="dialogRef.close()">Cancel</button>
+      <button type="submit" class="blue" [disabled]="!saveTemplateForm.valid || submitting">
+        {{ submitting ? 'Saving...' : 'Save Template' }}
+      </button>
+    </div>
+  </form>
+</modal-base>

@@ -1,0 +1,93 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  label {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+  }
+
+  input.form-control,
+  textarea.form-control,
+  select.form-control {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background-color: white;
+    transition: border-color 0.3s ease;
+
+    &:hover {
+      border-color: #bbb;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  select.form-control {
+    cursor: pointer;
+
+    option {
+      padding: 8px;
+      color: #333;
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &:not(.blue) {
+      background-color: #f0f0f0;
+      color: #333;
+
+      &:hover:not(:disabled) {
+        background-color: #e0e0e0;
+      }
+    }
+
+    &.blue {
+      background-color: #4a90e2;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: #357abd;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}

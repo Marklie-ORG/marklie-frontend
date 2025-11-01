@@ -9,6 +9,7 @@ import { ReportSection, AdAccount, Metric, MetricDataPoint } from '../interfaces
 import { AdAccountsService } from './api/ad-accounts.service.js';
 import { ReportService } from './api/report.service';
 import { NotificationService } from './notification.service';
+import { SchedulingTemplate } from '../interfaces/templates.interfaces';
 
 
 @Injectable({
@@ -1144,6 +1145,132 @@ export class ReportsDataService {
       this.notificationService.info('Failed to download PDF');
     }
 
+  }
+
+  async getReportsSectionsFromTemplate(template: SchedulingTemplate): Promise<ReportSection[]> {
+
+    let reportSections: ReportSection[] = [];
+
+    const providers = template.providers;
+    const facebookProvider = providers!.find(p => p.provider === 'facebook');
+
+    // helpers to generate lightweight preview data (keep scoped to this method)
+    const generateDateSeries = (days: number = 10) => {
+      const today = new Date();
+      const dates: string[] = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString());
+      }
+      return dates;
+    };
+
+    const randomFor = (metricName: string): number => {
+      const name = (metricName || '').toLowerCase();
+      if (name.includes('roas')) return 9;
+      if (name.includes('ctr') || name.includes('rate')) return 9;
+      if (name.includes('cpc') || name.includes('cpm') || name.includes('cpp')) return 9;
+      if (name.includes('spend') || name.includes('cost') || name.includes('value')) return 999;
+      if (name.includes('impressions') || name.includes('reach')) return 999;
+      if (name.includes('click')) return 9999;
+      if (name.includes('purchase') || name.includes('purchases')) return 999;
+      if (name.includes('add_to_cart') || name.includes('addtocart') || name.includes('cart')) return 999;
+      if (name.includes('checkout')) return 9999;
+      if (name.includes('engagement')) return 9999;
+      return 9;
+    };
+
+    for (let section of facebookProvider?.sections || []) {
+
+      let adAccounts: AdAccount[] = [];
+      let sectionTitle: string = ''
+
+      for (let adAccount of section.adAccounts) {
+
+        let metrics: Metric[] = [];
+
+        for (let metric of adAccount.metrics) {
+          metrics.push({
+            name: metric.name,
+            order: metric.order,
+            enabled: true,
+            isCustom: false
+          })
+        }
+
+        metrics.sort((a, b) => a.order - b.order);
+
+        // Build ad account object and attach preview data per section
+        const adAccountObj: AdAccount = {
+          id: adAccount.adAccountId,
+          name: adAccount.adAccountName,
+          metrics: metrics,
+          order: adAccount.order,
+          enabled: adAccount.enabled,
+          currency: adAccount.currency
+        };
+
+        if (section.name === 'kpis') {
+          sectionTitle = 'Main KPIs'
+          adAccountObj.metrics = adAccountObj.metrics.map(m => ({ ...m, value: randomFor(m.name) }));
+        } else if (section.name === 'graphs') {
+          sectionTitle = 'Graphs'
+          const dates = generateDateSeries(10);
+          adAccountObj.metrics = adAccountObj.metrics.map(m => ({
+            ...m,
+            dataPoints: dates.map(date => ({ date, value: randomFor(m.name) }))
+          }));
+        } else if (section.name === 'ads') {
+          sectionTitle = 'Best creatives'
+          const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
+          const metricsForCreative = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
+
+          adAccountObj.creativesData = Array.from({ length: 10 }).map((_, i) => ({
+            adId: `${adAccount.adAccountId}-ad-${i + 1}`,
+            adName: `Ad ${i + 1}`,
+            adCreativeId: `${adAccount.adAccountId}-creative-${i + 1}`,
+            sourceUrl: `https://facebook.com/ads/${i + 1}`,
+            thumbnailUrl: '/assets/img/2025-03-19%2013.02.21.jpg',
+            metrics: metricsForCreative.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+          })) as any;
+
+          adAccountObj.adsSettings = {
+            maxAds: adAccount.adsSettings?.maxAds ?? 10,
+            sortBy: adAccount.adsSettings?.sortBy ?? metricsForCreative[0]?.name
+          };
+        } else if (section.name === 'campaigns') {
+          sectionTitle = 'Best campaigns'
+          const enabledMetrics = adAccountObj.metrics.filter(m => m.enabled);
+          const metricsForRow = enabledMetrics.length ? enabledMetrics : adAccountObj.metrics.slice(0, 3);
+
+          adAccountObj.campaignsData = Array.from({ length: 3 }).map((_, i) => ({
+            index: i,
+            campaignName: `Campaign ${i + 1}`,
+            metrics: metricsForRow.map((m, k) => ({ name: m.name, order: k, value: randomFor(m.name) }))
+          })) as any;
+          adAccountObj.campaignsSettings = {
+            maxCampaigns: adAccount.campaignsSettings?.maxCampaigns ?? 10,
+            sortBy: adAccount.campaignsSettings?.sortBy ?? enabledMetrics[0]?.name
+          };
+        }
+
+        adAccounts.push(adAccountObj)
+
+      }
+
+      reportSections.push({
+        key: section.name,
+        title: sectionTitle,
+        enabled: true,
+        adAccounts: adAccounts,
+        order: section.order
+      })
+
+    }
+
+    reportSections = await this.appendCurrencyToMetrics(reportSections);
+    return this.appendPercentForSpecificMetrics(reportSections)
   }
 
 }

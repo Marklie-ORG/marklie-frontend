@@ -1,14 +1,14 @@
-<h1>Best campaigns</h1>
+<div class="header-text">Best campaigns</div>
 
 <div #adAccountsContainer>
 @for (adAccount of adAccounts(); track adAccount.id) {
   @if (adAccount.enabled) {
     <div class="ad-account-item" [attr.data-adaccount-id]="adAccount.id">
       <div class="ad-account-header mb-2 mt-4 d-flex justify-between align-center">
-        <h4 class="">{{ adAccount.name }}</h4>
+        <div class="ad-account-name">{{ adAccount.name }}</div>
         <div class="d-flex align-center">
           @if (!isViewMode()) {
-            <label class="mr-2">Show:</label>
+            <label class="mr-2">Rows amount</label>
             <select class="select-default mr-3"
                     [ngModel]="getCampaignsLimit(adAccount)"
                     (ngModelChange)="onCampaignsLimitChange(adAccount.id, $event)">
@@ -18,7 +18,7 @@
               <option [value]="25">25</option>
             </select>
 
-            <label class="mr-2">Best campaigns by:</label>
+            <label class="mr-2">Sort by</label>
             <select class="select-default mr-3"
                     [ngModel]="getCampaignsSortMetric(adAccount)"
                     (ngModelChange)="onCampaignsSortMetricChange(adAccount.id, $event)">

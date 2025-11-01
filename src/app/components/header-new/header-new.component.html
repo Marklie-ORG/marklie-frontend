@@ -6,6 +6,10 @@
         <span>Marklie</span>
       </a>
     </div>
+    <nav class="header__content-middle">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+    </nav>
     <div class="header__content-right">
       <div class="desktop-buttons">
         <a class="desktop-buttons__login" target="_self" routerLink="/auth">
@@ -20,11 +24,20 @@
         <app-button variant="primary" size="medium" link="/auth">
           Sign up
         </app-button>
-        <!-- TODO: Implement mobile menu when needed -->
-        <!-- <span class="mobile-menu">
+        <button class="mobile-menu" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen" aria-label="Toggle menu">
           <img src="/assets/icons/burger-menu.svg" alt="menu" />
-        </span> -->
+        </button>
       </div>
     </div>
   </div>
+
+  @if (isMobileMenuOpen) {
+    <div class="mobile-nav-overlay" (click)="closeMobileMenu()">
+      <nav class="mobile-nav" (click)="$event.stopPropagation()">
+        <a href="#features" class="mobile-nav-link" (click)="closeMobileMenu()">Features</a>
+        <a href="#pricing" class="mobile-nav-link" (click)="closeMobileMenu()">Pricing</a>
+        <a routerLink="/auth" class="mobile-nav-link" (click)="closeMobileMenu()">Log in</a>
+      </nav>
+    </div>
+  }
 </header>

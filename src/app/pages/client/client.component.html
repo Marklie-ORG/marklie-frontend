@@ -17,12 +17,13 @@
             </div>
             
             <div class="d-flex gap-3">
-              <button class="blue" (click)="scheduleReport()" >
+              <marklie-button variant="primary" (clicked)="scheduleReport()">
                 New report
-              </button>
-              <button (click)="onEditClient()">
-                ⚙️ Client Settings
-              </button>
+              </marklie-button>
+              <!-- ⚙️  -->
+              <marklie-button variant="secondary" (clicked)="onEditClient()">
+                Client Settings
+              </marklie-button>
             </div>
 
           </div>
@@ -76,9 +77,9 @@
           </div>
 
           <div class="d-flex align-center justify-center mt-4" *ngIf="!scheduleOptionsLoading && scheduleOptions.length === 0">
-            <button class="blue" (click)="scheduleReport()" >
+            <marklie-button variant="primary" size="large" (clicked)="scheduleReport()">
                 Schedule your first report for {{client?.name}}!
-            </button>
+            </marklie-button>
           </div>
 
         </div>

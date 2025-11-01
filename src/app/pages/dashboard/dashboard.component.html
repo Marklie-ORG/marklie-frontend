@@ -21,9 +21,9 @@
       <div class="title d-flex align-center justify-between pl-4 pt-4 pr-4 pb-3">
         <h3>Clients</h3>
         @if ((pageLoaded() && clients.length > 0) || !pageLoaded()) {
-          <button class="blue" (click)="showAddClientModal()">
+          <marklie-button size="medium" (clicked)="showAddClientModal()">
             New client
-          </button>
+          </marklie-button>
         }
       </div>
       
@@ -93,9 +93,9 @@
 
       @if ((pageLoaded() && clients.length === 0)) {
         <div class="d-flex align-center justify-center mt-4">
-          <button class="blue" (click)="showAddClientModal()">
+          <marklie-button variant="primary" size="large" (clicked)="showAddClientModal()">
             Add your first client!
-          </button>
+          </marklie-button>
         </div>
       }
     </div>
